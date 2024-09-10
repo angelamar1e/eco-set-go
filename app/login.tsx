@@ -37,9 +37,9 @@ export default function LogInScreen() {
           const role = snapshot.val();
           console.log(role);
           if (role == "user") {
-            router.push("(tabs)");
+            router.push('/(tabs)');
           } else {
-            router.push("(admin)");
+            router.push("/(admin)");
           }
         }
       });

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, Alert, Pressable, Button, Text } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, Alert, Pressable, Button, Text, View } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { router, Link } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -18,7 +18,7 @@ export default function Index() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const user = auth().currentUser;`         `
+        const user = auth().currentUser;
 
         if (user){
           setIsLoggedIn(true);
@@ -58,6 +58,7 @@ export default function Index() {
         variant="primary"
       />
     </ThemedView>
+    <View></View>
     </ParallaxScrollView>
   );
 }
