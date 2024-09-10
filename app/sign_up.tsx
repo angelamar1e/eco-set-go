@@ -22,10 +22,6 @@ export default function SignUp() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const current_date = Date().toString();
-  const food_footprint = 0;
-  const mobility_footprint = 0;
-  const electricity_footprint = 0;
-  const overall_footprint = 0;
 
   const clearAllInput = () => {
     setUsername('');
@@ -34,15 +30,17 @@ export default function SignUp() {
   };
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
-    db().ref(`/users/${response.user.uid}`).set({username});
-    db().ref(`/users/${response.user.uid}`).set({created_at: current_date});
-    db().ref(`/users/${response.user.uid}`).set({role: 'user'});
+    db().ref(`/users/${response.user.uid}`).set({
+      role: 'user',
+      username,
+      created_at: current_date,
+    });
     db().ref(`/current_footprint/${response.user.uid}`).set({
-      food_footprint,
-      mobility_footprint,
-      electricity_footprint,
-      overall_footprint,
-      created_at: current_date
+      food_footprint: 0,
+      mobility_footprint: 0,
+      electricity_footprint: 0,
+      overall_footprint: 0,
+      updated_at: current_date
     });
   };
 
@@ -53,6 +51,8 @@ export default function SignUp() {
 
         if (response.user){
             createProfile(response);
+            clearAllInput();
+            router.push('(tabs)');
         }
 
       } catch (e){
@@ -76,7 +76,7 @@ export default function SignUp() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <TextInput 
-          placeholder='Name'
+          placeholder='Username'
           value={username}
           onChangeText={setUsername}/>
         <TextInput 
@@ -93,9 +93,11 @@ export default function SignUp() {
             onPress={handleSignUp}
             variant="primary"
           />
-          <Link href={'/login'}>
-            <Button title='Log In'/>
-        </Link>
+          <CTAButton
+            title="Log In"
+            onPress={() => router.push('/login')}
+            variant="secondary"
+          />          
       </ThemedView>
     </ParallaxScrollView>
   );

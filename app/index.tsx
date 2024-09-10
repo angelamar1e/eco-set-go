@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Platform, TextInput, Alert, Pressable, Button } from 'react-native';
-import React, { useState } from 'react';
+import { Image, StyleSheet, Platform, TextInput, Alert, Pressable, Button, Text } from 'react-native';
+import React, {useState, useEffect} from 'react';
 import { router, Link } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
@@ -8,8 +8,34 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CTAButton } from '@/components/CTAButton';
+import { log } from '@react-native-firebase/crashlytics';
+import LogInScreen from './login';
 
 export default function Index() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const user = auth().currentUser;`         `
+
+        if (user){
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkSession();
+  }, [router]);
+
+
+  if (isLoggedIn){
+    router.push('/(tabs)');
+    return null;
+  }
 
   return (
     <ParallaxScrollView
@@ -21,16 +47,21 @@ export default function Index() {
         />
       }>
     <ThemedView style={styles.stepContainer}>
-        <Link href={'/login'}>
-          <Button title='Log In'/>
-        </Link>
-        <Link href={'/sign_up'}>
-          <Button title='Sign Up'/>
-        </Link>
+      <CTAButton
+        title="Log In"
+        onPress={() => router.push('/login')}
+        variant="primary"
+      />
+      <CTAButton
+        title="Sign Up"
+        onPress={() => router.push('/sign_up')}
+        variant="primary"
+      />
     </ThemedView>
     </ParallaxScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   titleContainer: {

@@ -1,4 +1,4 @@
-node_modules/
+google-services.json
 .expo/
 dist/
 npm-debug.*
@@ -18,3 +18,4 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+node_modules
