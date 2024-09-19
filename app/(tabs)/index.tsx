@@ -1,64 +1,95 @@
 import React, { useState, useEffect } from "react";
-import auth from "@react-native-firebase/auth";
-import db, { FirebaseDatabaseTypes } from "@react-native-firebase/database";
+import { BackHandler, Platform, View, Text } from "react-native";
+import { styled, withExpoSnack } from "nativewind";
+import { getUserUid, handleBackAction, handleLogOut } from "../utils";
+import { SafeAreaView } from "react-native-safe-area-context";
+import DailyLog from "@/components/DailyLog";
+import { CTAButton } from "@/components/CTAButton";
+import firestore, {
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
+import { HelloWave } from "@/components/HelloWave";
 
-import { BackHandler, Platform, View } from "react-native";
-import { Text } from "react-native-paper";
-import {
-  useFonts,
-  Poppins_400Regular,
-  Poppins_700Bold,
-  Poppins_600SemiBold,
-} from "@expo-google-fonts/poppins";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
+const StyledView = styled(View);
 
-export default function LandingPageScreen() {
+const Box = ({ className = "", ...props }) => (
+  <StyledView
+    className={`flex-1 justify-center bg-lime-800 rounded ${className}`}
+    {...props}
+  />
+);
+
+export default function LandingPage() {
+  const [userUid, setUserUid] = useState<string | undefined>();
+  const [userName, setUserName] = useState<string | undefined>();
   const [overallFP, setOverallFP] = useState<number | undefined>();
+  // const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
+
+  getUserUid().then((userUid) => {
+    setUserUid(userUid);
+    getUserName();
+  });
+
+  async function getUserName(){
+    const user = await firestore().collection('users').doc(userUid).get();
+    const userName = user.data()!.username;
+    setUserName(userName);
+  }
 
   useEffect(() => {
-    const backAction = () => {
-      if (Platform.OS === "android") {
-        BackHandler.exitApp();
-        return true; // Indicate that the back button press is handled
-      }
-      return false; // Default behavior for other platforms
-    };
+    const refPath = firestore().collection("current_footprint").doc(userUid);
 
+    const unsubscribe = refPath.onSnapshot((doc) => {
+      setOverallFP(doc.data()!.overall_footprint);
+    });
+
+    return () => unsubscribe();
+  });
+
+  useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      handleBackAction
     );
 
     // Cleanup function
     return () => backHandler.remove();
   }, []);
 
-  useEffect(() => {
-    const currentUser = auth().currentUser!;
-    const refPath = `/current_footprint/${currentUser.uid}/overall_footprint`;
-
-    db()
-      .ref(refPath)
-      .on("value", (snapshot) => {
-        if (snapshot.exists()) {
-          const value = snapshot.val();
-          setOverallFP(value);
-        }
-      });
-
-    return () => db().ref(refPath).off();
-  });
-
   return (
-    <View className="flex-1 mt-5">
-      <Text variant="headlineSmall">
-        Welcome, <Text className="italic">user!</Text>
-      </Text>
-      <View className="flex-row">
-        
+    <SafeAreaView className="flex-1 px-2">
+      <View className="flex h-1/4">
+        <Text className="m-3 text-4xl text-lime-800">
+          Hello, <Text className="italic">{userName}!</Text>
+        </Text> 
+        <View className="flex flex-row h-full space-x-2">
+          <Box>
+            <Text className="text-center font-medium mb-3 text-xl text-stone-300">
+              Carbon Footprint
+            </Text>
+            <Text className="text-center text-6xl text-stone-300">
+              {overallFP}
+            </Text>
+            <Text className="text-center italic text-sm text-stone-300">
+              tons of{'\n'}CO2 equivalent
+            </Text>
+          </Box>
+          <View className="flex flex-column h-full w-1/2 space-y-2">
+            <Box className="flex-row items-center pr-2">
+              <Text className="flex w-1/2 text-center text-3xl text-stone-300">0g</Text>
+              <Text className="flex w-1/2 text-center text-base italic text-stone-300">less than initial record</Text>
+            </Box>
+            <Box className="flex-row items-center pr-2">
+              <Text className="flex w-1/2 text-center text-3xl text-stone-300">0%</Text>
+              <Text className="flex w-1/2 text-center text-base italic text-stone-300">of the goal is completed</Text>
+            </Box>
+          </View>
+        </View>
+        <View className="flex mt-3">
+          <DailyLog />
+        </View>
+        <CTAButton title="Log Out" variant="primary" onPress={handleLogOut} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
