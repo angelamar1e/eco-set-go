@@ -1,14 +1,14 @@
-import { Image, StyleSheet, TextInput, Alert } from "react-native";
-import React, { useState } from "react";
-import { router, Link } from "expo-router";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import db from "@react-native-firebase/database";
+import { Image, StyleSheet, Alert } from "react-native";
+import { TextInput } from "react-native-paper";
 
-import { HelloWave } from "@/components/HelloWave";
+import React, { useState } from "react";
+import { router } from "expo-router";
+import auth from "@react-native-firebase/auth";
+
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { CTAButton } from "@/components/CTAButton";
+import { goToInterface } from "./utils";
 
 export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
@@ -18,31 +18,11 @@ export default function LogInScreen() {
     if (email && password) {
       try {
         await auth().signInWithEmailAndPassword(email, password);
-        goToProperInterface();
+        goToInterface();
       } catch (e) {
         Alert.alert("Login Error");
       }
     }
-  };
-
-  const goToProperInterface = async () => {
-    const currentUser = auth().currentUser!;
-    const refPath = `users/${currentUser.uid}/role`;
-
-    db()
-      .ref(refPath)
-      .once("value")
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const role = snapshot.val();
-          console.log(role);
-          if (role == "user") {
-            router.push('/(tabs)');
-          } else {
-            router.push("/(admin)");
-          }
-        }
-      });
   };
 
   return (
@@ -56,7 +36,7 @@ export default function LogInScreen() {
       }
     >
       <ThemedView style={styles.stepContainer}>
-        <TextInput placeholder="Email" value={email} onChangeText={setEmail} />
+        <TextInput className='text-white' placeholder="Email" value={email} onChangeText={setEmail} />
         <TextInput
           placeholder="Password"
           value={password}

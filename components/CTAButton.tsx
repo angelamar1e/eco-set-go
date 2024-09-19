@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 type ButtonType = "primary" | "secondary";
 
@@ -33,8 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   containerSecondary: {
-    height: 60,
-    backgroundColor: "white",
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
   textSecondary: {
     fontSize: 15,
     fontWeight: "bold",
-    color: "black",
+    color: "gray",
   },
 });

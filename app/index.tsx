@@ -1,41 +1,17 @@
-import { Image, StyleSheet, Platform, TextInput, Alert, Pressable, Button, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { router, Link } from 'expo-router';
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-
-import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CTAButton } from '@/components/CTAButton';
-import { log } from '@react-native-firebase/crashlytics';
-import LogInScreen from './login';
+import { goToInterface } from './utils';
 
 export default function Index() {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const user = auth().currentUser;
-
-        if (user){
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkSession();
+    goToInterface();
   }, [router]);
-
-
-  if (isLoggedIn){
-    router.push('/(tabs)');
-    return null;
-  }
 
   return (
     <ParallaxScrollView

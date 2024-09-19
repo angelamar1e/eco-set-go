@@ -4,23 +4,23 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CTAButton } from '@/components/CTAButton';
 import React, { useState } from "react";
+import { TextInput } from "react-native-paper";
 import {
-  Image, 
-  StyleSheet, 
-  TextInput,
-  Pressable,
-  Keyboard,
-  Button,
   Alert,
+  Image, 
+  StyleSheet,
 } from "react-native";
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import db from "@react-native-firebase/database";
+import firestore from "@react-native-firebase/firestore";
+import { goToInterface } from './utils';
 
 export default function SignUp() {
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
+
   const current_date = Date().toString();
 
   const clearAllInput = () => {
@@ -30,35 +30,65 @@ export default function SignUp() {
   };
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
-    db().ref(`/users/${response.user.uid}`).set({
-      role: 'user',
-      username,
-      created_at: current_date,
-    });
-    db().ref(`/current_footprint/${response.user.uid}`).set({
-      food_footprint: 0,
-      mobility_footprint: 0,
-      electricity_footprint: 0,
-      overall_footprint: 0,
-      updated_at: current_date
-    });
-  };
+    const userUid = response.user.uid;
+
+    try {
+      firestore().collection('users').doc(userUid).set({
+        role: "user",
+        username,
+        created_at: current_date,
+      });
+
+      firestore().collection('current_footprint').doc(userUid).set({
+        food_footprint: 0,
+        transportation_footprint: 0,
+        electricity_footprint: 0,
+        overall_footprint: 2.27 // initially set to the national average
+      });
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   const handleSignUp = async () => {
+    setLoading(true);
     if (email && password){
       try {
-        const response = await auth().createUserWithEmailAndPassword(email, password);
-
-        if (response.user){
-            createProfile(response);
-            clearAllInput();
-            router.push('(tabs)');
-        }
-
-      } catch (e){
-        Alert.alert("Oops", "Please check your form and try again.");
+          const response = await auth().createUserWithEmailAndPassword(email, password);
+          createProfile(response);
+          clearAllInput();
+          goToInterface();
+      } catch (error){
+          handleError(error);
+      }
+      finally{
+        setLoading(false);
       }
     }
+  };
+
+  const handleError = (error: any) => {
+    let message = 'An error occurred. Please try again.';
+    
+    switch (error.code) {
+      case 'auth/invalid-email':
+        message = 'The email address is badly formatted.';
+        break;
+      case 'auth/email-already-in-use':
+        message = 'The email address is already in use by another account.';
+        break;
+      case 'auth/weak-password':
+        message = 'The password is too weak. Please choose a stronger password.';
+        break;
+      case 'auth/missing-email':
+        message = 'Please provide an email address.';
+        break;
+      default:
+        message = error.message; // Generic error message
+    }
+
+    Alert.alert('Sign Up Error', message);
   };
  
   return (
@@ -72,13 +102,13 @@ export default function SignUp() {
       }>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <TextInput 
           placeholder='Username'
           value={username}
-          onChangeText={setUsername}/>
+          onChangeText={setUsername}
+          mode='flat'/>
         <TextInput 
           placeholder='Email'
           value={email}
@@ -89,7 +119,7 @@ export default function SignUp() {
           onChangeText={setPassword}
           secureTextEntry/>
           <CTAButton
-            title="Sign Up"
+            title={loading ? "Signing Up..." : "Sign Up"}
             onPress={handleSignUp}
             variant="primary"
           />
