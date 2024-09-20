@@ -1,4 +1,5 @@
-import { Image, StyleSheet, TextInput, Alert } from "react-native";
+import { Image, StyleSheet, Alert, View } from "react-native";
+import { TextInput } from "react-native-paper";
 import React, { useState } from "react";
 import { router, Link } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -9,6 +10,7 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { CTAButton } from "@/components/CTAButton";
+import { Feather, FontAwesome } from '@expo/vector-icons';
 
 export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
@@ -55,15 +57,44 @@ export default function LogInScreen() {
         />
       }
     >
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">Eco Set Go</ThemedText>
+      </ThemedView>
+      
       <ThemedView style={styles.stepContainer}>
-        <TextInput placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
+        <View style={styles.inputWrapper}>
+          <FontAwesome name="envelope-o" style={styles.icon} />
+          <TextInput 
+            placeholder="Email" 
+            value={email} 
+            onChangeText={setEmail}
+            mode='flat'
+            underlineColor='#ccc' 
+            activeUnderlineColor= '#407F3D'
+            style={styles.input}
+          />
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Feather name="lock" style={styles.icon}/>
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            mode='flat'
+            underlineColor='#ccc' 
+            activeUnderlineColor= '#407F3D'
+            style={styles.input}
+          />
+        </View>
+        
+        <CTAButton 
+          title="Log In" 
+          onPress={handleSignIn} 
+          variant="primary"  
         />
-        <CTAButton title="Log In" onPress={handleSignIn} variant="primary" />
+
         <CTAButton
           title="Sign Up"
           onPress={() => router.push("/sign_up")}
@@ -75,15 +106,46 @@ export default function LogInScreen() {
 }
 
 const styles = StyleSheet.create({
-  stepContainer: {
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
+  },
+  stepContainer: {
+    gap: 12,
+    marginBottom: 12,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   reactLogo: {
     height: 178,
     width: 290,
     bottom: 0,
     left: 0,
-    position: "absolute",
+    position: 'absolute',
+  },
+  inputWrapper:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative', 
+    borderRadius: 10,            
+    overflow: 'hidden',
+    height:50,
+  },
+  input:{
+    backgroundColor: '#F6F5F3',
+    paddingLeft: 40,
+    flex:1,
+    borderRadius: 10,
+    overflow: 'hidden',
+    fontSize: 14,
+    color: '#757575'
+  },
+  icon: {
+    position: 'absolute',
+    paddingLeft: 20,
+    zIndex: 10,
+    color: '#757575',
+    fontSize: 24,
   },
 });
