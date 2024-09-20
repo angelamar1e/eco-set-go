@@ -3,12 +3,14 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CTAButton } from '@/components/CTAButton';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import React, { useState } from "react";
 import { TextInput } from "react-native-paper";
 import {
   Alert,
   Image, 
   StyleSheet,
+  View,
 } from "react-native";
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
@@ -103,31 +105,58 @@ export default function SignUp() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
-        <TextInput 
-          placeholder='Username'
-          value={username}
-          onChangeText={setUsername}
-          mode='flat'/>
-        <TextInput 
-          placeholder='Email'
-          value={email}
-          onChangeText={setEmail}/>
+        <View style={styles.inputWrapper}>
+          <Feather name="user" style={styles.icon} />
           <TextInput 
-          placeholder='Password'
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry/>
-          <CTAButton
+              placeholder='Username'
+              value={username}
+              onChangeText={setUsername}
+              mode='flat'
+              underlineColor='#ccc' 
+              activeUnderlineColor= '#407F3D'
+              style={styles.input}
+          />
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <FontAwesome name="envelope-o" style={styles.icon} />
+          <TextInput 
+            placeholder='Email'
+            value={email}
+            onChangeText={setEmail}
+            mode='flat'
+            underlineColor='#ccc' 
+            activeUnderlineColor= '#407F3D'
+            style={styles.input}
+          />
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Feather name="lock" style={styles.icon} />
+          <TextInput
+            placeholder='Password'
+            value={password}
+            onChangeText={setPassword}
+            mode='flat'
+            secureTextEntry
+            underlineColor='#ccc' 
+            activeUnderlineColor= '#407F3D'
+            style={styles.input}
+          />
+        </View>
+
+        <CTAButton
             title={loading ? "Signing Up..." : "Sign Up"}
             onPress={handleSignUp}
             variant="primary"
-          />
-          <CTAButton
+        />
+        <CTAButton
             title="Log In"
             onPress={() => router.push('/login')}
             variant="secondary"
-          />          
+        />          
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -140,8 +169,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+    gap: 12,
+    marginBottom: 12,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   reactLogo: {
     height: 178,
@@ -149,5 +180,29 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  inputWrapper:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative', 
+    borderRadius: 10,            
+    overflow: 'hidden',
+    height:50,
+  },
+  input:{
+    backgroundColor: '#F6F5F3',
+    paddingLeft: 40,
+    flex:1,
+    borderRadius: 10,
+    overflow: 'hidden',
+    fontSize: 14,
+    color: '#757575'
+  },
+  icon: {
+    position: 'absolute',
+    paddingLeft: 20,
+    zIndex: 10,
+    color: '#757575',
+    fontSize: 24,
   },
 });
