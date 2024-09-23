@@ -9,6 +9,8 @@ import { goToInterface } from './utils';
 
 export default function Index() {
 
+  const [loading, setLoading] = useState<true>();
+
   useEffect(() => {
     goToInterface();
   }, [router]);

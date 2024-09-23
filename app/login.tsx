@@ -21,6 +21,7 @@ export default function LogInScreen() {
         goToInterface();
       } catch (e) {
         Alert.alert("Login Error");
+        console.error(e);
       }
     }
   };
@@ -43,7 +44,7 @@ export default function LogInScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <CTAButton title="Log In" onPress={handleSignIn} variant="primary" />
+        <CTAButton title="Log In" onPress={handleSignIn} variant="primary"/>
         <CTAButton
           title="Sign Up"
           onPress={() => router.push("/sign_up")}

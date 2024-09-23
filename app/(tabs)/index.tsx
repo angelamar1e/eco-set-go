@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BackHandler, Platform, View, Text } from "react-native";
 import { styled, withExpoSnack } from "nativewind";
-import { getUserUid, handleBackAction, handleLogOut } from "../utils";
+import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/components/DailyLog";
 import { CTAButton } from "@/components/CTAButton";
@@ -23,28 +23,26 @@ export default function LandingPage() {
   const [userUid, setUserUid] = useState<string | undefined>();
   const [userName, setUserName] = useState<string | undefined>();
   const [overallFP, setOverallFP] = useState<number | undefined>();
-  // const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
-
-  getUserUid().then((userUid) => {
-    setUserUid(userUid);
-    getUserName();
-  });
-
-  async function getUserName(){
-    const user = await firestore().collection('users').doc(userUid).get();
-    const userName = user.data()!.username;
-    setUserName(userName);
-  }
+  const footprint = firestore().collection("current_footprint").doc(userUid);
 
   useEffect(() => {
-    const refPath = firestore().collection("current_footprint").doc(userUid);
+    const fetchUserUid = async () => {
+      const uid = await getUserUid();
+      setUserUid(uid);
+      setUserName(await getUserName(uid));
+    };
 
-    const unsubscribe = refPath.onSnapshot((doc) => {
+    fetchUserUid();
+  }, []);
+
+
+  useEffect(() => {
+    const unsubscribe = footprint.onSnapshot((doc) => {
       setOverallFP(doc.data()!.overall_footprint);
     });
 
     return () => unsubscribe();
-  });
+  },[footprint]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -85,6 +83,7 @@ export default function LandingPage() {
             </Box>
           </View>
         </View>
+        {/* daily log */}
         <View className="flex mt-3">
           <DailyLog />
         </View>
