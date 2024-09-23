@@ -1,29 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInput, View} from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 
-type InputField = {
-    placeholder: string;
-    value: string;
-    onChangeText: (text: string) => void;
-    secureTextEntry ?: boolean;
-    icon: {
-        library: 'Feather' | 'FontAwesome'; // Specify the library
-        name: string; // Icon name
-    };
-};
+type FormType = 'login' | 'signup'; // Define the form type
+interface AuthInputFieldsProps {
+  formType: FormType;  // New prop to determine the form type (login or signup)
+}
 
-type AuthInputFieldsProps = {
-    fields: InputField[];
-};
+export const AuthInputFields: React.FC<AuthInputFieldsProps> = ({ formType }) => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  // Define fields for sign-up (Username, Email, Password)
+  const signUpFields = [
+    {
+      placeholder: 'Username',
+      value: username,
+      onChangeText: setUsername,
+      secureTextEntry: false,
+    },
+    {
+      placeholder: 'Email',
+      value: email,
+      onChangeText: setEmail,
+      secureTextEntry: false,
+    },
+    {
+      placeholder: 'Password',
+      value: password,
+      onChangeText: setPassword,
+      secureTextEntry: true,
+    },
+  ];
 
-export const AuthInputFields: React.FC<AuthInputFieldsProps> = ({ fields }) => {
-    return (
-      <View>
-        {fields.map((field, index) => (
-            <View key={index} className="p-1.5">
-              <View>
-                {field.placeholder === "Username" ? (
+  // Define fields for login (Email, Password)
+  const loginFields = [
+    {
+      placeholder: 'Email',
+      value: email,
+      onChangeText: setEmail,
+      secureTextEntry: false,
+    },
+    {
+      placeholder: 'Password',
+      value: password,
+      onChangeText: setPassword,
+      secureTextEntry: true,
+    },
+  ];
+
+  // Use the appropriate fields based on the form type
+  const fields = formType === 'login' ? loginFields : signUpFields;
+
+  return (
+    <View>
+       {fields.map((field, index) => (
+          <View key={index} className="p-1.5">
+            <View>
+              {field.placeholder === "Username" ? (
                     <Feather
                       name="user"
                       size={24}
