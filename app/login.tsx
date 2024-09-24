@@ -1,16 +1,22 @@
-import { Image, StyleSheet, Alert, View } from "react-native";
-import { TextInput } from "react-native-paper";
+import { Image, StyleSheet, Alert, View, Text } from "react-native";
 import React, { useState } from "react";
 import { router, Link } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import db from "@react-native-firebase/database";
 
-import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { CTAButton } from "@/components/CTAButton";
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { LoginButton } from "@/components/LoginButton";
+import { SignUpButton } from "@/components/SignUpButton";
+import { AuthInputFields } from "@/components/InputFields";
+import {Container} from "@/components/Container";
+import { TitleComponent } from "@/components/Title";
+
+import { NativeWindStyleSheet } from "nativewind";
+  NativeWindStyleSheet.setOutput({
+  default: "native",
+});
 
 export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
@@ -48,104 +54,25 @@ export default function LogInScreen() {
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Eco Set Go</ThemedText>
-      </ThemedView>
-      
-      <ThemedView style={styles.stepContainer}>
-        <View style={styles.inputWrapper}>
-          <FontAwesome name="envelope-o" style={styles.icon} />
-          <TextInput 
-            placeholder="Email" 
-            value={email} 
-            onChangeText={setEmail}
-            mode='flat'
-            underlineColor='#ccc' 
-            activeUnderlineColor= '#407F3D'
-            style={styles.input}
-          />
-        </View>
+    <ThemedView className="flex-1 justify-center w-full px-8">
+        <Container>
+          <TitleComponent />
 
-        <View style={styles.inputWrapper}>
-          <Feather name="lock" style={styles.icon}/>
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            mode='flat'
-            underlineColor='#ccc' 
-            activeUnderlineColor= '#407F3D'
-            style={styles.input}
-          />
-        </View>
-        
-        <CTAButton 
+          <AuthInputFields formType="login"/>
+
+        <LoginButton 
           title="Log In" 
           onPress={handleSignIn} 
           variant="primary"  
         />
+        </Container>
 
-        <CTAButton
-          title="Sign Up"
+        <SignUpButton
+          title="Don't have an account? Sign Up"
           onPress={() => router.push("/sign_up")}
           variant="secondary"
         />
+
       </ThemedView>
-    </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 12,
-    marginBottom: 12,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  inputWrapper:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative', 
-    borderRadius: 10,            
-    overflow: 'hidden',
-    height:50,
-  },
-  input:{
-    backgroundColor: '#F6F5F3',
-    paddingLeft: 40,
-    flex:1,
-    borderRadius: 10,
-    overflow: 'hidden',
-    fontSize: 14,
-    color: '#757575'
-  },
-  icon: {
-    position: 'absolute',
-    paddingLeft: 20,
-    zIndex: 10,
-    color: '#757575',
-    fontSize: 24,
-  },
-});
