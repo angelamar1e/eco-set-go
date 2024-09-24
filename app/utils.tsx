@@ -43,7 +43,7 @@ export async function goToInterface() {
     console.log(role);
 
     if (role == 'user'){
-        router.push('/(tabs)');
+        router.push('/(tabs)/Home');
     }
     else if (role == 'admin'){
         router.push('/(admin)');

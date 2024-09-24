@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BackHandler, Platform, View, Text } from "react-native";
 import { styled, withExpoSnack } from "nativewind";
-import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../utils";
+import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../../utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/components/home/DailyLog";
 import { CTAButton } from "@/components/CTAButton";
