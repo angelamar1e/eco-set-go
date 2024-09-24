@@ -62,10 +62,11 @@ const DailyLog: FC = () => {
   useEffect(() => {
     const fetchEcoActions = async () => {
       if (actionIds.length > 0) {
-        const ecoActions = await getActionInfo(actionIds);
+        const remainingActions = actionIds.filter((id) => !completedActionIds.includes(id));
+        const actionsData = await getActionInfo(remainingActions);
         const completedActionsData = await getActionInfo(completedActionIds);
 
-        setDailyLog(ecoActions.filter((action) => !completedActionIds.includes(action.id)));
+        setDailyLog(actionsData);
         setCompletedActions(completedActionsData);
       }
     };

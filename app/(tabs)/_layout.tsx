@@ -25,7 +25,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="eco_articles"
+        name="eco_articles/list"
         options={{
           title: 'Eco Articles',
           tabBarIcon: ({ color, focused }) => (
