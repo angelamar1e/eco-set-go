@@ -1,14 +1,23 @@
-import { Image, StyleSheet, Alert } from "react-native";
-import { TextInput } from "react-native-paper";
-
+import { Image, StyleSheet, Alert, View, Text } from "react-native";
 import React, { useState } from "react";
-import { router } from "expo-router";
-import auth from "@react-native-firebase/auth";
+import { router, Link } from "expo-router";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import db from "@react-native-firebase/database";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { CTAButton } from "@/components/CTAButton";
 import { goToInterface } from "./utils";
+import { LoginButton } from "@/components/LoginButton";
+import { SignUpButton } from "@/components/SignUpButton";
+import { AuthInputFields } from "@/components/InputFields";
+import {Container} from "@/components/Container";
+import { TitleComponent } from "@/components/Title";
+
+import { NativeWindStyleSheet } from "nativewind";
+  NativeWindStyleSheet.setOutput({
+  default: "native",
+});
 
 export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
@@ -26,44 +35,25 @@ export default function LogInScreen() {
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
+    <ThemedView className="flex-1 justify-center w-full px-8">
+        <Container>
+          <TitleComponent />
+
+          <AuthInputFields formType="login"/>
+
+        <LoginButton 
+          title="Log In" 
+          onPress={handleSignIn} 
+          variant="primary"  
         />
-      }
-    >
-      <ThemedView style={styles.stepContainer}>
-        <TextInput className='text-white' placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <CTAButton title="Log In" onPress={handleSignIn} variant="primary" />
-        <CTAButton
-          title="Sign Up"
+        </Container>
+
+        <SignUpButton
+          title="Don't have an account? Sign Up"
           onPress={() => router.push("/sign_up")}
           variant="secondary"
         />
+
       </ThemedView>
-    </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
