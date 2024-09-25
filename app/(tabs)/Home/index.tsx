@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { BackHandler, Platform, View, Text } from "react-native";
 import { styled, withExpoSnack } from "nativewind";
-import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../../utils";
+import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DailyLog from "@/components/home/DailyLog";
+import DailyLog from "@/app/components/(tabs)/Home/daily_log";
 import { CTAButton } from "@/components/CTAButton";
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
+import LogOutButton from "@/app/components/LogOutButton";
 
 const StyledView = styled(View);
 
@@ -85,8 +86,8 @@ export default function LandingPage() {
         <View className="flex mt-3">
           <DailyLog />
         </View>
-        <CTAButton title="Log Out" variant="primary" onPress={handleLogOut} />
       </View>
+        <LogOutButton/>
     </SafeAreaView>
   );
 }
