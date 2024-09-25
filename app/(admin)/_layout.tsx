@@ -24,6 +24,16 @@ export default function TabLayout() {
           headerShown: false
         }}
       />
+      <Tabs.Screen
+        name="Eco Articles/list"
+        options={{
+          title: 'Eco Articles',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
+          ),
+          headerShown: false
+        }}
+      />
     </Tabs>
   );
 }

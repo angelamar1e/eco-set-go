@@ -5,7 +5,7 @@ import firestore from "@react-native-firebase/firestore";
 import { Swipeable } from "react-native-gesture-handler";
 import { styled } from "nativewind";
 import { EcoAction } from "@/types/EcoAction";
-import { getUserUid } from "@/app/utils";
+import { getUserUid } from "@/app/utils/utils";
 import moment from "moment";
 
 const StyledTouchableOpacity = styled(TouchableOpacity);
@@ -161,13 +161,6 @@ const DailyLog: FC = () => {
       ) : (
         <Text className="px-4 text-gray-500">No actions completed yet.</Text>
       )}
-
-      {/* Add New Action Button */}
-      <StyledTouchableOpacity className="mt-6 mb-10 mx-4 py-3 bg-green-500 rounded-full">
-        <Text className="text-center text-white text-lg font-semibold">
-          Add New Action
-        </Text>
-      </StyledTouchableOpacity>
     </View>
   );
 };

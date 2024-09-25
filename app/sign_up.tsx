@@ -13,7 +13,7 @@ import {
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { goToInterface } from './utils';
+import { goToInterface } from './utils/utils';
 
 export default function SignUp() {
   const [username, setUsername] = useState<string | undefined>();
@@ -45,6 +45,14 @@ export default function SignUp() {
         electricity_footprint: 0,
         overall_footprint: 2.27 // initially set to the national average
       });
+
+      firestore().collection('daily_logs').doc(userUid).set({
+        action_ids: []
+      })
+
+      firestore().collection('user_logs').doc(userUid).set({
+        [current_date]: []
+      })
     }
     catch(error){
       console.error(error);

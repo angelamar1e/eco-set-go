@@ -8,7 +8,7 @@ import auth from "@react-native-firebase/auth";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { CTAButton } from "@/components/CTAButton";
-import { goToInterface } from "./utils";
+import { goToInterface } from "./utils/utils";
 
 export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
@@ -19,11 +19,17 @@ export default function LogInScreen() {
       try {
         await auth().signInWithEmailAndPassword(email, password);
         goToInterface();
+        clearAllInput();
       } catch (e) {
         Alert.alert("Login Error");
         console.error(e);
       }
     }
+  };
+
+  const clearAllInput = () => {
+    setEmail('');
+    setPassword('');
   };
 
   return (

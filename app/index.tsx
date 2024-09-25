@@ -5,7 +5,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CTAButton } from '@/components/CTAButton';
-import { goToInterface } from './utils';
+import { goToInterface } from './utils/utils';
 
 export default function Index() {
 
