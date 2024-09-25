@@ -4,29 +4,25 @@ import { Card } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { router } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
+import { getEcoActionsList } from '@/app/utils/articles_utils';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
 
   useEffect(() => {
-    const unsubscribe = firestore()
-      .collection('eco_actions')
-      .onSnapshot((snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title,
-        })) as EcoAction[];
+    const fetchEcoActions = async () => {
+      const data = await getEcoActionsList();
+      setEcoActions(data);
+    }
 
-        setEcoActions(data);
-    });
-
-    // Cleanup listener on unmount
-    return () => unsubscribe();
+    fetchEcoActions();
+    
   }, []);
 
   const renderItem = ({ item }: { item: EcoAction }) => (
     <Card
-      onPress={() => router.push(`/${item.id}`)}
+      onPress={() => router.push(`components/(tabs)/Eco Articles/${item.id}`)}
       style={{ margin: 10 }}
     >
       <Card.Content>
@@ -36,15 +32,17 @@ const EcoActionsList = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-      <Text style={{ textAlign: 'center', fontSize: 24, margin: 10 }}>Eco Actions</Text>
-      <FlatList
-        data={ecoActions}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
-  );
+    <SafeAreaView className='flex-1'>
+      <View style={{ flex: 1}}>
+        <Text style={{ textAlign: 'center', fontSize: 24, margin: 10 }}>Eco Actions</Text>
+        <FlatList
+          data={ecoActions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+    </SafeAreaView>
+    );
 };
 
 export default EcoActionsList;
