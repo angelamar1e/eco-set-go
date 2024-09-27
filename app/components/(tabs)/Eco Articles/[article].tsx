@@ -136,34 +136,50 @@ const EcoActionDetail = () => {
   );
 
   return (
-    <View style={{ padding: 10 }} className="justify-center">
-      <View className="flex justify-center">
-        <Button icon="note-plus" mode="contained" className="justify-center w-52 m-3" onPress={handleAddToLog}>Add to Daily Log</Button>
+    <View style={{ padding: 10 }} className="flex-1 flex-column justify-start">
+      <View className="flex-column">
+          <Text className="font-bold text-2xl">
+            {actionDetail.title} </Text>
+        <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end" onPress={handleAddToLog}>Add to Daily Log</Button>
       </View>
-      <Card style={{ margin: 10 }}>
-        <Card.Content>
-          <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-            {actionDetail.title}
-          </Text>
-          {/* <Text style={{ marginTop: 5 }}>{actionDetail.description}</Text> */}
-        </Card.Content>
-      </Card>
 
-      <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-        Related Eco Facts:
+      <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
+        Facts
       </Text>
       <FlatList
         data={facts}
         renderItem={renderFactItem}
         keyExtractor={(item) => item.id}
+        className="max-h-20"
+      />
+
+      <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
+        Benefits
+      </Text>
+      <FlatList
+        data={benefits}
+        renderItem={renderFactItem}
+        keyExtractor={(item) => item.id}
+        className="max-h-20"
+      />
+
+    <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
+        Instructions
+      </Text>
+      <FlatList
+        data={instructions}
+        renderItem={renderFactItem}
+        keyExtractor={(item) => item.id}
+        className="max-h-20"
       />
       
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
         duration={Snackbar.DURATION_SHORT} // Optional, set a duration if you want
+      className="w-full"
       >
-        Action added to the Daily Log
+        Action added to your Daily Log
       </Snackbar>
     </View>
   );

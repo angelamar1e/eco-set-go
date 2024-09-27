@@ -68,7 +68,7 @@ const AddArticle = () => {
   };
 
   const handleAddEcoAction = () => {
-    const timestamp = Date.now().toString();
+    const timestamp = Date().toString();
     const ecoActionsCollection = firestore().collection('eco_actions');
 
     return ecoActionsCollection.add({
@@ -176,7 +176,7 @@ const AddArticle = () => {
               </View>
 
               {visibleInput === (isFact ? 'fact' : isBenefit ? 'benefit' : 'instruction') && (
-                <TouchableWithoutFeedback onPress={() => setVisibleInput(null)}>
+                // <TouchableWithoutFeedback onPress={() => setVisibleInput(null)}>
                   <Card style={{ margin: 10 }}>
                     <TextInput className="max-h-32 hwrap"
                       placeholder="Content"
@@ -199,7 +199,7 @@ const AddArticle = () => {
                       </Button>
                     </Card.Actions>
                   </Card>
-                </TouchableWithoutFeedback>
+                // </TouchableWithoutFeedback>
               )}
 
               <FlatList
