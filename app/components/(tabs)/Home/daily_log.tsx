@@ -69,6 +69,9 @@ const DailyLog: FC = () => {
         setDailyLog(actionsData);
         setCompletedActions(completedActionsData);
       }
+      else if (actionIds.length == 0){
+        setDailyLog([]);
+      }
     };
 
     fetchEcoActions();
