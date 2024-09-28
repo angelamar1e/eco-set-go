@@ -7,6 +7,7 @@ import { styled } from "nativewind";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
 import moment from "moment";
+import { ThemedText } from "@/components/ThemedText";
 
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
@@ -134,7 +135,7 @@ const DailyLog: FC = () => {
 
   return (
     <View className="bg-gray">
-      <Text className="text-center text-2xl font-bold m-3">Daily Log</Text>
+      <ThemedText type="subtitle" className="text-left text-[28px] ml-6 mt-2 mb-4">Daily Log</ThemedText>
       <FlatList
         data={dailyLog}
         renderItem={renderItem}
@@ -142,13 +143,12 @@ const DailyLog: FC = () => {
       />
 
       {/* Completed Actions Section */}
-      <Text className="text-lg font-semibold mt-4 px-4">Actions Done:</Text>
       {completedActions.length > 0 ? (
         <FlatList
           data={completedActions}
           renderItem={({ item }) => (
             <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-              <Text className="text-lg">{item.title}</Text>
+              <ThemedText className="text-lg">{item.title}</ThemedText>
               <Checkbox
                 status={
                   completedActions.some((action) => action.id === item.id)
@@ -162,7 +162,7 @@ const DailyLog: FC = () => {
           keyExtractor={(item) => item.id}
         />
       ) : (
-        <Text className="px-4 text-gray-500">No actions completed yet.</Text>
+        <Text className="text-center text-gray-500">No actions completed yet.</Text>
       )}
     </View>
   );
