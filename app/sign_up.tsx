@@ -98,40 +98,6 @@ export default function SignUp() {
     }
 
     Alert.alert('Sign Up Error', message);
-          const response = await auth().createUserWithEmailAndPassword(email, password);
-          createProfile(response);
-          clearAllInput();
-          goToInterface();
-      } catch (error){
-          handleError(error);
-      }
-      finally{
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleError = (error: any) => {
-    let message = 'An error occurred. Please try again.';
-    
-    switch (error.code) {
-      case 'auth/invalid-email':
-        message = 'The email address is badly formatted.';
-        break;
-      case 'auth/email-already-in-use':
-        message = 'The email address is already in use by another account.';
-        break;
-      case 'auth/weak-password':
-        message = 'The password is too weak. Please choose a stronger password.';
-        break;
-      case 'auth/missing-email':
-        message = 'Please provide an email address.';
-        break;
-      default:
-        message = error.message; // Generic error message
-    }
-
-    Alert.alert('Sign Up Error', message);
   };
  
   return (
