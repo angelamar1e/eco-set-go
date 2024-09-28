@@ -7,7 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 
 export async function checkSession() {
     const user = auth().currentUser!
-    
+
     return user;
 }
 
@@ -31,15 +31,25 @@ export async function getRole() {
     }
 }
 
+export async function getUserName(uid: string){
+    const userData = (await firestore().collection('users').doc(uid).get()).data();
+    const userName = userData!.username;
+
+    return userName;
+}
+
 export async function goToInterface() {
     const role = await getRole();
     console.log(role);
 
     if (role == 'user'){
-        router.push('/(tabs)');
+        router.push('/(tabs)/Home');
     }
     else if (role == 'admin'){
         router.push('/(admin)');
+    }
+    else{
+        return;
     }
 }
 

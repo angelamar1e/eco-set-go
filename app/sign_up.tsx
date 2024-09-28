@@ -9,16 +9,17 @@ import {
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { goToInterface } from './utils';
+import { goToInterface } from './utils/utils';
 import { LoginButton } from '@/components/LoginButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
 
+
 export default function SignUp() {
-  const [username, setUsername] = useState<string>('');  // changed from undefined to empty strings to ensure variables are always strings
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>(''); 
+  const [username, setUsername] = useState<string | undefined>();
+  const [email, setEmail] = useState<string | undefined>();
+  const [password, setPassword] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
   const current_date = Date().toString();
@@ -45,6 +46,14 @@ export default function SignUp() {
         electricity_footprint: 0,
         overall_footprint: 2.27 // initially set to the national average
       });
+
+      firestore().collection('daily_logs').doc(userUid).set({
+        action_ids: []
+      })
+
+      firestore().collection('user_logs').doc(userUid).set({
+        [current_date]: []
+      })
     }
     catch(error){
       console.error(error);
@@ -102,7 +111,7 @@ export default function SignUp() {
 
           <SignUpButton
             title={loading ? "Signing Up..." : "Sign Up"}
-            onPress={() => router.push('/sign_up')}
+            onPress={handleSignUp}
             variant="primary"
           />
         </Container>
