@@ -1,12 +1,12 @@
 import { Image, StyleSheet, Alert, View, Text } from "react-native";
 import React, { useState } from "react";
-import { router, Link } from "expo-router";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import db from "@react-native-firebase/database";
+import { router } from "expo-router";
+import auth from "@react-native-firebase/auth";
 
+import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { goToInterface } from "./utils/utils";
 import { LoginButton } from "@/components/LoginButton";
 import { SignUpButton } from "@/components/SignUpButton";
 import { AuthInputFields } from "@/components/InputFields";
@@ -26,31 +26,18 @@ export default function LogInScreen() {
     if (email && password) {
       try {
         await auth().signInWithEmailAndPassword(email, password);
-        goToProperInterface();
+        goToInterface();
+        clearAllInput();
       } catch (e) {
         Alert.alert("Login Error");
+        console.error(e);
       }
     }
   };
 
-  const goToProperInterface = async () => {
-    const currentUser = auth().currentUser!;
-    const refPath = `users/${currentUser.uid}/role`;
-
-    db()
-      .ref(refPath)
-      .once("value")
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const role = snapshot.val();
-          console.log(role);
-          if (role == "user") {
-            router.push("(tabs)");
-          } else {
-            router.push("(admin)");
-          }
-        }
-      });
+  const clearAllInput = () => {
+    setEmail('');
+    setPassword('');
   };
 
   return (

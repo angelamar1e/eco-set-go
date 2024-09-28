@@ -2,6 +2,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
 import React, { useState } from "react";
+import { TextInput } from "react-native-paper";
 import {
   Alert,
   View
@@ -9,16 +10,16 @@ import {
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { goToInterface } from './utils';
+import { goToInterface } from './utils/utils';
 import { LoginButton } from '@/components/LoginButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
 
 export default function SignUp() {
-  const [username, setUsername] = useState<string>('');  // changed from undefined to empty strings to ensure variables are always strings
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>(''); 
+  const [username, setUsername] = useState<string | undefined>();
+  const [email, setEmail] = useState<string | undefined>();
+  const [password, setPassword] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
   const current_date = Date().toString();
@@ -45,6 +46,14 @@ export default function SignUp() {
         electricity_footprint: 0,
         overall_footprint: 2.27 // initially set to the national average
       });
+
+      firestore().collection('daily_logs').doc(userUid).set({
+        action_ids: []
+      })
+
+      firestore().collection('user_logs').doc(userUid).set({
+        [current_date]: []
+      })
     }
     catch(error){
       console.error(error);
@@ -55,6 +64,40 @@ export default function SignUp() {
     setLoading(true);
     if (email && password){
       try {
+          const response = await auth().createUserWithEmailAndPassword(email, password);
+          createProfile(response);
+          clearAllInput();
+          goToInterface();
+      } catch (error){
+          handleError(error);
+      }
+      finally{
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleError = (error: any) => {
+    let message = 'An error occurred. Please try again.';
+    
+    switch (error.code) {
+      case 'auth/invalid-email':
+        message = 'The email address is badly formatted.';
+        break;
+      case 'auth/email-already-in-use':
+        message = 'The email address is already in use by another account.';
+        break;
+      case 'auth/weak-password':
+        message = 'The password is too weak. Please choose a stronger password.';
+        break;
+      case 'auth/missing-email':
+        message = 'Please provide an email address.';
+        break;
+      default:
+        message = error.message; // Generic error message
+    }
+
+    Alert.alert('Sign Up Error', message);
           const response = await auth().createUserWithEmailAndPassword(email, password);
           createProfile(response);
           clearAllInput();

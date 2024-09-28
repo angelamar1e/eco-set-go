@@ -1,19 +1,29 @@
-import { Link } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import firestore from '@react-native-firebase/firestore';
+import { View, Text, Button, FlatList, TouchableOpacity, BackHandler } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { EcoAction } from '../../types/EcoAction';
+import LogOutButton from '../components/LogOutButton';
+import { handleBackAction } from '../utils/utils';
 
-export default function HomeScreen() {
+const AdminHome = () => {
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackAction
+    );
+
+    // Cleanup function
+    return () => backHandler.remove();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Eco Articles</Text>
-      
+    <View style={{ flex: 1, padding: 20 }}>
+      <Text className='text-4xl mt-2'>Welcome, admin!</Text>
+      <LogOutButton/>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+export default AdminHome;

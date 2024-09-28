@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
-import React, {useState, useEffect} from 'react';
-import auth from '@react-native-firebase/auth';
+import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
@@ -16,7 +15,7 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Tabs.Screen
-        name="index"
+        name="Home/index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
@@ -26,9 +25,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="home1"
+        name="Eco Articles/list"
         options={{
-          title: 'Title',
+          title: 'Eco Articles',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
           ),

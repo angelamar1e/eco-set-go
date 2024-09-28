@@ -2,12 +2,14 @@ import { View } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { router, Link } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
-import { goToInterface } from './utils';
+import { goToInterface } from './utils/utils';
 import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
 
 export default function Index() {
+
+  const [loading, setLoading] = useState<true>();
 
   useEffect(() => {
     goToInterface();
