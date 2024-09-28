@@ -1,26 +1,26 @@
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { CTAButton } from '@/components/CTAButton';
+import { AuthInputFields } from '@/components/InputFields';
+import { SignUpButton } from "@/components/SignUpButton";
 import React, { useState } from "react";
 import {
-  Image, 
-  StyleSheet, 
-  TextInput,
-  Pressable,
-  Keyboard,
-  Button,
   Alert,
+  View
 } from "react-native";
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import db from "@react-native-firebase/database";
+import firestore from "@react-native-firebase/firestore";
+import { goToInterface } from './utils';
+import { LoginButton } from '@/components/LoginButton';
+import { Container } from '@/components/Container';
+import { TitleComponent } from '@/components/Title';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function SignUp() {
-  const [username, setUsername] = useState<string | undefined>();
-  const [email, setEmail] = useState<string | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
+  const [username, setUsername] = useState<string>('');  // changed from undefined to empty strings to ensure variables are always strings
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>(''); 
+  const [loading, setLoading] = useState(false);
+
   const current_date = Date().toString();
 
   const clearAllInput = () => {
@@ -30,94 +30,90 @@ export default function SignUp() {
   };
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
-    db().ref(`/users/${response.user.uid}`).set({
-      role: 'user',
-      username,
-      created_at: current_date,
-    });
-    db().ref(`/current_footprint/${response.user.uid}`).set({
-      food_footprint: 0,
-      mobility_footprint: 0,
-      electricity_footprint: 0,
-      overall_footprint: 0,
-      updated_at: current_date
-    });
-  };
+    const userUid = response.user.uid;
+
+    try {
+      firestore().collection('users').doc(userUid).set({
+        role: "user",
+        username,
+        created_at: current_date,
+      });
+
+      firestore().collection('current_footprint').doc(userUid).set({
+        food_footprint: 0,
+        transportation_footprint: 0,
+        electricity_footprint: 0,
+        overall_footprint: 2.27 // initially set to the national average
+      });
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   const handleSignUp = async () => {
+    setLoading(true);
     if (email && password){
       try {
-        const response = await auth().createUserWithEmailAndPassword(email, password);
-
-        if (response.user){
-            createProfile(response);
-            clearAllInput();
-            router.push('(tabs)');
-        }
-
-      } catch (e){
-        Alert.alert("Oops", "Please check your form and try again.");
+          const response = await auth().createUserWithEmailAndPassword(email, password);
+          createProfile(response);
+          clearAllInput();
+          goToInterface();
+      } catch (error){
+          handleError(error);
+      }
+      finally{
+        setLoading(false);
       }
     }
   };
+
+  const handleError = (error: any) => {
+    let message = 'An error occurred. Please try again.';
+    
+    switch (error.code) {
+      case 'auth/invalid-email':
+        message = 'The email address is badly formatted.';
+        break;
+      case 'auth/email-already-in-use':
+        message = 'The email address is already in use by another account.';
+        break;
+      case 'auth/weak-password':
+        message = 'The password is too weak. Please choose a stronger password.';
+        break;
+      case 'auth/missing-email':
+        message = 'Please provide an email address.';
+        break;
+      default:
+        message = error.message; // Generic error message
+    }
+
+    Alert.alert('Sign Up Error', message);
+  };
  
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <TextInput 
-          placeholder='Username'
-          value={username}
-          onChangeText={setUsername}/>
-        <TextInput 
-          placeholder='Email'
-          value={email}
-          onChangeText={setEmail}/>
-          <TextInput 
-          placeholder='Password'
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry/>
-          <CTAButton
-            title="Sign Up"
-            onPress={handleSignUp}
+      <ThemedView className="flex-1 justify-center w-full px-8">
+        <Container>
+          <TitleComponent />
+
+          <View className= "mt-20 flex-grow">
+            <AuthInputFields formType='signup' />
+          </View>  
+
+          <SignUpButton
+            title={loading ? "Signing Up..." : "Sign Up"}
+            onPress={() => router.push('/sign_up')}
             variant="primary"
           />
-          <CTAButton
-            title="Log In"
+        </Container>
+          
+        <View className="absolute bottom-10 left-0 right-0 items-center">
+          <LoginButton
+            title="Have an account already? Login"
             onPress={() => router.push('/login')}
-            variant="secondary"
-          />          
+            variant='secondary'
+          />
+        </View>        
       </ThemedView>
-    </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
