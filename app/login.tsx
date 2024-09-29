@@ -1,11 +1,12 @@
 import { Image, StyleSheet, Alert, View, Text } from "react-native";
 import React, { useState } from "react";
-import { router } from "expo-router";
-import auth from "@react-native-firebase/auth";
+import { router, Link } from "expo-router";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import db from "@react-native-firebase/database";
 
-import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
+import { CTAButton } from "@/components/CTAButton";
 import { goToInterface } from "./utils/utils";
 import { LoginButton } from "@/components/LoginButton";
 import { SignUpButton } from "@/components/SignUpButton";

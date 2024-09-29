@@ -2,7 +2,6 @@ import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
 import React, { useState } from "react";
-import { TextInput } from "react-native-paper";
 import {
   Alert,
   View
@@ -15,6 +14,7 @@ import { LoginButton } from '@/components/LoginButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
+
 
 export default function SignUp() {
   const [username, setUsername] = useState<string | undefined>();
@@ -111,7 +111,7 @@ export default function SignUp() {
 
           <SignUpButton
             title={loading ? "Signing Up..." : "Sign Up"}
-            onPress={() => router.push('/sign_up')}
+            onPress={handleSignUp}
             variant="primary"
           />
         </Container>

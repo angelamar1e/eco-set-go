@@ -27,9 +27,9 @@ export const CTAButton: FC<CTAButtonProps> = ({ title, onPress, variant }) => {
 
 const styles = StyleSheet.create({
   containerPrimary: {
-    height: 60,
-    backgroundColor: "purple",
-    borderRadius: 8,
+    height: 50,
+    backgroundColor: "#407F3D",
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   textSecondary: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "regular",
     color: "gray",
   },
 });
