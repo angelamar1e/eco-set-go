@@ -11,9 +11,9 @@ export default function Index() {
 
   const [loading, setLoading] = useState<true>();
 
-  useEffect(() => {
-    goToInterface();
-  }, [router]);
+ // useEffect(() => {
+ //   goToInterface();
+ // }, [router]);
 
   return (
     <ThemedView className="flex-1 justify-center">
