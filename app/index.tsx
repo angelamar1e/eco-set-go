@@ -30,6 +30,7 @@ export default function Index() {
           onPress={() => router.push('/sign_up')}
           variant="primary"
         />
+
       </View> 
     </ThemedView>
   );
