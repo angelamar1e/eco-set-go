@@ -20,8 +20,8 @@ export default function TabLayout() {
           borderRadius: 35,         
           height: 65, 
           marginBottom: 5,
-          marginHorizontal:20
-
+          marginHorizontal:20,
+          position: 'absolute'
         },
       }}>
       <Tabs.Screen
