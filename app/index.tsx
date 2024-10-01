@@ -31,6 +31,12 @@ export default function Index() {
           variant="primary"
         />
 
+        <LoginButton
+        title="Take Initial Quiz"
+        onPress={() => router.push('/')}
+        variant="primary"
+        />
+
       </View> 
     </ThemedView>
   );
