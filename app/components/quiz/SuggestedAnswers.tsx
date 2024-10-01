@@ -9,8 +9,8 @@ interface SuggestedAnswersProps {
 
 export const SuggestedAnswers: FC<SuggestedAnswersProps> = ({ title, isSelected, onPress }) => {
   const containerStyle = isSelected
-    ? 'mt-2 mb-2 mr-2 p-3 w-[48%] bg-white rounded-full border border-green-500'
-    : 'mt-2 mb-2 mr-2 p-3 w-[48%] bg-white rounded-full border border-gray-300';
+    ? 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-green-500'
+    : 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-gray-300';
 
   const textStyle = isSelected
     ? 'text-green-500 text-center'
