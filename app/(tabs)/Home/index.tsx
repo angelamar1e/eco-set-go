@@ -11,6 +11,7 @@ import firestore, {
 import LogOutButton from "@/app/components/LogOutButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import QuizButton from "@/app/components/QuizButton";
 
 const StyledView = styled(View);
 
@@ -107,8 +108,10 @@ export default function LandingPage() {
             </View>
           </View>
         
+
           {/* Log Out*/}
           <View className="flex-1 mb-20 mt-4">
+            <QuizButton />
             <LogOutButton />
           </View>
 
