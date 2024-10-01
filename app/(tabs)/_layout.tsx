@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { View } from 'react-native'
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
@@ -11,15 +12,44 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: 'white',
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: 'black',
+          borderRadius: 35,         
+          height: 65, 
+          marginBottom: 5,
+          marginHorizontal:20,
+          position: 'absolute'
+        },
       }}>
       <Tabs.Screen
         name="Home/index"
         options={{
-          title: 'Home',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <View style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 55,
+              width: 55,
+              marginTop: 10
+            }}>
+              <View style={{
+                borderRadius: 25,
+                backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                padding: focused ? 10 : 0,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <TabBarIcon 
+                  name={focused ? 'home' : 'home-outline'} 
+                  color={color} 
+                  style={{ fontSize: 35 }}
+                />
+              </View>
+            </View>
           ),
           headerShown: false
         }}
@@ -27,9 +57,29 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Eco Articles/list"
         options={{
-          title: 'Eco Articles',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <View style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 55,
+              width: 55,
+              marginTop: 10
+            }}>
+              <View style={{
+                borderRadius: 25,
+                backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                padding: focused ? 10 : 0,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <TabBarIcon 
+                  name={focused ? 'book' : 'book-outline'} 
+                  color={color} 
+                  style={{ fontSize: 35 }}
+                />
+              </View>
+            </View>
           ),
           headerShown: false
         }}
