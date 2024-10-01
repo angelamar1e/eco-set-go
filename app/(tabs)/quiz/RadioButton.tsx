@@ -11,23 +11,57 @@ export default function RadioButton() {
 
   const handleChoiceSelect = (choiceId: number) => {
     setSelectedChoice(choiceId);
+
   };
 
   return (
     <ThemedView>
       <QuestionContainer>
+        <ThemedText type="subtitle">
+            Food Section
+        </ThemedText>
+       
         <ThemedText type="default">
           What kind of breakfast do you usually eat?
         </ThemedText>
-        <View className="flex-auto flex-row mt-4">
-          {['Bread and pastries', 'Milk and cereals', 'Salty (toast, egg, cold cut)', 'Filipino breakfast (rice & cold cut)', 'Fruit', 'No Breakfast'].map((title, index) => (
+        
+        <View className="flex-wrap flex-row justify-between">
             <RadioChoices
-              key={index}
-              title={title}
-              isSelected={selectedChoice === index + 1}
-              onPress={() => handleChoiceSelect(index + 1)}
+                title="Bread and pastries"
+                isSelected={selectedChoice === 1}
+                onPress={() => handleChoiceSelect(1)}
             />
-          ))}
+            <RadioChoices
+                title="Bread and pastries"
+                isSelected={selectedChoice === 2}
+                onPress={() => handleChoiceSelect(2)}
+            />   
+        </View>
+
+        <View className="flex-wrap flex-row justify-between">
+            <RadioChoices
+                title="Salty"
+                isSelected={selectedChoice === 3}
+                onPress={() => handleChoiceSelect(3)}
+            />
+            <RadioChoices
+                title="Filipino Breakfast"
+                isSelected={selectedChoice === 4}
+                onPress={() => handleChoiceSelect(4)}
+            />   
+        </View>
+       
+        <View className="flex-wrap flex-row justify-between">
+            <RadioChoices
+                title="Fruit"
+                isSelected={selectedChoice === 5}
+                onPress={() => handleChoiceSelect(5)}
+            />
+            <RadioChoices
+                title="No Breakfast"
+                isSelected={selectedChoice === 6}
+                onPress={() => handleChoiceSelect(6)}
+            />   
         </View>
 
         <View className="flex flex-row mt-4 justify-between">
@@ -40,7 +74,9 @@ export default function RadioButton() {
             variant="primary"
           />
         </View>
+      
       </QuestionContainer>
+   
     </ThemedView>
   );
 }

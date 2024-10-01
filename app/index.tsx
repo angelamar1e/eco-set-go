@@ -44,12 +44,6 @@ export default function Index() {
         variant="primary"
         />
 
-        <SkipButton
-          title="Skip"
-          isSelected={selectedChoice === 1}
-          onPress={() => handleChoiceSelect(1)}
-        />
-
       </View> 
     </ThemedView>
   );
