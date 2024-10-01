@@ -45,6 +45,7 @@ interface Template2Props {
         <QuestionContainer>
             <ThemedText type="default" className='text-black mb-3'>{question}</ThemedText>
 
+            {/* Suggested Answers */}
             <View className='flex-row flex-wrap justify-between mb-3'>
                 {answers.map((answer) => (
                 <SuggestedAnswers
@@ -56,10 +57,11 @@ interface Template2Props {
                 ))}
             </View>
 
+            {/* Text Fields */}
             <TextField
-            label={textFieldLabel}
-            value={inputValue}
-            onChangeText={handleTextChange}
+              label={textFieldLabel}
+              value={inputValue}
+              onChangeText={handleTextChange}
             />
 
             <View className='mt-5 items-center '>

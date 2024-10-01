@@ -1,4 +1,3 @@
-// Stepper.tsx
 import React, { FC, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 
