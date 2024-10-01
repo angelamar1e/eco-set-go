@@ -4,10 +4,13 @@ import { router } from "expo-router";
 
 const QuizScreen = () => {
 
+  const goToSampleQuestion = () => {
+    router.push("/(quiz)/SampleQuestion");
+  };
 
   return (
     <View className="flex-1 items-center justify-center bg-stone-100 p-4">
-      {/*templates button go here*/}
+      <Button title="Sample Question" onPress={goToSampleQuestion} />
     </View>
   );
 };
