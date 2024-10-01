@@ -12,8 +12,8 @@ export const NavigationButton: FC<NavigationButtonProps> = ({ title, variant }) 
 
   const containerStyle =
     variant === "primary" 
-      ? "bg-green-600 rounded-full w-[48%] p-2 mr-2"
-      : "bg-gray-200 rounded-full w-[48%] p-2 mr-2";
+      ? "bg-green-600 rounded-full w-[45%] p-2 ml-2 mr-2"
+      : "bg-gray-200 rounded-full w-[45%] p-2 ml-2 mr-2";
 
   const textStyle =
     variant === "primary"
