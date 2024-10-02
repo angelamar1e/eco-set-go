@@ -20,11 +20,36 @@ const ExamplePage = () => {
             onNavigationPress={handleNavigationPress}
         />
 
-    /* Template 4
+    /*  Template 3
+        const question = "What kind of breakfast do you usually eat?";
+        const answer = [
+            'Bread and pastries',
+            'Salty',
+            'Filipino Breakfast',
+            'Fruit',
+            'No Breakfast',
+        ];
+
+        const navigationNext = "Next";
+        const navigationPrevious = "Previous";
+
+        const handleNavigationPress = () => {
+            console.log("Navigating to the next or previous question...");
+        };
+
+    return (
+        <Template3
+            question={question}
+            answer={answer}
+            navigationNext={navigationNext}
+            navigationPrevious={navigationPrevious}
+            onNavigationPress={handleNavigationPress}
+        />  
+    
+        Template 4
         const question2 = "Choose your favorite features";
         const answers2 = ['Feature A', 'Feature B', 'Feature C', 'Feature D'];
         const navigationButtonTitle = "Next";
-
 
     return (
             <Template4
