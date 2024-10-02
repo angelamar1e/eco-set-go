@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import Stepper  from './Stepper'
-import { NavigationButton } from './NavigationButton';
+import { NavigationButton } from './NavigationButtons';
 
 interface Template5Props {
   question: string;

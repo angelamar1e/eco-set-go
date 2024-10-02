@@ -19,6 +19,25 @@ const ExamplePage = () => {
             navigationButtonTitle={navigationButtonTitle}
             onNavigationPress={handleNavigationPress}
         />
+        
+    /* Template3
+    const question="Question"
+    const answer=['Answer1']
+    const navigationNext= "Next";
+    const navigationPrevious= "Previous";
+    
+    const handleNavigationPress = () => {
+        console.log("Navigating to the next question...");
+    };
+
+    return (
+        <Template3
+        question={question}
+        answer={answer}
+        navigationNext={navigationNext}
+        navigationPrevious={navigationPrevious}
+        onNavigationPress={handleNavigationPress}
+        />
 
     /* Template 4
         const question2 = "Choose your favorite features";

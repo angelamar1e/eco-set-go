@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import { CheckboxChoices } from './Checkbox'; 
-import { NavigationButton } from './NavigationButton';
+import { NavigationButton } from './NavigationButtons';
 
 interface Template6Props {
   question: string;

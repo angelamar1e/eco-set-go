@@ -6,17 +6,9 @@ import { goToInterface } from './utils/utils';
 import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
-import { SkipButton } from '@/app/components/quiz/SkipButton';
+import QuizButton from "@/app/components/QuizButton";
 
 export default function Index() {
-
-  const [loading, setLoading] = useState<true>();
-
-  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-
-  const handleChoiceSelect = (choiceId: number) => {
-    setSelectedChoice(choiceId);
-  };
 
  // useEffect(() => {
  //   goToInterface();
@@ -38,11 +30,7 @@ export default function Index() {
           variant="primary"
         />
 
-        <LoginButton
-        title="Take Initial Quiz"
-        onPress={() => router.push('/(tabs)/quiz/RadioButton')}
-        variant="primary"
-        />
+        <QuizButton/>
 
       </View> 
     </ThemedView>

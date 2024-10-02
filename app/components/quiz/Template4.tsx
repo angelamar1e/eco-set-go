@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { CheckboxChoices } from './Checkbox';
-import { NavigationButton } from './NavigationButton';
+import { NavigationButton } from './NavigationButtons';
 
 interface Template4Props {
     question: string;
