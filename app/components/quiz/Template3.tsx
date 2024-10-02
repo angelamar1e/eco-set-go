@@ -37,7 +37,7 @@ export const Template3: FC<Template3Props> = ({
                     {question}
                 </ThemedText>
                 
-                <View className="flex-wrap flex-row justify-center">
+                <View className="flex-wrap flex-row justify-left">
                     {answer.map((answer, index) => (
                         <RadioChoices
                             key={index}

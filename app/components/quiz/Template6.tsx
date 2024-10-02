@@ -59,7 +59,7 @@ const Template6: FC<Template6Props> = ({
         </View>
 
         {/* Checkboxes */}
-        <View className="flex-row flex-wrap justify-center">
+        <View className="flex-row flex-wrap justify-left">
           {checkboxes.map((item) => (
             <CheckboxChoices
               key={item}
