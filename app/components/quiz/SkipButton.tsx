@@ -1,20 +1,20 @@
 import React, { FC } from 'react';
 import { Text, Pressable } from 'react-native';
 
-interface ChoicesProps {
+interface SkipButtonProps {
   title: string;
   isSelected: boolean;
   onPress: () => void;
 }
 
-export const RadioChoices: FC<ChoicesProps> = ({ title, isSelected, onPress }) => {
+export const SkipButton: FC<SkipButtonProps> = ({ title, isSelected, onPress }) => {
   const containerStyle = isSelected
-    ? 'mt-2 mb-2 ml-2 mr-2 p-4 w-[45%] bg-white rounded-lg border border-green-500'
-    : 'mt-2 mb-2 ml-2 mr-2 p-4 w-[45%] bg-white rounded-lg border border-gray-300';
+    ? 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-green-500'
+    : 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-gray-300';
 
   const textStyle = isSelected
-    ? 'text-green-500 text-base'
-    : 'text-black text-base';
+    ? 'text-green-500 text-center'
+    : 'text-black text-center';
 
   return (
     <Pressable className={containerStyle} onPress={onPress}>
