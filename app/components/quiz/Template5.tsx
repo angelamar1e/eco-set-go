@@ -42,7 +42,7 @@ const Template5: FC<Template5Props> = ({
         <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
         {/* Suggested Answers */}
-        <View className="flex-row flex-wrap justify-between mb-3">
+        <View className="flex-row flex-wrap justify-left mb-3">
           {answers.map((answer) => (
             <SuggestedAnswers
               key={answer}

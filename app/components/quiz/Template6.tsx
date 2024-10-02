@@ -47,7 +47,7 @@ const Template6: FC<Template6Props> = ({
         <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
         {/* Suggested Answers */}
-        <View className="flex-row flex-wrap justify-between mb-3">
+        <View className="flex-row flex-wrap justify-left mb-3">
           {answers.map((answer) => (
             <SuggestedAnswers
               key={answer}
@@ -59,7 +59,7 @@ const Template6: FC<Template6Props> = ({
         </View>
 
         {/* Checkboxes */}
-        <View className="flex-row flex-wrap justify-between mb-3">
+        <View className="flex-row flex-wrap justify-center">
           {checkboxes.map((item) => (
             <CheckboxChoices
               key={item}
