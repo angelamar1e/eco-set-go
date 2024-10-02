@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import { TextField } from './TextField';
-import { NavigationButton } from './NavigationButton';
+import { NavigationButton } from './NavigationButtons';
 
 interface Template2Props {
     question: string;
@@ -15,7 +15,7 @@ interface Template2Props {
     onNavigationPress: () => void;
   }
 
-  const Template2: FC<Template2Props> = ({
+export const Template2: FC<Template2Props> = ({
     question,
     answers,
     textFieldLabel,
@@ -46,7 +46,7 @@ interface Template2Props {
             <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Suggested Answers */}
-            <View className='flex-row flex-wrap justify-between mb-3'>
+            <View className='flex-row flex-wrap justify-left mb-3'>
                 {answers.map((answer) => (
                 <SuggestedAnswers
                     key={answer}
