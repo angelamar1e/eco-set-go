@@ -37,7 +37,7 @@ export const Template3: FC<Template3Props> = ({
                     {question}
                 </ThemedText>
                 
-                <View className="flex-wrap flex-row justify-between">
+                <View className="flex-wrap flex-row justify-center">
                     {answer.map((answer, index) => (
                         <RadioChoices
                             key={index}
@@ -48,7 +48,7 @@ export const Template3: FC<Template3Props> = ({
                     ))}
                 </View>
 
-                <View className="flex flex-row mt-4 justify-between">
+                <View className="flex flex-row mt-4 justify-center">
                 <NavigationButton
                     title={navigationPrevious}
                     variant="secondary"
