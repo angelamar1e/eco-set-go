@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native'
+import { View } from 'react-native'
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
@@ -84,16 +85,6 @@ export default function TabLayout() {
           headerShown: false
         }}
       />
-      {/* <Tabs.Screen
-        name="Eco Articles/list"
-        options={{
-          title: 'Eco Articles',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-          headerShown: false
-        }}
-      /> */}
     </Tabs>
   );
 }

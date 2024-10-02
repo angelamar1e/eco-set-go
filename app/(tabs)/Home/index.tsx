@@ -9,6 +9,9 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 import LogOutButton from "@/app/components/LogOutButton";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import QuizButton from "@/app/components/QuizButton";
 
 const StyledView = styled(View);
 
@@ -54,40 +57,66 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 px-2">
-      <View className="flex h-1/4">
-        <Text className="m-3 text-4xl text-lime-800">
-          Hello, <Text className="italic">{userName}!</Text>
-        </Text> 
-        <View className="flex flex-row h-full space-x-2">
-          <Box>
-            <Text className="text-center font-medium mb-3 text-xl text-gray-100">
-              Carbon Footprint
-            </Text>
-            <Text className="text-center text-6xl text-gray-100">
-              {overallFP}
-            </Text>
-            <Text className="text-center italic text-sm text-gray-100">
-              tons of{'\n'}CO2 equivalent
-            </Text>
-          </Box>
-          <View className="flex flex-column h-full w-1/2 space-y-2">
-            <Box className="flex-row items-center pr-2">
-              <Text className="flex w-1/2 text-center text-3xl text-gray-100">0g</Text>
-              <Text className="flex w-1/2 text-center text-base italic text-gray-200">less than initial record</Text>
-            </Box>
-            <Box className="flex-row items-center pr-2">
-              <Text className="flex w-1/2 text-center text-3xl text-gray-100">0%</Text>
-              <Text className="flex w-1/2 text-center text-base italic text-gray-200">of the goal is completed</Text>
-            </Box>
+    <ThemedView className="flex-1">
+      <SafeAreaView className="flex-1">
+        <View className="flex-1 px-2">
+
+          <View className="h-1/4 mt-3">
+            <View className="flex-row items-center m-3">
+              <View className="h-14 w-14 rounded-full bg-stone-300 overflow-hidden mr-2 ml-4">
+                {/* add image here */}
+              </View>
+
+              <ThemedText type="title" className="ml-2 text-4xl mt-2">
+                Welcome, <Text className="italic text-lime-800">{userName}!</Text>
+              </ThemedText> 
+            </View>
+
+            <ThemedText type="subtitle" className="ml-6 mt-2 mb-3 text-[28px]">
+              Summary
+            </ThemedText>
+          
+            <View className="flex flex-row h-full space-x-2">
+              <Box className="rounded-[20px] ml-5">
+                <Text className="text-center font-medium mb-3 text-xl text-stone-300">
+                  Carbon Footprint
+                </Text>
+                <Text className="text-center bold text-6xl text-stone-300">
+                  {overallFP}
+                </Text>
+                <Text className="text-center italic text-sm text-stone-300">
+                  tons of{'\n'}CO2 equivalent
+                </Text>
+              </Box>
+
+              <View className="flex flex-column h-full w-1/2 space-y-2">
+                <Box className="flex-row items-center pr-2 rounded-[20px] bg-transparent border-2 border-stone-300 mr-5">
+                  <ThemedText type="defaultSemiBold" className="flex w-1/2 text-center text-3xl">0g</ThemedText>
+                  <ThemedText className="flex w-1/2 text-center text-base italic">less than initial record</ThemedText>
+                </Box>
+
+                <Box className="flex-row items-center pr-2 rounded-[20px] bg-transparent border-2 border-stone-300 mr-5">
+                  <ThemedText type="defaultSemiBold" className="flex w-1/2 text-center text-3xl">0%</ThemedText>
+                  <ThemedText className="flex w-1/2 text-center text-base italic text-black-300">of the goal is completed</ThemedText>
+                </Box>
+              </View>
+            </View>
+          
+            {/* daily log */}
+            <View className="flex mt-3">
+              <DailyLog />
+            </View>
           </View>
+        
+
+          {/* Log Out*/}
+          <View className="flex-1 mb-20 mt-4">
+            <QuizButton />
+            <LogOutButton />
+          </View>
+
         </View>
-        {/* daily log */}
-        <View className="flex mt-3">
-          <DailyLog />
-        </View>
-      </View>
-        <LogOutButton/>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ThemedView>
   );
 }
