@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, Image } from 'react-native';
 import { Card } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { router, Stack } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
 import { getEcoActionsList } from '@/app/utils/articles_utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 
 const EcoActionsList = () => {
   
@@ -29,27 +31,31 @@ const EcoActionsList = () => {
   const renderItem = ({ item }: { item: EcoAction }) => (
     <Card
       onPress={() => router.push(`components/(tabs)/Eco Articles/${item.id}`)}
-      style={{ margin: 10 }}
+      className='m-2 h-[150px] bg-white:transparent justify-end'
     >
-      <Card.Content>
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.title}</Text>
+      <Card.Content className='mb-2'>
+        <ThemedText type='default' className='text-[20px] text-lime-800 italic'>{item.title}</ThemedText>
       </Card.Content>
     </Card>
   );
 
   return (
+    <ThemedView className='flex-1 px-2'>
     <><Stack>
       <Stack.Screen name="Eco Articles/list" options={{ headerShown: false }} />
     </Stack>
-    <SafeAreaView className='flex-1'>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: 'center', fontSize: 24, margin: 10 }}>Eco Actions</Text>
+    <SafeAreaView className='flex-1 mt-3'>
+        <View className='flex-1'>
+          <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
+            <ThemedText type='subtitle' className='text-[28px] text-gray-100'>Eco Actions</ThemedText>
+          </View>
           <FlatList
             data={ecoActions}
             renderItem={renderItem}
             keyExtractor={(item) => item.id} />
         </View>
       </SafeAreaView></>
+      </ThemedView>
     );
 };
 

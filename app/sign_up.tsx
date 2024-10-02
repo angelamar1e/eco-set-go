@@ -1,19 +1,20 @@
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { CTAButton } from '@/components/CTAButton';
+import { AuthInputFields } from '@/components/InputFields';
+import { SignUpButton } from "@/components/SignUpButton";
 import React, { useState } from "react";
-import { TextInput } from "react-native-paper";
 import {
   Alert,
-  Image, 
-  StyleSheet,
+  View
 } from "react-native";
 import { Link, router, Stack } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { goToInterface } from './utils/utils';
+import { LoginButton } from '@/components/LoginButton';
+import { Container } from '@/components/Container';
+import { TitleComponent } from '@/components/Title';
+import { ThemedText } from '@/components/ThemedText';
+
 
 export default function SignUp() {
   const [username, setUsername] = useState<string | undefined>();
@@ -100,62 +101,28 @@ export default function SignUp() {
   };
  
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <TextInput 
-          placeholder='Username'
-          value={username}
-          onChangeText={setUsername}
-          mode='flat'/>
-        <TextInput 
-          placeholder='Email'
-          value={email}
-          onChangeText={setEmail}/>
-          <TextInput 
-          placeholder='Password'
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry/>
-          <CTAButton
+      <ThemedView className="flex-1 justify-center w-full px-8">
+        <Container>
+          <TitleComponent />
+
+          <View className= "mt-20 flex-grow">
+            <AuthInputFields formType='signup' />
+          </View>  
+
+          <SignUpButton
             title={loading ? "Signing Up..." : "Sign Up"}
             onPress={handleSignUp}
             variant="primary"
           />
-          <CTAButton
-            title="Log In"
+        </Container>
+          
+        <View className="absolute bottom-10 left-0 right-0 items-center">
+          <LoginButton
+            title="Have an account already? Login"
             onPress={() => router.push('/login')}
-            variant="secondary"
-          />          
+            variant='secondary'
+          />
+        </View>        
       </ThemedView>
-    </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

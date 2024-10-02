@@ -61,24 +61,24 @@ export default function LandingPage() {
         </Text> 
         <View className="flex flex-row h-full space-x-2">
           <Box>
-            <Text className="text-center font-medium mb-3 text-xl text-stone-300">
+            <Text className="text-center font-medium mb-3 text-xl text-gray-100">
               Carbon Footprint
             </Text>
-            <Text className="text-center text-6xl text-stone-300">
+            <Text className="text-center text-6xl text-gray-100">
               {overallFP}
             </Text>
-            <Text className="text-center italic text-sm text-stone-300">
+            <Text className="text-center italic text-sm text-gray-100">
               tons of{'\n'}CO2 equivalent
             </Text>
           </Box>
           <View className="flex flex-column h-full w-1/2 space-y-2">
             <Box className="flex-row items-center pr-2">
-              <Text className="flex w-1/2 text-center text-3xl text-stone-300">0g</Text>
-              <Text className="flex w-1/2 text-center text-base italic text-stone-300">less than initial record</Text>
+              <Text className="flex w-1/2 text-center text-3xl text-gray-100">0g</Text>
+              <Text className="flex w-1/2 text-center text-base italic text-gray-200">less than initial record</Text>
             </Box>
             <Box className="flex-row items-center pr-2">
-              <Text className="flex w-1/2 text-center text-3xl text-stone-300">0%</Text>
-              <Text className="flex w-1/2 text-center text-base italic text-stone-300">of the goal is completed</Text>
+              <Text className="flex w-1/2 text-center text-3xl text-gray-100">0%</Text>
+              <Text className="flex w-1/2 text-center text-base italic text-gray-200">of the goal is completed</Text>
             </Box>
           </View>
         </View>

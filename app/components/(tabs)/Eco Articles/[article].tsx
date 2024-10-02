@@ -6,6 +6,8 @@ import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from '../../../../types/ArticleInfo';
 import { getUserUid } from "@/app/utils/utils";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
@@ -136,42 +138,44 @@ const EcoActionDetail = () => {
   );
 
   return (
-    <View style={{ padding: 10 }} className="flex-1 flex-column justify-start">
+    <ThemedView className="flex-1 px-5">
       <View className="flex-column">
-          <Text className="font-bold text-2xl">
+          <Text className="text-lime-800 mt-5 font-bold text-2xl">
             {actionDetail.title} </Text>
-        <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end" onPress={handleAddToLog}>Add to Daily Log</Button>
+        <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end bg-lime-800" onPress={handleAddToLog}>Add to Daily Log</Button>
       </View>
 
-      <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-        Facts
-      </Text>
-      <FlatList
-        data={facts}
-        renderItem={renderFactItem}
-        keyExtractor={(item) => item.id}
-        className="max-h-20"
-      />
+      <View className="bg-white h-auto border-2 border-lime-800 bg-transparent rounded-[25px] mt-2">
+        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
+          Facts
+        </ThemedText>
+        <FlatList
+          data={facts}
+          renderItem={renderFactItem}
+          keyExtractor={(item) => item.id}
+          className="max-h-20"
+        />
 
-      <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-        Benefits
-      </Text>
-      <FlatList
-        data={benefits}
-        renderItem={renderFactItem}
-        keyExtractor={(item) => item.id}
-        className="max-h-20"
-      />
+        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
+          Benefits
+        </ThemedText>
+        <FlatList
+          data={benefits}
+          renderItem={renderFactItem}
+          keyExtractor={(item) => item.id}
+          className="max-h-20"
+        />
 
-    <Text className="text-center" style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-        Instructions
-      </Text>
-      <FlatList
-        data={instructions}
-        renderItem={renderFactItem}
-        keyExtractor={(item) => item.id}
-        className="max-h-20"
-      />
+        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
+          Instructions
+        </ThemedText>
+        <FlatList
+          data={instructions}
+          renderItem={renderFactItem}
+          keyExtractor={(item) => item.id}
+          className="max-h-20"
+        />
+      </View>
       
       <Snackbar
         visible={visible}
@@ -180,8 +184,9 @@ const EcoActionDetail = () => {
       className="w-full"
       >
         Action added to your Daily Log
+
       </Snackbar>
-    </View>
+    </ThemedView>
   );
 };
 
