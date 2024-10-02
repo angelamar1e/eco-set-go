@@ -10,7 +10,7 @@ interface QuestionContainerProps {
 
 export const QuestionContainer: React.FC<QuestionContainerProps> = ({ children }) => {
   return (
-    <StyledContainer className="bg-gray-100 p-4">
+    <StyledContainer className="bg-gray-100 p-4 mt-4 mb-2 rounded-[25px]">
       {children}
     </StyledContainer>
   );
