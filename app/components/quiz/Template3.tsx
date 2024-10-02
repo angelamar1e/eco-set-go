@@ -33,7 +33,7 @@ export const Template3: FC<Template3Props> = ({
         return (
             <ThemedView className="flex-1 px-6">
             <QuestionContainer>
-                <ThemedText type="default" className='text-black mb-3'>
+                <ThemedText type="default" className='text-black text-[20px] mb-3'>
                     {question}
                 </ThemedText>
                 

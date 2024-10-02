@@ -37,10 +37,10 @@ const Template4: FC<Template4Props> = ({
     return (
         <ThemedView className="flex-1 px-6">
             <QuestionContainer>
-                <ThemedText type="default" className="text-black mb-3">{question}</ThemedText>
+                <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
                  {/* Checkboxes */}
-                <View className="flex-row flex-wrap justify-between mb-3">
+                <View className="flex-row flex-wrap justify-center">
                     {answers.map((answer) => (
                         <CheckboxChoices
                             key={answer}

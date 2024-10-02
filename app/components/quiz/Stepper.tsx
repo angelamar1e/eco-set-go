@@ -1,3 +1,4 @@
+import { ThemedText } from '@/components/ThemedText';
 import React, { FC, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 
@@ -19,22 +20,26 @@ const Stepper: FC<StepperProps> = ({ title, value, onChange }) => {
   };
 
   return (
-    <View className="flex-row items-center justify-between bg-white p-4 rounded-lg border border-lime-800">
-      <Text className="text-[18px] mr-3">{title}</Text>
+    <View className="flex-row items-center justify-between bg-white p-4 rounded-[10px] border border-gray-300">
+      <View>
+        <ThemedText type='defaultSemiBold' className="text-[20px] text-black mr-3">{title}</ThemedText>
+        <Text className="text-[15px] text-gray-500 mt-1">{value}x</Text>
+      </View>
+
       <View className="flex-row items-center">
-      <Pressable 
-          onPress={decrement} 
-          className="bg-lime-800 p-2 rounded-full"
-        >
-          <Text className="text-lg text-white font-bold">-</Text>
-        </Pressable>
-        <Text className="mx-3 text-lg">{value}</Text>
         <Pressable 
-          onPress={increment} 
-          className="bg-lime-800 p-2 rounded-full"
-        >
-          <Text className="text-lg text-white font-bold">+</Text>
-        </Pressable>
+            onPress={decrement} 
+            className="bg-lime-800 p-1 w-[35px] rounded-l-lg border-r border-white"
+          >
+            <Text className="text-lg text-white ml-3">-</Text>
+          </Pressable>
+
+          <Pressable 
+            onPress={increment} 
+            className="bg-lime-800 p-1 w-[35px] mr-1 rounded-r-lg border-l border-white"
+          >
+            <Text className="text-lg text-white ml-2">+</Text>
+          </Pressable>
       </View>
     </View>
   );
