@@ -43,7 +43,7 @@ export const Template2: FC<Template2Props> = ({
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
-            <ThemedText type="default" className='text-black mb-3'>{question}</ThemedText>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Suggested Answers */}
             <View className='flex-row flex-wrap justify-left mb-3'>
@@ -58,11 +58,14 @@ export const Template2: FC<Template2Props> = ({
             </View>
 
             {/* Text Fields */}
-            <TextField
-              label={textFieldLabel}
-              value={inputValue}
-              onChangeText={handleTextChange}
-            />
+            <View className='ml-2'>
+              <TextField
+                label={textFieldLabel}
+                value={inputValue}
+                onChangeText={handleTextChange}
+              />
+            </View>
+            
 
             <View className='mt-5 items-center '>
                 <NavigationButton

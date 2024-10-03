@@ -10,13 +10,17 @@ interface TextFieldProps {
 export const TextField: FC<TextFieldProps> = ({label, value, onChangeText}) => {
 
   return (
-    <TextInput
-      label={label}
-      value={value}
-      onChangeText={onChangeText}
-      mode="outlined"
-      outlineColor='green'
-      activeOutlineColor='green'
-    />
+      <TextInput
+        label={label}
+        value={value}
+        onChangeText={onChangeText}
+        mode="outlined"
+        outlineColor='gray'
+        activeOutlineColor='#22C55E'
+        className='bg-white w-[70%]'
+        theme={{
+          roundness: 10,
+        }}
+      />
   );
 };
