@@ -46,7 +46,7 @@ export const Template2: FC<Template2Props> = ({
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
-            <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3' >{category}</ThemedText>
+            <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
             <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Suggested Answers */}
@@ -83,11 +83,11 @@ export const Template2: FC<Template2Props> = ({
                   title="Next"
                   variant="primary"
                   onPress={() => {
-                    console.log('Next button pressed');
-                    onNext();
+                  console.log('Next button pressed');
+                  onNext();
               }}
-            />
-          </View>
+                />
+            </View>
         </QuestionContainer>
       </ThemedView>
     );
