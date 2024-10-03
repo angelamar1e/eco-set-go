@@ -23,7 +23,7 @@ export const Template2: FC<Template2Props> = ({
     onNavigationPress,
 }) => {
  
-    // State to manage selected answer
+  // State to manage selected answer
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
   // State to manage the input value in the TextField
