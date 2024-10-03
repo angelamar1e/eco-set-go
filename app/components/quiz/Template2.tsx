@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import { TextField } from './TextField';
-import { NavigationButton } from './NavigationButtons';
+import { NavigationButtons } from './NavigationButtons';
 
 interface Template2Props {
     category: string;
@@ -73,13 +73,13 @@ export const Template2: FC<Template2Props> = ({
             {/* Navigation Button */}
             <View className='flex-row justify-center mt-4'>
               {showBackButton && (
-                <NavigationButton
+                <NavigationButtons
                   title="Back"
                   variant="secondary"
                   onPress={onBack}
                 />
               )}
-                <NavigationButton
+                <NavigationButtons
                   title="Next"
                   variant="primary"
                   onPress={() => {

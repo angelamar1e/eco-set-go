@@ -1,12 +1,13 @@
 import { useState, FC } from 'react';
 import { View } from 'react-native';
 import { QuestionContainer } from '@/app/components/quiz/QuestionContainer';
-import { NavigationButton } from '@/app/components/quiz/NavigationButtons';
+import { NavigationButtons } from '@/app/components/quiz/NavigationButtons';
 import { ThemedText } from '@/components/ThemedText';
 import { RadioChoices } from '@/app/components/quiz/RadioChoices';
 import { ThemedView } from '@/components/ThemedView';
 
 interface Template3Props {
+    category: string;
     question: string;
     answer: string[];
     navigationNext: string;
@@ -15,6 +16,7 @@ interface Template3Props {
 }
 
 export const Template3: FC<Template3Props> = ({
+        category,
         question,
         answer,
         navigationNext,
@@ -33,6 +35,9 @@ export const Template3: FC<Template3Props> = ({
         return (
             <ThemedView className="flex-1 px-6">
             <QuestionContainer>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>
+                    {category}
+                </ThemedText>
                 <ThemedText type="default" className='text-black text-[20px] mb-3'>
                     {question}
                 </ThemedText>
@@ -49,11 +54,11 @@ export const Template3: FC<Template3Props> = ({
                 </View>
 
                 <View className="flex flex-row mt-4 justify-center">
-                <NavigationButton
+                <NavigationButtons
                     title={navigationPrevious}
                     variant="secondary"
                 />
-                <NavigationButton
+                <NavigationButtons
                     title={navigationNext}
                     variant="primary"
                 />

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { QuestionContainer } from '@/app/components/quiz/QuestionContainer';
-import { NavigationButton } from '@/app/components/quiz/NavigationButtons';
+import { NavigationButtons } from '@/app/components/quiz/NavigationButtons';
 import { ThemedText } from '@/components/ThemedText';
 import Stepper from '../components/quiz/Stepper';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export const NoOfMeals = () => {
+const NoOfMeals = () => {
   // Define initial value before using it in state
   const stepperInitialValue = 0;
 
@@ -63,7 +63,7 @@ export const NoOfMeals = () => {
 
                 {/* Navigation Button */}
                 <View className="mt-5 items-center">
-                <NavigationButton
+                <NavigationButtons
                     title="Next"
                     variant="primary"
                     //Set navigation logic
@@ -74,4 +74,6 @@ export const NoOfMeals = () => {
         </ScrollView>
     </ThemedView>
   );
-}
+};
+
+export default NoOfMeals;

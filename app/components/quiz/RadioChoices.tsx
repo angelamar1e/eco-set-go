@@ -9,8 +9,8 @@ interface ChoicesProps {
 
 export const RadioChoices: FC<ChoicesProps> = ({ title, isSelected, onPress }) => {
   const containerStyle = isSelected
-    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[45%] bg-white rounded-lg border border-green-500'
-    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[45%] bg-white rounded-lg border border-gray-300';
+    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-green-500'
+    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-gray-300';
 
   const textStyle = isSelected
     ? 'text-green-500 text-base'

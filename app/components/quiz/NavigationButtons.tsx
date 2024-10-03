@@ -7,7 +7,7 @@ interface NavigationButtonProps {
   onPress?: () => void;
 }
 
-export const NavigationButton: FC<NavigationButtonProps> = ({ title, variant }) => {
+export const NavigationButtons: FC<NavigationButtonProps> = ({ title, variant }) => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
 
