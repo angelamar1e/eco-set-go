@@ -10,18 +10,18 @@ interface Template3Props {
     category: string;
     question: string;
     answer: string[];
-    navigationNext: string;
-    navigationPrevious: string;
-    onNavigationPress: () => void;
+    onNext: () => void;         
+    onBack?: () => void;        
+    showBackButton?: boolean;
 }
 
 export const Template3: FC<Template3Props> = ({
         category,
         question,
         answer,
-        navigationNext,
-        navigationPrevious,
-        onNavigationPress,
+        onNext,
+        onBack,
+        showBackButton = true, 
     }) => 
         
     {
@@ -35,14 +35,13 @@ export const Template3: FC<Template3Props> = ({
         return (
             <ThemedView className="flex-1 px-6">
             <QuestionContainer>
-            <ThemedText type="default" className='text-black text-[20px] mb-3'>
-                    {category}
-                </ThemedText>
+                <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3' >{category}</ThemedText>
                 <ThemedText type="default" className='text-black text-[20px] mb-3'>
                     {question}
                 </ThemedText>
                 
-                <View className="flex-wrap flex-row justify-left">
+                {/* Radio Chouces */}
+                <View className="flex-wrap flex-row justify-center mt-10 mb-3">
                     {answer.map((answer, index) => (
                         <RadioChoices
                             key={index}
@@ -53,15 +52,23 @@ export const Template3: FC<Template3Props> = ({
                     ))}
                 </View>
 
-                <View className="flex flex-row mt-4 justify-center">
-                <NavigationButtons
-                    title={navigationPrevious}
-                    variant="secondary"
-                />
-                <NavigationButtons
-                    title={navigationNext}
-                    variant="primary"
-                />
+                {/* Navigation Button */}
+                <View className='flex-row justify-center mt-4'>
+                {showBackButton && (
+                    <NavigationButton
+                        title="Back"
+                        variant="secondary"
+                        onPress={onBack}
+                    />
+                )}
+                    <NavigationButton
+                        title="Next"
+                        variant="primary"
+                        onPress={() => {
+                        console.log('Next button pressed');
+                        onNext();
+                }}
+                    />
                 </View>
             
             </QuestionContainer>

@@ -10,8 +10,8 @@ interface CheckboxProps {
 
 export const CheckboxChoices: FC<CheckboxProps> = ({ title, isChecked, onPress }) => {
   const containerStyle = isChecked
-    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[45%] bg-white rounded-lg border border-green-500 flex-row items-center'
-    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[45%] bg-white rounded-lg border border-gray-300 flex-row items-center';
+    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-green-500 flex-row items-center'
+    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-gray-300 flex-row items-center';
 
   const textStyle = isChecked
     ? 'text-green-500 text-base ml-3'

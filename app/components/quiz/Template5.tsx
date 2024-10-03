@@ -8,22 +8,27 @@ import Stepper  from './Stepper'
 import { NavigationButton } from './NavigationButtons';
 
 interface Template5Props {
+  category: string;
   question: string;
   answers: string[];
   stepperTitle: string;
   stepperInitialValue: number;
-  navigationButtonTitle: string;
-  onNavigationPress: () => void;
+  onNext: () => void;         
+  onBack?: () => void;        
+  showBackButton?: boolean;
 }
 
 const Template5: FC<Template5Props> = ({
+  category,
   question,
   answers,
   stepperTitle,
   stepperInitialValue,
-  navigationButtonTitle,
-  onNavigationPress,
+  onNext,
+  onBack,
+  showBackButton = true,
 }) => {
+
   // State to manage the selected answer
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
@@ -38,7 +43,7 @@ const Template5: FC<Template5Props> = ({
   return (
     <ThemedView className="flex-1 px-6">
       <QuestionContainer>
-        {/* Display the question */}
+        <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
         <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
         {/* Suggested Answers */}
@@ -54,7 +59,7 @@ const Template5: FC<Template5Props> = ({
         </View>
 
         {/* Stepper */}
-        <View className="mt-5 mb-5">
+        <View className="mt-5 mb-5 justify-center mt-10 mb-3">
           <Stepper 
             title={stepperTitle}
             value={stepperValue}
@@ -63,12 +68,22 @@ const Template5: FC<Template5Props> = ({
         </View>
 
         {/* Navigation Button */}
-        <View className="mt-5 items-center">
-          <NavigationButton
-            title={navigationButtonTitle}
-            variant="primary"
-            /*no navigation logic applied*/
-          />
+        <View className='flex-row justify-center mt-4'>
+          {showBackButton && (
+            <NavigationButton
+              title="Back"
+              variant="secondary"
+              onPress={onBack}
+            />
+          )}
+            <NavigationButton
+              title="Next"
+              variant="primary"
+              onPress={() => {
+              console.log('Next button pressed');
+              onNext();
+          }}
+            />
         </View>
       </QuestionContainer>
     </ThemedView>

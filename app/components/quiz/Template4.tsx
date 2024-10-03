@@ -7,17 +7,21 @@ import { CheckboxChoices } from './Checkbox';
 import { NavigationButton } from './NavigationButtons';
 
 interface Template4Props {
+    category: string;
     question: string;
     answers: string[];
-    navigationButtonTitle: string;
-    onNavigationPress: () => void;
+    onNext: () => void;         
+    onBack?: () => void;        
+    showBackButton?: boolean;  
 }
 
 const Template4: FC<Template4Props> = ({
+    category,
     question,
     answers,
-    navigationButtonTitle,
-    onNavigationPress,
+    onNext,
+    onBack,
+    showBackButton = true, 
 }) => {
 
     // State to manage selected answers (multiple selections allowed)
@@ -37,10 +41,11 @@ const Template4: FC<Template4Props> = ({
     return (
         <ThemedView className="flex-1 px-6">
             <QuestionContainer>
+                <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
                 <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
                  {/* Checkboxes */}
-                <View className="flex-row flex-wrap justify-left">
+                <View className="flex-row flex-wrap justify-center mt-10 mb-3">
                     {answers.map((answer) => (
                         <CheckboxChoices
                             key={answer}
@@ -51,13 +56,23 @@ const Template4: FC<Template4Props> = ({
                     ))}
                 </View>
 
-                 {/* Navigation Button */}
-                <View className="mt-5 items-center">
-                    <NavigationButton
-                        title={navigationButtonTitle}
+                {/* Navigation Button */}
+                <View className='flex-row justify-center mt-4'>
+                    {showBackButton && (
+                        <NavigationButton
+                        title="Back"
+                        variant="secondary"
+                        onPress={onBack}
+                        />
+                    )}
+                        <NavigationButton
+                        title="Next"
                         variant="primary"
-                        /*no navigation logic applied*/
-                    />
+                        onPress={() => {
+                        console.log('Next button pressed');
+                        onNext();
+                    }}
+                        />
                 </View>
             </QuestionContainer>
         </ThemedView>
