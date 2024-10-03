@@ -1,7 +1,7 @@
 import { useState, FC } from 'react';
 import { View } from 'react-native';
 import { QuestionContainer } from '@/app/components/quiz/QuestionContainer';
-import { NavigationButton } from '@/app/components/quiz/NavigationButtons';
+import { NavigationButtons } from '@/app/components/quiz/NavigationButtons';
 import { ThemedText } from '@/components/ThemedText';
 import { RadioChoices } from '@/app/components/quiz/RadioChoices';
 import { ThemedView } from '@/components/ThemedView';
@@ -55,13 +55,13 @@ export const Template3: FC<Template3Props> = ({
                 {/* Navigation Button */}
                 <View className='flex-row justify-center mt-4'>
                 {showBackButton && (
-                    <NavigationButton
+                    <NavigationButtons
                         title="Back"
                         variant="secondary"
                         onPress={onBack}
                     />
                 )}
-                    <NavigationButton
+                    <NavigationButtons
                         title="Next"
                         variant="primary"
                         onPress={() => {

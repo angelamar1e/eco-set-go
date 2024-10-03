@@ -7,7 +7,7 @@ interface NavigationButtonProps {
   onPress?: () => void;
 }
 
-export const NavigationButton: FC<NavigationButtonProps> = ({ title, variant }) => {
+export const NavigationButtons: FC<NavigationButtonProps> = ({ title, variant, onPress }) => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
 
@@ -24,7 +24,7 @@ export const NavigationButton: FC<NavigationButtonProps> = ({ title, variant }) 
       : "text-black text-center";
 
   return (
-    <TouchableOpacity className={containerStyle}>
+    <TouchableOpacity className={containerStyle} onPress={onPress}>
       <Text className={textStyle}>{title}</Text>
     </TouchableOpacity>
   );

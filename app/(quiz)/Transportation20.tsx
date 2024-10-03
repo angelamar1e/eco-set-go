@@ -18,7 +18,7 @@ const Transportation20 = () => {
 
     const handleNext = () => {
         console.log('Next button pressed');
-        router.push("/(quiz)/Transportation20");    
+        router.push("/(quiz)/Food1");    
     };
 
     const handleBack = () => {

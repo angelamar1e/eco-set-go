@@ -13,7 +13,8 @@ const Transportation19 = () => {
     const answers4 = ['Bus', 'Jeepney', 'Tricycle', 'None'];
 
     const handleNext = () => {
-        // Implement your navigation logic here (e.g., navigate to the next question)
+        console.log('Next button pressed');
+        router.push("/(quiz)/Transportation20");    
     };
 
     const handleBack = () => {
