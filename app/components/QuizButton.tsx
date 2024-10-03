@@ -11,7 +11,7 @@ const QuizButton = () => {
   // Function to handle button press
   const handleQuizPress = () => {
     console.log('Quiz button pressed');
-    router.push("/(quiz)/SampleQuestion");
+    router.push("/(quiz)/Transportation1");
   };
 
   return (
