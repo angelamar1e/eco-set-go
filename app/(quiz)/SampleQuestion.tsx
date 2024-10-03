@@ -21,6 +21,7 @@ const ExamplePage = () => {
     const question3 = "What kind of breakfast do you usually eat?";
     const answer3 = [
         'Bread and pastries',
+        'Milk and cereals',
         'Salty',
         'Filipino Breakfast',
         'Fruit',
