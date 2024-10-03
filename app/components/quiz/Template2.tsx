@@ -8,19 +8,23 @@ import { TextField } from './TextField';
 import { NavigationButton } from './NavigationButtons';
 
 interface Template2Props {
+    category: string;
     question: string;
     answers: string[];
     textFieldLabel: string;
-    navigationButtonTitle: string;
-    onNavigationPress: () => void;
+    onNext: () => void;         
+    onBack?: () => void;        
+    showBackButton?: boolean;  
   }
 
 export const Template2: FC<Template2Props> = ({
+    category,
     question,
     answers,
     textFieldLabel,
-    navigationButtonTitle,
-    onNavigationPress,
+    onNext,
+    onBack,
+    showBackButton = true, 
 }) => {
  
   // State to manage selected answer
@@ -39,14 +43,14 @@ export const Template2: FC<Template2Props> = ({
     setInputValue(text);
     };
 
-
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
+            <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3' >{category}</ThemedText>
             <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Suggested Answers */}
-            <View className='flex-row flex-wrap justify-left mb-3'>
+            <View className='flex-row flex-wrap justify-left mb-10'>
                 {answers.map((answer) => (
                 <SuggestedAnswers
                     key={answer}
@@ -58,22 +62,32 @@ export const Template2: FC<Template2Props> = ({
             </View>
 
             {/* Text Fields */}
-            <View className='ml-2'>
+            <View className='ml-2 mb-5'>
               <TextField
                 label={textFieldLabel}
                 value={inputValue}
                 onChangeText={handleTextChange}
               />
             </View>
-            
 
-            <View className='mt-5 items-center '>
+            {/* Navigation Button */}
+            <View className='flex-row justify-center mt-4'>
+              {showBackButton && (
                 <NavigationButton
-                title={navigationButtonTitle}
-                variant="primary" 
-                /*no navigation logic applied*/
+                  title="Back"
+                  variant="secondary"
+                  onPress={onBack}
                 />
-            </View>
+              )}
+                <NavigationButton
+                  title="Next"
+                  variant="primary"
+                  onPress={() => {
+                    console.log('Next button pressed');
+                    onNext();
+              }}
+            />
+          </View>
         </QuestionContainer>
       </ThemedView>
     );

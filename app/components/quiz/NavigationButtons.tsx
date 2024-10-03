@@ -4,6 +4,7 @@ import { TouchableOpacity, Text, useColorScheme } from "react-native";
 interface NavigationButtonProps {
   title: string;
   variant: "primary" | "secondary";
+  onPress?: () => void;
 }
 
 export const NavigationButton: FC<NavigationButtonProps> = ({ title, variant }) => {
