@@ -55,13 +55,13 @@ export const Template3: FC<Template3Props> = ({
                 {/* Navigation Button */}
                 <View className='flex-row justify-center mt-4'>
                 {showBackButton && (
-                    <NavigationButton
+                    <NavigationButtons
                         title="Back"
                         variant="secondary"
                         onPress={onBack}
                     />
                 )}
-                    <NavigationButton
+                    <NavigationButtons
                         title="Next"
                         variant="primary"
                         onPress={() => {

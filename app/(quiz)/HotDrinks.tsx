@@ -7,27 +7,25 @@ import Template5 from '../components/quiz/Template5';
 const NoOfMeals = () => {
     const router = useRouter();
 
-    const category = "Meals";
-    const question = "Choose the 14 meals (lunches and dinners) for your typical week";
+    const category = "Drinks";
+    const question = "How many cups of hot drinks do you drink in a day? ";
     const answers = [
-        'Vegan',
-        'Vegetarian',
-        'Little meat',
-        'Meat every day',
+        'No hot drinks',
+        'A coffee',
+        'Lots of coffee',
+        'Coffee and tea',
+        'A hot chocolate'
     ];
     const stepperTitle = [
-        'Vegan', 
-        'Vegetarian', 
-        'Pork Meat Meal', 
-        'Beef Meat Meal', 
-        'Fish Meat Meal', 
-        'Chicken Meat Meal'
+        'Coffee', 
+        'Tea', 
+        'Hot Chocolate', 
     ];
     const stepperInitialValue = 0;
 
     const onNext = () => {
         console.log('Next button pressed');
-        router.push('/(quiz)/HotDrinks');
+        router.push('/(quiz)/Softdrinks');
     };
 
     const onBack = () => {
