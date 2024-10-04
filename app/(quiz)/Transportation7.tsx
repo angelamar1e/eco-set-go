@@ -3,38 +3,37 @@ import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
 import { useRouter } from 'expo-router';
 
-
-const Transportation2 = () => {
+const Transportation7 = () => {
     const router = useRouter();
 
     // Template 2 states and handlers
-    const category = "Transporation";
-    const question2 = "What is the average number of passengers in the car?";
-    const answers2 = ['Only one', 'Two', 'Five'];
-    const textFieldLabel2 = " ";
+    const category = "Transportation";
+    const question2 = "Do you know the average fuel consumption of the car?";
+    const answers2 = ['5l/100 km', '7l/100km', '9l/100km'];
+    const textFieldLabel2 = "0l/0km";
 
     const handleNext = () => {
         console.log('Next button pressed');
-        router.push("/(quiz)/Transportation3");
+        router.push("/(quiz)/Transportation8");    
     };
 
     const handleBack = () => {
-        router.push("/(quiz)/Transportation1")
+        router.push("/(quiz)/Transportation6")
     };
 
     return (
-        <ThemedView className='flex-1 px-4'>
+        <ThemedView className='flex-1 p-4'>
             <Template2
                 category={category}
                 question={question2}
                 answers={answers2}
                 textFieldLabel={textFieldLabel2}
-                onNext={handleNext}
                 onBack={handleBack}
-                showBackButton={true}
+                onNext={handleNext}
+                showBackButton={true} 
             />
         </ThemedView>
     )
 };
 
-export default Transportation2;
+export default Transportation7;
