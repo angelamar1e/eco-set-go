@@ -98,6 +98,8 @@ const DailyLog: FC = () => {
     });
   }
 
+  
+
   // Handle Deleting an Action from Daily Log
   const handleDelete = async (actionId: string) => {
     await dailyLogDoc.update({

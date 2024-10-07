@@ -1,32 +1,25 @@
 import { Image, StyleSheet, Alert, View, Text } from "react-native";
 import React, { useState } from "react";
-import { router, Link } from "expo-router";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import db from "@react-native-firebase/database";
-
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { router } from "expo-router";
+import auth from "@react-native-firebase/auth";
+import { Container } from "@/components/Container";
+import { TitleComponent } from "@/components/Title";
 import { ThemedView } from "@/components/ThemedView";
-import { CTAButton } from "@/components/CTAButton";
-import { goToInterface } from "./utils/utils";
 import { LoginButton } from "@/components/LoginButton";
 import { SignUpButton } from "@/components/SignUpButton";
-import { AuthInputFields } from "@/components/InputFields";
-import {Container} from "@/components/Container";
-import { TitleComponent } from "@/components/Title";
-
-import { NativeWindStyleSheet } from "nativewind";
-  NativeWindStyleSheet.setOutput({
-  default: "native",
-});
+import { TextInput } from "react-native-paper";
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { goToInterface } from "./utils/utils";
 
 export default function LogInScreen() {
-  const [email, setEmail] = useState<string | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   const handleSignIn = async () => {
     if (email && password) {
       try {
         await auth().signInWithEmailAndPassword(email, password);
+        // Navigate to the interface after successful login
         goToInterface();
         clearAllInput();
       } catch (e) {
@@ -43,24 +36,59 @@ export default function LogInScreen() {
 
   return (
     <ThemedView className="flex-1 justify-center w-full px-8">
-        <Container>
-          <TitleComponent />
+      <Container>
+        <TitleComponent />
 
-          <AuthInputFields formType="login"/>
+        {/* Email Input Field */}
+        <View className='py-1.5'>
+          <View>
+            <FontAwesome
+              name="envelope-o"
+              size={24}
+              style={{ position: 'absolute', left: 16, top: 12, color: '#757575', zIndex: 10 }} 
+            />
+            <TextInput
+              className="pl-14 pr-4 py-3 bg-[#F6F5F3] rounded-lg text-[#757575] w-full h-12"
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+          </View>
+        </View>
 
+        {/* Password Input Field */}
+        <View className='py-1.5'>
+          <View>
+            <Feather
+              name="lock"
+              size={24}
+              style={{ position: 'absolute', left: 16, top: 12, color: '#757575', zIndex: 10 }} 
+            />
+            <TextInput
+              className="pl-14 pr-4 py-3 bg-[#F6F5F3] rounded-lg text-[#757575] w-full h-12"
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+        </View>
+
+        {/* Login Button */}
         <LoginButton 
-          title="Log In" 
+          title="Log In"
           onPress={handleSignIn} 
           variant="primary"  
         />
-        </Container>
+      </Container>
 
-        <SignUpButton
-          title="Don't have an account? Sign Up"
-          onPress={() => router.push("/sign_up")}
-          variant="secondary"
-        />
-
-      </ThemedView>
+      {/* Sign Up Button */}
+      <SignUpButton
+        title="Don't have an account? Sign Up"
+        onPress={() => router.push("/sign_up")}
+        variant="secondary"
+      />
+    </ThemedView>
   );
 }

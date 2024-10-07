@@ -32,12 +32,13 @@ interface Template2Props {
   // Function to handle answer selection
   const handlePress = (answer: string) => {
     setSelectedAnswer(answer);
+    setInputValue(answer);
   };
 
   // Function to handle text input change
   const handleTextChange = (text: string) => {
     setInputValue(text);
-    };
+  };
 
 
     return (
