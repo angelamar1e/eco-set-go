@@ -3,31 +3,18 @@ import db from '@react-native-firebase/database';
 import { router } from 'expo-router';
 import { Platform, BackHandler } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { useAuth } from '../components/AuthContext';
 
-
-export async function checkSession() {
-    const user = auth().currentUser!
-
-    return user;
-}
-
-export async function getUserUid() {
-    const user = await checkSession();
-    const userUid = user.uid;
-    
-    return userUid;
-}
+const { userUid } = useAuth();
 
 export async function getRole() {
-    const userUid = await getUserUid();
-
     const doc = await firestore().collection('users').doc(userUid).get()
-    const role = doc.data()!.role
+    const role = doc.data().role
 
     if (role) {
         return role;
     } else {
-        return ''; // Or handle the case where the role doesn't exist
+        return ''; // case where the role doesn't exist
     }
 }
 
