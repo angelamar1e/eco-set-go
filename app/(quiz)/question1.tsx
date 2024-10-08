@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native-gesture-handler";
 import { View } from "react-native";
@@ -7,77 +7,52 @@ import { QuestionContainer } from "../components/quiz/QuestionContainer";
 import { Text, TextInput } from "react-native-paper";
 import Calculator from "../components/quiz/Calculator";
 import { Link } from "expo-router";
+import { QuizContext } from '@/contexts/QuizContext';
+import firestore from '@react-native-firebase/firestore';
 
 const Question1 = () => {
+  const { questionDocumentIds, questionCollection } = useContext(QuizContext);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [numericValue, setNumericValue] = useState<number>(0);
+  const [choices, setChoices] = useState(null);
+  const [question, setQuestion] = useState<string>("");
 
-  const handleBlur = () => {
-    convertInput(inputValue);
-  };
+    // Fetch question document 
+    useEffect(() => {
+      const fetchQuestion = async () => {
+        try {
+          console.log(questionDocumentIds);
+          const snapshot = await questionCollection.doc(questionDocumentIds[0]).get();
 
-  useEffect(() => {
-    convertInput(inputValue);
-  }, [inputValue]);
-
-  const convertInput = (text: string) => {
-    if (/^\d*$/.test(text) || text === "") {
-      const newValue = text === "" ? 0 : parseFloat(text);
-      setNumericValue(newValue);
-    }
-  };
-
-  const handlePress = (choice: string) => {
-    setSelectedAnswer(choice);
-
-    const newInputValue = getInputValue(choice);
-    setInputValue(newInputValue);
-    convertInput(newInputValue);
-  };
-
-  const getInputValue = (choice: string) => {
-    switch (choice) {
-      case "Zero":
-        return "0";
-      case "Vacations":
-        return "1000";
-      case "10km / day":
-        return "3650";
-      case "1000km / month":
-        return "12000";
-      case "20 000km / year":
-        return "20000";
-      default:
-        return "0";
-    }
-  };
-
-  const choices = [
-    "Zero",
-    "Vacations",
-    "10km / day",
-    "1000km / month",
-    "20 000km / year",
-  ];
+          if (snapshot.exists) {
+            const questionData = snapshot.data();
+            setQuestion(questionData.question);
+            setChoices(questionData.choices);
+          }
+          else {
+            console.log("no document");
+          }
+        } catch (error) {
+          console.error('Error fetching document:', error);
+        }
+      };
+  
+      fetchQuestion();
+    }, [questionDocumentIds]); // Fetch only once when the component mounts
 
   return (
     <ThemedView className="flex-1">
       <ScrollView>
-        <Calculator value={numericValue * 0.21} />
+        {/* <Calculator value={numericValue * 0.21} /> */}
         <QuestionContainer>
-          <Text>How far do you travel per year by car?</Text>
+          <Text>{question}</Text>
         </QuestionContainer>
 
         <View className="flex-row flex-wrap justify-between mb-3">
-          {choices.map((choice) => (
-            <SuggestedAnswers
-              key={choice}
-              title={choice}
-              isSelected={selectedAnswer === choice}
-              onPress={() => handlePress(choice)}
-            />
-          ))}
+          {choices ? Object.entries(choices).map(([key, value]) => (
+            <Text key={key}>{key}</Text>
+          )) : <Text> Loading... </Text>}
         </View>
 
         <TextInput
@@ -87,7 +62,7 @@ const Question1 = () => {
           outlineColor="green"
           activeOutlineColor="green"
           onChangeText={setInputValue}
-          onBlur={handleBlur}
+          // onBlur={handleBlur}s
           value={inputValue}
           className="m-3"
         />
