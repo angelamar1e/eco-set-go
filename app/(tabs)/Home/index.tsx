@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BackHandler, Platform, View, Text } from "react-native";
 import { styled, withExpoSnack } from "nativewind";
-import { getUserName, handleBackAction, handleLogOut } from "../../utils/utils";
+import { getUserName, getUserUid, handleBackAction, handleLogOut } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/app/components/(tabs)/Home/daily_log";
 import { CTAButton } from "@/components/CTAButton";
@@ -13,7 +13,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import QuizButton from "@/app/components/QuizButton";
 import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
-import { useAuth } from "@/app/components/AuthContext";
 
 const StyledView = styled(View);
 
@@ -25,16 +24,22 @@ const Box = ({ className = "", ...props }) => (
 );
 
 export default function LandingPage() {
-  const { userUid } = useAuth();
+  const [userUid, setUserUid] = useState<string | undefined>();
   const [userName, setUserName] = useState<string | undefined>();
   const [overallFP, setOverallFP] = useState<number | undefined>();
   const [impactValue, setImpactValue] = useState<number>(0);
   const footprint = firestore().collection("current_footprint").doc(userUid);
 
   useEffect(() => {
-    getUserName(userUid).then(setUserName);
-  }, [userUid]);
-  
+    const fetchUserUid = async () => {
+      const uid = await getUserUid();
+      setUserUid(uid);
+      setUserName(await getUserName(uid));
+    };
+
+    fetchUserUid();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = footprint.onSnapshot((doc) => {
       setOverallFP(doc.data()!.overall_footprint!.toFixed(2));
