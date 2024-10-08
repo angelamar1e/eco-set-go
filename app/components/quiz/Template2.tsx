@@ -5,25 +5,29 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import { TextField } from './TextField';
-import { NavigationButton } from './NavigationButton';
+import { NavigationButtons } from './NavigationButtons';
 
 interface Template2Props {
+    category: string;
     question: string;
     answers: string[];
     textFieldLabel: string;
-    navigationButtonTitle: string;
-    onNavigationPress: () => void;
+    onNext: () => void;         
+    onBack?: () => void;        
+    showBackButton?: boolean;  
   }
 
-  const Template2: FC<Template2Props> = ({
+export const Template2: FC<Template2Props> = ({
+    category,
     question,
     answers,
     textFieldLabel,
-    navigationButtonTitle,
-    onNavigationPress,
+    onNext,
+    onBack,
+    showBackButton = true, 
 }) => {
  
-    // State to manage selected answer
+  // State to manage selected answer
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
   // State to manage the input value in the TextField
@@ -40,14 +44,14 @@ interface Template2Props {
     setInputValue(text);
   };
 
-
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
-            <ThemedText type="default" className='text-black mb-3'>{question}</ThemedText>
+            <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Suggested Answers */}
-            <View className='flex-row flex-wrap justify-between mb-3'>
+            <View className='flex-row flex-wrap justify-left mb-10'>
                 {answers.map((answer) => (
                 <SuggestedAnswers
                     key={answer}
@@ -59,17 +63,30 @@ interface Template2Props {
             </View>
 
             {/* Text Fields */}
-            <TextField
-              label={textFieldLabel}
-              value={inputValue}
-              onChangeText={handleTextChange}
-            />
+            <View className='ml-2 mb-5'>
+              <TextField
+                label={textFieldLabel}
+                value={inputValue}
+                onChangeText={handleTextChange}
+              />
+            </View>
 
-            <View className='mt-5 items-center '>
-                <NavigationButton
-                title={navigationButtonTitle}
-                variant="primary" 
-                /*no navigation logic applied*/
+            {/* Navigation Button */}
+            <View className='flex-row justify-center mt-4'>
+              {showBackButton && (
+                <NavigationButtons
+                  title="Back"
+                  variant="secondary"
+                  onPress={onBack}
+                />
+              )}
+                <NavigationButtons
+                  title="Next"
+                  variant="primary"
+                  onPress={() => {
+                  console.log('Next button pressed');
+                  onNext();
+              }}
                 />
             </View>
         </QuestionContainer>

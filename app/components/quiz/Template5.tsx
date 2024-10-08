@@ -4,75 +4,99 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
-import Stepper  from './Stepper'
-import { NavigationButton } from './NavigationButton';
+import Stepper from './Stepper';
+import { NavigationButtons } from './NavigationButtons';
 
 interface Template5Props {
-  question: string;
-  answers: string[];
-  stepperTitle: string;
-  stepperInitialValue: number;
-  navigationButtonTitle: string;
-  onNavigationPress: () => void;
+    category: string;
+    question: string;
+    answers: string[];
+    stepperTitle: string[];
+    stepperInitialValue: number;
+    onNext: () => void;         
+    onBack?: () => void;        
+    showBackButton?: boolean;
 }
 
 const Template5: FC<Template5Props> = ({
-  question,
-  answers,
-  stepperTitle,
-  stepperInitialValue,
-  navigationButtonTitle,
-  onNavigationPress,
+    category,
+    question,
+    answers,
+    stepperTitle,
+    stepperInitialValue,
+    onNext,
+    onBack,
+    showBackButton = true,
 }) => {
-  // State to manage the selected answer
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+    // State to manage the selected answer
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-  // State to manage the stepper value
-  const [stepperValue, setStepperValue] = useState<number>(stepperInitialValue);
+    // State to manage the stepper values as an array
+    const [stepperValues, setStepperValues] = useState<number[]>(new Array(stepperTitle.length).fill(stepperInitialValue));
 
-  // Function to handle answer selection
-  const handlePress = (answer: string) => {
-    setSelectedAnswer(answer);
-  };
+    // Function to handle answer selection
+    const handlePress = (answer: string) => {
+        setSelectedAnswer(answer);
+    };
 
-  return (
-    <ThemedView className="flex-1 px-6">
-      <QuestionContainer>
-        {/* Display the question */}
-        <ThemedText type="default" className="text-black mb-3">{question}</ThemedText>
+    // Handle stepper value changes
+    const handleStepperChange = (index: number, value: number) => {
+        const updatedValues = [...stepperValues];
+        updatedValues[index] = value;
+        setStepperValues(updatedValues);
+    };
 
-        {/* Suggested Answers */}
-        <View className="flex-row flex-wrap justify-between mb-3">
-          {answers.map((answer) => (
-            <SuggestedAnswers
-              key={answer}
-              title={answer}
-              isSelected={selectedAnswer === answer}
-              onPress={() => handlePress(answer)}
-            />
-          ))}
-        </View>
+    return (
+        <ThemedView className="flex-1 px-6">
+            <QuestionContainer>
+                <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
+                <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
-        {/* Stepper */}
-        <View className="mt-5 mb-5">
-          <Stepper 
-            title={stepperTitle}
-            value={stepperValue}
-            onChange={setStepperValue}
-          />
-        </View>
+                {/* Suggested Answers */}
+                <View className="flex-row flex-wrap justify-left mb-3">
+                    {answers.map((answer) => (
+                        <SuggestedAnswers
+                            key={answer}
+                            title={answer}
+                            isSelected={selectedAnswer === answer}
+                            onPress={() => handlePress(answer)}
+                        />
+                    ))}
+                </View>
 
-        {/* Navigation Button */}
-        <View className="mt-5 items-center">
-          <NavigationButton
-            title={navigationButtonTitle}
-            variant="primary"
-            /*no navigation logic applied*/
-          />
-        </View>
-      </QuestionContainer>
-    </ThemedView>
-  );
+                {/* Stepper */}
+                <View className="mt-5 mb-5 justify-center mt-10 mb-3">
+                    {stepperTitle.map((title, index) => (
+                        <Stepper 
+                            key={title}
+                            title={title}
+                            value={stepperValues[index]} // Use the specific stepper's value
+                            onChange={(value) => handleStepperChange(index, value)} // Pass the index
+                        />
+                    ))}
+                </View>
+
+                {/* Navigation Button */}
+                <View className='flex-row justify-center mt-4'>
+                    {showBackButton && (
+                        <NavigationButtons
+                            title="Back"
+                            variant="secondary"
+                            onPress={onBack}
+                        />
+                    )}
+                    <NavigationButtons
+                        title="Next"
+                        variant="primary"
+                        onPress={() => {
+                            console.log('Next button pressed');
+                            onNext();
+                        }}
+                    />
+                </View>
+            </QuestionContainer>
+        </ThemedView>
+    );
 };
 
 export default Template5;

@@ -9,12 +9,10 @@ interface SuggestedAnswersProps {
 
 export const SuggestedAnswers: FC<SuggestedAnswersProps> = ({ title, isSelected, onPress }) => {
   const containerStyle = isSelected
-    ? 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-green-500'
-    : 'mt-2 mb-2 mr-2 p-3 w-[45%] bg-white rounded-full border border-gray-300';
+    ? 'mt-1 mb-1 ml-1 mr-1 p-2 pl-4 pr-4 h-10 bg-[#9CD87E] rounded-full border-2 border-lime-800 justify-center flex-initial'
+    : 'mt-1 mb-1 ml-1 mr-1 p-2 pl-4 pr-4 h-10 bg-[#9CD87E] rounded-full justify-center flex-initial';
 
-  const textStyle = isSelected
-    ? 'text-green-500 text-center'
-    : 'text-black text-center';
+    const textStyle = 'text-lime-800 text-center';
 
   return (
     <Pressable className={containerStyle} onPress={onPress}>

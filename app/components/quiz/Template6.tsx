@@ -5,23 +5,28 @@ import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { SuggestedAnswers } from './SuggestedAnswers';
 import { CheckboxChoices } from './Checkbox'; 
-import { NavigationButton } from './NavigationButton';
+import { NavigationButtons } from './NavigationButtons';
 
 interface Template6Props {
+  category: string;
   question: string;
   answers: string[]; 
   checkboxes: string[]; 
-  navigationButtonTitle: string;
-  onNavigationPress: () => void;
+  onNext: () => void;         
+  onBack?: () => void;        
+  showBackButton?: boolean;
 }
 
 const Template6: FC<Template6Props> = ({
+  category,
   question,
   answers,
   checkboxes,
-  navigationButtonTitle,
-  onNavigationPress,
+  onNext,
+  onBack,
+  showBackButton = true,
 }) => {
+
   // State to manage selected suggested answer
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
@@ -44,10 +49,11 @@ const Template6: FC<Template6Props> = ({
   return (
     <ThemedView className="flex-1 px-6">
       <QuestionContainer>
-        <ThemedText type="default" className="text-black mb-3">{question}</ThemedText>
+        <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
+        <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
         {/* Suggested Answers */}
-        <View className="flex-row flex-wrap justify-between mb-3">
+        <View className="flex-row flex-wrap justify-left mb-3">
           {answers.map((answer) => (
             <SuggestedAnswers
               key={answer}
@@ -59,7 +65,7 @@ const Template6: FC<Template6Props> = ({
         </View>
 
         {/* Checkboxes */}
-        <View className="flex-row flex-wrap justify-between mb-3">
+        <View className="flex-row flex-wrap justify-center mt-10 mb-3">
           {checkboxes.map((item) => (
             <CheckboxChoices
               key={item}
@@ -71,12 +77,22 @@ const Template6: FC<Template6Props> = ({
         </View>
 
         {/* Navigation Button */}
-        <View className="mt-5 items-center">
-          <NavigationButton
-            title={navigationButtonTitle}
-            variant="primary"
-            /*no navigation logic applied*/
-          />
+        <View className='flex-row justify-center mt-4'>
+          {showBackButton && (
+            <NavigationButtons
+              title="Back"
+              variant="secondary"
+              onPress={onBack}
+            />
+          )}
+            <NavigationButtons
+              title="Next"
+              variant="primary"
+              onPress={() => {
+              console.log('Next button pressed');
+              onNext();
+          }}
+            />
         </View>
       </QuestionContainer>
     </ThemedView>
