@@ -6,15 +6,16 @@ import { goToInterface } from './utils/utils';
 import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
+import { useAuth } from './components/AuthContext';
 
 export default function Index() {
-
+  const { user } =  useAuth();
   const [loading, setLoading] = useState<true>();
 
-  useEffect(() => {
+  if (user) {
     goToInterface();
-  }, [router]);
-
+  }
+  
   return (
     <ThemedView className="flex-1 justify-center">
       <TitleComponent />
