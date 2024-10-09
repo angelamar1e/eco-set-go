@@ -15,7 +15,14 @@ export const QuizDocsProvider = ({ children }) => {
       try {
         const snapshot = await questionCollection.get();
         const ids = snapshot.docs.map(doc => doc.id);
-        setQuestionDocumentIds(ids); // Set the document IDs in the state
+
+         // Sort the document IDs as numbers
+         const sortedIds = ids
+         .map(id => parseInt(id, 10)) // Convert to numbers
+         .sort((a, b) => a - b) // Sort in ascending order
+         .map(id => id.toString()); // Convert back to strings if needed
+
+        setQuestionDocumentIds(sortedIds); // Set the document IDs in the state
       } catch (error) {
         console.error('Error fetching document IDs:', error);
       }
