@@ -14,7 +14,7 @@ const Electricity3 = () => {
         'Half of my production',
         'I consume 100% of what I produce',
     ]
-    const textFieldLabel = "Please specify your exact consumption";
+    const textFieldLabel = "Please specify your exact consumption percentage";
 
     const onNext = () => {
         console.log('Next button pressed');

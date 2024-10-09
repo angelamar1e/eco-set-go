@@ -15,7 +15,7 @@ const Electricity1 = () => {
         'Small family', //4 members
         'Large family', //6 members
     ]
-    const textFieldLabel = "Please specify how many are you in the household";
+    const textFieldLabel = "number of persons";
 
     const onNext = () => {
         console.log('Next button pressed');

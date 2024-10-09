@@ -10,8 +10,8 @@ const Electricity5 = () => {
     const category="Electricity";
     const question1="What is your household's annual electricity consumption from the grid? (Excluding consumption using your solar panels)";
     const question2="No invoice? \nEnter your approximate monthly expenditure."
-    const textFieldLabel1 = "User input";
-    const textFieldLabel2 = "Enter your approximate monthly expenditure."
+    const textFieldLabel1 = "kWh";
+    const textFieldLabel2 = "₱"
 
     const onNext = () => {
         console.log('Next button pressed');

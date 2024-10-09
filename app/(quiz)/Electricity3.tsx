@@ -15,8 +15,8 @@ const Electricity3 = () => {
         '4000 kWh',
     ]
     const question2="No statement? \nHow many panels do you have installed?"
-    const textFieldLabel1 = "Please specify your consumption";
-    const textFieldLabel2 = "Enter your installed capacity here";
+    const textFieldLabel1 = "kWh";
+    const textFieldLabel2 = "number of panels";
 
     const onNext = () => {
         console.log('Next button pressed');
