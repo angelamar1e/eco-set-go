@@ -5,9 +5,10 @@ interface TextFieldProps {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
+  onBlur: () => void;
 }
 
-export const TextField: FC<TextFieldProps> = ({label, value, onChangeText}) => {
+export const TextField: FC<TextFieldProps> = ({label, value, onChangeText, onBlur}) => {
 
   return (
       <TextInput
@@ -21,6 +22,7 @@ export const TextField: FC<TextFieldProps> = ({label, value, onChangeText}) => {
         theme={{
           roundness: 10,
         }}
+        onBlur={onBlur}
       />
   );
 };
