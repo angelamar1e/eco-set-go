@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {Template3} from '../components/quiz/Template3';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 
 const Transportation8 = () => {
-    const router = useRouter();
+    
 
     const category = "Transportation";
     const question3 = "Have you flown at least once in the last 3 years?";

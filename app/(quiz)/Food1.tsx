@@ -5,7 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 
 const BreakfastMeal = () => {
-    const router = useRouter();
+    
 
     const category = "Meals";
     const question = "What kind of breakfast do you usually eat?";

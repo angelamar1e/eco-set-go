@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import Template2 from '../components/quiz/Template2';
 
 const HardDrinks = () => {
-    const router = useRouter();
+    
 
     const category="Drinks";
     const question="How often is your weekly consumption of alcohol? (wine, beer, etc.)";

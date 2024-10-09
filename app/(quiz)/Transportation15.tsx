@@ -1,11 +1,11 @@
 import React from "react";
 import Template4 from "../components/quiz/Template4";
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 
 const Transportation15 = () => {
-    const router = useRouter();
+    
 
     // Template 4 states and handlers
     const category = "Transportation";

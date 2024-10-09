@@ -1,21 +1,16 @@
-import React, { useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import {Template3} from '../components/quiz/Template3';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
+import { QuestionProps } from '@/types/QuizProps';
+import { TransportEmission } from '@/constants/DefaultValues';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
 
-
-const Transportation4 = () => {
-    const router = useRouter();
-
+const Transportation4: FC<QuestionProps> = ({ question, choices }) => {
     const category = "Transportation";
-    const question3 = "What is the size of the car?";
-    const answer3 = [
-        'Small',
-        'Average',
-        'Utility vehicle',
-        'Sedan',
-        'SUV',
-    ];
+
+    const {setLifespanInKm} = useContext(EmissionsContext);
+
     const handleNext = () => {
         console.log('Next button pressed');
         router.push("/(quiz)/Transportation5");
@@ -29,10 +24,12 @@ const Transportation4 = () => {
         <ThemedView className='flex-1 px-4'>
             <Template3
                 category={category}
-                question={question3}
-                answer={answer3}
+                question={question}
+                choices={choices}
+                defaultValue={TransportEmission.Car.lifeSpan}
                 onNext={handleNext}
                 onBack={handleBack}
+                onAnswer={setLifespanInKm}
                 showBackButton={true}
             />
         </ThemedView>

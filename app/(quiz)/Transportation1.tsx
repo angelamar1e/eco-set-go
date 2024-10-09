@@ -4,10 +4,10 @@ import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { TransportEmission } from '@/constants/DefaultValues';
-import { QuizProps } from '@/types/QuizProps';
+import { QuestionProps } from '@/types/QuizProps';
 
 // Use FC with the props interface
-const Transportation1: FC<QuizProps> = ({ question, choices }) => {
+const Transportation1: FC<QuestionProps> = ({ question, choices }) => {
   const { setKmTravelled } = useContext(EmissionsContext);
 
   const category = 'Transportation';

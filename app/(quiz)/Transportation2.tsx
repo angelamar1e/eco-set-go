@@ -2,11 +2,11 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
-import { QuizProps } from '@/types/QuizProps';
+import { QuestionProps } from '@/types/QuizProps';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { TransportEmission } from '@/constants/DefaultValues';
 
-const Transportation2: FC<QuizProps> = ({ question, choices }) => {
+const Transportation2: FC<QuestionProps> = ({ question, choices }) => {
     const { setNumOfPassengers } = useContext(EmissionsContext);
 
     const category = "Transporation";

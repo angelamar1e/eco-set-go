@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import Template5 from '../components/quiz/Template5';
 
 const HotDrinks = () => {
-    const router = useRouter();
+    
 
     const category = "Drinks";
     const question = "How many cups of hot drinks do you drink in a day? ";

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {Template3} from '../components/quiz/Template3';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 
 const Transportation13 = () => {
-    const router = useRouter();
+    
 
     const category = "Transportation";
     const question3 = "What is the engine of your scooter or motorcycle?";

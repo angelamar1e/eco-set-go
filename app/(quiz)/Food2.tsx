@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import Template5 from '../components/quiz/Template5';
 
 const NoOfMeals = () => {
-    const router = useRouter();
+    
 
     const category = "Meals";
     const question = "Choose the 14 meals (lunches and dinners) for your typical week";
