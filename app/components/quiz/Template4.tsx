@@ -52,25 +52,6 @@ const Template4: FC<TemplateProps> = ({
             />
           ))}
         </View>
-
-        {/* Navigation Button */}
-        <View className="flex-row justify-center mt-4">
-          {showBackButton && (
-            <NavigationButtons
-              title="Back"
-              variant="secondary"
-              onPress={onBack}
-            />
-          )}
-          <NavigationButtons
-            title="Next"
-            variant="primary"
-            onPress={() => {
-              console.log("Next button pressed");
-              onNext();
-            }}
-          />
-        </View>
       </QuestionContainer>
     </ThemedView>
   );

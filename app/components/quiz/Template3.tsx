@@ -18,15 +18,15 @@ export const Template3: FC<TemplateProps> = ({
   showBackButton = true,
   onAnswer
 }) => {
-  const [answer, setAnswer] = useState<string | number>();
+  const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
 
-  const handlePress = (answer: string | number) => {
-    setAnswer(answer);
-    onAnswer(answer);
+  const handlePress = (selected: string | number) => {
+    setAnswer(selected);
+    onAnswer(selected);
   };
 
   return (
-    <ThemedView className="flex-1 px-6">
+    // <ThemedView className="flex-1 px-6">
       <QuestionContainer>
         <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
           {category}
@@ -42,7 +42,7 @@ export const Template3: FC<TemplateProps> = ({
               <RadioChoices
                 key={key}
                 title={key}
-                isSelected={answer ? answer === value : value === defaultValue}
+                isSelected={answer === value}
                 onPress={() => handlePress(value)}
               />
             ))
@@ -50,26 +50,7 @@ export const Template3: FC<TemplateProps> = ({
             <Text> Loading... </Text>
           )}
         </View>
-
-        {/* Navigation Button */}
-        <View className="flex-row justify-center mt-4">
-          {showBackButton && (
-            <NavigationButtons
-              title="Back"
-              variant="secondary"
-              onPress={onBack}
-            />
-          )}
-          <NavigationButtons
-            title="Next"
-            variant="primary"
-            onPress={() => {
-              console.log("Next button pressed");
-              onNext();
-            }}
-          />
-        </View>
       </QuestionContainer>
-    </ThemedView>
+    // </ThemedView>
   );
 };

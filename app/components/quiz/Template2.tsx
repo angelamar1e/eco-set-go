@@ -42,7 +42,7 @@ export const Template2: FC<TemplateProps> = ({
   };
 
   return (
-    <ThemedView className="flex-1 px-6">
+    // <ThemedView className="flex-1 px-4">
       <QuestionContainer>
         <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
           {category}
@@ -75,27 +75,8 @@ export const Template2: FC<TemplateProps> = ({
             onBlur={handleBlur}
           />
         </View>
-
-        {/* Navigation Button */}
-        <View className="flex-row justify-center mt-4">
-          {showBackButton && (
-            <NavigationButtons
-              title="Back"
-              variant="secondary"
-              onPress={onBack}
-            />
-          )}
-          <NavigationButtons
-            title="Next"
-            variant="primary"
-            onPress={() => {
-              console.log("Next button pressed");
-              onNext();
-            }}
-          />
-        </View>
       </QuestionContainer>
-    </ThemedView>
+    // </ThemedView>
   );
 };
 

@@ -5,11 +5,13 @@ import Calculator from '../components/quiz/Calculator';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { components } from '../../constants/QuestionComponents';
 import { skipConditions } from '@/constants/SkipConditions';
+import { ThemedView } from '@/components/ThemedView';
+import { NavigationButtons } from '../components/quiz/NavigationButtons';
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
   const { kmTravelled } = useContext(EmissionsContext);
-  
+
   const [question, setQuestion] = useState<string>('');
   const [choices, setChoices] = useState<Map<string, number> & Map<string, string>>(new Map());
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
@@ -55,7 +57,7 @@ const QuizIndex = () => {
 
   // Move to the next component, taking skip logic into account
   const goToNextComponent = () => {
-    const skipSteps = determineSkipSteps();
+    const skipSteps = 1;
     const newIndex = currentComponentIndex + skipSteps;
 
     // Ensure the new index does not exceed available components
@@ -66,16 +68,31 @@ const QuizIndex = () => {
     }
   };
 
+    // Move to the previous component, taking skip logic into account
+    const goToPrevComponent = () => {
+      const newIndex = currentComponentIndex - 1;
+  
+      // Ensure the new index does not exceed available components
+      if (newIndex >= 0) {
+        setCurrentComponentIndex(newIndex);
+      } else {
+        console.log('No more components');
+      }
+    };
+
   // Dynamically render the current component based on currentComponentIndex
   const CurrentComponent = components[currentComponentIndex];
 
   return (
-    <View className="flex-1 p-4">
+    <ThemedView className="flex-1 p-4">
       <Calculator/>
       {/* Render the current component with props */}
       <CurrentComponent question={question} choices={choices} />
-      <Button title="Next" onPress={goToNextComponent} />
-    </View>
+      <View className='flex-row justify-center mt-4'>
+      <NavigationButtons title="Back" variant='secondary' onPress={goToPrevComponent} />
+      <NavigationButtons title="Next" variant='primary' onPress={goToNextComponent} />
+        </View>
+    </ThemedView>
   );
 };
 
