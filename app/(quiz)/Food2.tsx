@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useRouter } from "expo-router";
 import Template5 from '../components/quiz/Template5';
 
-const NoOfMeals = () => {
+const Food2 = () => {
     const router = useRouter();
 
     const category = "Meals";
@@ -53,4 +53,4 @@ const NoOfMeals = () => {
     );
 };
 
-export default NoOfMeals;
+export default Food2;

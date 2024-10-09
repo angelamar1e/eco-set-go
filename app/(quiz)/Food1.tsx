@@ -4,7 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 
-const BreakfastMeal = () => {
+const Food1 = () => {
     const router = useRouter();
 
     const category = "Meals";
@@ -43,4 +43,4 @@ const BreakfastMeal = () => {
     );
 };
 
-export default BreakfastMeal;
+export default Food1;
