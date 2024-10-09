@@ -1,4 +1,5 @@
 import { TransportEmission } from '@/constants/DefaultValues';
+import { FlightData } from '@/types/FlightData';
 
 export function computeCarEmissions(
     efPerKm: number,
@@ -41,4 +42,43 @@ export function computeCarEmissions(
     let useOfCar: number = efPerKm * kmTravelled;
     carEmission = (useOfCar + manufacture) / numOfPassengers
     return carEmission / 1000 // results in kg, converted to tons by dividing by 1000
+}
+
+export function computeAirplaneEmission(data: FlightData): number{
+    let aveSpeed: number = data['aveDistance'] / data['aveDuration'];
+    let airplaneEmission: number = data['flightDuration'] * aveSpeed * TransportEmission.Airplane.efPerKm;
+    return airplaneEmission
+}
+
+export function computeTotalAirplaneEmissions(
+    shortHaul: FlightData,
+    mediumHaul: FlightData,
+    longHaul: FlightData,
+    travelledbyPlane: boolean,
+)
+{
+    let airplaneEmission: number = 0;
+    if (travelledbyPlane == false){
+        return airplaneEmission
+    }
+    if (shortHaul) {
+        airplaneEmission += computeAirplaneEmission(shortHaul)
+    }
+    if (mediumHaul) {
+        airplaneEmission += computeAirplaneEmission(mediumHaul)
+    }
+    if (longHaul) {
+        airplaneEmission += computeAirplaneEmission(longHaul)
+    }
+    return airplaneEmission / 1000 // results in kg, converted to tons by dividing by 1000
+}
+
+export function computeTwoWheelersEmissions(efPerKm: number, kmTravelled: number, usesTwoWheelers: boolean){
+    let twoWheelersEmissions = 0;
+
+    if (usesTwoWheelers) {
+        twoWheelersEmissions = kmTravelled * efPerKm;
+        return twoWheelersEmissions / 1000;
+    }
+    return twoWheelersEmissions;
 }

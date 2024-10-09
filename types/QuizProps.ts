@@ -8,7 +8,7 @@ export interface TemplateProps {
     textFieldLabel?: string;
     question: string;
     choices?: Map<string, string> | Map<string, number>;
-    defaultValue: string | number;
+    defaultValue: string | number | boolean;
     onNext: () => void;
     onBack?: () => void;
     onAnswer: (answer: string | number) => void;
