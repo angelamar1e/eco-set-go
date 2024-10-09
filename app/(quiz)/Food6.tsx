@@ -15,7 +15,7 @@ const Food6 = () => {
         ];
     const onNext = () => {
         console.log('Next button pressed');
-        router.push('/(tabs)/Home');
+        router.push('/(quiz)/Electricity1');
         };
 
     const onBack = () => {

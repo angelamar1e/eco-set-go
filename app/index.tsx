@@ -6,7 +6,7 @@ import { goToInterface } from './utils/utils';
 import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
-import QuizButton from "@/app/components/QuizButton";
+
 
 export default function Index() {
 
@@ -29,9 +29,6 @@ export default function Index() {
           onPress={() => router.push('/sign_up')}
           variant="primary"
         />
-
-        <QuizButton/>
-
       </View> 
     </ThemedView>
   );
