@@ -10,9 +10,9 @@ import QuizButton from "@/app/components/QuizButton";
 
 export default function Index() {
 
- // useEffect(() => {
- //   goToInterface();
- // }, [router]);
+ useEffect(() => {
+   goToInterface();
+   }, [router]);
 
   return (
     <ThemedView className="flex-1 justify-center">
