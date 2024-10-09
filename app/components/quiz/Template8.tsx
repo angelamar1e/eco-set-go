@@ -3,13 +3,13 @@ import { View} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
-import { SuggestedAnswers } from './SuggestedAnswers';
 import { TextField } from './TextField';
 import { NavigationButtons } from './NavigationButtons';
 
 interface Template8Props {
     category: string;
-    question: string;
+    question1: string;
+    question2: string;
     textFieldLabel1: string;
     textFieldLabel2: string;
     onNext: () => void;         
@@ -19,7 +19,8 @@ interface Template8Props {
 
 export const Template8: FC<Template8Props> = ({
     category,
-    question,
+    question1,
+    question2,
     textFieldLabel1,
     textFieldLabel2,
     onNext,
@@ -28,33 +29,42 @@ export const Template8: FC<Template8Props> = ({
 }) => {
 
   // State to manage the input value in the TextField
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue1, setInputValue1] = useState<string>("");
 
-  // Function to handle text input change
-  const handleTextChange = (text: string) => {
-    setInputValue(text);
+  // State to manage the input value in the TextField2
+  const [inputValue2, setInputValue2] = useState<string>("");
+
+  // Function to handle text input change 1
+  const handleTextChange1 = (text: string) => {
+    setInputValue1(text);
+    };
+
+  // Function to handle text input change 2
+  const handleTextChange2 = (text: string) => {
+    setInputValue2(text);
     };
 
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
             <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
-            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question1}</ThemedText>
 
             {/* Text Fields */}
             <View className='ml-2 mb-5'>
               <TextField
-                label={textFieldLabel2}
-                value={inputValue}
-                onChangeText={handleTextChange}
+                label={textFieldLabel1}
+                value={inputValue1}
+                onChangeText={handleTextChange1}
               />
             </View>
 
-            <View className='ml-2 mb-5 rounded-lg bg-[#9CD87E] border-2 border-lime-800'>
+            <View className='mt-5 ml-2 mb-5'>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question2}</ThemedText>
               <TextField
                 label={textFieldLabel2}
-                value={inputValue}
-                onChangeText={handleTextChange}
+                value={inputValue2}
+                onChangeText={handleTextChange2}
               />
             </View>
 

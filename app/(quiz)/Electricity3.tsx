@@ -8,20 +8,19 @@ const Electricity3 = () => {
     const router = useRouter();
 
     const category="Electricity";
-    const question="What is the annual electricity production of your solar panels, whether consumed by you or fed back into the grid? ";
+    const question1="What is the annual electricity production of your solar panels, whether consumed by you or fed back into the grid? ";
     const answers=[
         '1000 kWh',
         '2000 kWh',
         '4000 kWh',
-        '4000 kWh', 
     ]
-    const textFieldLabel1 = "User input";
-
-    const textFieldLabel2 = "No statement? Enter your installed capacity here."
+    const question2="No statement? \nHow many panels do you have installed?"
+    const textFieldLabel1 = "Please specify your consumption";
+    const textFieldLabel2 = "Enter your installed capacity here";
 
     const onNext = () => {
         console.log('Next button pressed');
-        router.push('/(tabs)/Home');
+        router.push('/Electricity4');
         };
 
     const onBack = () => {
@@ -34,7 +33,8 @@ const Electricity3 = () => {
             <ScrollView>
                 <Template7
                 category={category}
-                question={question}
+                question1={question1}
+                question2={question2}
                 answers={answers}
                 textFieldLabel1={textFieldLabel1}
                 textFieldLabel2={textFieldLabel2}

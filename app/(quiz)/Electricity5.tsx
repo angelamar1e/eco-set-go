@@ -8,9 +8,10 @@ const Electricity5 = () => {
     const router = useRouter();
 
     const category="Electricity";
-    const question="What is your household's annual electricity consumption from the grid? \n (Excluding consumption using your solar panels)";
+    const question1="What is your household's annual electricity consumption from the grid? (Excluding consumption using your solar panels)";
+    const question2="No invoice? \nEnter your approximate monthly expenditure."
     const textFieldLabel1 = "User input";
-    const textFieldLabel2 = "No invoice? Enter your approximate monthly expenditure."
+    const textFieldLabel2 = "Enter your approximate monthly expenditure."
 
     const onNext = () => {
         console.log('Next button pressed');
@@ -27,7 +28,8 @@ const Electricity5 = () => {
             <ScrollView>
                 <Template8
                 category={category}
-                question={question}
+                question1={question1}
+                question2={question2}
                 textFieldLabel1={textFieldLabel1}
                 textFieldLabel2={textFieldLabel2}
                 onNext={onNext}

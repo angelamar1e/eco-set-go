@@ -15,7 +15,7 @@ const Electricity2 = () => {
         ];
     const onNext = () => {
         console.log('Next button pressed');
-        router.push('/(tabs)/Home');
+        router.push('/(quiz)/Electricity3');
         };
 
     const onBack = () => {
