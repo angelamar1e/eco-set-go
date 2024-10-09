@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { FC, useContext } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
+import { QuestionProps } from '@/types/QuizProps';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { TransportEmission } from '@/constants/DefaultValues';
 
-const Transportation11 = () => {
-    
-
-    // Template 2 states and handlers
+const Transportation11: FC<QuestionProps> = ({ question, choices }) => {
     const category = "Transportation";
-    const question2 = "Over a year, how many hours do you travel on flights on more than 6 hours (large-haul)?";
-    const answers2 = ['Zero', 'Manila -> Chennai', 'Manila -> Dubai', 'Manila -> Auckland, NZ', 'Manila -> New York'];
     const textFieldLabel2 = "hrs";
+
+    const {setLongHaul} = useContext(EmissionsContext);
+
+    const updateFlightDuration = (newDuration: string | number) => {
+        setLongHaul((prevShortHaul: any) => ({
+          ...prevShortHaul, // Spread the previous state to keep other properties unchanged
+          flightDuration: newDuration, // Update only the flightDuration
+        }));
+      };
 
     const handleNext = () => {
         console.log('Next button pressed');
@@ -22,14 +29,16 @@ const Transportation11 = () => {
     };
 
     return (
-        <ThemedView className='flex-1 p-4'>
+        <ThemedView className="px-4">
             <Template2
                 category={category}
-                question={question2}
-                choices={answers2}
+                question={question}
+                choices={choices}
+                defaultValue={TransportEmission.Airplane.longHaul.duration}
                 textFieldLabel={textFieldLabel2}
                 onBack={handleBack}
                 onNext={handleNext}
+                onAnswer={updateFlightDuration}
                 showBackButton={true} 
             />
         </ThemedView>
