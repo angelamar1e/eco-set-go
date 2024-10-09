@@ -6,29 +6,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { RadioChoices } from "@/app/components/quiz/RadioChoices";
 import { ThemedView } from "@/components/ThemedView";
 import { Text } from "react-native-paper";
+import { TemplateProps } from "@/types/QuizProps";
 
-interface Template3BaseProps {
-  category: string;
-  question: string;
-  onNext: () => void;
-  onBack?: () => void;
-  showBackButton?: boolean;
-  onAnswer: (answer: string | number) => void;
-}
-
-interface stringChoiceValues extends Template3BaseProps {
-  choices: Map<string, string>;
-  defaultValue: string;
-}
-
-interface numberChoiceValues extends Template3BaseProps {
-  choices: Map<string, number>;
-  defaultValue: number;
-}
-
-type Template3Props = stringChoiceValues | numberChoiceValues;
-
-export const Template3: FC<Template3Props> = ({
+export const Template3: FC<TemplateProps> = ({
   category,
   question,
   choices,

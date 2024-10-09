@@ -6,20 +6,9 @@ import { QuestionContainer } from "./QuestionContainer";
 import { PresetChoices } from "./PresetChoices";
 import { TextField } from "./TextField";
 import { NavigationButtons } from "./NavigationButtons";
+import { TemplateProps } from "@/types/QuizProps";
 
-interface Template2Props {
-  category: string;
-  question: string;
-  choices?: Map<string, number>;
-  textFieldLabel: string;
-  defaultValue: number;
-  onNext: () => void;
-  onBack?: () => void;
-  showBackButton?: boolean;
-  onAnswer: (answer: number) => void; 
-}
-
-export const Template2: FC<Template2Props> = ({
+export const Template2: FC<TemplateProps> = ({
   category,
   question,
   choices: choices,
