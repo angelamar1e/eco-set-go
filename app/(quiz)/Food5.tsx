@@ -18,7 +18,7 @@ const HardDrinks = () => {
 
     const onNext = () => {
         console.log('Next button pressed');
-        // router.push('/(quiz)/HardDrinks'); //commented for the mean time
+        router.push('/(quiz)/Food6')
         };
 
     const onBack = () => {
