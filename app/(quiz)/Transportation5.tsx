@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import {Template3} from '../components/quiz/Template3';
 import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
+import { QuestionProps } from '@/types/QuizProps';
+import { TransportEmission } from '@/constants/DefaultValues';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
 
-const Transportation5 = () => {
-    
-
+const Transportation5: FC<QuestionProps> = ({ question, choices }) => {
     const category = "Transportation";
-    const question3 = "What type of car do you use?";
-    const answer3 = [
-        'Thermal (diesel/petrol)',
-        'Hybrid',
-        'Electric',
-    ];
+
+    const {setConstructionScale} = useContext(EmissionsContext);
+
     const handleNext = () => {
         console.log('Next button pressed');
         router.push("/(quiz)/Transportation6");
@@ -23,13 +21,15 @@ const Transportation5 = () => {
     };
 
     return(
-        <ThemedView className='flex-1 px-4'>
+        <ThemedView className="px-4">
             <Template3
                 category={category}
-                question={question3}
-                answer={answer3}
+                question={question}
+                choices={choices}
+                defaultValue={TransportEmission.Car.constructionScale}
                 onNext={handleNext}
                 onBack={handleBack}
+                onAnswer={setConstructionScale}
                 showBackButton={true}
             />
         </ThemedView>

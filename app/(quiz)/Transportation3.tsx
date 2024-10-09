@@ -25,7 +25,7 @@ const Transportation3: FC<Question3Props> = ({ question, choices }) => {
     };
 
     return(
-        <ThemedView className='flex-1 px-4'>
+        <ThemedView className="px-4">
             <Template3
                 category={category}
                 question={question}

@@ -5,9 +5,12 @@ import { router } from 'expo-router';
 import { QuestionProps } from '@/types/QuizProps';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { TransportEmission } from '@/constants/DefaultValues';
+import { Text } from 'react-native-paper';
 
 const Transportation2: FC<QuestionProps> = ({ question, choices }) => {
     const { setNumOfPassengers } = useContext(EmissionsContext);
+
+    console.log();
 
     const category = "Transporation";
     const textFieldLabel = "persons";
@@ -22,7 +25,7 @@ const Transportation2: FC<QuestionProps> = ({ question, choices }) => {
     };
 
     return (
-        <ThemedView className='flex-1 px-4'>
+        <ThemedView className='px-4'>
             <Template2
                 category={category}
                 question={question}

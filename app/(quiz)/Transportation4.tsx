@@ -6,10 +6,15 @@ import { QuestionProps } from '@/types/QuizProps';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 
-const Transportation4: FC<QuestionProps> = ({ question, choices }) => {
+interface Question3Props{
+    question: string,
+    choices: Map<string, number>
+}
+
+const Transportation4: FC<Question3Props> = ({ question, choices }) => {
     const category = "Transportation";
 
-    const {setLifespanInKm} = useContext(EmissionsContext);
+    const {setLifeSpanInKm} = useContext(EmissionsContext);
 
     const handleNext = () => {
         console.log('Next button pressed');
@@ -21,7 +26,7 @@ const Transportation4: FC<QuestionProps> = ({ question, choices }) => {
     };
 
     return(
-        <ThemedView className='flex-1 px-4'>
+        <ThemedView className="px-4">
             <Template3
                 category={category}
                 question={question}
@@ -29,8 +34,8 @@ const Transportation4: FC<QuestionProps> = ({ question, choices }) => {
                 defaultValue={TransportEmission.Car.lifeSpan}
                 onNext={handleNext}
                 onBack={handleBack}
-                onAnswer={setLifespanInKm}
                 showBackButton={true}
+                onAnswer={setLifeSpanInKm}
             />
         </ThemedView>
     )

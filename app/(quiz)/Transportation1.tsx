@@ -19,7 +19,7 @@ const Transportation1: FC<QuestionProps> = ({ question, choices }) => {
   };
 
   return (
-    <ThemedView className="flex-1 p-4">
+    <ThemedView className="px-4">
       <Template2
         category={category}
         question={question}
