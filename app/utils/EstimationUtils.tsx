@@ -1,22 +1,26 @@
 import { TransportEmission } from '@/constants/DefaultValues';
 
-export function computeCarEmissions({
-    efPerKm = TransportEmission.Car.efPerKm,
-    kmTravelled = TransportEmission.Car.kmTravelled,
-    constructionScale = TransportEmission.Car.constructionScale,
-    lifeSpanInKm = TransportEmission.Car.lifeSpan, 
-    footprintPerLiter = TransportEmission.Car.footprintPerLiter,
-    consumptionPerKm = TransportEmission.Car.consumptionPerKm, 
-    numOfPassengers = TransportEmission.Car.numOfPassengers,
-    user = TransportEmission.Car.user
-} = {}): number
+export function computeCarEmissions(
+    efPerKm: number,
+    kmTravelled: number, 
+    constructionScale: number,
+    lifeSpanInKm : number,
+    footprintPerLiter: number,
+    consumptionPerKm: number,
+    numOfPassengers: number,
+    user: string)
 {
+    let carEmission: number;
+
+    if (kmTravelled == 0){
+        return carEmission = 0;
+    }
+    
     efPerKm = consumptionPerKm * footprintPerLiter;
     let amortization: number = 1 / lifeSpanInKm;
     let constructionPerKm: number = constructionScale * amortization;
     let thresholdKm: number = lifeSpanInKm / 20;
     let manufacture: number;
-    let carEmission: number;
 
     switch (user) {
         case 'owner': 
