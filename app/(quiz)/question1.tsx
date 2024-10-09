@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native-gesture-handler";
 import { View } from "react-native";
-import { SuggestedAnswers } from "../components/quiz/SuggestedAnswers";
+import { PresetChoices } from "../components/quiz/PresetChoices";
 import { QuestionContainer } from "../components/quiz/QuestionContainer";
 import { Text, TextInput } from "react-native-paper";
 import Calculator from "../components/quiz/Calculator";
@@ -12,9 +12,6 @@ import firestore from '@react-native-firebase/firestore';
 
 const Question1 = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [numericValue, setNumericValue] = useState<number>(0);
   const [choices, setChoices] = useState(null);
   const [question, setQuestion] = useState<string>("");
 
@@ -54,21 +51,6 @@ const Question1 = () => {
             <Text key={key}>{key}</Text>
           )) : <Text> Loading... </Text>}
         </View>
-
-        <TextInput
-          mode="flat"
-          placeholder="0"
-          keyboardType="numeric"
-          outlineColor="green"
-          activeOutlineColor="green"
-          onChangeText={setInputValue}
-          // onBlur={handleBlur}s
-          value={inputValue}
-          className="m-3"
-        />
-        <Text className="m-3">km / year</Text>
-
-        <Link href="/(quiz)/" className="text-blue-600 text-right mr-5"> → Go to questions templates</Link>
       </ScrollView>
     </ThemedView>
   );

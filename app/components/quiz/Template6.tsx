@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
-import { SuggestedAnswers } from './SuggestedAnswers';
+import { PresetChoices } from './PresetChoices';
 import { CheckboxChoices } from './Checkbox'; 
 import { NavigationButtons } from './NavigationButtons';
 
@@ -55,7 +55,7 @@ const Template6: FC<Template6Props> = ({
         {/* Suggested Answers */}
         <View className="flex-row flex-wrap justify-left mb-3">
           {answers.map((answer) => (
-            <SuggestedAnswers
+            <PresetChoices
               key={answer}
               title={answer}
               isSelected={selectedAnswer === answer}
