@@ -1,27 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import Question1 from './question1';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Button } from 'react-native';
+import { QuizContext } from '@/contexts/QuizContext';
+import Calculator from '../components/quiz/Calculator';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { components } from '../../constants/QuestionComponents';
+import { skipConditions } from '@/constants/SkipConditions';
 
 const QuizIndex = () => {
-    const components = [Question1]
-
-    // State to track which component is currently shown
+  const { questionDocumentIds, questionCollection } = useContext(QuizContext);
+  const { kmTravelled } = useContext(EmissionsContext);
+  
+  const [question, setQuestion] = useState<string>('');
+  const [choices, setChoices] = useState<Map<string, number> & Map<string, string>>(new Map());
   const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
+  
+  // Fetch the question based on currentComponentIndex
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      const currentQuestionId = questionDocumentIds[currentComponentIndex];
+      if (currentQuestionId) {
+        try {
+          const snapshot = await questionCollection.doc(currentQuestionId).get();
+          if (snapshot.exists) {
+            const questionData = snapshot.data();
+            setQuestion(questionData.question);
+            setChoices(questionData.choices || new Map());
+          } else {
+            console.log('No document found for this question');
+          }
+        } catch (error) {
+          console.error('Error fetching document:', error);
+        }
+      }
+    };
+    
+    fetchQuestion();
+  }, [currentComponentIndex, questionDocumentIds, questionCollection]);
 
-  // Function to go to the next component
+    // Function to determine how many steps to skip based on conditions
+  const determineSkipSteps = () => {
+    let skipSteps = 1;  // Default to advancing one step if no condition is met
+
+    // Loop through the conditions and find the number of steps to skip if the condition is met
+    for (const { condition, skipSteps: steps } of skipConditions) {
+      console.log("updated km: ",kmTravelled)
+      if (condition(kmTravelled)) { 
+        skipSteps = steps || 1;  // Use the skipSteps from the condition, or default to 1
+        break;
+      }
+    }
+
+    return skipSteps;
+  };
+
+  // Move to the next component, taking skip logic into account
   const goToNextComponent = () => {
-    if (currentComponentIndex < components.length - 1) {
-      setCurrentComponentIndex(currentComponentIndex + 1);
+    const skipSteps = determineSkipSteps();
+    const newIndex = currentComponentIndex + skipSteps;
+
+    // Ensure the new index does not exceed available components
+    if (newIndex < components.length) {
+      setCurrentComponentIndex(newIndex);
     } else {
-      console.log('No more components'); // Optionally handle the end of the array
+      console.log('No more components');
     }
   };
 
-  return (
-      <View>
-      {components[currentComponentIndex]()}
+  // Dynamically render the current component based on currentComponentIndex
+  const CurrentComponent = components[currentComponentIndex];
 
-      <Button title="Next Component" onPress={goToNextComponent} />
+  return (
+    <View className="flex-1 p-4">
+      <Calculator/>
+      {/* Render the current component with props */}
+      <CurrentComponent question={question} choices={choices} />
+      <Button title="Next" onPress={goToNextComponent} />
     </View>
   );
 };
