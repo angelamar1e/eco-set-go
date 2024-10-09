@@ -26,7 +26,7 @@ const Transportation14 = () => {
             <Template2
                 category={category}
                 question={question2}
-                answers={answers2}
+                choices={answers2}
                 textFieldLabel={textFieldLabel2}
                 onBack={handleBack}
                 onNext={handleNext}

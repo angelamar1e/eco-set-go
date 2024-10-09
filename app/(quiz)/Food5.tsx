@@ -32,7 +32,7 @@ const HardDrinks = () => {
                 <Template2
                 category={category}
                 question={question}
-                answers={answers}
+                choices={answers}
                 textFieldLabel={textFieldLabel}
                 onNext={onNext}
                 onBack={onBack}
