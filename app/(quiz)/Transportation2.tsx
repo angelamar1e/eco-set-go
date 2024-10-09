@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
+import { QuizProps } from '@/types/QuizProps';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { TransportEmission } from '@/constants/DefaultValues';
 
+const Transportation2: FC<QuizProps> = ({ question, choices }) => {
+    const { setNumOfPassengers } = useContext(EmissionsContext);
 
-const Transportation2 = () => {
-    const router = useRouter();
-
-    // Template 2 states and handlers
     const category = "Transporation";
-    const question2 = "What is the average number of passengers in the car?";
-    const answers2 = ['Only one', 'Two', 'Five'];
-    const textFieldLabel2 = " ";
+    const textFieldLabel = "persons";
 
     const handleNext = () => {
         console.log('Next button pressed');
@@ -26,12 +25,14 @@ const Transportation2 = () => {
         <ThemedView className='flex-1 px-4'>
             <Template2
                 category={category}
-                question={question2}
-                answers={answers2}
-                textFieldLabel={textFieldLabel2}
+                question={question}
+                choices={choices}
+                textFieldLabel={textFieldLabel}
+                defaultValue={TransportEmission.Car.numOfPassengers}
                 onNext={handleNext}
                 onBack={handleBack}
                 showBackButton={true}
+                onAnswer={setNumOfPassengers}
             />
         </ThemedView>
     )
