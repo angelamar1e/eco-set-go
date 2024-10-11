@@ -1,14 +1,14 @@
-import React, { FC, useContext, useEffect, useState, } from 'react';
+import React, { useContext, useEffect, useState, FC } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { QuestionProps } from '@/types/QuizProps';
-import { EmissionsContext } from '@/contexts/EmissionsContext';
 
 // Use FC with the props interface
 const Transportation1: FC<QuestionProps> = ({ question, choices }) => {
-  const {setKmTravelled} = useContext(EmissionsContext);
+  const { setKmTravelled } = useContext(EmissionsContext);
 
   const category = 'Transportation';
   const textFieldLabel = 'km/year';
@@ -26,6 +26,7 @@ const Transportation1: FC<QuestionProps> = ({ question, choices }) => {
         choices={choices}
         textFieldLabel={textFieldLabel}
         defaultValue={TransportEmission.Car.kmTravelled}
+        onNext={handleNext}
         showBackButton={false}
         onAnswer={setKmTravelled}
       />

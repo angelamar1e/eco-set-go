@@ -14,6 +14,8 @@ export const Template2: FC<TemplateProps> = ({
   choices: choices,
   textFieldLabel,
   defaultValue,
+  onNext,
+  onBack,
   showBackButton = true,
   onAnswer
 }) => {

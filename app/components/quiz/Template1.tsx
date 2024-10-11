@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Button } from 'react-native';
+import { router } from "expo-router";
 
 const QuizScreen = () => {
 
   const goToSampleQuestion = () => {
-    // router.push("/(quiz)/SampleQuestion");
+    router.push("/(quiz)/SampleQuestion");
   };
 
   return (

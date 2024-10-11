@@ -9,6 +9,8 @@ export interface TemplateProps {
     question: string;
     choices?: Map<string, string> | Map<string, number>;
     defaultValue: string | number | boolean;
+    onNext: () => void;
+    onBack?: () => void;
     onAnswer: (answer: string | number) => void;
     showBackButton?: boolean;
 }
