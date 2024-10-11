@@ -12,11 +12,11 @@ interface Template7Props {
     question1: string;
     question2: string;
     answers: string[];
-    textFieldLabel1: string;
-    textFieldLabel2: string;
     onNext: () => void;         
     onBack?: () => void;        
     showBackButton?: boolean;  
+    unit1: string;
+    unit2:string;
   }
 
 export const Template7: FC<Template7Props> = ({
@@ -24,11 +24,11 @@ export const Template7: FC<Template7Props> = ({
     question1,
     question2,
     answers,
-    textFieldLabel1,
-    textFieldLabel2,
     onNext,
     onBack,
     showBackButton = true, 
+    unit1,
+    unit2,
 }) => {
  
   // State to manage selected answer
@@ -76,18 +76,18 @@ export const Template7: FC<Template7Props> = ({
             {/* Text Fields */}
             <View className='ml-2 mb-5'>
               <TextField
-                label={textFieldLabel1}
                 value={inputValue1}
                 onChangeText={handleTextChange1}
+                unit={unit1}
               />
             </View>
 
             <View className='mt-5 ml-2 mb-5'>
             <ThemedText type="default" className='text-black text-[20px] mb-3'>{question2}</ThemedText>
               <TextField
-                label={textFieldLabel2}
                 value={inputValue2}
                 onChangeText={handleTextChange2}
+                unit={unit2}
               />
             </View>
 

@@ -10,8 +10,8 @@ const Electricity5 = () => {
     const category="Electricity";
     const question1="What is your household's annual electricity consumption from the grid? (Excluding consumption using your solar panels)";
     const question2="No invoice? \nEnter your approximate monthly expenditure."
-    const textFieldLabel1 = "kWh";
-    const textFieldLabel2 = "₱"
+    const unit1="kWh"
+    const unit2="pesos"
 
     const onNext = () => {
         console.log('Next button pressed');
@@ -30,11 +30,11 @@ const Electricity5 = () => {
                 category={category}
                 question1={question1}
                 question2={question2}
-                textFieldLabel1={textFieldLabel1}
-                textFieldLabel2={textFieldLabel2}
                 onNext={onNext}
                 onBack={onBack}
                 showBackButton={true}
+                unit1={unit1}
+                unit2={unit2}
                 />
             </ScrollView>
         </ThemedView>

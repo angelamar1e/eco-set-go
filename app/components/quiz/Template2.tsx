@@ -11,20 +11,20 @@ interface Template2Props {
     category: string;
     question: string;
     answers: string[];
-    textFieldLabel: string;
     onNext: () => void;         
     onBack?: () => void;        
     showBackButton?: boolean;  
+    unit: string;
   }
 
 export const Template2: FC<Template2Props> = ({
     category,
     question,
     answers,
-    textFieldLabel,
     onNext,
     onBack,
     showBackButton = true, 
+    unit,
 }) => {
  
   // State to manage selected answer
@@ -64,9 +64,9 @@ export const Template2: FC<Template2Props> = ({
             {/* Text Fields */}
             <View className='ml-2 mb-5'>
               <TextField
-                label={textFieldLabel}
                 value={inputValue}
                 onChangeText={handleTextChange}
+                unit={unit}
               />
             </View>
 
