@@ -10,22 +10,22 @@ interface Template8Props {
     category: string;
     question1: string;
     question2: string;
-    textFieldLabel1: string;
-    textFieldLabel2: string;
     onNext: () => void;         
     onBack?: () => void;        
-    showBackButton?: boolean;  
+    showBackButton?: boolean; 
+    unit1: string; 
+    unit2: string;
   }
 
 export const Template8: FC<Template8Props> = ({
     category,
     question1,
     question2,
-    textFieldLabel1,
-    textFieldLabel2,
     onNext,
     onBack,
     showBackButton = true, 
+    unit1,
+    unit2,
 }) => {
 
   // State to manage the input value in the TextField
@@ -53,18 +53,18 @@ export const Template8: FC<Template8Props> = ({
             {/* Text Fields */}
             <View className='ml-2 mb-5'>
               <TextField
-                label={textFieldLabel1}
                 value={inputValue1}
                 onChangeText={handleTextChange1}
+                unit={unit1}
               />
             </View>
 
             <View className='mt-5 ml-2 mb-5'>
             <ThemedText type="default" className='text-black text-[20px] mb-3'>{question2}</ThemedText>
               <TextField
-                label={textFieldLabel2}
                 value={inputValue2}
                 onChangeText={handleTextChange2}
+                unit={unit2}
               />
             </View>
 

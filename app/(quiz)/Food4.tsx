@@ -14,7 +14,7 @@ const Food4 = () => {
         'Daily',
         'Twice a week',
     ]
-    const textFieldLabel = "Please specify your consumption";
+    const unit="liters";
 
     const onNext = () => {
         console.log('Next button pressed');
@@ -33,10 +33,10 @@ const Food4 = () => {
                 category={category}
                 question={question}
                 answers={answers}
-                textFieldLabel={textFieldLabel}
                 onNext={onNext}
                 onBack={onBack}
                 showBackButton={true}
+                unit={unit}
                 />
             </ScrollView>
         </ThemedView>
