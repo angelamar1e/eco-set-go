@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
-import { SuggestedAnswers } from './SuggestedAnswers';
+import { PresetChoices } from './PresetChoices';
 import Stepper from './Stepper';
 import { NavigationButtons } from './NavigationButtons';
 
@@ -13,9 +13,6 @@ interface Template5Props {
     answers: string[];
     stepperTitle: string[];
     stepperInitialValue: number;
-    onNext: () => void;         
-    onBack?: () => void;        
-    showBackButton?: boolean;
 }
 
 const Template5: FC<Template5Props> = ({
@@ -24,9 +21,6 @@ const Template5: FC<Template5Props> = ({
     answers,
     stepperTitle,
     stepperInitialValue,
-    onNext,
-    onBack,
-    showBackButton = true,
 }) => {
     // State to manage the selected answer
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -55,7 +49,7 @@ const Template5: FC<Template5Props> = ({
                 {/* Suggested Answers */}
                 <View className="flex-row flex-wrap justify-left mb-3">
                     {answers.map((answer) => (
-                        <SuggestedAnswers
+                        <PresetChoices
                             key={answer}
                             title={answer}
                             isSelected={selectedAnswer === answer}
@@ -74,25 +68,6 @@ const Template5: FC<Template5Props> = ({
                             onChange={(value) => handleStepperChange(index, value)} // Pass the index
                         />
                     ))}
-                </View>
-
-                {/* Navigation Button */}
-                <View className='flex-row justify-center mt-4'>
-                    {showBackButton && (
-                        <NavigationButtons
-                            title="Back"
-                            variant="secondary"
-                            onPress={onBack}
-                        />
-                    )}
-                    <NavigationButtons
-                        title="Next"
-                        variant="primary"
-                        onPress={() => {
-                            console.log('Next button pressed');
-                            onNext();
-                        }}
-                    />
                 </View>
             </QuestionContainer>
         </ThemedView>

@@ -1,36 +1,26 @@
-import React from 'react';
+import React, { FC, useContext } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
+import { QuestionProps } from '@/types/QuizProps';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { TransportEmission } from '@/constants/DefaultValues';
 
-const Transportation7 = () => {
-    const router = useRouter();
-
-    // Template 2 states and handlers
+const Transportation7: FC<QuestionProps> = ({ question, choices }) => {
     const category = "Transportation";
-    const question2 = "Do you know the average fuel consumption of the car?";
-    const answers2 = ['5l/100 km', '7l/100km', '9l/100km'];
-    const textFieldLabel2 = "0l/0km";
+    const unit = 'l/km'
+    const {setConsumptionPerKm} = useContext(EmissionsContext);
 
-    const handleNext = () => {
-        console.log('Next button pressed');
-        router.push("/(quiz)/Transportation8");    
-    };
-
-    const handleBack = () => {
-        router.push("/(quiz)/Transportation6")
-    };
 
     return (
-        <ThemedView className='flex-1 p-4'>
+        <ThemedView className="px-4">
             <Template2
                 category={category}
-                question={question2}
-                answers={answers2}
-                textFieldLabel={textFieldLabel2}
-                onBack={handleBack}
-                onNext={handleNext}
-                showBackButton={true} 
+                question={question}
+                choices={choices}
+                defaultValue={TransportEmission.Car.consumptionPerKm}
+                unit={unit}
+                onAnswer={setConsumptionPerKm}
             />
         </ThemedView>
     )

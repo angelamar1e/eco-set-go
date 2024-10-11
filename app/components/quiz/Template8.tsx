@@ -4,28 +4,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { TextField } from './TextField';
-import { NavigationButtons } from './NavigationButtons';
+import { TemplateProps } from "@/types/QuizProps";
 
-interface Template8Props {
-    category: string;
-    question1: string;
-    question2: string;
-    onNext: () => void;         
-    onBack?: () => void;        
-    showBackButton?: boolean; 
-    unit1: string; 
-    unit2: string;
-  }
-
-export const Template8: FC<Template8Props> = ({
+export const Template8: FC<TemplateProps> = ({
     category,
-    question1,
+    question,
     question2,
-    onNext,
-    onBack,
-    showBackButton = true, 
-    unit1,
-    unit2,
+    unit,
+    onAnswer,
 }) => {
 
   // State to manage the input value in the TextField
@@ -44,18 +30,28 @@ export const Template8: FC<Template8Props> = ({
     setInputValue2(text);
     };
 
+  // Handle blur event for the input fields
+  const handleBlur = () => {
+    const parsedInput1 = parseInt(inputValue1, 10) || 0;  // Convert to number or default to 0
+    const parsedInput2 = parseInt(inputValue2, 10) || 0;  // Convert to number or default to 0
+  
+    // Call onAnswer with the combined results of both inputs (or adjust logic as needed)
+    onAnswer(parsedInput1 + parsedInput2); 
+    };
+
     return (
       <ThemedView className="flex-1 px-6">
         <QuestionContainer>
             <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
-            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question1}</ThemedText>
+            <ThemedText type="default" className='text-black text-[20px] mb-3'>{question}</ThemedText>
 
             {/* Text Fields */}
             <View className='ml-2 mb-5'>
               <TextField
                 value={inputValue1}
                 onChangeText={handleTextChange1}
-                unit={unit1}
+                unit={unit}
+                onBlur={handleBlur}
               />
             </View>
 
@@ -64,27 +60,9 @@ export const Template8: FC<Template8Props> = ({
               <TextField
                 value={inputValue2}
                 onChangeText={handleTextChange2}
-                unit={unit2}
+                unit={unit}
+                onBlur={handleBlur}
               />
-            </View>
-
-            {/* Navigation Button */}
-            <View className='flex-row justify-center mt-4'>
-              {showBackButton && (
-                <NavigationButtons
-                  title="Back"
-                  variant="secondary"
-                  onPress={onBack}
-                />
-              )}
-                <NavigationButtons
-                  title="Next"
-                  variant="primary"
-                  onPress={() => {
-                  console.log('Next button pressed');
-                  onNext();
-              }}
-                />
             </View>
         </QuestionContainer>
       </ThemedView>

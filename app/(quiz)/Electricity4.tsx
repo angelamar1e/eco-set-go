@@ -1,11 +1,9 @@
 import React from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useRouter } from "expo-router";
 import Template2 from '../components/quiz/Template2';
 
-const Electricity3 = () => {
-    const router = useRouter();
+const Electricity4 = () => {
 
     const category="Electricity";
     const question="How much electricity do you consume from solar panels?";
@@ -14,17 +12,7 @@ const Electricity3 = () => {
         'Half of my production',
         'I consume 100% of what I produce',
     ]
-    const textFieldLabel = "Please specify your exact consumption percentage";
-
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Electricity5');
-        };
-
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
-    };
+    const unit = "Please specify your exact consumption percentage";
 
     return (
         <ThemedView className="flex-1 px-4">
@@ -32,15 +20,16 @@ const Electricity3 = () => {
                 <Template2
                 category={category}
                 question={question}
-                answers={answers}
-                textFieldLabel={textFieldLabel}
-                onNext={onNext}
-                onBack={onBack}
-                showBackButton={true}
+                choices={answers}
+                unit={unit}
+                defaultValue={''}                                        // to avoid errors
+                onAnswer={function (answer: string | number): void {    
+                    throw new Error('Function not implemented.');
+                } } 
                 />
             </ScrollView>
         </ThemedView>
     );
 };
 
-export default Electricity3;
+export default Electricity4;

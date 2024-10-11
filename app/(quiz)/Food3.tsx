@@ -1,11 +1,10 @@
 import React from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useRouter } from "expo-router";
 import Template5 from '../components/quiz/Template5';
 
-const Food3 = () => {
-    const router = useRouter();
+const HotDrinks = () => {
+    
 
     const category = "Drinks";
     const question = "How many cups of hot drinks do you drink in a day? ";
@@ -23,18 +22,9 @@ const Food3 = () => {
     ];
     const stepperInitialValue = 0;
 
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Food4');
-    };
-
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
-    };
 
     return (
-        <ThemedView className="flex-1 px-4">
+        <ThemedView className="px-4">
             <ScrollView>
                 <Template5
                     category={category}
@@ -42,13 +32,10 @@ const Food3 = () => {
                     answers={answers}
                     stepperTitle={stepperTitle}
                     stepperInitialValue={stepperInitialValue}
-                    onNext={onNext}
-                    onBack={onBack}
-                    showBackButton={true}
                 />
             </ScrollView>
         </ThemedView>
     );
 };
 
-export default Food3;
+export default HotDrinks;

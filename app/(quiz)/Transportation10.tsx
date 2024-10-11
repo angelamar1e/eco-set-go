@@ -1,36 +1,32 @@
-import React from 'react';
+import React, { FC, useContext } from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
+import { QuestionProps } from '@/types/QuizProps';
+import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { TransportEmission } from '@/constants/DefaultValues';
 
-const Transportation10 = () => {
-    const router = useRouter();
-
-    // Template 2 states and handlers
+const Transportation10: FC<QuestionProps> = ({ question, choices }) => {
     const category = "Transportation";
-    const question2 = "Over a year, how many hours do you travel on flights between 2 and 6 hours (medium-haul)?";
-    const answers2 = ['Zero', 'Manila -> Davao', 'Manila -> Hongkong', 'Manila -> Bangkok', 'Manila -> Seoul'];
-    const textFieldLabel2 = "hrs";
+    const unit = "hrs";
 
-    const handleNext = () => {
-        console.log('Next button pressed');
-        router.push("/(quiz)/Transportation11");    
-    };
+    const {setMediumHaul} = useContext(EmissionsContext);
 
-    const handleBack = () => {
-        router.push("/(quiz)/Transportation9")
-    };
+    const updateFlightDuration = (newDuration: string | number) => {
+        setMediumHaul((prevShortHaul: any) => ({
+          ...prevShortHaul, // Spread the previous state to keep other properties unchanged
+          flightDuration: newDuration, // Update only the flightDuration
+        }));
+      };
 
     return (
-        <ThemedView className='flex-1 p-4'>
+        <ThemedView className="px-4">
             <Template2
                 category={category}
-                question={question2}
-                answers={answers2}
-                textFieldLabel={textFieldLabel2}
-                onBack={handleBack}
-                onNext={handleNext}
-                showBackButton={true} 
+                question={question}
+                choices={choices}
+                defaultValue={TransportEmission.Airplane.mediumHaul.duration}
+                onAnswer={updateFlightDuration}
+                unit={unit}
             />
         </ThemedView>
     )

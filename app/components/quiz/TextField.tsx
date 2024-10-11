@@ -6,11 +6,11 @@ import { ThemedText } from '@/components/ThemedText';
 interface TextFieldProps {
   value: string;
   onChangeText: (text: string) => void;
+  onBlur: () => void;
   unit: string;
 }
 
-
-export const TextField: FC<TextFieldProps> = ({value, onChangeText, unit}) => {
+export const TextField: FC<TextFieldProps> = ({unit, value, onChangeText, onBlur}) => {
 
   return (
       <View className="flex-row items-center">
@@ -24,6 +24,7 @@ export const TextField: FC<TextFieldProps> = ({value, onChangeText, unit}) => {
         theme={{
           roundness: 10,
         }}
+        onBlur={onBlur}
       />
       <ThemedText className="ml-4">{unit}</ThemedText>
       </View>

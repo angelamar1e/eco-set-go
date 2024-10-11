@@ -18,29 +18,21 @@ const Electricity3 = () => {
     const unit1="kWh"
     const unit2="panels"
 
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Electricity4');
-        };
-
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
-    };
     
     return (
         <ThemedView className="flex-1 px-4">
             <ScrollView>
                 <Template7
                 category={category}
-                question1={question1}
+                question={question1}
                 question2={question2}
-                answers={answers}
-                onNext={onNext}
-                onBack={onBack}
-                showBackButton={true}
-                unit1={unit1}
-                unit2={unit2}
+                choices={answers}
+                unit={unit1}
+                //unit2:{unit2}
+                defaultValue={''}                                        // to avoid errors
+                onAnswer={function (answer: string | number): void {    
+                    throw new Error('Function not implemented.');
+                } } 
                 />
             </ScrollView>
         </ThemedView>

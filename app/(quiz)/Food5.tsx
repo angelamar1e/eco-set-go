@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRouter } from "expo-router";
 import Template2 from '../components/quiz/Template2';
 
-const Food5 = () => {
-    const router = useRouter();
+const HardDrinks = () => {
+    
 
     const category="Drinks";
     const question="How often is your weekly consumption of alcohol? (wine, beer, etc.)";
@@ -16,14 +16,13 @@ const Food5 = () => {
     ]
     const unit="liters"
 
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Food6')
-        };
+    // Set up a default value and a state for the answer
+    const [defaultValue, setDefaultValue] = useState<string | number>(answers[0]);  // Assuming first choice is default
 
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
+    // Handle answer selection
+    const handleAnswer = (answer: string | number) => {
+        console.log('Selected answer:', answer);
+        setDefaultValue(answer);  // Update the default value after user selection
     };
 
     return (
@@ -32,15 +31,14 @@ const Food5 = () => {
                 <Template2
                 category={category}
                 question={question}
-                answers={answers}
-                onNext={onNext}
-                onBack={onBack}
-                showBackButton={true}
+                choices={answers}
                 unit={unit}
+                defaultValue={defaultValue}
+                onAnswer={handleAnswer} 
                 />
             </ScrollView>
         </ThemedView>
     );
 };
 
-export default Food5;
+export default HardDrinks;

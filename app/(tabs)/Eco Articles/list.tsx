@@ -31,9 +31,9 @@ const EcoActionsList = () => {
   const renderItem = ({ item }: { item: EcoAction }) => (
     <Card
       onPress={() => router.push(`components/(tabs)/Eco Articles/${item.id}`)}
-      className='m-1 ml-6 w-[350px] h-[150px] bg-white:transparent justify-end'
+      className='m-2 h-[150px] bg-white:transparent justify-end'
     >
-      <Card.Content className='mb-2 ml-2'>
+      <Card.Content className='mb-2'>
         <ThemedText type='default' className='text-[20px] text-lime-800 italic'>{item.title}</ThemedText>
       </Card.Content>
     </Card>
@@ -46,8 +46,8 @@ const EcoActionsList = () => {
     </Stack>
     <SafeAreaView className='flex-1 mt-3'>
         <View className='flex-1'>
-          <View className='bg-lime-800 h-1/4 rounded-b-3xl mb-4 justify-center items-center'>
-            <ThemedText type='subtitle' className='text-[28px] text-stone-300'>Eco Actions</ThemedText>
+          <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
+            <ThemedText type='subtitle' className='text-[28px] text-gray-100'>Eco Actions</ThemedText>
           </View>
           <FlatList
             data={ecoActions}

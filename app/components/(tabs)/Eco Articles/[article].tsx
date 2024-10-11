@@ -139,10 +139,10 @@ const EcoActionDetail = () => {
 
   return (
     <ThemedView className="flex-1 px-5">
-      <View className="bg-lime-800 mt-5 h-[80px] rounded-[25px] flex-row items-center justify-between pl-10">
-              <ThemedText className="font-bold text-2xl text-stone-300">
-                {actionDetail.title} </ThemedText>
-            <Button icon="note-plus" mode="contained" className="w-42 m-3 bg-transparent pt--2" onPress={handleAddToLog}>Add to Daily Log</Button>
+      <View className="flex-column">
+          <Text className="text-lime-800 mt-5 font-bold text-2xl">
+            {actionDetail.title} </Text>
+        <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end bg-lime-800" onPress={handleAddToLog}>Add to Daily Log</Button>
       </View>
 
       <View className="bg-white h-auto border-2 border-lime-800 bg-transparent rounded-[25px] mt-2">

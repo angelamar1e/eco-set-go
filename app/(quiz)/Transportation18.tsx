@@ -1,10 +1,9 @@
 import React from 'react';
 import Template2 from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
 
 const Transportation18 = () => {
-    const router = useRouter();
+    
 
     // Template 2 states and handlers
     const category = "Transportation";
@@ -12,27 +11,20 @@ const Transportation18 = () => {
     const answers2 = [
         'Twice a month * LRT-1 Baclaran to Gil Puyat', 
         'Twice a week  * LRT-2 Cubao to Pureza',];
-    const textFieldLabel2 = "km";
+    const unit = "km";
 
-    const handleNext = () => {
-        console.log('Next button pressed');
-        router.push("/(quiz)/Transportation19");    
-    };
-
-    const handleBack = () => {
-        router.push("/(quiz)/Transportation17")
-    };
 
     return (
-        <ThemedView className='flex-1 p-4'>
+        <ThemedView className='px-4'>
             <Template2
                 category={category}
                 question={question2}
-                answers={answers2}
-                textFieldLabel={textFieldLabel2}
-                onBack={handleBack}
-                onNext={handleNext}
-                showBackButton={true} 
+                choices={answers2}
+                unit={unit}
+                defaultValue={''}                                        // to avoid errors
+                onAnswer={function (answer: string | number): void {    
+                    throw new Error('Function not implemented.');
+                } } 
             />
         </ThemedView>
     )

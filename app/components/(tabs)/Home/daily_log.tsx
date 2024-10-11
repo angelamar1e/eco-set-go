@@ -98,6 +98,8 @@ const DailyLog: FC = () => {
     });
   }
 
+  
+
   // Handle Deleting an Action from Daily Log
   const handleDelete = async (actionId: string) => {
     await dailyLogDoc.update({
@@ -120,7 +122,7 @@ const DailyLog: FC = () => {
       )}
     >
       <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <Text className="text-lg">{item.title}</Text>
+        <Text className="text-lg text-gray-700">{item.title}</Text>
         <Checkbox
           status={
             completedActions.some((action) => action.id === item.id)
@@ -135,7 +137,7 @@ const DailyLog: FC = () => {
 
   return (
     <View className="bg-gray">
-      <ThemedText type="subtitle" className="text-left text-[28px] ml-6 mt-2 mb-4">Daily Log</ThemedText>
+      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">Daily Log</ThemedText>
       <FlatList
         data={dailyLog}
         renderItem={renderItem}
@@ -143,12 +145,13 @@ const DailyLog: FC = () => {
       />
 
       {/* Completed Actions Section */}
+      <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
       {completedActions.length > 0 ? (
         <FlatList
           data={completedActions}
           renderItem={({ item }) => (
             <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-              <ThemedText className="text-lg">{item.title}</ThemedText>
+              <ThemedText className="text-lg text-gray-700">{item.title}</ThemedText>
               <Checkbox
                 status={
                   completedActions.some((action) => action.id === item.id)

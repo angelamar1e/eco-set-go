@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Template3 } from '../components/quiz/Template3';
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native-gesture-handler";
-import { useRouter } from "expo-router";
 
-const Food1 = () => {
-    const router = useRouter();
+const BreakfastMeal = () => {
+    
 
     const category = "Meals";
     const question = "What kind of breakfast do you usually eat?";
@@ -17,14 +16,14 @@ const Food1 = () => {
         'Fruits', 
         'No Breakfast\n(Beverages, but not solid food)'
         ];
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Food2');
-        };
 
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
+    // Set up a temporary default value and a state for the answer
+    const [defaultValue, setDefaultValue] = useState<string | number>(answers[0]);  // Assuming first choice is default
+
+    // Handle answer selection
+    const handleAnswer = (answer: string | number) => {
+        console.log('Selected answer:', answer);
+        setDefaultValue(answer);  // Update the default value after user selection
     };
 
     return (
@@ -33,14 +32,14 @@ const Food1 = () => {
                 <Template3
                     category={category}
                     question={question}
-                    answer={answers}
-                    onNext={onNext}
-                    onBack={onBack}
-                    showBackButton={true}
+                    choices={answers}
+                    defaultValue={defaultValue}   
+                    onAnswer={handleAnswer}
+                    unit=''
                 />
             </ScrollView>
         </ThemedView>
     );
 };
 
-export default Food1;
+export default BreakfastMeal;
