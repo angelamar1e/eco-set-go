@@ -32,7 +32,7 @@ interface ImpactCalculatorProps {
       if (footprintDoc.exists) {
         const data = footprintDoc.data();
         setBaseFootprint(data?.overall_footprint || 0); // Set base footprint
-        console.log(`Base footprint fetched: ${data?.overall_footprint}`);
+
       }
     } catch (error) {
       console.error("Error fetching base footprint:", error);

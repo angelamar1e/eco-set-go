@@ -45,7 +45,6 @@ const QuizIndex = () => {
 
     // Loop through the conditions and find the number of steps to skip if the condition is met
     for (const { condition, skipSteps: steps } of skipConditions) {
-      console.log("updated km: ",kmTravelled)
       if (condition(kmTravelled)) { 
         skipSteps = steps || 1;  // Use the skipSteps from the condition, or default to 1
         break;
