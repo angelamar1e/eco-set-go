@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import {TextInput} from 'react-native-paper';
 
 interface TextFieldProps {
-  label: string;
+  label: string | undefined;
   value: string;
   onChangeText: (text: string) => void;
   onBlur: () => void;
