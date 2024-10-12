@@ -181,11 +181,13 @@ export const EmissionsProvider = ({ children }) => {
     setTrainEmissions(computeTrainEmissions(trainKmTravelled));
   }, [trainKmTravelled]);
 
+  // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
       carEmissions +
       airplaneTravelEmissions +
       twoWheelersEmissions +
-      efficientTravelEmissions
+      efficientTravelEmissions +
+      trainEmissions
   );
 
   useEffect(() => {
@@ -195,7 +197,8 @@ export const EmissionsProvider = ({ children }) => {
           carEmissions +
           airplaneTravelEmissions +
           twoWheelersEmissions +
-          efficientTravelEmissions;
+          efficientTravelEmissions +
+          trainEmissions;
         console.log("efficient:", efficientTravelEmissions);
         setOverallFootprint(newFootprint);
 
@@ -211,7 +214,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateOverallFootprint();
-  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions]);
+  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions, efficientTravelEmissions, trainEmissions]);
 
   return (
     <EmissionsContext.Provider
@@ -259,6 +262,10 @@ export const EmissionsProvider = ({ children }) => {
         setSelectedTransports,
         setEBikeKmTravelled,
         setSmallVehKmTravelled,
+        trainEmissions, 
+        trainKmTravelled, 
+        setTrainEmissions,
+        setTrainKmTravelled
       }}
     >
       {children}
