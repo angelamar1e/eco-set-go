@@ -58,9 +58,21 @@ export const TransportEmission = {
     efPerKm: 0.03479,
   },
   PublicTransport: {
-    busEFperKm: 3.48,
-    jeepneyEFperKm: 2.61,
-    tricycleEFperKm: 2.46,
-    hoursTravelled: 3.5
+    selectedPublicTransport: ['bus, jeepney, tricycle'],
+    bus: {
+      efPerKm: 3.48,
+      aveSpeed: 12,
+      hrsTravelled: 1
+    },
+    jeepney: {
+      efPerKm: 2.61,
+      aveSpeed: 9,
+      hrsTravelled: 1
+    },
+    tricycle: {
+      efPerKm: 2.46,
+      aveSpeed: 19.94,
+      hrsTravelled: 1
+    }
   }
 };
