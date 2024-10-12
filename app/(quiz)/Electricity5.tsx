@@ -17,7 +17,7 @@ const Electricity5 = () => {
                 <Template8
                 category={category}
                 question={question1}
-                //question2={question2}
+                question2={question2}
                 unit={unit1}
                 //unit2={unit2}
                 defaultValue={''}                                        // to avoid errors

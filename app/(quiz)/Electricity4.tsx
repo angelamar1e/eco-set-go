@@ -12,7 +12,7 @@ const Electricity4 = () => {
         'Half of my production',
         'I consume 100% of what I produce',
     ]
-    const unit = "Please specify your exact consumption percentage";
+    const unit = "percent";
 
     return (
         <ThemedView className="flex-1 px-4">

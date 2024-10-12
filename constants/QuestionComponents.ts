@@ -3,7 +3,12 @@ import Electricity2 from "@/app/(quiz)/Electricity2";
 import Electricity3 from "@/app/(quiz)/Electricity3";
 import Electricity4 from "@/app/(quiz)/Electricity4";
 import Electricity5 from "@/app/(quiz)/Electricity5";
-import Food6 from "@/app/(quiz)/Food6";
+import BreakfastMeal from "@/app/(quiz)/Food1";
+import NoOfMeals from "@/app/(quiz)/Food2";
+import HotDrinks from "@/app/(quiz)/Food3";
+import Softdrinks from "@/app/(quiz)/Food4";
+import HardDrinks from "@/app/(quiz)/Food5";
+import BottledWater from "@/app/(quiz)/Food6";
 import Transportation1 from "@/app/(quiz)/Transportation1";
 import Transportation10 from "@/app/(quiz)/Transportation10";
 import Transportation11 from "@/app/(quiz)/Transportation11";
@@ -46,7 +51,12 @@ export const components = [
   Transportation18,
   Transportation19,
   Transportation20,
-  Food6,
+  BreakfastMeal,
+  NoOfMeals,
+  HotDrinks,
+  Softdrinks,
+  HardDrinks,
+  BottledWater,
   Electricity1,
   Electricity2,
   Electricity3,

@@ -1,11 +1,9 @@
 import React from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useRouter } from "expo-router";
 import Template2 from '../components/quiz/Template2';
 
 const Electricity1 = () => {
-    const router = useRouter();
 
     const category="Electricity";
     const question="How many people live in your household?";
@@ -15,17 +13,7 @@ const Electricity1 = () => {
         'Small family', //4 members
         'Large family', //6 members
     ]
-    const textFieldLabel = "number of persons";
-
-    const onNext = () => {
-        console.log('Next button pressed');
-        router.push('/(quiz)/Electricity2');
-        };
-
-    const onBack = () => {
-        console.log('Back button pressed');
-        router.back(); 
-    };
+    const unit = "persons";
 
     return (
         <ThemedView className="flex-1 px-4">
@@ -33,11 +21,12 @@ const Electricity1 = () => {
                 <Template2
                 category={category}
                 question={question}
-                answers={answers}
-                textFieldLabel={textFieldLabel}
-                onNext={onNext}
-                onBack={onBack}
-                showBackButton={true}
+                choices={answers}
+                unit={unit}
+                defaultValue={''} 
+                onAnswer={function (answer: string | number): void {
+                    throw new Error('Function not implemented.');
+                } }            
                 />
             </ScrollView>
         </ThemedView>
