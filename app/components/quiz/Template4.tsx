@@ -5,16 +5,14 @@ import { ThemedText } from "@/components/ThemedText";
 import { QuestionContainer } from "./QuestionContainer";
 import { CheckboxChoices } from "./Checkbox";
 import { NavigationButtons } from "./NavigationButtons";
-import { TemplateProps } from "@/types/QuizProps";
+import { CheckboxesProps } from "@/types/QuizProps";
 
-const Template4: FC<TemplateProps> = ({
+const Template4: FC<CheckboxesProps> = ({
   category,
   question,
   choices,
   defaultValue,
-  onNext,
-  onBack,
-  showBackButton = true,
+  checkboxes,
   onAnswer,
 }) => {
   // State to manage selected answers (multiple selections allowed)
@@ -43,7 +41,7 @@ const Template4: FC<TemplateProps> = ({
 
         {/* Checkboxes */}
         <View className="flex-row flex-wrap justify-center mt-10 mb-3">
-          {answers.map((answer) => (
+          {choices.map((answer) => (
             <CheckboxChoices
               key={answer}
               title={answer}

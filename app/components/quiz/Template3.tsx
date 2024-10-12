@@ -13,9 +13,6 @@ export const Template3: FC<TemplateProps> = ({
   question,
   choices,
   defaultValue,
-  onNext,
-  onBack,
-  showBackButton = true,
   onAnswer
 }) => {
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
@@ -26,7 +23,6 @@ export const Template3: FC<TemplateProps> = ({
   };
 
   return (
-    // <ThemedView className="flex-1 px-6">
       <QuestionContainer>
         <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
           {category}
@@ -51,6 +47,5 @@ export const Template3: FC<TemplateProps> = ({
           )}
         </View>
       </QuestionContainer>
-    // </ThemedView>
   );
 };

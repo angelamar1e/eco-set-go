@@ -6,33 +6,19 @@ import { QuestionContainer } from './QuestionContainer';
 import { PresetChoices } from './PresetChoices';
 import Stepper from './Stepper';
 import { NavigationButtons } from './NavigationButtons';
+import { StepperProps } from '@/types/QuizProps';
 
-interface Template5Props {
-    category: string;
-    question: string;
-    answers: string[];
-    stepperTitle: string[];
-    stepperInitialValue: number;
-    onNext: () => void;         
-    onBack?: () => void;        
-    showBackButton?: boolean;
-}
-
-const Template5: FC<Template5Props> = ({
+const Template5: FC<StepperProps> = ({
     category,
     question,
-    answers,
+    choices,
     stepperTitle,
-    stepperInitialValue,
-    onNext,
-    onBack,
-    showBackButton = true,
 }) => {
     // State to manage the selected answer
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+    const [selectedAnswer, setSelectedAnswer] = useState<string>();
 
     // State to manage the stepper values as an array
-    const [stepperValues, setStepperValues] = useState<number[]>(new Array(stepperTitle.length).fill(stepperInitialValue));
+    const [stepperValues, setStepperValues] = useState<number[]>(new Array(stepperTitle?.length).fill(0));
 
     // Function to handle answer selection
     const handlePress = (answer: string) => {

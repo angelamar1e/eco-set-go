@@ -12,18 +12,15 @@ export const Template2: FC<TemplateProps> = ({
   category,
   question,
   choices: choices,
-  textFieldLabel,
+  inputLabel,
   defaultValue,
-  onNext,
-  onBack,
-  showBackButton = true,
   onAnswer
 }) => {
   // State to manage selected answer from preset choices
   const [answer, setAnswer] = useState<number>();
 
   // State to manage the input value in the TextField
-  const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
+  const [inputValue, setInputValue] = useState<string>('');
 
   // Function to handle answer selection
   const handlePress = (answer: number) => {
@@ -66,17 +63,16 @@ export const Template2: FC<TemplateProps> = ({
           )}
         </View>
 
-        {/* Text Input Field */}
+        {/* Input field */}
         <View className="ml-2 mb-5">
           <TextField
-            label={textFieldLabel}
+            label={inputLabel}
             value={inputValue}
             onChangeText={handleTextChange}
             onBlur={handleBlur}
           />
         </View>
       </QuestionContainer>
-    // </ThemedView>
   );
 };
 
