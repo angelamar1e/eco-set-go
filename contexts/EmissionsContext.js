@@ -4,6 +4,7 @@ import {
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
+  computeTotalPublicTransportEmissions,
   computeTrainEmissions,
   computeTwoWheelersEmissions,
 } from "@/app/utils/EstimationUtils";
@@ -152,7 +153,9 @@ export const EmissionsProvider = ({ children }) => {
   }, [usesTwoWheelers, twoWheelerEFPerKm, twoWheelersKmTravelled]);
 
   // states for efficient transport emission variables
-  const [selectedTransports, setSelectedTransports] = useState(TransportEmission.EfficientTransport.selectedTransports);
+  const [selectedTransports, setSelectedTransports] = useState(
+    TransportEmission.EfficientTransport.selectedTransports
+  );
   const [eBikeKmTravelled, setEBikeKmTravelled] = useState(
     TransportEmission.EfficientTransport.electricBike.kmTravelled
   );
@@ -160,7 +163,11 @@ export const EmissionsProvider = ({ children }) => {
     TransportEmission.EfficientTransport.smallElectricVehicles.kmTravelled
   );
   const [efficientTravelEmissions, setEfficientTravelEmissions] = useState(
-    computeTotalEfficientTravelEmissions(selectedTransports, eBikeKmTravelled, smallVehKmTravelled)
+    computeTotalEfficientTravelEmissions(
+      selectedTransports,
+      eBikeKmTravelled,
+      smallVehKmTravelled
+    )
   );
 
   useEffect(() => {
@@ -174,20 +181,64 @@ export const EmissionsProvider = ({ children }) => {
   }, [selectedTransports, eBikeKmTravelled, smallVehKmTravelled]);
 
   // states for train emission variables
-  const [trainKmTravelled, setTrainKmTravelled] = useState(TransportEmission.Train.kmTravelled);
-  const [trainEmissions, setTrainEmissions] = useState(computeTrainEmissions(trainKmTravelled));
+  const [trainKmTravelled, setTrainKmTravelled] = useState(
+    TransportEmission.Train.kmTravelled
+  );
+  const [trainEmissions, setTrainEmissions] = useState(
+    computeTrainEmissions(trainKmTravelled)
+  );
 
   useEffect(() => {
     setTrainEmissions(computeTrainEmissions(trainKmTravelled));
   }, [trainKmTravelled]);
 
+  // states for public transport emissions
+  const [selectedPublicTransport, setSelectedPublicTransport] = useState(
+    TransportEmission.PublicTransport.selectedPublicTransport
+  );
+  const [busHrsTravelled, setBusHrsTravelled] = useState(
+    TransportEmission.PublicTransport.bus.hrsTravelled
+  );
+  const [jeepHrsTravelled, setJeepHrsTravelled] = useState(
+    TransportEmission.PublicTransport.jeepney.hrsTravelled
+  );
+  const [tricycleHrsTravelled, setTricycleHrsTravelled] = useState(
+    TransportEmission.PublicTransport.tricycle.hrsTravelled
+  );
+
+  const [publicTransportEmissions, setPublicTransportEmissions] = useState(
+    computeTotalPublicTransportEmissions(
+      selectedPublicTransport,
+      busHrsTravelled,
+      jeepHrsTravelled,
+      tricycleHrsTravelled
+    )
+  );
+
+  useEffect(() => {
+    setPublicTransportEmissions(
+      computeTotalPublicTransportEmissions(
+        selectedPublicTransport,
+        busHrsTravelled,
+        jeepHrsTravelled,
+        tricycleHrsTravelled
+      )
+    );
+  }, [
+    selectedPublicTransport,
+    busHrsTravelled,
+    jeepHrsTravelled,
+    tricycleHrsTravelled,
+  ]);
+
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
-      carEmissions +
+    carEmissions +
       airplaneTravelEmissions +
       twoWheelersEmissions +
       efficientTravelEmissions +
-      trainEmissions
+      trainEmissions +
+      publicTransportEmissions
   );
 
   useEffect(() => {
@@ -198,8 +249,8 @@ export const EmissionsProvider = ({ children }) => {
           airplaneTravelEmissions +
           twoWheelersEmissions +
           efficientTravelEmissions +
-          trainEmissions;
-        console.log("efficient:", efficientTravelEmissions);
+          trainEmissions + 
+          publicTransportEmissions;
         setOverallFootprint(newFootprint);
 
         try {
@@ -214,7 +265,14 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateOverallFootprint();
-  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions, efficientTravelEmissions, trainEmissions]);
+  }, [
+    carEmissions,
+    airplaneTravelEmissions,
+    twoWheelersEmissions,
+    efficientTravelEmissions,
+    trainEmissions,
+    publicTransportEmissions
+  ]);
 
   return (
     <EmissionsContext.Provider
@@ -262,10 +320,20 @@ export const EmissionsProvider = ({ children }) => {
         setSelectedTransports,
         setEBikeKmTravelled,
         setSmallVehKmTravelled,
-        trainEmissions, 
-        trainKmTravelled, 
+        trainEmissions,
+        trainKmTravelled,
         setTrainEmissions,
-        setTrainKmTravelled
+        setTrainKmTravelled,
+        publicTransportEmissions, 
+        selectedPublicTransport, 
+        busHrsTravelled, 
+        jeepHrsTravelled, 
+        tricycleHrsTravelled, 
+        setPublicTransportEmissions,
+        setSelectedPublicTransport, 
+        setBusHrsTravelled, 
+        setJeepHrsTravelled, 
+        setTricycleHrsTravelled, 
       }}
     >
       {children}
