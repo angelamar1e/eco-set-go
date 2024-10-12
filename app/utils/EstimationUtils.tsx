@@ -97,7 +97,7 @@ export function computeTwoWheelersEmissions(efPerKm: number, kmTravelled: number
         twoWheelersEmissions = kmTravelled * efPerKm;
         return converKgToTons(twoWheelersEmissions);
     }
-    
+
     return twoWheelersEmissions;
 }
 
@@ -117,25 +117,23 @@ export function computeBicycleEmissions(){
 }
 
 export function computeTotalEfficientTravelEmissions(
-    usesBike: boolean, 
-    usesEBike: boolean, 
-    usesSmallVehicles: boolean,
+    selectedTransports: string[],
     eBikeKmTravelled: number,
     smallVehKmTravelled: number,
 ){
     let efficientTravelEmissions = 0;
 
-    if (usesBike){
+    if ('bike' in selectedTransports){
         efficientTravelEmissions += computeBicycleEmissions();
     }
-    if (usesEBike){
+    if ('eBike' in selectedTransports){
         efficientTravelEmissions += computeEfficientTravelEmissions(
             TransportEmission.EfficientTransport.electricBike.efPerKm,
             eBikeKmTravelled,
             TransportEmission.EfficientTransport.electricBike.construction, 
             TransportEmission.EfficientTransport.electricBike.lifespan)
     }
-    if (usesSmallVehicles){
+    if ('smallVh' in selectedTransports){
         efficientTravelEmissions += computeEfficientTravelEmissions(
             TransportEmission.EfficientTransport.smallElectricVehicles.efPerKm,
             smallVehKmTravelled,

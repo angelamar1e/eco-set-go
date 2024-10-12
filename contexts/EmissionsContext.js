@@ -49,14 +49,17 @@ export const EmissionsProvider = ({ children }) => {
 
   // recompute car emissions per variable change
   useEffect(() => {
-    setCarEmissions(computeCarEmissions( 
-      kmTravelled,
-      constructionScale,
-      lifeSpanInKm,
-      footprintPerLiter,
-      consumptionPerKm,
-      numOfPassengers,
-      user,));
+    setCarEmissions(
+      computeCarEmissions(
+        kmTravelled,
+        constructionScale,
+        lifeSpanInKm,
+        footprintPerLiter,
+        consumptionPerKm,
+        numOfPassengers,
+        user
+      )
+    );
   }, [
     kmTravelled,
     constructionScale,
@@ -89,7 +92,7 @@ export const EmissionsProvider = ({ children }) => {
       travelledByPlane,
       shortHaulDuration,
       mediumHaulDuration,
-      longHaulDuration,
+      longHaulDuration
     )
   );
 
@@ -100,10 +103,15 @@ export const EmissionsProvider = ({ children }) => {
         travelledByPlane,
         shortHaulDuration,
         mediumHaulDuration,
-        longHaulDuration,
+        longHaulDuration
       )
     );
-  }, [travelledByPlane, shortHaulDuration, mediumHaulDuration, longHaulDuration]);
+  }, [
+    travelledByPlane,
+    shortHaulDuration,
+    mediumHaulDuration,
+    longHaulDuration,
+  ]);
 
   // states for two wheeler emission variables
   const [usesTwoWheelers, setUsesTwoWheelers] = useState(
@@ -120,7 +128,7 @@ export const EmissionsProvider = ({ children }) => {
     computeTwoWheelersEmissions(
       usesTwoWheelers,
       twoWheelerEFPerKm,
-      twoWheelersKmTravelled,
+      twoWheelersKmTravelled
     )
   );
 
@@ -129,20 +137,14 @@ export const EmissionsProvider = ({ children }) => {
       computeTwoWheelersEmissions(
         usesTwoWheelers,
         twoWheelerEFPerKm,
-        twoWheelersKmTravelled,
+        twoWheelersKmTravelled
       )
     );
   }, [usesTwoWheelers, twoWheelerEFPerKm, twoWheelersKmTravelled]);
 
   // states for efficient transport emission variables
-  const [usesBike, setUsesBike] = useState(
-    TransportEmission.EfficientTransport.bicycle.isUsed
-  );
-  const [usesEBike, setUsesEBike] = useState(
-    TransportEmission.EfficientTransport.electricBike.isUsed
-  );
-  const [usesSmallVehicles, setUsesSmallVehicles] = useState(
-    TransportEmission.EfficientTransport.smallElectricVehicles.isUsed
+  const [selectedTransports, setSelectedTransports] = useState(
+    TransportEmission.EfficientTransport.selectedTransports
   );
   const [eBikeKmTravelled, setEBikeKmTravelled] = useState(
     TransportEmission.EfficientTransport.electricBike.kmTravelled
@@ -155,27 +157,27 @@ export const EmissionsProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    setEfficientTravelEmissions(computeTotalEfficientTravelEmissions());
-  }, [
-    usesBike,
-    usesEBike,
-    usesSmallVehicles,
-    eBikeKmTravelled,
-    smallVehKmTravelled,
-  ]);
+    setEfficientTravelEmissions(
+      computeTotalEfficientTravelEmissions(
+        selectedTransports,
+        eBikeKmTravelled,
+        smallVehKmTravelled
+      )
+    );
+  }, [selectedTransports, eBikeKmTravelled, smallVehKmTravelled]);
 
   const [overallFootprint, setOverallFootprint] = useState(
     carEmissions +
-    airplaneTravelEmissions +
-    twoWheelersEmissions +
-    efficientTravelEmissions
+      airplaneTravelEmissions +
+      twoWheelersEmissions +
+      efficientTravelEmissions
   );
 
   useEffect(() => {
     const updateOverallFootprint = async () => {
       if (userUid) {
         const newFootprint =
-          carEmissions + airplaneTravelEmissions + twoWheelersEmissions;
+          carEmissions + airplaneTravelEmissions + twoWheelersEmissions + efficientTravelEmissions;
         setOverallFootprint(newFootprint);
 
         try {
@@ -190,7 +192,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateOverallFootprint();
-  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions]);
+  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions, efficientTravelEmissions]);
 
   return (
     <EmissionsContext.Provider
@@ -233,15 +235,11 @@ export const EmissionsProvider = ({ children }) => {
         setTwoWheelerEFPerKm,
         setTwoWheelersKmTravelled,
         efficientTravelEmissions,
-        usesBike,
-        usesEBike,
-        usesSmallVehicles,
+        selectedTransports,
         eBikeKmTravelled,
         smallVehKmTravelled,
         setEfficientTravelEmissions,
-        setUsesBike,
-        setUsesEBike,
-        setUsesSmallVehicles,
+        setSelectedTransports,
         setEBikeKmTravelled,
         setSmallVehKmTravelled,
       }}
