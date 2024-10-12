@@ -2,7 +2,7 @@ import { TransportEmission } from '@/constants/DefaultValues';
 import { FlightData } from '@/types/FlightData';
 
 export function converKgToTons(inTons: number){ // metric tons
-    const inKg = inTons / 1000; 
+    let inKg = inTons / 1000; 
 
     return inKg;
 }
@@ -45,9 +45,9 @@ export function computeCarEmissions(
         }
     
     let useOfCar: number = efPerKm * kmTravelled;
-    carEmission = (useOfCar + manufacture) / numOfPassengers
+    carEmission = (useOfCar + manufacture) / numOfPassengers;
 
-    return converKgToTons(carEmission);
+    return carEmission / 1000;
 }
 
 export function computeAirplaneEmission(data: FlightData): number{
@@ -123,17 +123,21 @@ export function computeTotalEfficientTravelEmissions(
 ){
     let efficientTravelEmissions = 0;
 
-    if ('bike' in selectedTransports){
+    if (selectedTransports.length === 0){
+        console.log(efficientTravelEmissions);
+        return efficientTravelEmissions;
+    }
+    if (selectedTransports.includes('bike')){
         efficientTravelEmissions += computeBicycleEmissions();
     }
-    if ('eBike' in selectedTransports){
+    if (selectedTransports.includes('eBike')){
         efficientTravelEmissions += computeEfficientTravelEmissions(
             TransportEmission.EfficientTransport.electricBike.efPerKm,
             eBikeKmTravelled,
             TransportEmission.EfficientTransport.electricBike.construction, 
             TransportEmission.EfficientTransport.electricBike.lifespan)
     }
-    if ('smallVh' in selectedTransports){
+    if (selectedTransports.includes('smallVh')){
         efficientTravelEmissions += computeEfficientTravelEmissions(
             TransportEmission.EfficientTransport.smallElectricVehicles.efPerKm,
             smallVehKmTravelled,
@@ -141,5 +145,6 @@ export function computeTotalEfficientTravelEmissions(
             TransportEmission.EfficientTransport.smallElectricVehicles.lifespan)
     }
 
+    console.log(converKgToTons(efficientTravelEmissions));
     return converKgToTons(efficientTravelEmissions);
 }

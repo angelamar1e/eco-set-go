@@ -35,7 +35,7 @@ export const TransportEmission = {
     kmTravelled: 2000
   },
   EfficientTransport: {
-    selectedTransports: ['bike'],
+    selectedTransports: ['bike',],
     bicycle : {
         construction: 116,
         lifespan: 12,

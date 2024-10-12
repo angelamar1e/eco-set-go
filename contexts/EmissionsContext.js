@@ -45,7 +45,17 @@ export const EmissionsProvider = ({ children }) => {
   );
   const [user, setUser] = useState(TransportEmission.Car.user);
 
-  const [carEmissions, setCarEmissions] = useState(computeCarEmissions());
+  const [carEmissions, setCarEmissions] = useState(
+    computeCarEmissions(
+      kmTravelled,
+      constructionScale,
+      lifeSpanInKm,
+      footprintPerLiter,
+      consumptionPerKm,
+      numOfPassengers,
+      user
+    )
+  );
 
   // recompute car emissions per variable change
   useEffect(() => {
@@ -75,17 +85,15 @@ export const EmissionsProvider = ({ children }) => {
     TransportEmission.Airplane.travelledByPlane
   );
 
-  const [shortHaulDuration, setShortHaulDuration] = useState({
-    flightDuration: TransportEmission.Airplane.shortHaul.duration,
-  });
-
-  const [mediumHaulDuration, setMediumHaulDuration] = useState({
-    flightDuration: TransportEmission.Airplane.mediumHaul.duration,
-  });
-
-  const [longHaulDuration, setLongHaulDuration] = useState({
-    flightDuration: TransportEmission.Airplane.longHaul.duration,
-  });
+  const [shortHaulDuration, setShortHaulDuration] = useState(
+    TransportEmission.Airplane.shortHaul.duration
+  );
+  const [mediumHaulDuration, setMediumHaulDuration] = useState(
+    TransportEmission.Airplane.mediumHaul.duration
+  );
+  const [longHaulDuration, setLongHaulDuration] = useState(
+    TransportEmission.Airplane.longHaul.duration
+  );
 
   const [airplaneTravelEmissions, setAirplaneTravelEmissions] = useState(
     computeTotalAirplaneEmissions(
@@ -143,9 +151,7 @@ export const EmissionsProvider = ({ children }) => {
   }, [usesTwoWheelers, twoWheelerEFPerKm, twoWheelersKmTravelled]);
 
   // states for efficient transport emission variables
-  const [selectedTransports, setSelectedTransports] = useState(
-    TransportEmission.EfficientTransport.selectedTransports
-  );
+  const [selectedTransports, setSelectedTransports] = useState(TransportEmission.EfficientTransport.selectedTransports);
   const [eBikeKmTravelled, setEBikeKmTravelled] = useState(
     TransportEmission.EfficientTransport.electricBike.kmTravelled
   );
@@ -153,7 +159,7 @@ export const EmissionsProvider = ({ children }) => {
     TransportEmission.EfficientTransport.smallElectricVehicles.kmTravelled
   );
   const [efficientTravelEmissions, setEfficientTravelEmissions] = useState(
-    computeTotalEfficientTravelEmissions
+    computeTotalEfficientTravelEmissions(selectedTransports, eBikeKmTravelled, smallVehKmTravelled)
   );
 
   useEffect(() => {
@@ -167,7 +173,7 @@ export const EmissionsProvider = ({ children }) => {
   }, [selectedTransports, eBikeKmTravelled, smallVehKmTravelled]);
 
   const [overallFootprint, setOverallFootprint] = useState(
-    carEmissions +
+      carEmissions +
       airplaneTravelEmissions +
       twoWheelersEmissions +
       efficientTravelEmissions
@@ -177,7 +183,11 @@ export const EmissionsProvider = ({ children }) => {
     const updateOverallFootprint = async () => {
       if (userUid) {
         const newFootprint =
-          carEmissions + airplaneTravelEmissions + twoWheelersEmissions + efficientTravelEmissions;
+          carEmissions +
+          airplaneTravelEmissions +
+          twoWheelersEmissions +
+          efficientTravelEmissions;
+        console.log("efficient:", efficientTravelEmissions);
         setOverallFootprint(newFootprint);
 
         try {
@@ -192,7 +202,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateOverallFootprint();
-  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions, efficientTravelEmissions]);
+  }, [carEmissions, airplaneTravelEmissions, twoWheelersEmissions]);
 
   return (
     <EmissionsContext.Provider
@@ -217,16 +227,14 @@ export const EmissionsProvider = ({ children }) => {
         setUser,
         airplaneTravelEmissions,
         travelledByPlane,
-        flightEFPerKm,
-        shortHaul,
-        mediumHaul,
-        longHaul,
+        shortHaulDuration,
+        mediumHaulDuration,
+        longHaulDuration,
         setAirplaneTravelEmissions,
         setTravelledByPlane,
-        setFlightEFPerKm,
-        setShortHaul,
-        setMediumHaul,
-        setLongHaul,
+        setShortHaulDuration,
+        setMediumHaulDuration,
+        setLongHaulDuration,
         twoWheelersEmissions,
         twoWheelerEFPerKm,
         twoWheelersKmTravelled,
