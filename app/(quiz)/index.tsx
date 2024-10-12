@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Button } from "react-native";
+import { View } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
 import Calculator from "../components/quiz/Calculator";
 import { EmissionsContext } from "@/contexts/EmissionsContext";
@@ -7,10 +7,10 @@ import { ThemedView } from "@/components/ThemedView";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
 import { Text } from "react-native-paper";
 import { QuestionData } from "@/types/QuestionData";
-import Template2 from "../components/quiz/Template2";
-import { Template3 } from "../components/quiz/Template3";
-import Template4 from "../components/quiz/Template4";
-import Template5 from "../components/quiz/Template5";
+import InputTemplate from "../components/quiz/InputTemplate";
+import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
+import StepperTemplate from "../components/quiz/StepperTemplate";
+import RadioTemplate from "../components/quiz/RadioTemplate";
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
@@ -18,7 +18,7 @@ const QuizIndex = () => {
 
   const [questionData, setQuestionData] = useState<QuestionData>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const templates = [Template2, Template3, Template4, Template5];
+  const templates = [InputTemplate, RadioTemplate, CheckboxTemplate, StepperTemplate];
 
   // Fetch the question based on currentQuestionIndex
   useEffect(() => {
@@ -26,12 +26,10 @@ const QuizIndex = () => {
       const currentQuestionId = questionDocumentIds[currentQuestionIndex];
       if (currentQuestionId) {
         try {
-          const snapshot = await questionCollection
-            .doc(currentQuestionId)
-            .get();
+          const snapshot = await questionCollection.doc(currentQuestionId).get();
           if (snapshot.exists) {
-            const questionData = snapshot.data();
-            setQuestionData(questionData);
+            const fetchedQuestionData = snapshot.data();
+            setQuestionData(fetchedQuestionData);
           } else {
             console.log("No document found for this question");
           }
@@ -40,9 +38,18 @@ const QuizIndex = () => {
         }
       }
     };
-
+  
     fetchQuestion();
   }, [currentQuestionIndex, questionDocumentIds, questionCollection]);
+
+  const handleAnswer = (value: any) => {
+    const variable = questionData?.variable;
+    
+    if (variable){
+      const setter = emissionsContext[`set${variable.charAt(0).toUpperCase()}${variable.slice(1)}`];
+      setter(value);
+    }
+  }
 
   // Move to the next question, taking skip logic into account
   const goToNextComponent = () => {
@@ -80,14 +87,14 @@ const QuizIndex = () => {
       {questionData ? (
         <>
           <CurrentComponent
+            key={questionData.variable}
             question={questionData.question}
             choices={questionData.choices}
-            defaultValue={questionData.default_value}
+            defaultValue={emissionsContext[questionData.variable]}
             category={questionData.category}
             inputLabel={questionData.input_label}
-            onAnswer={emissionsContext[questionData.variable]}
+            onAnswer={handleAnswer}
             stepperTitle={questionData.stepperTitles}
-            checkboxes={questionData.checkboxes}
           />
           <View className="flex-row justify-center mt-4">
             <NavigationButtons
