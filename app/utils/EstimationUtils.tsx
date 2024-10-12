@@ -148,3 +148,11 @@ export function computeTotalEfficientTravelEmissions(
     console.log(converKgToTons(efficientTravelEmissions));
     return converKgToTons(efficientTravelEmissions);
 }
+
+export function computeTrainEmissions(kmTravelled: number){
+    let trainEmissions = 0;
+
+    trainEmissions = kmTravelled * TransportEmission.Train.efPerKm;
+
+    return converKgToTons(trainEmissions);
+}
