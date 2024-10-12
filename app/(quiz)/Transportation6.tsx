@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from 'react';
-import {Template3} from '../components/quiz/Template3';
+import { Template2 } from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 import { QuestionProps } from '@/types/QuizProps';
@@ -15,12 +15,13 @@ const Transportation6: FC<QuestionProps> = ({ question, choices }) => {
 
     return(
         <ThemedView className="px-4">
-            <Template3
+            <Template2
                 category={category}
                 question={question}
                 choices={choices}
                 defaultValue={TransportEmission.Car.footprintPerLiter}
                 onAnswer={setFootprintPerLiter}
+                unit=''
             />
         </ThemedView>
     )

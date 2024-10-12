@@ -1,67 +1,76 @@
-import React, { FC, useState } from "react";
-import { View } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { QuestionContainer } from "./QuestionContainer";
-import { CheckboxChoices } from "./Checkbox";
-import { TemplateProps } from "@/types/QuizProps";
+import React, { FC, useState } from 'react';
+import { View } from 'react-native';
+import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
+import { QuestionContainer } from './QuestionContainer';
+import { PresetChoices } from './PresetChoices';
+import Stepper from './Stepper';
 
+interface Template4Props {
+    category: string;
+    question: string;
+    answers: string[];
+    stepperTitle: string[];
+    stepperInitialValue: number;
+}
 
-const Template4: FC<TemplateProps> = ({
-  category,
-  question,
-  choices,
-  defaultValue,
-  onAnswer,
+const Template4: FC<Template4Props> = ({
+    category,
+    question,
+    answers,
+    stepperTitle,
+    stepperInitialValue,
 }) => {
-  // State to manage selected answers (multiple selections allowed)
-  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+    // State to manage the selected answer
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-  // Function to handle checkbox toggle
-  const handleCheckboxPress = (answer: string) => {
-    if (selectedAnswers.includes(answer)) {
-      // Remove answer if already selected
-      setSelectedAnswers(selectedAnswers.filter((item) => item !== answer));
-    } else {
-      // Add answer if not selected
-      setSelectedAnswers([...selectedAnswers, answer]);
+    // State to manage the stepper values as an array
+    const [stepperValues, setStepperValues] = useState<number[]>(new Array(stepperTitle.length).fill(stepperInitialValue));
 
-      // Call the onAnswer callback with the updated selected answers
-      onAnswer(answer);
-    }
-  };
+    // Function to handle answer selection
+    const handlePress = (answer: string) => {
+        setSelectedAnswer(answer);
+    };
 
-    // Convert choices into an array if it's a Map
-    const choicesArray = Array.isArray(choices)
-    ? choices
-    : choices instanceof Map
-    ? Array.from(choices.keys()) // Get keys if it's a Map
-    : []; // Default to empty arra
+    // Handle stepper value changes
+    const handleStepperChange = (index: number, value: number) => {
+        const updatedValues = [...stepperValues];
+        updatedValues[index] = value;
+        setStepperValues(updatedValues);
+    };
 
-  return (
-    // <ThemedView className="flex-1 px-6">
-      <QuestionContainer>
-        <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
-          {category}
-        </ThemedText>
-        <ThemedText type="default" className="text-black text-[20px] mb-3">
-          {question}
-        </ThemedText>
+    return (
+        <ThemedView className="flex-1 px-6">
+            <QuestionContainer>
+                <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
+                <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
-        {/* Checkboxes */}
-        <View className="flex-row flex-wrap justify-center mt-10 mb-3">
-          {choicesArray.map((answer: string) => (
-            <CheckboxChoices
-              key={answer}
-              title={answer}
-              isChecked={selectedAnswers.includes(answer)}
-              onPress={() => handleCheckboxPress(answer)}
-            />
-          ))}
-        </View>
-      </QuestionContainer>
-    // </ThemedView>
-  );
+                {/* Suggested Answers */}
+                <View className="flex-row flex-wrap justify-left mb-3">
+                    {answers.map((answer) => (
+                        <PresetChoices
+                            key={answer}
+                            title={answer}
+                            isSelected={selectedAnswer === answer}
+                            onPress={() => handlePress(answer)}
+                        />
+                    ))}
+                </View>
+
+                {/* Stepper */}
+                <View className="mt-5 mb-5 justify-center mt-10 mb-3">
+                    {stepperTitle.map((title, index) => (
+                        <Stepper 
+                            key={title}
+                            title={title}
+                            value={stepperValues[index]} // Use the specific stepper's value
+                            onChange={(value) => handleStepperChange(index, value)} // Pass the index
+                        />
+                    ))}
+                </View>
+            </QuestionContainer>
+        </ThemedView>
+    );
 };
 
 export default Template4;

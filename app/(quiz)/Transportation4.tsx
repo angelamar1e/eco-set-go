@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from 'react';
-import {Template3} from '../components/quiz/Template3';
+import { Template2 } from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { router } from 'expo-router';
 import { QuestionProps } from '@/types/QuizProps';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
@@ -19,12 +18,13 @@ const Transportation4: FC<Question3Props> = ({ question, choices }) => {
 
     return(
         <ThemedView className="px-4">
-            <Template3
+            <Template2
                 category={category}
                 question={question}
                 choices={choices}
                 defaultValue={TransportEmission.Car.lifeSpan}
                 onAnswer={setLifeSpanInKm}
+                unit=''
             />
         </ThemedView>
     )

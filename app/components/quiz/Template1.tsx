@@ -1,17 +1,78 @@
-import React from 'react';
-import { View, Button } from 'react-native';
+import React, { FC, useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import { QuestionContainer } from "./QuestionContainer";
+import { PresetChoices } from "./PresetChoices";
+import { TextField } from "./TextField";
+import { TemplateProps } from "@/types/QuizProps";
 
-const QuizScreen = () => {
+export const Template1: FC<TemplateProps> = ({
+  category,
+  question,
+  choices: choices,
+  defaultValue,
+  onAnswer,
+  unit,
+}) => {
+  // State to manage selected answer from preset choices
+  const [answer, setAnswer] = useState<number>();
 
-  const goToSampleQuestion = () => {
-    // router.push("/(quiz)/SampleQuestion");
+  // State to manage the input value in the TextField
+  const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
+
+  // Function to handle answer selection
+  const handlePress = (answer: number) => {
+    setAnswer(answer);
+    setInputValue(answer.toString());
+    onAnswer(answer);
+  };
+
+  // Function to handle text input change
+  const handleTextChange = (text: string) => {
+    setInputValue(text);
+  };
+
+  const handleBlur = () => {
+    onAnswer(parseInt(inputValue));
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-stone-100 p-4">
-      <Button title="Sample Question" onPress={goToSampleQuestion} />
-    </View>
+    // <ThemedView className="flex-1 px-4">
+      <QuestionContainer>
+        <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
+          {category}
+        </ThemedText>
+        <ThemedText type="default" className="text-black text-[20px] mb-3">
+          {question}
+        </ThemedText>
+
+        <View className="flex-row flex-wrap justify-left mb-10">
+          {choices ? (
+            Object.entries(choices).map(([key, value]) => (
+              <PresetChoices
+                key={key}
+                title={key}
+                isSelected={answer || answer == 0 ? answer === value : value === defaultValue}
+                onPress={() => handlePress(value)}
+              />
+            ))
+          ) : (
+            <Text> Loading... </Text>
+          )}
+        </View>
+
+        {/* Text Input Field */}
+        <View className="ml-2 mb-5">
+          <TextField
+            value={inputValue}
+            onChangeText={handleTextChange}
+            onBlur={handleBlur}
+            unit={unit}
+          />
+        </View>
+      </QuestionContainer>
+    // </ThemedView>
   );
 };
 
-export default QuizScreen;
+export default Template1;

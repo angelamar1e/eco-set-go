@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import Template2 from '../components/quiz/Template2';
+import Template1 from '../components/quiz/Template1';
 import { ThemedView } from '@/components/ThemedView';
 import { QuestionProps } from '@/types/QuizProps';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
@@ -15,7 +15,7 @@ const Transportation2: FC<QuestionProps> = ({ question, choices }) => {
 
     return (
         <ThemedView className='px-4'>
-            <Template2
+            <Template1
                 category={category}
                 question={question}
                 choices={choices}

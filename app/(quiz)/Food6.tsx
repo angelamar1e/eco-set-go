@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; 
-import { Template3 } from '../components/quiz/Template3';
+import { Template2 } from '../components/quiz/Template2';
 import { ThemedView } from "@/components/ThemedView";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -13,9 +13,9 @@ const BottledWater = () => {
         ];
 
     return (
-        <ThemedView className="flex-1 px-4">
+        <ThemedView className="px-4">
             <ScrollView>
-                <Template3
+                <Template2
                     category={category}
                     question={question}
                     choices={answers}

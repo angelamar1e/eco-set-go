@@ -4,74 +4,73 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { QuestionContainer } from './QuestionContainer';
 import { PresetChoices } from './PresetChoices';
-import Stepper from './Stepper';
-import { NavigationButtons } from './NavigationButtons';
+import { CheckboxChoices } from './Checkbox'; 
 
 interface Template5Props {
-    category: string;
-    question: string;
-    answers: string[];
-    stepperTitle: string[];
-    stepperInitialValue: number;
+  category: string;
+  question: string;
+  answers: string[]; 
+  checkboxes: string[]; 
 }
 
 const Template5: FC<Template5Props> = ({
-    category,
-    question,
-    answers,
-    stepperTitle,
-    stepperInitialValue,
+  category,
+  question,
+  answers,
+  checkboxes,
 }) => {
-    // State to manage the selected answer
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-    // State to manage the stepper values as an array
-    const [stepperValues, setStepperValues] = useState<number[]>(new Array(stepperTitle.length).fill(stepperInitialValue));
+  // State to manage selected suggested answer
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-    // Function to handle answer selection
-    const handlePress = (answer: string) => {
-        setSelectedAnswer(answer);
-    };
+  // State to manage the checked status of checkboxes
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
-    // Handle stepper value changes
-    const handleStepperChange = (index: number, value: number) => {
-        const updatedValues = [...stepperValues];
-        updatedValues[index] = value;
-        setStepperValues(updatedValues);
-    };
+  // Handle suggested answer selection
+  const handleAnswerPress = (answer: string) => {
+    setSelectedAnswer(answer);
+  };
 
-    return (
-        <ThemedView className="flex-1 px-6">
-            <QuestionContainer>
-                <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
-                <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
+  // Handle checkbox toggle
+  const handleCheckboxToggle = (item: string) => {
+    setCheckedItems((prevCheckedItems) => ({
+      ...prevCheckedItems,
+      [item]: !prevCheckedItems[item],
+    }));
+  };
 
-                {/* Suggested Answers */}
-                <View className="flex-row flex-wrap justify-left mb-3">
-                    {answers.map((answer) => (
-                        <PresetChoices
-                            key={answer}
-                            title={answer}
-                            isSelected={selectedAnswer === answer}
-                            onPress={() => handlePress(answer)}
-                        />
-                    ))}
-                </View>
+  return (
+    <ThemedView className="flex-1 px-6">
+      <QuestionContainer>
+        <ThemedText type='defaultSemiBold' className='text-lime-800 mb-3'>{category}</ThemedText>
+        <ThemedText type="default" className="text-black text-[20px] mb-3">{question}</ThemedText>
 
-                {/* Stepper */}
-                <View className="mt-5 mb-5 justify-center mt-10 mb-3">
-                    {stepperTitle.map((title, index) => (
-                        <Stepper 
-                            key={title}
-                            title={title}
-                            value={stepperValues[index]} // Use the specific stepper's value
-                            onChange={(value) => handleStepperChange(index, value)} // Pass the index
-                        />
-                    ))}
-                </View>
-            </QuestionContainer>
-        </ThemedView>
-    );
+        {/* Suggested Answers */}
+        <View className="flex-row flex-wrap justify-left mb-3">
+          {answers.map((answer) => (
+            <PresetChoices
+              key={answer}
+              title={answer}
+              isSelected={selectedAnswer === answer}
+              onPress={() => handleAnswerPress(answer)}
+            />
+          ))}
+        </View>
+
+        {/* Checkboxes */}
+        <View className="flex-row flex-wrap justify-center mt-10 mb-3">
+          {checkboxes.map((item) => (
+            <CheckboxChoices
+              key={item}
+              title={item}
+              isChecked={checkedItems[item] || false}
+              onPress={() => handleCheckboxToggle(item)}
+            />
+          ))}
+        </View>
+      </QuestionContainer>
+    </ThemedView>
+  );
 };
 
 export default Template5;

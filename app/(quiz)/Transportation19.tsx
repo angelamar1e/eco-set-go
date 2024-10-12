@@ -1,6 +1,6 @@
 import React from "react";
-import Template4 from "../components/quiz/Template4";
 import { ThemedView } from '@/components/ThemedView';
+import Template3 from "../components/quiz/Template3";
 
 
 const Transportation19 = () => {
@@ -14,7 +14,7 @@ const Transportation19 = () => {
 
     return(
         <ThemedView className="px4">
-            <Template4
+            <Template3
                 category={category}
                 question={question4}
                 choices={answers4}

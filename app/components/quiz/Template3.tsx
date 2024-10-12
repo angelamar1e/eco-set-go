@@ -1,24 +1,42 @@
-import { useState, FC } from "react";
+import React, { FC, useState } from "react";
 import { View } from "react-native";
-import { QuestionContainer } from "@/app/components/quiz/QuestionContainer";
+import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { RadioChoices } from "@/app/components/quiz/RadioChoices";
-import { Text } from "react-native-paper";
+import { QuestionContainer } from "./QuestionContainer";
+import { CheckboxChoices } from "./Checkbox";
 import { TemplateProps } from "@/types/QuizProps";
 
-export const Template3: FC<TemplateProps> = ({
+
+const Template3: FC<TemplateProps> = ({
   category,
   question,
   choices,
   defaultValue,
-  onAnswer
+  onAnswer,
 }) => {
-  const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
+  // State to manage selected answers (multiple selections allowed)
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
 
-  const handlePress = (selected: string | number) => {
-    setAnswer(selected);
-    onAnswer(selected);
+  // Function to handle checkbox toggle
+  const handleCheckboxPress = (answer: string) => {
+    if (selectedAnswers.includes(answer)) {
+      // Remove answer if already selected
+      setSelectedAnswers(selectedAnswers.filter((item) => item !== answer));
+    } else {
+      // Add answer if not selected
+      setSelectedAnswers([...selectedAnswers, answer]);
+
+      // Call the onAnswer callback with the updated selected answers
+      onAnswer(answer);
+    }
   };
+
+    // Convert choices into an array if it's a Map
+    const choicesArray = Array.isArray(choices)
+    ? choices
+    : choices instanceof Map
+    ? Array.from(choices.keys()) // Get keys if it's a Map
+    : []; // Default to empty arra
 
   return (
     // <ThemedView className="flex-1 px-6">
@@ -30,22 +48,20 @@ export const Template3: FC<TemplateProps> = ({
           {question}
         </ThemedText>
 
-        {/* Radio Choices */}
-        <View className="flex-wrap flex-row justify-center mt-10 mb-3">
-          {choices ? (
-            Object.entries(choices).map(([key, value]) => (
-              <RadioChoices
-                key={key}
-                title={key}
-                isSelected={answer === value}
-                onPress={() => handlePress(value)}
-              />
-            ))
-          ) : (
-            <Text> Loading... </Text>
-          )}
+        {/* Checkboxes */}
+        <View className="flex-row flex-wrap justify-center mt-10 mb-3">
+          {choicesArray.map((answer: string) => (
+            <CheckboxChoices
+              key={answer}
+              title={answer}
+              isChecked={selectedAnswers.includes(answer)}
+              onPress={() => handleCheckboxPress(answer)}
+            />
+          ))}
         </View>
       </QuestionContainer>
     // </ThemedView>
   );
 };
+
+export default Template3;

@@ -1,5 +1,5 @@
 import React from 'react';
-import Template2 from '../components/quiz/Template2';
+import { Template1 } from '../components/quiz/Template1';
 import { ThemedView } from '@/components/ThemedView';
 
 const Transportation17 = () => {
@@ -17,8 +17,8 @@ const Transportation17 = () => {
 
 
     return (
-        <ThemedView className='flex-1 p-4'>
-            <Template2
+        <ThemedView className='p-4'>
+            <Template1
                 category={category}
                 question={question2}
                 choices={answers2}

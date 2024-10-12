@@ -2,7 +2,7 @@ import React from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRouter } from "expo-router";
-import Template7 from '../components/quiz/Template7';
+import Template6 from '../components/quiz/Template6';
 
 const Electricity3 = () => {
     const router = useRouter();
@@ -20,9 +20,9 @@ const Electricity3 = () => {
 
     
     return (
-        <ThemedView className="flex-1 px-4">
+        <ThemedView className="px-4">
             <ScrollView>
-                <Template7
+                <Template6
                 category={category}
                 question={question1}
                 question2={question2}
