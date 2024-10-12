@@ -45,6 +45,9 @@ const QuizIndex = () => {
   const handleAnswer = (value: any) => {
     const variable = questionData?.variable;
     
+    if (['9', '10', '11'].includes(questionDocumentIds[currentQuestionIndex])){
+      value *= 2;
+    }
     if (variable){
       const setter = emissionsContext[`set${variable.charAt(0).toUpperCase()}${variable.slice(1)}`];
       setter(value);
