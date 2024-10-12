@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from 'react';
 import { Template2 } from '../components/quiz/Template2';
 import { ThemedView } from '@/components/ThemedView';
-import { QuestionProps } from '@/types/QuizProps';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 
@@ -14,7 +13,6 @@ const Transportation4: FC<Question3Props> = ({ question, choices }) => {
     const category = "Transportation";
 
     const {setLifeSpanInKm} = useContext(EmissionsContext);
-
 
     return(
         <ThemedView className="px-4">

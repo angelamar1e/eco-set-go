@@ -4,12 +4,12 @@ import { ThemedView } from '@/components/ThemedView';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
 
-interface Question3Props{
+interface QuestionProps{
     question: string,
     choices: Map<string, string>
 }
 
-const Transportation3: FC<Question3Props> = ({ question, choices }) => {
+const Transportation3: FC<QuestionProps> = ({ question, choices }) => {
     const { setUser } = useContext(EmissionsContext);
 
     const category = "Transportation";

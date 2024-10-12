@@ -6,7 +6,7 @@ import { QuestionContainer } from './QuestionContainer';
 import { PresetChoices } from './PresetChoices';
 import Stepper from './Stepper';
 
-interface Template4Props {
+interface TemplateProps {
     category: string;
     question: string;
     answers: string[];
@@ -14,7 +14,7 @@ interface Template4Props {
     stepperInitialValue: number;
 }
 
-const Template4: FC<Template4Props> = ({
+const Template4: FC<TemplateProps> = ({
     category,
     question,
     answers,

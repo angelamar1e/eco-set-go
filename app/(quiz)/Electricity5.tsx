@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemedView } from '@/components/ThemedView';
 import { ScrollView } from 'react-native-gesture-handler';
-import Template7 from '../components/quiz/Template7';
+import Template5 from '../components/quiz/Template5';
 
 const Electricity5 = () => {
 
@@ -14,7 +14,7 @@ const Electricity5 = () => {
     return (
         <ThemedView className="px-4">
             <ScrollView>
-                <Template7
+                <Template5
                 category={category}
                 question={question1}
                 question2={question2}
