@@ -1,3 +1,5 @@
+import { CheckboxProps } from "react-native-paper";
+
 export interface QuestionProps {
     question: string; // The question as a string
     choices?: Map<string, string> | Map<string, number>; // The choices as a Map
@@ -5,21 +7,17 @@ export interface QuestionProps {
 
 export interface TemplateProps {
     category: string;
-    textFieldLabel?: string;
+    inputLabel?: string;
     question: string;
     choices?: Map<string, string> | Map<string, number>;
     defaultValue: string | number | boolean;
-    onNext: () => void;
-    onBack?: () => void;
     onAnswer: (answer: string | number) => void;
-    showBackButton?: boolean;
 }
 
 export interface StepperProps extends TemplateProps {
-    stepperTitle: string[];
-    stepperInitialValue: number;
+    stepperTitle?: string[];
 } 
 
-export interface CheckboxProps extends TemplateProps {
-    checkboxes: string[];
+export interface CheckboxesProps extends TemplateProps {
+    checkboxes?: string[];
 }

@@ -33,7 +33,7 @@ const HardDrinks = () => {
                 category={category}
                 question={question}
                 choices={answers}
-                textFieldLabel={textFieldLabel}
+                inputLabel={textFieldLabel}
                 onNext={onNext}
                 onBack={onBack}
                 showBackButton={true}

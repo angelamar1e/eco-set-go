@@ -24,7 +24,7 @@ const Transportation1: FC<QuestionProps> = ({ question, choices }) => {
         category={category}
         question={question}
         choices={choices}
-        textFieldLabel={textFieldLabel}
+        inputLabel={textFieldLabel}
         defaultValue={TransportEmission.Car.kmTravelled}
         onNext={handleNext}
         showBackButton={false}

@@ -31,7 +31,7 @@ const Transportation20 = () => {
                 category={category}
                 question={question2}
                 choices={answers2}
-                textFieldLabel={textFieldLabel2}
+                inputLabel={textFieldLabel2}
                 onBack={handleBack}
                 onNext={handleNext}
                 showBackButton={true} 

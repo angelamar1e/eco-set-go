@@ -30,7 +30,7 @@ const Transportation2: FC<QuestionProps> = ({ question, choices }) => {
                 category={category}
                 question={question}
                 choices={choices}
-                textFieldLabel={textFieldLabel}
+                inputLabel={textFieldLabel}
                 defaultValue={TransportEmission.Car.numOfPassengers}
                 onNext={handleNext}
                 onBack={handleBack}

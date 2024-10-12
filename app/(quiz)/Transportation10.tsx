@@ -35,7 +35,7 @@ const Transportation10: FC<QuestionProps> = ({ question, choices }) => {
                 question={question}
                 choices={choices}
                 defaultValue={TransportEmission.Airplane.mediumHaul.duration}
-                textFieldLabel={textFieldLabel2}
+                inputLabel={textFieldLabel2}
                 onBack={handleBack}
                 onNext={handleNext}
                 onAnswer={updateFlightDuration}

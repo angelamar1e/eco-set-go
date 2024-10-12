@@ -4,13 +4,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
 import { TransportEmission } from '@/constants/DefaultValues';
 import { EmissionsContext } from '@/contexts/EmissionsContext';
+import { QuestionProps } from '@/types/QuizProps';
 
 interface Question3Props{
     question: string,
-    choices: Map<string, string>
+    choices?: Map<string, string>
 }
 
-const Transportation3: FC<Question3Props> = ({ question, choices }) => {
+const Transportation3: FC<QuestionProps> = ({ question, choices }) => {
     const { setUser } = useContext(EmissionsContext);
 
     const category = "Transportation";
@@ -29,7 +30,7 @@ const Transportation3: FC<Question3Props> = ({ question, choices }) => {
             <Template3
                 category={category}
                 question={question}
-                choices={choices}
+                // choices={choices}
                 defaultValue={TransportEmission.Car.user}
                 onNext={handleNext}
                 onBack={handleBack}

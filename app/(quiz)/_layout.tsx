@@ -8,7 +8,6 @@ export default function Quiz() {
       <QuizDocsProvider>
           <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="Transportation1" options={{ headerShown: false }} />
           </Stack>
       </QuizDocsProvider>
     </EmissionsProvider>
