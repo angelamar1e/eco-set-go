@@ -1,4 +1,4 @@
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 import { View } from "react-native";
 import { QuestionContainer } from "@/app/components/quiz/QuestionContainer";
 import { ThemedText } from "@/components/ThemedText";
@@ -9,15 +9,33 @@ import { TemplateProps } from "@/types/QuizProps";
 export const Template2: FC<TemplateProps> = ({
   category,
   question,
-  choices,
+  choices = {},
   defaultValue,
   onAnswer
 }) => {
-  const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
+  // gets the first choice that matches the defaultValue
+  const getDefaultIndex = () => {
+    const defaultIndex = Object.entries(choices).findIndex(
+      ([, value]) => value === defaultValue
+    );
+    return defaultIndex !== -1 ? defaultIndex : null;
+  };
 
-  const handlePress = (selected: string | number) => {
-    setAnswer(selected);
-    onAnswer(selected);
+  // declares selectedIndex, sets initial values using getDefaultIndex
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(getDefaultIndex());
+
+  // dynamically updates selectedIndex when defaultValue or choices change
+  useEffect(() => {
+    if (defaultValue) {
+      const defaultIndex = getDefaultIndex();
+      setSelectedIndex(defaultIndex);
+    }
+  }, [defaultValue, choices]);
+
+  const handlePress = (index: number, value: string | number) => {
+    setSelectedIndex(index);  // Set the index as the selected one
+    onAnswer(value);          // Send the selected value to the callback
+    console.log("Selected Answer: ", value); // Log the selected answer
   };
 
   return (
@@ -33,12 +51,12 @@ export const Template2: FC<TemplateProps> = ({
         {/* Radio Choices */}
         <View className="flex-wrap flex-row justify-center mt-10 mb-3">
           {choices ? (
-            Object.entries(choices).map(([key, value]) => (
+            Object.entries(choices).map(([key, value], index) => (
               <RadioChoices
-                key={key}
+                key={index} 
                 title={key}
-                isSelected={answer === value}
-                onPress={() => handlePress(value)}
+                isSelected={selectedIndex === index}
+                onPress={() => handlePress(index, value as string | number)}
               />
             ))
           ) : (
