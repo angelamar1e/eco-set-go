@@ -4,6 +4,7 @@ import {
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
+  computeTrainEmissions,
   computeTwoWheelersEmissions,
 } from "@/app/utils/EstimationUtils";
 import { TransportEmission } from "@/constants/DefaultValues";
@@ -171,6 +172,14 @@ export const EmissionsProvider = ({ children }) => {
       )
     );
   }, [selectedTransports, eBikeKmTravelled, smallVehKmTravelled]);
+
+  // states for train emission variables
+  const [trainKmTravelled, setTrainKmTravelled] = useState(TransportEmission.Train.kmTravelled);
+  const [trainEmissions, setTrainEmissions] = useState(computeTrainEmissions(trainKmTravelled));
+
+  useEffect(() => {
+    setTrainEmissions(computeTrainEmissions(trainKmTravelled));
+  }, [trainKmTravelled]);
 
   const [overallFootprint, setOverallFootprint] = useState(
       carEmissions +
