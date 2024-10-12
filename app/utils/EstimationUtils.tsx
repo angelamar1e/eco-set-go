@@ -156,3 +156,47 @@ export function computeTrainEmissions(kmTravelled: number){
 
     return converKgToTons(trainEmissions);
 }
+
+export function computePublicTransportEmissions(efPerKm: number, aveSpeed: number, hrsTravelled: number){
+    let efPerHr: number;
+    efPerHr = efPerKm * aveSpeed;
+    const emissions = (efPerHr * hrsTravelled) * 52 // weeks in a year
+    
+    return emissions;
+}
+export function computeTotalPublicTransportEmissions(
+    selectedTransports: string[],
+    busHrsTravelled: number,
+    jeepHrsTravelled: number,
+    tricycleHrsTravelled: number,
+){
+    let publicTransportEmissions = 0;
+
+    if (selectedTransports.length === 0){
+        return publicTransportEmissions;
+    }
+    if (selectedTransports.includes('bus')){
+        publicTransportEmissions += computePublicTransportEmissions(
+            TransportEmission.PublicTransport.bus.efPerKm,
+            TransportEmission.PublicTransport.bus.aveSpeed,
+            busHrsTravelled
+        );
+    }
+    if (selectedTransports.includes('jeep')){
+        publicTransportEmissions += computePublicTransportEmissions(
+            TransportEmission.PublicTransport.jeepney.efPerKm,
+            TransportEmission.PublicTransport.jeepney.aveSpeed,
+            jeepHrsTravelled
+        );
+    }
+    if (selectedTransports.includes('trike')){
+        publicTransportEmissions += computePublicTransportEmissions(
+            TransportEmission.PublicTransport.tricycle.efPerKm,
+            TransportEmission.PublicTransport.tricycle.aveSpeed,
+            tricycleHrsTravelled
+        );
+    }
+
+    console.log(converKgToTons(publicTransportEmissions));
+    return converKgToTons(publicTransportEmissions);
+}
