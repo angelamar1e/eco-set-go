@@ -35,20 +35,22 @@ export const TransportEmission = {
     kmTravelled: 2000
   },
   EfficientTransport: {
-    defaultSelected: ["bicycle"],
     bicycle : {
+        isUsed: true,
         construction: 116,
         lifespan: 12,
     },
     electricBike: {
+        isUsed: false,
         efPerKm: 0.00223,
-        distanceTravelled: 400,
+        kmTravelled: 400,
         construction: 262,
         lifespan: 12
     },
     smallElectricVehicles: {
+        isUsed: false,
         efPerKm: 0.002,
-        distanceTravelled: 400,
+        kmTravelled: 400,
         construction: 91.9,
         lifespan: 4
     }
