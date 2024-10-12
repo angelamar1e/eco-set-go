@@ -1,8 +1,13 @@
 import { TransportEmission } from '@/constants/DefaultValues';
 import { FlightData } from '@/types/FlightData';
 
+export function converKgToTons(inTons: number){ // metric tons
+    const inKg = inTons / 1000; 
+
+    return inKg;
+}
+
 export function computeCarEmissions(
-    efPerKm: number,
     kmTravelled: number, 
     constructionScale: number,
     lifeSpanInKm : number,
@@ -17,7 +22,7 @@ export function computeCarEmissions(
         return carEmission = 0;
     }
     
-    efPerKm = consumptionPerKm * footprintPerLiter;
+    let efPerKm = consumptionPerKm * footprintPerLiter;
     let amortization: number = 1 / lifeSpanInKm;
     let constructionPerKm: number = constructionScale * amortization;
     let thresholdKm: number = lifeSpanInKm / 20;
@@ -41,36 +46,48 @@ export function computeCarEmissions(
     
     let useOfCar: number = efPerKm * kmTravelled;
     carEmission = (useOfCar + manufacture) / numOfPassengers
-    return carEmission / 1000 // results in kg, converted to tons by dividing by 1000
+
+    return converKgToTons(carEmission);
 }
 
 export function computeAirplaneEmission(data: FlightData): number{
     let aveSpeed: number = data['aveDistance'] / data['aveDuration'];
     let airplaneEmission: number = data['flightDuration'] * aveSpeed * TransportEmission.Airplane.efPerKm;
+
     return airplaneEmission
 }
 
 export function computeTotalAirplaneEmissions(
-    shortHaul: FlightData,
-    mediumHaul: FlightData,
-    longHaul: FlightData,
     travelledbyPlane: boolean,
+    shortHaulDuration: number,
+    mediumHaulDuration: number,
+    longHaulDuration: number,
 )
 {
     let airplaneEmission: number = 0;
+
     if (travelledbyPlane == false){
         return airplaneEmission
     }
-    if (shortHaul) {
-        airplaneEmission += computeAirplaneEmission(shortHaul)
+    else {
+        airplaneEmission += computeAirplaneEmission({
+            aveDistance: TransportEmission.Airplane.shortHaul.aveDistance,
+            aveDuration: TransportEmission.Airplane.shortHaul.aveDuration,
+            flightDuration: shortHaulDuration
+        })
+        airplaneEmission += computeAirplaneEmission({
+            aveDistance: TransportEmission.Airplane.mediumHaul.aveDistance,
+            aveDuration: TransportEmission.Airplane.mediumHaul.aveDuration,
+            flightDuration: mediumHaulDuration
+        })
+        airplaneEmission += computeAirplaneEmission({
+            aveDistance: TransportEmission.Airplane.longHaul.aveDistance,
+            aveDuration: TransportEmission.Airplane.longHaul.aveDuration,
+            flightDuration: longHaulDuration
+        })
     }
-    if (mediumHaul) {
-        airplaneEmission += computeAirplaneEmission(mediumHaul)
-    }
-    if (longHaul) {
-        airplaneEmission += computeAirplaneEmission(longHaul)
-    }
-    return airplaneEmission / 1000 // results in kg, converted to tons by dividing by 1000
+
+    return converKgToTons(airplaneEmission); // results in kg, converted to tons by dividing by 1000
 }
 
 export function computeTwoWheelersEmissions(efPerKm: number, kmTravelled: number, usesTwoWheelers: boolean){
@@ -78,7 +95,53 @@ export function computeTwoWheelersEmissions(efPerKm: number, kmTravelled: number
 
     if (usesTwoWheelers) {
         twoWheelersEmissions = kmTravelled * efPerKm;
-        return twoWheelersEmissions / 1000;
+        return converKgToTons(twoWheelersEmissions);
     }
+    
     return twoWheelersEmissions;
+}
+
+export function computeEfficientTravelEmissions(efPerKm: number, kmTravelled: number, construction: number, lifespan: number){
+    const emissions = (efPerKm * kmTravelled) + (construction/lifespan)
+    
+    return emissions;
+}
+
+export function computeBicycleEmissions(){
+    let bicycleEmissions: number;
+
+    const bicycleConstruction = TransportEmission.EfficientTransport.bicycle.construction;
+    const bicycleLifespan = TransportEmission.EfficientTransport.bicycle.lifespan;
+
+    return bicycleEmissions = bicycleConstruction / bicycleLifespan;
+}
+
+export function computeTotalEfficientTravelEmissions(
+    usesBike: boolean, 
+    usesEBike: boolean, 
+    usesSmallVehicles: boolean,
+    eBikeKmTravelled: number,
+    smallVehKmTravelled: number,
+){
+    let efficientTravelEmissions = 0;
+
+    if (usesBike){
+        efficientTravelEmissions += computeBicycleEmissions();
+    }
+    if (usesEBike){
+        efficientTravelEmissions += computeEfficientTravelEmissions(
+            TransportEmission.EfficientTransport.electricBike.efPerKm,
+            eBikeKmTravelled,
+            TransportEmission.EfficientTransport.electricBike.construction, 
+            TransportEmission.EfficientTransport.electricBike.lifespan)
+    }
+    if (usesSmallVehicles){
+        efficientTravelEmissions += computeEfficientTravelEmissions(
+            TransportEmission.EfficientTransport.smallElectricVehicles.efPerKm,
+            smallVehKmTravelled,
+            TransportEmission.EfficientTransport.smallElectricVehicles.construction,
+            TransportEmission.EfficientTransport.smallElectricVehicles.lifespan)
+    }
+
+    return converKgToTons(efficientTravelEmissions);
 }
