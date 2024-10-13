@@ -5,5 +5,5 @@ export interface QuestionData {
     category: string;
     input_label?: string;
     template: number;
-    stepperTitles?: string[];
+    stepper_titles?: Map<string,number>;
 }

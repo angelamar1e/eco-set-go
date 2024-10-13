@@ -4,9 +4,9 @@ export interface TemplateProps {
     question: string;
     choices?: Map<string, string> | Map<string, number>;
     defaultValue: any
-    onAnswer: (answer: string | number | string[]) => void;
+    onAnswer: (answer: any) => void;
 }
 
 export interface StepperTemplateProps extends TemplateProps {
-    stepperTitle?: number[];
+    stepperTitle?: Map<string, number>;
 }
