@@ -300,7 +300,7 @@ export function computeTotalColdDrinkEmissions(sweetDrinksFrequency: number, alc
     return converKgToTons(totalColdDrinksEmissions);
 }
 
-export function computeBottleWaterEmissions(buysBottledWater: boolean){
+export function computeBottledWaterEmissions(buysBottledWater: boolean){
     let bottledWaterEmissions = 0;
 
     if (buysBottledWater){

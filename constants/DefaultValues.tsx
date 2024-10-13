@@ -129,6 +129,7 @@ export const FoodEmission = {
     }
   },
   BottledWater: {
+    boughtRegularly: false,
     consumption: 1.8,
     ef: 0.27
   }
