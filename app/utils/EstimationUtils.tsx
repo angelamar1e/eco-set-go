@@ -279,21 +279,34 @@ export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency){
     return converKgToTons(totalHotDrinksEmissions);
 }
 
-export function computeColdDrinkEmission(consumption: number, ef: number){
+export function computeColdDrinkEmission(frequency: number, litersPerDay: number, ef: number){
+    let consumption = (frequency * litersPerDay);
+
     let coldDrinkEmission = (consumption * 52) * ef;
 
     return coldDrinkEmission;
 }
 
-export function computeTotalColdDrinkEmissions(sweetDrinksConsumption: number, alcoholConsumption: number){
+export function computeTotalColdDrinkEmissions(sweetDrinksFrequency: number, alcoholFrequency: number){
     let totalColdDrinksEmissions = 0;
 
-    if (sweetDrinksConsumption > 0){
-        totalColdDrinksEmissions += computeColdDrinkEmission(sweetDrinksConsumption, FoodEmission.ColdDrinks.sweetDrinks.ef);
+    if (sweetDrinksFrequency > 0){
+        totalColdDrinksEmissions += computeColdDrinkEmission(sweetDrinksFrequency, FoodEmission.ColdDrinks.sweetDrinks.litersPerDay, FoodEmission.ColdDrinks.sweetDrinks.ef);
     }
-    if (alcoholConsumption > 0){
-        totalColdDrinksEmissions += computeColdDrinkEmission(alcoholConsumption, FoodEmission.ColdDrinks.sweetDrinks.ef);
+    if (alcoholFrequency > 0){
+        totalColdDrinksEmissions += computeColdDrinkEmission(alcoholFrequency, FoodEmission.ColdDrinks.alcohol.litersPerDay, FoodEmission.ColdDrinks.sweetDrinks.ef);
     }
 
     return converKgToTons(totalColdDrinksEmissions);
+}
+
+export function computeBottleWaterEmissions(buysBottledWater: boolean){
+    let bottledWaterEmissions = 0;
+
+    if (buysBottledWater){
+        let annualConsumption = FoodEmission.BottledWater.consumption * 365 
+        bottledWaterEmissions = annualConsumption * FoodEmission.BottledWater.ef;
+    }
+
+    return converKgToTons(bottledWaterEmissions);
 }
