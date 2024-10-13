@@ -13,7 +13,7 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
   question,
   choices,
   defaultValue,
-  stepperTitle,
+  steppers,
   onAnswer,
 }) => {
   // State to manage the selected answer
@@ -63,8 +63,8 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
 
         {/* Stepper */}
         <View className="mt-5 mb-5 justify-center mt-10 mb-3">
-          {stepperTitle ? (
-            Object.entries(stepperTitle).map(([key, value]) => (
+          {steppers ? (
+            Object.entries(steppers).map(([key, value]) => (
               <Stepper
                 key={key}
                 title={key}
