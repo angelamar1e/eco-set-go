@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import firestore from "@react-native-firebase/firestore";
 import {
+  computeBreakfastEmissions,
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
@@ -8,7 +9,7 @@ import {
   computeTrainEmissions,
   computeTwoWheelersEmissions,
 } from "@/app/utils/EstimationUtils";
-import { TransportEmission } from "@/constants/DefaultValues";
+import { FoodEmission, TransportEmission } from "@/constants/DefaultValues";
 import { getUserUid } from "@/app/utils/utils";
 
 // Create a context
@@ -231,6 +232,14 @@ export const EmissionsProvider = ({ children }) => {
     tricycleHrsTravelled,
   ]);
 
+  // states for breakfast emission variable
+  const [breakfastEf, setBreakfastEf] = useState(FoodEmission.Breakfast.ef);
+  const [breakfastEmissions, setBreakfastEmissions] = useState(computeBreakfastEmissions(FoodEmission.Breakfast.ef));
+
+  useEffect(() => {
+    setBreakfastEmissions(computeBreakfastEmissions(breakfastEf));
+  }, [breakfastEf]);
+
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
     carEmissions +
@@ -238,7 +247,8 @@ export const EmissionsProvider = ({ children }) => {
       twoWheelersEmissions +
       efficientTravelEmissions +
       trainEmissions +
-      publicTransportEmissions
+      publicTransportEmissions + 
+      breakfastEmissions
   );
 
   useEffect(() => {
@@ -250,7 +260,8 @@ export const EmissionsProvider = ({ children }) => {
           twoWheelersEmissions +
           efficientTravelEmissions +
           trainEmissions + 
-          publicTransportEmissions;
+          publicTransportEmissions + 
+          breakfastEmissions;
         setOverallFootprint(newFootprint);
 
         try {
@@ -271,7 +282,8 @@ export const EmissionsProvider = ({ children }) => {
     twoWheelersEmissions,
     efficientTravelEmissions,
     trainEmissions,
-    publicTransportEmissions
+    publicTransportEmissions,
+    breakfastEmissions
   ]);
 
   return (
@@ -333,7 +345,11 @@ export const EmissionsProvider = ({ children }) => {
         setSelectedPublicTransport, 
         setBusHrsTravelled, 
         setJeepHrsTravelled, 
-        setTricycleHrsTravelled, 
+        setTricycleHrsTravelled,
+        breakfastEmissions, 
+        breakfastEf, 
+        setBreakfastEmissions,
+        setBreakfastEf,
       }}
     >
       {children}
