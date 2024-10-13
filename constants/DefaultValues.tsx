@@ -103,7 +103,7 @@ export const FoodEmission = {
     drinkTypeFrequency: {
       'Coffee': 1,
       'Tea': 0,
-      'Hot chocolate': 0
+      'Hot Chocolate': 0
     },
     drinkTypeEF: {
       coffee: 16.5,

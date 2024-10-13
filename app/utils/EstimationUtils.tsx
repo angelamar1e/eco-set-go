@@ -260,7 +260,7 @@ export function computeHotDrinkEmission(ef: number, kgPerCup: number, frequencyP
 interface DrinkTypeFrequency {
     'Coffee': number,
     'Tea': number,
-    'Hot chocolate': number
+    'Hot Chocolate': number
 }
 
 export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency){
@@ -272,8 +272,8 @@ export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency){
     if (frequency['Tea'] > 0){
         totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.tea, FoodEmission.HotDrinks.kgPerCup.tea, frequency['Tea']);
     }
-    if (frequency['Hot chocolate'] > 0){
-        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.hotChoco, FoodEmission.HotDrinks.kgPerCup.hotChoco, frequency['Hot chocolate']);
+    if (frequency['Hot Chocolate'] > 0){
+        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.hotChoco, FoodEmission.HotDrinks.kgPerCup.hotChoco, frequency['Hot Chocolate']);
     }
 
     return converKgToTons(totalHotDrinksEmissions);
