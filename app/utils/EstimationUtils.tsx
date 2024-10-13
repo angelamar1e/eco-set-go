@@ -209,14 +209,14 @@ export function computeBreakfastEmissions(breakfastEf: number){
 }
 
 export function computeMealEmission(ef: number, frequencyPerWeek: number){
-    let mealEmission = 0;
+    let mealEmission: number;
 
     mealEmission = (frequencyPerWeek * 52) * ef;
 
     return mealEmission;
 }
 
-export interface MealTypeFrequency {
+interface MealTypeFrequency {
     'Vegan': number,
     'Vegetarian': number,
     'Beef meat meal': number,
@@ -229,23 +229,71 @@ export function computeTotalMealEmissions(frequency: MealTypeFrequency){
     let totalMealEmissions = 0;
     
     if (frequency['Beef meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.beef, frequency['Beef meat meal']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.beef, frequency['Beef meat meal']);
     }
     if (frequency['Chicken meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.chicken, frequency['Chicken meat meal']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.chicken, frequency['Chicken meat meal']);
     }
     if (frequency['Fish meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.fish, frequency['Fish meat meal']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.fish, frequency['Fish meat meal']);
     }
     if (frequency['Pork meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.pork, frequency['Pork meat meal']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.pork, frequency['Pork meat meal']);
     }
     if (frequency['Vegan'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.vegan, frequency['Vegan']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.vegan, frequency['Vegan']);
     }
     if (frequency['Vegetarian'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.vegetarian, frequency['Vegetarian']);
+        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.vegetarian, frequency['Vegetarian']);
     }
 
     return converKgToTons(totalMealEmissions);
+}
+
+export function computeHotDrinkEmission(ef: number, kgPerCup: number, frequencyPerDay: number){
+    let efPerCup = ef * kgPerCup;
+    let hotDrinkEmission = (frequencyPerDay * efPerCup) * 365; // days in a year
+    
+    return hotDrinkEmission;
+}
+
+interface DrinkTypeFrequency {
+    'Coffee': number,
+    'Tea': number,
+    'Hot chocolate': number
+}
+
+export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency){
+    let totalHotDrinksEmissions = 0;
+    
+    if (frequency['Coffee'] > 0){
+        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.coffee, FoodEmission.HotDrinks.kgPerCup.coffee, frequency['Coffee']);
+    }
+    if (frequency['Tea'] > 0){
+        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.tea, FoodEmission.HotDrinks.kgPerCup.tea, frequency['Tea']);
+    }
+    if (frequency['Hot chocolate'] > 0){
+        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.hotChoco, FoodEmission.HotDrinks.kgPerCup.hotChoco, frequency['Hot chocolate']);
+    }
+
+    return converKgToTons(totalHotDrinksEmissions);
+}
+
+export function computeColdDrinkEmission(consumption: number, ef: number){
+    let coldDrinkEmission = (consumption * 52) * ef;
+
+    return coldDrinkEmission;
+}
+
+export function computeTotalColdDrinkEmissions(sweetDrinksConsumption: number, alcoholConsumption: number){
+    let totalColdDrinksEmissions = 0;
+
+    if (sweetDrinksConsumption > 0){
+        totalColdDrinksEmissions += computeColdDrinkEmission(sweetDrinksConsumption, FoodEmission.ColdDrinks.sweetDrinks.ef);
+    }
+    if (alcoholConsumption > 0){
+        totalColdDrinksEmissions += computeColdDrinkEmission(alcoholConsumption, FoodEmission.ColdDrinks.sweetDrinks.ef);
+    }
+
+    return converKgToTons(totalColdDrinksEmissions);
 }
