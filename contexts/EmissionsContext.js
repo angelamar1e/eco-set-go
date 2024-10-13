@@ -5,6 +5,7 @@ import {
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
+  computeTotalMealEmissions,
   computeTotalPublicTransportEmissions,
   computeTrainEmissions,
   computeTwoWheelersEmissions,
@@ -232,13 +233,21 @@ export const EmissionsProvider = ({ children }) => {
     tricycleHrsTravelled,
   ]);
 
-  // states for breakfast emission variable
+  // states for breakfast emission variables
   const [breakfastEf, setBreakfastEf] = useState(FoodEmission.Breakfast.ef);
   const [breakfastEmissions, setBreakfastEmissions] = useState(computeBreakfastEmissions(FoodEmission.Breakfast.ef));
 
   useEffect(() => {
     setBreakfastEmissions(computeBreakfastEmissions(breakfastEf));
   }, [breakfastEf]);
+
+  // states for meals emission variables
+  const [mealTypeFrequency, setMealTypeFrequency] = useState(FoodEmission.Lunches_Dinners.mealTypeFrequency);
+  const [mealEmissions, setMealEmissions] = useState(computeTotalMealEmissions(mealTypeFrequency));
+
+  useEffect(() => {
+    setMealEmissions(computeTotalMealEmissions(mealTypeFrequency));
+  }, [mealTypeFrequency]);
 
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
@@ -248,7 +257,8 @@ export const EmissionsProvider = ({ children }) => {
       efficientTravelEmissions +
       trainEmissions +
       publicTransportEmissions + 
-      breakfastEmissions
+      breakfastEmissions + 
+      mealEmissions
   );
 
   useEffect(() => {
@@ -261,8 +271,10 @@ export const EmissionsProvider = ({ children }) => {
           efficientTravelEmissions +
           trainEmissions + 
           publicTransportEmissions + 
-          breakfastEmissions;
+          breakfastEmissions + 
+          mealEmissions;
         setOverallFootprint(newFootprint);
+        console.log("meal:", mealEmissions)
 
         try {
           await firestore()
@@ -283,7 +295,8 @@ export const EmissionsProvider = ({ children }) => {
     efficientTravelEmissions,
     trainEmissions,
     publicTransportEmissions,
-    breakfastEmissions
+    breakfastEmissions,
+    mealEmissions
   ]);
 
   return (
@@ -350,6 +363,10 @@ export const EmissionsProvider = ({ children }) => {
         breakfastEf, 
         setBreakfastEmissions,
         setBreakfastEf,
+        mealEmissions, 
+        mealTypeFrequency, 
+        setMealEmissions,
+        setMealTypeFrequency, 
       }}
     >
       {children}
