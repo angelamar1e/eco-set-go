@@ -1,11 +1,12 @@
 import React, { createContext, useState, useEffect } from "react";
 import firestore from "@react-native-firebase/firestore";
 import {
+  computeBottledWaterEmissions,
   computeBreakfastEmissions,
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalColdDrinkEmissions,
-  computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
+  computeTotalEfficientTravelEmissions,
   computeTotalHotDrinksEmissions,
   computeTotalMealEmissions,
   computeTotalPublicTransportEmissions,
@@ -237,36 +238,66 @@ export const EmissionsProvider = ({ children }) => {
 
   // states for breakfast emission variables
   const [breakfastEf, setBreakfastEf] = useState(FoodEmission.Breakfast.ef);
-  const [breakfastEmissions, setBreakfastEmissions] = useState(computeBreakfastEmissions(FoodEmission.Breakfast.ef));
+  const [breakfastEmissions, setBreakfastEmissions] = useState(
+    computeBreakfastEmissions(FoodEmission.Breakfast.ef)
+  );
 
   useEffect(() => {
     setBreakfastEmissions(computeBreakfastEmissions(breakfastEf));
   }, [breakfastEf]);
 
   // states for meals emission variables
-  const [mealTypeFrequency, setMealTypeFrequency] = useState(FoodEmission.LunchesDinners.mealTypeFrequency);
-  const [mealEmissions, setMealEmissions] = useState(computeTotalMealEmissions(mealTypeFrequency));
+  const [mealTypeFrequency, setMealTypeFrequency] = useState(
+    FoodEmission.LunchesDinners.mealTypeFrequency
+  );
+  const [mealEmissions, setMealEmissions] = useState(
+    computeTotalMealEmissions(mealTypeFrequency)
+  );
 
   useEffect(() => {
     setMealEmissions(computeTotalMealEmissions(mealTypeFrequency));
   }, [mealTypeFrequency]);
 
   // states for hot drinks emissions
-  const [hotDrinksFrequency, setHotDrinksFrequency] = useState(FoodEmission.HotDrinks.drinkTypeFrequency);
-  const [hotDrinksEmissions, setHotDrinksEmissions] = useState(computeTotalHotDrinksEmissions(FoodEmission.HotDrinks.drinkTypeFrequency));
+  const [hotDrinksFrequency, setHotDrinksFrequency] = useState(
+    FoodEmission.HotDrinks.drinkTypeFrequency
+  );
+  const [hotDrinksEmissions, setHotDrinksEmissions] = useState(
+    computeTotalHotDrinksEmissions(FoodEmission.HotDrinks.drinkTypeFrequency)
+  );
 
   useEffect(() => {
     setHotDrinksEmissions(computeTotalHotDrinksEmissions(hotDrinksFrequency));
   }, [hotDrinksFrequency]);
 
-  // states for cold drinks emissions 
-  const [sweetDrinksFrequency, setSweetDrinksFrequency] = useState(FoodEmission.ColdDrinks.sweetDrinks.frequency);
-  const [alcoholFrequency, setAlcoholFrequency] = useState(FoodEmission.ColdDrinks.alcohol.frequency);
-  const [coldDrinksEmissions, setColdDrinksEmissions] = useState(computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency));
+  // states for cold drinks emissions
+  const [sweetDrinksFrequency, setSweetDrinksFrequency] = useState(
+    FoodEmission.ColdDrinks.sweetDrinks.frequency
+  );
+  const [alcoholFrequency, setAlcoholFrequency] = useState(
+    FoodEmission.ColdDrinks.alcohol.frequency
+  );
+  const [coldDrinksEmissions, setColdDrinksEmissions] = useState(
+    computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency)
+  );
 
   useEffect(() => {
-    setColdDrinksEmissions(computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency));
+    setColdDrinksEmissions(
+      computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency)
+    );
   }, [sweetDrinksFrequency, alcoholFrequency]);
+
+  // states for bottled water emissions
+  const [buysBottledWater, setBuysBottledWater] = useState(
+    FoodEmission.BottledWater.boughtRegularly
+  );
+  const [bottledWaterEmissions, setBottledWaterEmissions] = useState(
+    computeBottledWaterEmissions(buysBottledWater)
+  );
+
+  useEffect(() => {
+    setBottledWaterEmissions(computeBottledWaterEmissions(buysBottledWater));
+  }, [buysBottledWater]);
 
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
@@ -275,11 +306,12 @@ export const EmissionsProvider = ({ children }) => {
       twoWheelersEmissions +
       efficientTravelEmissions +
       trainEmissions +
-      publicTransportEmissions + 
-      breakfastEmissions + 
-      mealEmissions + 
+      publicTransportEmissions +
+      breakfastEmissions +
+      mealEmissions +
       hotDrinksEmissions +
-      coldDrinksEmissions
+      coldDrinksEmissions +
+      bottledWaterEmissions
   );
 
   useEffect(() => {
@@ -290,14 +322,15 @@ export const EmissionsProvider = ({ children }) => {
           airplaneTravelEmissions +
           twoWheelersEmissions +
           efficientTravelEmissions +
-          trainEmissions + 
-          publicTransportEmissions + 
-          breakfastEmissions + 
-          mealEmissions + 
+          trainEmissions +
+          publicTransportEmissions +
+          breakfastEmissions +
+          mealEmissions +
           hotDrinksEmissions +
-          coldDrinksEmissions;
+          coldDrinksEmissions +
+          bottledWaterEmissions;
         setOverallFootprint(newFootprint);
-        console.log("meal:", mealEmissions)
+        console.log("meal:", mealEmissions);
 
         try {
           await firestore()
@@ -321,7 +354,8 @@ export const EmissionsProvider = ({ children }) => {
     breakfastEmissions,
     mealEmissions,
     hotDrinksEmissions,
-    coldDrinksEmissions
+    coldDrinksEmissions,
+    bottledWaterEmissions,
   ]);
 
   return (
@@ -374,34 +408,38 @@ export const EmissionsProvider = ({ children }) => {
         trainKmTravelled,
         setTrainEmissions,
         setTrainKmTravelled,
-        publicTransportEmissions, 
-        selectedPublicTransport, 
-        busHrsTravelled, 
-        jeepHrsTravelled, 
-        tricycleHrsTravelled, 
+        publicTransportEmissions,
+        selectedPublicTransport,
+        busHrsTravelled,
+        jeepHrsTravelled,
+        tricycleHrsTravelled,
         setPublicTransportEmissions,
-        setSelectedPublicTransport, 
-        setBusHrsTravelled, 
-        setJeepHrsTravelled, 
+        setSelectedPublicTransport,
+        setBusHrsTravelled,
+        setJeepHrsTravelled,
         setTricycleHrsTravelled,
-        breakfastEmissions, 
-        breakfastEf, 
+        breakfastEmissions,
+        breakfastEf,
         setBreakfastEmissions,
         setBreakfastEf,
-        mealEmissions, 
-        mealTypeFrequency, 
+        mealEmissions,
+        mealTypeFrequency,
         setMealEmissions,
-        setMealTypeFrequency, 
+        setMealTypeFrequency,
         hotDrinksEmissions,
-        hotDrinksFrequency, 
+        hotDrinksFrequency,
         setHotDrinksEmissions,
         setHotDrinksFrequency,
-        coldDrinksEmissions, 
-        sweetDrinksConsumption: sweetDrinksFrequency, 
-        alcoholConsumption: alcoholFrequency, 
+        coldDrinksEmissions,
+        sweetDrinksFrequency,
+        alcoholFrequency,
         setColdDrinksEmissions,
-        setSweetDrinksConsumption: setSweetDrinksFrequency,
-        setAlcoholConsumption: setAlcoholFrequency,
+        setSweetDrinksFrequency,
+        setAlcoholFrequency,
+        bottledWaterEmissions,
+        buysBottledWater,
+        setBottledWaterEmissions,
+        setBuysBottledWater,
       }}
     >
       {children}
