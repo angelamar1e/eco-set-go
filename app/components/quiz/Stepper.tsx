@@ -22,9 +22,9 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
   };
 
   return (
-    <View className="flex-row items-center justify-between bg-white p-4 rounded-[10px] border border-gray-300">
+    <View className="flex-row items-center justify-between bg-white p-1 rounded-[10px] border border-gray-300">
       <View>
-        <ThemedText type='defaultSemiBold' className="text-[20px] text-black mr-3">{title}</ThemedText>
+        <ThemedText type='defaultSemiBold' className="text-[16px] text-black mr-3">{title}</ThemedText>
         <Text className="text-[15px] text-gray-500 mt-1">{value}x</Text>
       </View>
 

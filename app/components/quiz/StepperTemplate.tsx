@@ -62,7 +62,7 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
         </View>
 
         {/* Stepper */}
-        <View className="mt-5 mb-5 justify-center mt-10 mb-3">
+        <View className="mb-5 justify-center">
           {steppers ? (
             Object.entries(steppers).map(([key, value]) => (
               <Stepper
