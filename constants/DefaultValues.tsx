@@ -81,7 +81,7 @@ export const FoodEmission = {
   Breakfast: {
     ef: 0.06528 // Simple rice meal EF 
   },
-  Lunches_Dinners: {
+  LunchesDinners: {
     mealTypeFrequency: {
       'Vegan': 0,
       'Vegetarian': 1,
@@ -90,7 +90,7 @@ export const FoodEmission = {
       'Pork meat meal': 5,
       'Fish meat meal': 2
     },
-    mealsEf: {
+    mealTypeEF: {
       vegan: 0.004,
       vegetarian: 0.0265,
       pork: 0.7013,
@@ -98,5 +98,49 @@ export const FoodEmission = {
       fish: 0.5561,
       chicken: 0.6485
     }
+  },
+  HotDrinks: {
+    drinkTypeFrequency: {
+      'Coffee': 1,
+      'Tea': 0,
+      'Hot chocolate': 0
+    },
+    drinkTypeEF: {
+      coffee: 16.5,
+      tea: 0.03,
+      hotChoco: 18.7
+    },
+    kgPerCup: {
+      coffee: 0.012,
+      tea: 0.25,
+      hotChoco: 0.02
+    }
+  },
+  ColdDrinks: {
+    sweetDrinks: {
+      consumption: 0.305,
+      ef: 0.71
+    },
+    alcohol: {
+      consumption: 0.017,
+      ef: 1.2
+    }
+  },
+  BottledWater: {
+    consumption: 1.8,
+    ef: 0.27
+  }
+}
+
+export const ElectricityEmissions = {
+  householdSize: 4,
+  Grid: {
+    householdConsumption: 200,
+    ef: 0.6935
+  },
+  Solar: {
+    isUsed: false,
+    annualProduction: 2000,
+    percentConsumed: 1,
   }
 }
