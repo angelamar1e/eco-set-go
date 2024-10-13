@@ -8,5 +8,5 @@ export interface TemplateProps {
 }
 
 export interface StepperTemplateProps extends TemplateProps {
-    stepperTitle?: Map<string, number>;
+    steppers?: Map<string, number>;
 }
