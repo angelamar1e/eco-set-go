@@ -118,11 +118,13 @@ export const FoodEmission = {
   },
   ColdDrinks: {
     sweetDrinks: {
-      consumption: 0.305,
+      frequency: 1,
+      litersPerDay: 0.305,
       ef: 0.71
     },
     alcohol: {
-      consumption: 0.017,
+      frequency: 1,
+      litersPerDay: 0.017,
       ef: 1.2
     }
   },
@@ -135,8 +137,9 @@ export const FoodEmission = {
 export const ElectricityEmissions = {
   householdSize: 4,
   Grid: {
-    householdConsumption: 200,
-    ef: 0.6935
+    ratePerKwh: 11.6339, // in pesos
+    monthlyExpenditure: 2326.78, // for 200 kWh
+    ef: 0.6935 // per kWh
   },
   Solar: {
     isUsed: false,
