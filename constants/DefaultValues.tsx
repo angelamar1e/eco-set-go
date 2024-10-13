@@ -82,13 +82,13 @@ export const FoodEmission = {
     ef: 0.06528 // Simple rice meal EF 
   },
   Lunches_Dinners: {
-    weeklyMealsCount: {
-      vegan: 1,
-      vegetarian: 1,
-      beef: 0,
-      chicken: 5,
-      pork: 5,
-      fish: 2
+    mealTypeFrequency: {
+      'Vegan': 0,
+      'Vegetarian': 1,
+      'Beef meat meal': 1,
+      'Chicken meat meal': 5,
+      'Pork meat meal': 5,
+      'Fish meat meal': 2
     },
     mealsEf: {
       vegan: 0.004,
