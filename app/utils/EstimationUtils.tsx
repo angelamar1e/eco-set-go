@@ -1,4 +1,4 @@
-import { TransportEmission } from '@/constants/DefaultValues';
+import { FoodEmission, TransportEmission } from '@/constants/DefaultValues';
 import { FlightData } from '@/types/FlightData';
 
 export function converKgToTons(inTons: number){ // metric tons
@@ -124,7 +124,6 @@ export function computeTotalEfficientTravelEmissions(
     let efficientTravelEmissions = 0;
 
     if (selectedTransports.length === 0){
-        console.log(efficientTravelEmissions);
         return efficientTravelEmissions;
     }
     if (selectedTransports.includes('bike')){
@@ -145,7 +144,6 @@ export function computeTotalEfficientTravelEmissions(
             TransportEmission.EfficientTransport.smallElectricVehicles.lifespan)
     }
 
-    console.log(converKgToTons(efficientTravelEmissions));
     return converKgToTons(efficientTravelEmissions);
 }
 
@@ -208,4 +206,46 @@ export function computeBreakfastEmissions(breakfastEf: number){
     }
 
     return converKgToTons(breakfastEmission);
+}
+
+export function computeMealEmission(ef: number, frequencyPerWeek: number){
+    let mealEmission = 0;
+
+    mealEmission = (frequencyPerWeek * 52) * ef;
+
+    return mealEmission;
+}
+
+export interface MealTypeFrequency {
+    'Vegan': number,
+    'Vegetarian': number,
+    'Beef meat meal': number,
+    'Chicken meat meal': number,
+    'Pork meat meal': number,
+    'Fish meat meal': number;
+}
+
+export function computeTotalMealEmissions(frequency: MealTypeFrequency){
+    let totalMealEmissions = 0;
+    
+    if (frequency['Beef meat meal'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.beef, frequency['Beef meat meal']);
+    }
+    if (frequency['Chicken meat meal'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.chicken, frequency['Chicken meat meal']);
+    }
+    if (frequency['Fish meat meal'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.fish, frequency['Fish meat meal']);
+    }
+    if (frequency['Pork meat meal'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.pork, frequency['Pork meat meal']);
+    }
+    if (frequency['Vegan'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.vegan, frequency['Vegan']);
+    }
+    if (frequency['Vegetarian'] > 0){
+        totalMealEmissions += computeMealEmission(FoodEmission.Lunches_Dinners.mealsEf.vegetarian, frequency['Vegetarian']);
+    }
+
+    return converKgToTons(totalMealEmissions);
 }
