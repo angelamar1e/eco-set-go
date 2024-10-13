@@ -58,21 +58,45 @@ export const TransportEmission = {
     efPerKm: 0.03479,
   },
   PublicTransport: {
-    selectedPublicTransport: ['bus, jeepney, tricycle'],
+    selectedPublicTransport: ['bus', 'jeep', 'trike'],
     bus: {
-      efPerKm: 3.48,
+      efPerKm: 0.2902192,
       aveSpeed: 12,
       hrsTravelled: 1
     },
     jeepney: {
-      efPerKm: 2.61,
+      efPerKm: 0.2902192,
       aveSpeed: 9,
       hrsTravelled: 1
     },
     tricycle: {
-      efPerKm: 2.46,
+      efPerKm: 0.1235702,
       aveSpeed: 19.94,
       hrsTravelled: 1
     }
   }
 };
+
+export const FoodEmission = {
+  Breakfast: {
+    ef: 0.06528 // Simple rice meal EF 
+  },
+  Lunches_Dinners: {
+    weeklyMealsCount: {
+      vegan: 1,
+      vegetarian: 1,
+      beef: 0,
+      chicken: 5,
+      pork: 5,
+      fish: 2
+    },
+    mealsEf: {
+      vegan: 0.004,
+      vegetarian: 0.0265,
+      pork: 0.7013,
+      beef: 2.3,
+      fish: 0.5561,
+      chicken: 0.6485
+    }
+  }
+}
