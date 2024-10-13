@@ -97,7 +97,7 @@ const QuizIndex = () => {
             category={questionData.category}
             inputLabel={questionData.input_label}
             onAnswer={handleAnswer}
-            stepperTitle={questionData.stepperTitles}
+            stepperTitle={questionData.stepper_titles}
           />
           <View className="flex-row justify-center mt-4">
             <NavigationButtons
