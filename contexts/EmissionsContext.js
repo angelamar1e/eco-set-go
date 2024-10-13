@@ -4,6 +4,7 @@ import {
   computeBreakfastEmissions,
   computeCarEmissions,
   computeTotalAirplaneEmissions,
+  computeTotalColdDrinkEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
   computeTotalHotDrinksEmissions,
   computeTotalMealEmissions,
@@ -258,6 +259,15 @@ export const EmissionsProvider = ({ children }) => {
     setHotDrinksEmissions(computeTotalHotDrinksEmissions(hotDrinksFrequency));
   }, [hotDrinksFrequency]);
 
+  // states for cold drinks emissions 
+  const [sweetDrinksFrequency, setSweetDrinksFrequency] = useState(FoodEmission.ColdDrinks.sweetDrinks.frequency);
+  const [alcoholFrequency, setAlcoholFrequency] = useState(FoodEmission.ColdDrinks.alcohol.frequency);
+  const [coldDrinksEmissions, setColdDrinksEmissions] = useState(computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency));
+
+  useEffect(() => {
+    setColdDrinksEmissions(computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency));
+  }, [sweetDrinksFrequency, alcoholFrequency]);
+
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
     carEmissions +
@@ -268,7 +278,8 @@ export const EmissionsProvider = ({ children }) => {
       publicTransportEmissions + 
       breakfastEmissions + 
       mealEmissions + 
-      hotDrinksEmissions
+      hotDrinksEmissions +
+      coldDrinksEmissions
   );
 
   useEffect(() => {
@@ -283,7 +294,8 @@ export const EmissionsProvider = ({ children }) => {
           publicTransportEmissions + 
           breakfastEmissions + 
           mealEmissions + 
-          hotDrinksEmissions;
+          hotDrinksEmissions +
+          coldDrinksEmissions;
         setOverallFootprint(newFootprint);
         console.log("meal:", mealEmissions)
 
@@ -309,6 +321,7 @@ export const EmissionsProvider = ({ children }) => {
     breakfastEmissions,
     mealEmissions,
     hotDrinksEmissions,
+    coldDrinksEmissions
   ]);
 
   return (
@@ -383,6 +396,12 @@ export const EmissionsProvider = ({ children }) => {
         hotDrinksFrequency, 
         setHotDrinksEmissions,
         setHotDrinksFrequency,
+        coldDrinksEmissions, 
+        sweetDrinksConsumption: sweetDrinksFrequency, 
+        alcoholConsumption: alcoholFrequency, 
+        setColdDrinksEmissions,
+        setSweetDrinksConsumption: setSweetDrinksFrequency,
+        setAlcoholConsumption: setAlcoholFrequency,
       }}
     >
       {children}
