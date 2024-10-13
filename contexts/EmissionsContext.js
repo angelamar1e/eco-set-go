@@ -5,6 +5,7 @@ import {
   computeCarEmissions,
   computeTotalAirplaneEmissions,
   computeTotalEfficientTravelEmissions as computeTotalEfficientTravelEmissions,
+  computeTotalHotDrinksEmissions,
   computeTotalMealEmissions,
   computeTotalPublicTransportEmissions,
   computeTrainEmissions,
@@ -242,12 +243,20 @@ export const EmissionsProvider = ({ children }) => {
   }, [breakfastEf]);
 
   // states for meals emission variables
-  const [mealTypeFrequency, setMealTypeFrequency] = useState(FoodEmission.Lunches_Dinners.mealTypeFrequency);
+  const [mealTypeFrequency, setMealTypeFrequency] = useState(FoodEmission.LunchesDinners.mealTypeFrequency);
   const [mealEmissions, setMealEmissions] = useState(computeTotalMealEmissions(mealTypeFrequency));
 
   useEffect(() => {
     setMealEmissions(computeTotalMealEmissions(mealTypeFrequency));
   }, [mealTypeFrequency]);
+
+  // states for hot drinks emissions
+  const [hotDrinksFrequency, setHotDrinksFrequency] = useState(FoodEmission.HotDrinks.drinkTypeFrequency);
+  const [hotDrinksEmissions, setHotDrinksEmissions] = useState(computeTotalHotDrinksEmissions(FoodEmission.HotDrinks.drinkTypeFrequency));
+
+  useEffect(() => {
+    setHotDrinksEmissions(computeTotalHotDrinksEmissions(hotDrinksFrequency));
+  }, [hotDrinksFrequency]);
 
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
@@ -258,7 +267,8 @@ export const EmissionsProvider = ({ children }) => {
       trainEmissions +
       publicTransportEmissions + 
       breakfastEmissions + 
-      mealEmissions
+      mealEmissions + 
+      hotDrinksEmissions
   );
 
   useEffect(() => {
@@ -272,7 +282,8 @@ export const EmissionsProvider = ({ children }) => {
           trainEmissions + 
           publicTransportEmissions + 
           breakfastEmissions + 
-          mealEmissions;
+          mealEmissions + 
+          hotDrinksEmissions;
         setOverallFootprint(newFootprint);
         console.log("meal:", mealEmissions)
 
@@ -296,7 +307,8 @@ export const EmissionsProvider = ({ children }) => {
     trainEmissions,
     publicTransportEmissions,
     breakfastEmissions,
-    mealEmissions
+    mealEmissions,
+    hotDrinksEmissions,
   ]);
 
   return (
@@ -367,6 +379,10 @@ export const EmissionsProvider = ({ children }) => {
         mealTypeFrequency, 
         setMealEmissions,
         setMealTypeFrequency, 
+        hotDrinksEmissions,
+        hotDrinksFrequency, 
+        setHotDrinksEmissions,
+        setHotDrinksFrequency,
       }}
     >
       {children}
