@@ -197,6 +197,15 @@ export function computeTotalPublicTransportEmissions(
         );
     }
 
-    console.log(converKgToTons(publicTransportEmissions));
     return converKgToTons(publicTransportEmissions);
+}
+
+export function computeBreakfastEmissions(breakfastEf: number){
+    let breakfastEmission = 0;
+
+    if (breakfastEf > 0){
+        breakfastEmission = breakfastEf * 365; // days in a year
+    }
+
+    return converKgToTons(breakfastEmission);
 }
