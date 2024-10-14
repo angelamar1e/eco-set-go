@@ -4,6 +4,7 @@ import {
   computeBottledWaterEmissions,
   computeBreakfastEmissions,
   computeCarEmissions,
+  computeElectricityEmissions,
   computeTotalAirplaneEmissions,
   computeTotalColdDrinkEmissions,
   computeTotalEfficientTravelEmissions,
@@ -13,7 +14,11 @@ import {
   computeTrainEmissions,
   computeTwoWheelersEmissions,
 } from "@/app/utils/EstimationUtils";
-import { FoodEmission, TransportEmission } from "@/constants/DefaultValues";
+import {
+  ElectricityEmissions,
+  FoodEmission,
+  TransportEmission,
+} from "@/constants/DefaultValues";
 import { getUserUid } from "@/app/utils/utils";
 
 // Create a context
@@ -299,6 +304,50 @@ export const EmissionsProvider = ({ children }) => {
     setBottledWaterEmissions(computeBottledWaterEmissions(buysBottledWater));
   }, [buysBottledWater]);
 
+  // states for electricity consumption emission variables
+  const [householdSize, setHouseholdSize] = useState(
+    ElectricityEmissions.householdSize
+  );
+  const [usesSolarPanels, setUsesSolarPanels] = useState(
+    ElectricityEmissions.Solar.isUsed
+  );
+  const [solarProduction, setSolarProduction] = useState(
+    ElectricityEmissions.Solar.annualProduction
+  );
+  const [solarConsumptionPercent, setSolarConsumptionPercent] = useState(
+    ElectricityEmissions.Solar.percentConsumed
+  );
+  const [gridMonthlySpend, setGridMonthlySpend] = useState(
+    ElectricityEmissions.Grid.monthlySpend
+  );
+  const [electricityEmissions, setElectricityEmissions] = useState(
+    computeElectricityEmissions(
+      householdSize,
+      usesSolarPanels,
+      solarProduction,
+      solarConsumptionPercent,
+      gridMonthlySpend
+    )
+  );
+
+  useEffect(() => {
+    setElectricityEmissions(
+      computeElectricityEmissions(
+        householdSize,
+        usesSolarPanels,
+        solarProduction,
+        solarConsumptionPercent,
+        gridMonthlySpend
+      )
+    );
+  }, [
+    householdSize,
+    usesSolarPanels,
+    solarProduction,
+    solarConsumptionPercent,
+    gridMonthlySpend,
+  ]);
+
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(
     carEmissions +
@@ -311,7 +360,8 @@ export const EmissionsProvider = ({ children }) => {
       mealEmissions +
       hotDrinksEmissions +
       coldDrinksEmissions +
-      bottledWaterEmissions
+      bottledWaterEmissions +
+      electricityEmissions
   );
 
   useEffect(() => {
@@ -328,9 +378,9 @@ export const EmissionsProvider = ({ children }) => {
           mealEmissions +
           hotDrinksEmissions +
           coldDrinksEmissions +
-          bottledWaterEmissions;
+          bottledWaterEmissions +
+          electricityEmissions;
         setOverallFootprint(newFootprint);
-        console.log("meal:", mealEmissions);
 
         try {
           await firestore()
@@ -356,6 +406,7 @@ export const EmissionsProvider = ({ children }) => {
     hotDrinksEmissions,
     coldDrinksEmissions,
     bottledWaterEmissions,
+    electricityEmissions,
   ]);
 
   return (
@@ -440,6 +491,18 @@ export const EmissionsProvider = ({ children }) => {
         buysBottledWater,
         setBottledWaterEmissions,
         setBuysBottledWater,
+        setElectricityEmissions,
+        electricityEmissions,
+        householdSize,
+        usesSolarPanels,
+        solarProduction,
+        solarConsumptionPercent,
+        gridMonthlySpend,
+        setUsesSolarPanels,
+        setHouseholdSize,
+        setSolarProduction,
+        setSolarConsumptionPercent,
+        setGridMonthlySpend,
       }}
     >
       {children}
