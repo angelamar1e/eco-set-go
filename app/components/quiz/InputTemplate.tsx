@@ -6,16 +6,16 @@ import { PresetChoices } from "./PresetChoices";
 import { TextField } from "./TextField";
 import { TemplateProps } from "@/types/QuizProps";
 
-export const Template1: FC<TemplateProps> = ({
+const InputTemplate: FC<TemplateProps> = ({
   category,
   question,
   choices: choices,
+  inputLabel = "",
   defaultValue,
-  onAnswer,
-  unit,
+  onAnswer
 }) => {
   // State to manage selected answer from preset choices
-  const [answer, setAnswer] = useState<number>();
+  const [answer, setAnswer] = useState<number>(defaultValue);
 
   // State to manage the input value in the TextField
   const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
@@ -37,7 +37,6 @@ export const Template1: FC<TemplateProps> = ({
   };
 
   return (
-    // <ThemedView className="flex-1 px-4">
       <QuestionContainer>
         <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
           {category}
@@ -52,7 +51,7 @@ export const Template1: FC<TemplateProps> = ({
               <PresetChoices
                 key={key}
                 title={key}
-                isSelected={answer || answer == 0 ? answer === value : value === defaultValue}
+                isSelected={value === answer}
                 onPress={() => handlePress(value)}
               />
             ))
@@ -61,18 +60,17 @@ export const Template1: FC<TemplateProps> = ({
           )}
         </View>
 
-        {/* Text Input Field */}
+        {/* Input field */}
         <View className="ml-2 mb-5">
           <TextField
+            unit={inputLabel}
             value={inputValue}
             onChangeText={handleTextChange}
             onBlur={handleBlur}
-            unit={unit}
           />
         </View>
       </QuestionContainer>
-    // </ThemedView>
   );
 };
 
-export default Template1;
+export default InputTemplate;

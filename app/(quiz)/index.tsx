@@ -1,96 +1,122 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Button } from 'react-native';
-import { QuizContext } from '@/contexts/QuizContext';
-import Calculator from '../components/quiz/Calculator';
-import { EmissionsContext } from '@/contexts/EmissionsContext';
-import { components } from '../../constants/QuestionComponents';
-import { skipConditions } from '@/constants/SkipConditions';
-import { ThemedView } from '@/components/ThemedView';
-import { NavigationButtons } from '../components/quiz/NavigationButtons';
+import React, { useState, useEffect, useContext } from "react";
+import { View } from "react-native";
+import { QuizContext } from "@/contexts/QuizContext";
+import Calculator from "../components/quiz/Calculator";
+import { EmissionsContext } from "@/contexts/EmissionsContext";
+import { ThemedView } from "@/components/ThemedView";
+import { NavigationButtons } from "../components/quiz/NavigationButtons";
+import { Text } from "react-native-paper";
+import { QuestionData } from "@/types/QuestionData";
+import InputTemplate from "../components/quiz/InputTemplate";
+import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
+import StepperTemplate from "../components/quiz/StepperTemplate";
+import RadioTemplate from "../components/quiz/RadioTemplate";
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
-  const { kmTravelled } = useContext(EmissionsContext);
+  const emissionsContext = useContext(EmissionsContext);
 
-  const [question, setQuestion] = useState<string>('');
-  const [choices, setChoices] = useState<Map<string, number> & Map<string, string>>(new Map());
-  const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
-  
-  // Fetch the question based on currentComponentIndex
+  const [questionData, setQuestionData] = useState<QuestionData>();
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const templates = [InputTemplate, RadioTemplate, CheckboxTemplate, StepperTemplate];
+
+  // Fetch the question based on currentQuestionIndex
   useEffect(() => {
     const fetchQuestion = async () => {
-      const currentQuestionId = questionDocumentIds[currentComponentIndex];
+      const currentQuestionId = questionDocumentIds[currentQuestionIndex];
       if (currentQuestionId) {
         try {
           const snapshot = await questionCollection.doc(currentQuestionId).get();
           if (snapshot.exists) {
-            const questionData = snapshot.data();
-            setQuestion(questionData.question);
-            setChoices(questionData.choices || new Map());
+            const fetchedQuestionData = snapshot.data();
+            setQuestionData(fetchedQuestionData);
           } else {
-            console.log('No document found for this question');
+            console.log("No document found for this question");
           }
         } catch (error) {
-          console.error('Error fetching document:', error);
+          console.error("Error fetching document:", error);
         }
       }
     };
-    
+  
     fetchQuestion();
-  }, [currentComponentIndex, questionDocumentIds, questionCollection]);
+  }, [currentQuestionIndex, questionDocumentIds, questionCollection]);
 
-    // Function to determine how many steps to skip based on conditions
-  const determineSkipSteps = () => {
-    let skipSteps = 1;  // Default to advancing one step if no condition is met
-
-    // Loop through the conditions and find the number of steps to skip if the condition is met
-    for (const { condition, skipSteps: steps } of skipConditions) {
-      if (condition(kmTravelled)) { 
-        skipSteps = steps || 1;  // Use the skipSteps from the condition, or default to 1
-        break;
-      }
+  const handleAnswer = (value: any) => {
+    const variable = questionData?.variable;
+    
+    if (['9', '10', '11'].includes(questionDocumentIds[currentQuestionIndex])){
+      value *= 2;
     }
+    if (variable){
+      const setter = emissionsContext[`set${variable.charAt(0).toUpperCase()}${variable.slice(1)}`];
+      setter(value);
+    }
+  }
 
-    return skipSteps;
-  };
-
-  // Move to the next component, taking skip logic into account
+  // Move to the next question, taking skip logic into account
   const goToNextComponent = () => {
     const skipSteps = 1;
-    const newIndex = currentComponentIndex + skipSteps;
+    const newIndex = currentQuestionIndex + skipSteps;
 
-    // Ensure the new index does not exceed available components
-    if (newIndex < components.length) {
-      setCurrentComponentIndex(newIndex);
+    // Ensure the new index does not exceed number of questions
+    if (newIndex < questionDocumentIds.length) {
+      setCurrentQuestionIndex(newIndex);
     } else {
-      console.log('No more components');
+      console.log("No more components");
     }
   };
 
-    // Move to the previous component, taking skip logic into account
-    const goToPrevComponent = () => {
-      const newIndex = currentComponentIndex - 1;
-  
-      // Ensure the new index does not exceed available components
-      if (newIndex >= 0) {
-        setCurrentComponentIndex(newIndex);
-      } else {
-        console.log('No more components');
-      }
-    };
+  // Move to the previous question, taking skip logic into account
+  const goToPrevComponent = () => {
+    const newIndex = currentQuestionIndex - 1;
 
-  // Dynamically render the current component based on currentComponentIndex
-  const CurrentComponent = components[currentComponentIndex];
+    // Ensure the new index does not exceed number of questions
+    if (newIndex >= 0) {
+      setCurrentQuestionIndex(newIndex);
+    } else {
+      console.log("No more components");
+    }
+  };
+
+  // Dynamically render the template based on current question
+  const CurrentComponent = questionData
+    ? templates[questionData.template]
+    : templates[0];
 
   return (
     <ThemedView className="flex-1 p-4">
-      <Calculator/>
-      {/* Render the current component with props */}
-      <CurrentComponent question={question} choices={choices} />
-      <View className='flex-row justify-center mt-4'>
-      <NavigationButtons title="Back" variant='secondary' onPress={goToPrevComponent} />
-      <NavigationButtons title="Next" variant='primary' onPress={goToNextComponent} />
-        </View>
+      <Calculator />
+      {questionData ? (
+        <>
+          <CurrentComponent
+            key={questionData.variable}
+            question={questionData.question}
+            choices={questionData.choices}
+            defaultValue={emissionsContext[questionData.variable]}
+            category={questionData.category}
+            inputLabel={questionData.input_label}
+            onAnswer={handleAnswer}
+            steppers={questionData.steppers}
+          />
+          <View className="flex-row justify-center mt-4">
+            <NavigationButtons
+              title="Back"
+              variant="secondary"
+              onPress={goToPrevComponent}
+            />
+            <NavigationButtons
+              title="Next"
+              variant="primary"
+              onPress={goToNextComponent}
+            />
+          </View>
+        </>
+      ) : (
+        <View>
+          <Text>Loading...</Text>
+        </View> // or any other loading indicator
+      )}
     </ThemedView>
   );
 };

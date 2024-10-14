@@ -1,25 +1,12 @@
-export interface QuestionProps {
-    question: string; // The question as a string
-    choices?: Map<string, string> | Map<string, number>; // The choices as a Map
-}
-
 export interface TemplateProps {
     category: string;
-    textFieldLabel?: string;
+    inputLabel?: string;
     question: string;
-    question2?: string;
-    choices?: Map<string, string> | Map<string, number> | string[];
-    defaultValue: string | number | boolean;
-    onAnswer: (answer: string | number) => void;
-    showBackButton?: boolean;
-    unit: string;
+    choices?: Map<string, string> | Map<string, number>;
+    defaultValue: any
+    onAnswer: (answer: any) => void;
 }
 
-export interface StepperProps extends TemplateProps {
-    stepperTitle: string[];
-    stepperInitialValue: number;
-} 
-
-export interface CheckboxProps extends TemplateProps {
-    checkboxes: string[];
+export interface StepperTemplateProps extends TemplateProps {
+    steppers?: Map<string, number>;
 }
