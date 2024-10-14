@@ -6,7 +6,7 @@ export const TransportEmission = {
     constructionScale: 4500,
     lifeSpan: 225000,
     footprintPerLiter: 2.33982,
-    consumptionPerKm: 0.13,
+    consumptionPerKm: 13,
     numOfPassengers: 2,
     user: "owner",
   },
@@ -139,12 +139,12 @@ export const ElectricityEmissions = {
   householdSize: 4,
   Grid: {
     ratePerKwh: 11.6339, // in pesos
-    monthlyExpenditure: 2326.78, // for 200 kWh
+    monthlySpend: 2326.78, // for 200 kWh
     ef: 0.6935 // per kWh
   },
   Solar: {
     isUsed: false,
     annualProduction: 2000,
-    percentConsumed: 1,
+    percentConsumed: 100,
   }
 }
