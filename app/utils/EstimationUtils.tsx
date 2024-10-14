@@ -1,5 +1,6 @@
 import { FoodEmission, TransportEmission } from '@/constants/DefaultValues';
 import { FlightData } from '@/types/FlightData';
+import { ElectricityEmissions } from '../../constants/DefaultValues';
 
 export function converKgToTons(inTons: number){ // metric tons
     let inKg = inTons / 1000; 
@@ -22,10 +23,10 @@ export function computeCarEmissions(
         return carEmission = 0;
     }
     
-    let efPerKm = consumptionPerKm * footprintPerLiter;
-    let amortization: number = 1 / lifeSpanInKm;
-    let constructionPerKm: number = constructionScale * amortization;
-    let thresholdKm: number = lifeSpanInKm / 20;
+    let efPerKm = (consumptionPerKm / 100) * footprintPerLiter;
+    let amortization = 1 / lifeSpanInKm;
+    let constructionPerKm = constructionScale * amortization;
+    let thresholdKm = lifeSpanInKm / 20;
     let manufacture: number;
 
     switch (user) {
@@ -36,11 +37,11 @@ export function computeCarEmissions(
             manufacture = constructionPerKm * kmTravelled
             break;
         case 'car-sharer':
-            manufacture = 0
-            efPerKm = TransportEmission.Car.efPerKm
+            manufacture = 0;
+            efPerKm = TransportEmission.Car.efPerKm;
             break;
         default: 
-            manufacture = constructionPerKm * thresholdKm
+            manufacture = constructionPerKm * thresholdKm;
             break;
         }
     
@@ -90,7 +91,7 @@ export function computeTotalAirplaneEmissions(
     return converKgToTons(airplaneEmission); // results in kg, converted to tons by dividing by 1000
 }
 
-export function computeTwoWheelersEmissions(efPerKm: number, kmTravelled: number, usesTwoWheelers: boolean){
+export function computeTwoWheelersEmissions(usesTwoWheelers: boolean, efPerKm: number, kmTravelled: number){
     let twoWheelersEmissions = 0;
 
     if (usesTwoWheelers) {
@@ -309,4 +310,35 @@ export function computeBottledWaterEmissions(buysBottledWater: boolean){
     }
 
     return converKgToTons(bottledWaterEmissions);
+}
+
+export function computeGridConsumption(gridMonthlySpend: number){
+    let gridConsumption: number;
+
+    gridConsumption = (gridMonthlySpend / ElectricityEmissions.Grid.ratePerKwh) * 12;
+    
+    return gridConsumption;
+}
+
+export function computeSolarProduction(solarProduction: number, solarConsumptionPercent: number){
+    let solarConsumption = solarProduction * (solarConsumptionPercent / 100);
+
+    return solarConsumption;
+}
+
+export function computeElectricityEmissions(householdSize: number, solarIsUsed: boolean, solarProduction: number, solarConsumptionPercent: number, gridMonthlySpend: number){
+    let electricityEmissions = 0;
+    let electricityConsumption = 0;
+    
+    // compute annual consumption
+    electricityConsumption += computeGridConsumption(gridMonthlySpend);
+
+    if (solarIsUsed){
+        electricityConsumption += computeSolarProduction(solarProduction, solarConsumptionPercent);
+    }
+
+    // compute annual emissions
+    electricityEmissions = (electricityConsumption * ElectricityEmissions.Grid.ef) / householdSize;
+
+    return converKgToTons(electricityEmissions);
 }
