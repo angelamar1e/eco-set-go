@@ -29,6 +29,15 @@ const Feed: React.FC = () => {
       contactNumber: '123-456-7890',
       price: '200',
     },
+    {
+      id: '2',
+      content: 'Surplus Crops',
+      userName: 'Crops',
+      userHandle: '@surplus',
+      userIcon: 'https://example.com/crops.png',
+      contactNumber: '123-456-7890',
+      price: '200',
+    },
   ]);
   
   const [newPost, setNewPost] = useState('');
