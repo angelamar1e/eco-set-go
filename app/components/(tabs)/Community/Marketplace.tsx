@@ -1,41 +1,46 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from 'react';
+import { View, FlatList } from 'react-native';
+import MarketplacePostCard from './MarketplacePostCard';
+import MarketplaceCreatePost from './MarketplaceCreatePost';
+import { MarketplacePost } from '@/types/PostCardProps';
 
-interface Product {
-  id: string;
-  name: string;
-  price: string;
-  image: string;
+interface MarketplaceProps {
+  posts: MarketplacePost[]; // Using MarketplacePost type
+  newPost: string;
+  setNewPost: (text: string) => void;
+  handleCreateMarketplacePost: (contactNumber: string, price: string) => void; 
 }
 
-const initialProducts: Product[] = [
-  { id: '1', name: 'Product 1', price: '$10', image: 'https://via.placeholder.com/150' },
-  { id: '2', name: 'Product 2', price: '$20', image: 'https://via.placeholder.com/150' },
-  { id: '3', name: 'Product 3', price: '$30', image: 'https://via.placeholder.com/150' },
-];
-
-const Marketplace: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-
-  const renderItem = ({ item }: { item: Product }) => (
-    <TouchableOpacity className="bg-white rounded-lg shadow p-4 mb-4">
-      <Image source={{ uri: item.image }} className="w-full h-32 rounded" />
-      <Text className="text-lg font-semibold mt-2">{item.name}</Text>
-      <Text className="text-gray-600">{item.price}</Text>
-      <TouchableOpacity className="mt-2 bg-lime-800 p-2 rounded-full">
-        <Text className="text-white text-center">Add to Cart</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-
+const Marketplace: React.FC<MarketplaceProps> = ({
+  posts,
+  newPost,
+  setNewPost,
+  handleCreateMarketplacePost,
+}) => {
   return (
-    <View className="flex-1 p-4 bg-gray-100">
-      <Text className="text-2xl font-bold mb-4">Marketplace</Text>
+    <View className="flex-1">
       <FlatList
-        data={products}
-        renderItem={renderItem}
+        data={posts}
         keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <MarketplacePostCard 
+            id={item.id}
+            content={item.content}
+            userName={item.userName}
+            userHandle={item.userHandle}
+            userIcon={item.userIcon}
+            contactNumber={item.contactNumber}
+            price={item.price}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <MarketplaceCreatePost 
+            newPost={newPost}
+            setNewPost={setNewPost}
+            handleCreateMarketplacePost={handleCreateMarketplacePost}
+          />
+        }
       />
     </View>
   );

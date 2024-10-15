@@ -38,8 +38,7 @@ const MessageFeed: React.FC = () => {
   );
 
   return (
-    <View className="flex-1 p-4 bg-gray-100">
-      <Text className="text-2xl font-bold mb-4">Messages</Text>
+    <View className="flex-1 mt-10 p-4 bg-gray-100">
       <FlatList
         data={messages}
         renderItem={renderItem}

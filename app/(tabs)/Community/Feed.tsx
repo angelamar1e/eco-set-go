@@ -6,22 +6,38 @@ import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons
 import AllPosts from '@/app/components/(tabs)/Community/MainFeed';
 import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed'; 
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
+import { PostCard, MarketplacePost } from '@/types/PostCardProps';
 
 const Feed: React.FC = () => {
   const navigation = useNavigation();
-  const [posts, setPosts] = useState([
-    { id: '1', content: 'Hello World!', userName: 'John Doe', userHandle: 'john_doe', userIcon: 'https://example.com/icon1.png' },
-    { id: '2', content: 'This is a second post!', userName: 'Jane Smith', userHandle: 'jane_smith', userIcon: 'https://example.com/icon2.png' },
-    { id: '3', content: 'Sample!', userName: 'Jane Smith', userHandle: 'jane_smith', userIcon: 'https://example.com/icon2.png' },
-  ]);
-  const [newPost, setNewPost] = useState('');
   
-  // Set 'list' as the default selected button
+  // Base posts for Main Feed
+  const [posts, setPosts] = useState<PostCard[]>([
+    { id: '1', content: 'Hello', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon1.png' },
+    { id: '2', content: 'Hi!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
+    { id: '3', content: 'Sample!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
+  ]);
+
+  // Additional state for Marketplace posts
+  const [marketplacePosts, setMarketplacePosts] = useState<MarketplacePost[]>([
+    {
+      id: '1',
+      content: 'Surplus Crops',
+      userName: 'Crops',
+      userHandle: '@surplus',
+      userIcon: 'https://example.com/crops.png',
+      contactNumber: '123-456-7890',
+      price: '200',
+    },
+  ]);
+  
+  const [newPost, setNewPost] = useState('');
   const [selectedButton, setSelectedButton] = useState<string | null>('list'); 
 
+  // Handle creating a post for Main Feed
   const handleCreatePost = () => {
     if (newPost.trim()) {
-      const newPostData = {
+      const newPostData: PostCard = {
         id: (posts.length + 1).toString(),
         content: newPost,
         userName: 'Current User',
@@ -33,7 +49,23 @@ const Feed: React.FC = () => {
     }
   };
 
-  // Render the appropriate component based on the selected button
+  // Handle creating a post for Marketplace
+  const handleCreateMarketplacePost = (contactNumber: string, price: string) => {
+    if (newPost.trim()) {
+      const newMarketplacePost: MarketplacePost = {
+        id: (marketplacePosts.length + 1).toString(),
+        content: newPost,
+        userName: 'Current User',
+        userHandle: 'current_user',
+        userIcon: 'https://example.com/user_icon.png',
+        contactNumber,
+        price,
+      };
+      setMarketplacePosts([newMarketplacePost, ...marketplacePosts]);
+      setNewPost('');
+    }
+  };
+
   const renderSelectedComponent = () => {
     switch (selectedButton) {
       case 'list':
@@ -48,7 +80,14 @@ const Feed: React.FC = () => {
       case 'chat':
         return <MessageFeed />; 
       case 'cart':
-        return <Marketplace />; 
+        return (
+          <Marketplace 
+            posts={marketplacePosts} 
+            newPost={newPost}
+            setNewPost={setNewPost}
+            handleCreateMarketplacePost={handleCreateMarketplacePost} 
+          />
+        );
       default:
         return null; 
     }
@@ -67,7 +106,6 @@ const Feed: React.FC = () => {
         />
       </View>
 
-      {/* Render the selected component here */}
       {renderSelectedComponent()}
     </View>
   );
