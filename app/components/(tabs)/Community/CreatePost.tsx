@@ -1,36 +1,27 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@/app/(tabs)/Community/Feed';
+import React from 'react';
+import { View, TextInput } from 'react-native';
+import PostButton from './PostButton';
 
-type CreatePostScreenProps = NativeStackScreenProps<RootStackParamList, 'CreatePost'>;
+interface CreatePostProps {
+  newPost: string; 
+  setNewPost: (text: string) => void; 
+  handleCreatePost: () => void; 
+}
 
-const CreatePostScreen: React.FC<CreatePostScreenProps> = ({ navigation }) => {
-  const [postContent, setPostContent] = useState<string>('');
-
-  const handleCreatePost = () => {
-    // This is where you'd handle the logic to add a post.
-    // For now, just navigate back to the Home screen.
-    navigation.goBack();
-  };
-
+const CreatePost: React.FC<CreatePostProps> = ({ newPost, setNewPost, handleCreatePost }) => {
   return (
-    <View className="flex-1 bg-white p-4">
-      <Text className="text-lg font-bold mb-2">Create a New Post</Text>
+    <View className="bg-white p-4 rounded-lg mt-10 mb-2 ml-2 mr-2">
       <TextInput
-        className="border border-gray-300 rounded-lg p-2 mb-4"
-        placeholder="What's on your mind?"
-        value={postContent}
-        onChangeText={setPostContent}
+        placeholder="Write something..."
+        value={newPost}
+        onChangeText={setNewPost}
+        className="bg-gray-100 p-2 rounded-full mb-2"
       />
-      <TouchableOpacity
-        className="bg-blue-500 p-2 rounded-lg"
-        onPress={handleCreatePost}
-      >
-        <Text className="text-white text-center">Post</Text>
-      </TouchableOpacity>
+      <View className="flex-row justify-end">
+        <PostButton onPress={handleCreatePost} />
+      </View>
     </View>
   );
 };
 
-export default CreatePostScreen;
+export default CreatePost;
