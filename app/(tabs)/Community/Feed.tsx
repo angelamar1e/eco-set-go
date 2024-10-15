@@ -1,10 +1,11 @@
-// src/app/components/(tabs)/Community/Feed.js
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
-import AllPosts from '@/app/components/(tabs)/Community/AllPosts';
+import AllPosts from '@/app/components/(tabs)/Community/MainFeed';
+import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed'; 
+import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
 
 const Feed: React.FC = () => {
   const navigation = useNavigation();
@@ -14,7 +15,9 @@ const Feed: React.FC = () => {
     { id: '3', content: 'Sample!', userName: 'Jane Smith', userHandle: 'jane_smith', userIcon: 'https://example.com/icon2.png' },
   ]);
   const [newPost, setNewPost] = useState('');
-  const [isListVisible, setIsListVisible] = useState(true); 
+  
+  // Set 'list' as the default selected button
+  const [selectedButton, setSelectedButton] = useState<string | null>('list'); 
 
   const handleCreatePost = () => {
     if (newPost.trim()) {
@@ -30,6 +33,27 @@ const Feed: React.FC = () => {
     }
   };
 
+  // Render the appropriate component based on the selected button
+  const renderSelectedComponent = () => {
+    switch (selectedButton) {
+      case 'list':
+        return (
+          <AllPosts
+            posts={posts}
+            newPost={newPost}
+            setNewPost={setNewPost}
+            handleCreatePost={handleCreatePost}
+          />
+        );
+      case 'chat':
+        return <MessageFeed />; 
+      case 'cart':
+        return <Marketplace />; 
+      default:
+        return null; 
+    }
+  };
+
   return (
     <View className="flex-1">
       <View className="bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
@@ -38,19 +62,13 @@ const Feed: React.FC = () => {
 
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
-          isListVisible={isListVisible}
-          setIsListVisible={setIsListVisible}
+          selectedButton={selectedButton}
+          setSelectedButton={setSelectedButton}
         />
       </View>
 
-      {isListVisible && (
-        <AllPosts
-          posts={posts}
-          newPost={newPost}
-          setNewPost={setNewPost}
-          handleCreatePost={handleCreatePost}
-        />
-      )}
+      {/* Render the selected component here */}
+      {renderSelectedComponent()}
     </View>
   );
 };
