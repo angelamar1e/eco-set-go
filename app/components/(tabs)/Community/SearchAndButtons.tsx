@@ -22,10 +22,10 @@ const SearchAndButtons: React.FC<SearchAndButtonsProps> = ({ onSearch, isListVis
       </View>
 
       <TouchableOpacity
-        className="p-2 bg-white rounded-full shadow mr-2"
-        onPress={() => setIsListVisible(true)} // Show list view
+        className={`p-2 rounded-full shadow mr-2 ${isListVisible ? 'bg-green-500' : 'bg-white'}`}
+        onPress={() => setIsListVisible(true)} 
       >
-        <Ionicons name="list" size={24} color={isListVisible ? "#34C759" : "#A9A9A9"} />
+        <Ionicons name="list" size={24} color={isListVisible ? "#FFFFFF" : "#A9A9A9"} />
       </TouchableOpacity>
       <TouchableOpacity className="p-2 bg-white rounded-full shadow mr-2">
         <Ionicons name="chatbubble-outline" size={24} color="#34C759" />

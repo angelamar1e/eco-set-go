@@ -1,11 +1,10 @@
 // src/app/components/(tabs)/Community/Feed.js
 import React, { useState } from 'react';
-import { View, FlatList } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
-import PostCard from '@/app/components/(tabs)/Community/PostCard';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
-import CreatePost from '@/app/components/(tabs)/Community/CreatePost';
+import AllPosts from '@/app/components/(tabs)/Community/AllPosts';
 
 const Feed: React.FC = () => {
   const navigation = useNavigation();
@@ -15,7 +14,7 @@ const Feed: React.FC = () => {
     { id: '3', content: 'Sample!', userName: 'Jane Smith', userHandle: 'jane_smith', userIcon: 'https://example.com/icon2.png' },
   ]);
   const [newPost, setNewPost] = useState('');
-  const [isListVisible, setIsListVisible] = useState(true);
+  const [isListVisible, setIsListVisible] = useState(true); 
 
   const handleCreatePost = () => {
     if (newPost.trim()) {
@@ -45,29 +44,13 @@ const Feed: React.FC = () => {
       </View>
 
       {isListVisible && (
-        <CreatePost 
+        <AllPosts
+          posts={posts}
           newPost={newPost}
           setNewPost={setNewPost}
           handleCreatePost={handleCreatePost}
         />
       )}
-
-      <View className="flex-1">
-        <FlatList
-          data={isListVisible ? posts : []}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <PostCard 
-              content={item.content} 
-              userName={item.userName} 
-              userHandle={item.userHandle} 
-              userIcon={item.userIcon} 
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          style={{ flexGrow: 1 }}
-        />
-      </View>
     </View>
   );
 };
