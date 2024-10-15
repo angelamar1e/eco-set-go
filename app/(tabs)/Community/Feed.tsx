@@ -104,7 +104,7 @@ const Feed: React.FC = () => {
 
   return (
     <View className="flex-1">
-      <View className="bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
+      <View className="absolute top-0 left-0 right-0 z-10 bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
         <ThemedText type='subtitle' className='text-[28px] text-gray-100 mb-2'>Community</ThemedText>
         <ThemedText type='default' className='text-[15px] text-gray-100'>Date</ThemedText> 
 
