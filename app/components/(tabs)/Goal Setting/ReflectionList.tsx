@@ -21,7 +21,7 @@ const ReflectionsList = () => {
   ]);
 
   const renderItem = ({ item }: { item: Reflection }) => (
-    <Card className='mb-2 bg-stone-100 w-[343px]'>
+    <Card className='mb-2 bg-stone-100 w-[365px]'>
       <Card.Content className='items-left'>
         <ThemedText type='default' className='text-lg text-black'>{item.title}</ThemedText>
       </Card.Content>

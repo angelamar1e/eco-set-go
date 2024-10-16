@@ -8,7 +8,7 @@ const StyledButton = styled(Button);
 
 const AddActionButton = () => {
   return (
-    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1'>
+    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1 z-10'>
         <ThemedText className='text-white text-center text-[14px]'>Add an action</ThemedText>
     </TouchableOpacity>
 
