@@ -19,7 +19,7 @@ const ReflectionsList = () => {
   ]);
 
   const renderItem = ({ item }: { item: Reflection }) => (
-    <Card className='mb-4 mx-4 bg-stone-100 shadow-md rounded-lg w-[315px]'>
+    <Card className='mb-2 bg-stone-100 shadow-md rounded-lg w-[315px]'>
       <Card.Content>
         <ThemedText type='default' className='text-lg text-black font-semibold'>{item.title}</ThemedText>
         <ThemedText type='default' className='text-gray-700 mt-1'>{item.content}</ThemedText>
@@ -34,7 +34,6 @@ const ReflectionsList = () => {
       data={reflections}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      contentContainerStyle={{ paddingVertical: 10 }} // Add some vertical padding for the list
     />
   );
 };
