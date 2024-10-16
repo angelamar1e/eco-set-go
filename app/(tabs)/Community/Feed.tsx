@@ -20,9 +20,9 @@ const Feed: React.FC = () => {
 
   // EcoNews data
   const [ecoNews, setEcoNews] = useState([
-    { id: '1', image: 'https://example.com/image1.png', headline: 'Eco-friendly Initiative', lead: 'A new initiative has been launched...', source: 'EcoNews Daily' },
-    { id: '2', image: 'https://example.com/image2.png', headline: 'Renewable Energy Trends', lead: 'Recent trends in renewable energy...', source: 'Green World News' },
-    { id: '3', image: 'https://example.com/image3.png', headline: 'Sustainable Living', lead: 'Tips for living sustainably...', source: 'Nature Magazine' },
+    { id: '1', image: 'https://example.com/image1.png', headline: 'Article1', lead: 'Article 1 Lead..', source: 'Source' },
+    { id: '2', image: 'https://example.com/image2.png', headline: 'Article2', lead: 'Article 2 Lead..', source: 'Source' },
+    { id: '3', image: 'https://example.com/image3.png', headline: 'Article3', lead: 'Article 3 Lead...', source: 'Source' },
   ]);
 
   // State for Message Cards

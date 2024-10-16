@@ -10,7 +10,7 @@ interface EcoNewsCardProps {
 
 const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ image, headline, lead, source }) => {
   return (
-    <View className="h-[110px] bg-white p-4 rounded-lg mb-2 mx-2 shadow-md">
+    <View className="h-[110px] w-[300px] bg-white p-4 rounded-lg mb-2 mx-2 shadow-md">
       <View className="flex-row items-start">
         <Image source={{ uri: image }} className="w-16 h-16 rounded-md mr-4" alt="News Thumbnail" />
         <View className="flex-1">
