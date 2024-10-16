@@ -15,7 +15,7 @@ export const ToDoButton: FC<ToDoButtonProps> = ({ title, variant, style }) => {
   const containerStyle =
     variant === "primary" 
       ? "bg-green-600 rounded-full w-[18%] p-1 ml-7 mr-1"
-      : "bg-stone-100 rounded-full w-[18%] p-1 mr-7";
+      : "bg-stone-100 rounded-full w-[18%] p-1 mr-9";
 
   const textStyle =
     variant === "primary"
