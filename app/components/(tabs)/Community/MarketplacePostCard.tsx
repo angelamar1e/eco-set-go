@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { MarketplacePost } from '@/types/PostCardProps';
+import { ThemedText } from '@/components/ThemedText';
 
 interface MarketplacePostProps extends MarketplacePost {
-  id: string; // Include id here if you need it
+  id: string; 
 }
 
 const MarketplacePostCard: React.FC<MarketplacePostProps> = ({
-  id, // Destructure id if you need to use it
+  id, 
   content,
   userName,
   userHandle,
@@ -43,16 +44,16 @@ const MarketplacePostCard: React.FC<MarketplacePostProps> = ({
           alt="User Icon"
         />
         <View>
-          <Text className="font-bold">{userName}</Text>
-          <Text className="text-gray-500">{userHandle}</Text>
+          <ThemedText type='default' className="font-bold">{userName}</ThemedText>
+          <ThemedText type='default' className="text-gray-500">@{userHandle}</ThemedText>
         </View>
       </View>
 
-      <View className="mt-2">
-        <Text className="text-base">{content}</Text>
-        <Text className="text-green-600 font-bold mt-1">{price}</Text>
-        <Text className="text-gray-500">Contact: {contactNumber}</Text>
-        {/* Add link or additional functionality here */}
+      <View className="mt-2 mb-2">
+        <ThemedText type='default' className="text-base">{content}</ThemedText>
+        <ThemedText type='default' className="text-green-600 font-bold mt-1">₱{price}</ThemedText>
+        <ThemedText type='default' className="text-gray-500">Contact:{contactNumber}</ThemedText>
+        {/* Add link here */}
       </View>
 
       <View className="flex-row flex-1 items-center border border-gray-300 rounded-full ml-2">

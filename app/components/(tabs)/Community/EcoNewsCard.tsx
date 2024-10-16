@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
 
 interface EcoNewsCardProps {
   image: string;
@@ -14,9 +15,9 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ image, headline, lead, source
       <View className="flex-row items-start">
         <Image source={{ uri: image }} className="w-16 h-16 rounded-md mr-4" alt="News Thumbnail" />
         <View className="flex-1">
-          <Text className="font-bold text-lg">{headline}</Text>
-          <Text className="text-gray-600 mt-1">{lead}</Text>
-          <Text className="text-blue-500 text-sm mt-2">{source}</Text>
+          <ThemedText type='default'className="font-bold text-lg">{headline}</ThemedText>
+          <ThemedText type='default' className="text-gray-600 mt-1">{lead}</ThemedText>
+          <ThemedText type='default' className="text-blue-500 text-sm mt-2">{source}</ThemedText>
         </View>
       </View>
     </View>

@@ -1,3 +1,4 @@
+import { ThemedText } from '@/components/ThemedText';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -33,13 +34,13 @@ const PostCard: React.FC<PostCardProps> = ({ content, userName, userHandle, user
           alt="User Icon"
         />
         <View>
-          <Text className="font-bold">{userName}</Text>
-          <Text className="text-gray-500">{userHandle}</Text>
+          <ThemedText type='default' className="font-bold">{userName}</ThemedText>
+          <ThemedText type='default' className="text-gray-500">@{userHandle}</ThemedText>
         </View>
       </View>
 
       <View className="mt-2">
-        <Text className="text-base">{content}</Text>
+        <ThemedText type='default'>{content}</ThemedText>
       </View>
 
       <View className="flex-row items-center justify-center mt-4">
