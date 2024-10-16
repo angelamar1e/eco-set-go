@@ -24,66 +24,156 @@ export default function TabLayout() {
           position: 'absolute'
         },
       }}>
-      <Tabs.Screen
-        name="Home/index"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 55,
-              width: 55,
-              marginTop: 10
-            }}>
+        <Tabs.Screen
+          name="Home/index"
+          options={{
+            title: '',
+            tabBarIcon: ({ color, focused }) => (
               <View style={{
-                borderRadius: 25,
-                backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                padding: focused ? 10 : 0,
                 alignItems: 'center',
                 justifyContent: 'center',
+                height: 55,
+                width: 55,
+                marginTop: 10
               }}>
-                <TabBarIcon 
-                  name={focused ? 'home' : 'home-outline'} 
-                  color={color} 
-                  style={{ fontSize: 35 }}
-                />
+                <View style={{
+                  borderRadius: 25,
+                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                  padding: focused ? 10 : 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TabBarIcon 
+                    name={focused ? 'home' : 'home-outline'} 
+                    color={color} 
+                    style={{ fontSize: 35 }}
+                  />
+                </View>
               </View>
-            </View>
-          ),
-          headerShown: false
-        }}
-      />
-      <Tabs.Screen
-        name="Eco Articles/list"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 55,
-              width: 55,
-              marginTop: 10
-            }}>
+            ),
+            headerShown: false
+          }}
+        />
+        <Tabs.Screen
+          name="Eco Articles/list"
+          options={{
+            title: '',
+            tabBarIcon: ({ color, focused }) => (
               <View style={{
-                borderRadius: 25,
-                backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                padding: focused ? 10 : 0,
                 alignItems: 'center',
                 justifyContent: 'center',
+                height: 55,
+                width: 55,
+                marginTop: 10
               }}>
-                <TabBarIcon 
-                  name={focused ? 'book' : 'book-outline'} 
-                  color={color} 
-                  style={{ fontSize: 35 }}
-                />
+                <View style={{
+                  borderRadius: 25,
+                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                  padding: focused ? 10 : 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TabBarIcon 
+                    name={focused ? 'book' : 'book-outline'} 
+                    color={color} 
+                    style={{ fontSize: 35 }}
+                  />
+                </View>
               </View>
-            </View>
-          ),
-          headerShown: false
-        }}
-      />
-    </Tabs>
+            ),
+            headerShown: false
+          }}
+        />
+        <Tabs.Screen
+          name="Goal Setting/logs"
+          options={{
+            title: '',
+            tabBarIcon: ({ color, focused }) => (
+              <View style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 55,
+                width: 55,
+                marginTop: 10
+              }}>
+                <View style={{
+                  borderRadius: 25,
+                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                  padding: focused ? 10 : 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TabBarIcon 
+                    name={focused ? 'checkmark-done' : 'checkmark-done-outline'} 
+                    color={color} 
+                    style={{ fontSize: 35 }}
+                  />
+                </View>
+              </View>
+            ),
+            headerShown: false
+          }}
+        />
+        <Tabs.Screen
+          name="Progress Monitoring/report"
+          options={{
+            title: '',
+            tabBarIcon: ({ color, focused }) => (
+              <View style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 55,
+                width: 55,
+                marginTop: 10
+              }}>
+                <View style={{
+                  borderRadius: 25,
+                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                  padding: focused ? 10 : 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TabBarIcon 
+                    name={focused ? 'bar-chart' : 'bar-chart-outline'} 
+                    color={color} 
+                    style={{ fontSize: 35 }}
+                  />
+                </View>
+              </View>
+            ),
+            headerShown: false
+          }}
+        />
+        <Tabs.Screen
+          name="Rewards/points"
+          options={{
+            title: '',
+            tabBarIcon: ({ color, focused }) => (
+              <View style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 55,
+                width: 55,
+                marginTop: 10
+              }}>
+                <View style={{
+                  borderRadius: 25,
+                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
+                  padding: focused ? 10 : 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <TabBarIcon 
+                    name={focused ? 'star' : 'star-outline'} 
+                    color={color} 
+                    style={{ fontSize: 35 }}
+                  />
+                </View>
+              </View>
+            ),
+            headerShown: false
+          }}
+        />
+      </Tabs>
   );
 }
