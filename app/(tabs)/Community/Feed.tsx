@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
+import React, { useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
-import AllPosts from '@/app/components/(tabs)/Community/MainFeed';
-import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed'; 
+import MainFeed from '@/app/components/(tabs)/Community/MainFeed';
+import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed';
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
 import { PostCard, MarketplacePost } from '@/types/PostCardProps';
 
@@ -16,6 +16,13 @@ const Feed: React.FC = () => {
     { id: '1', content: 'Hello', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon1.png' },
     { id: '2', content: 'Hi!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
     { id: '3', content: 'Sample!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
+  ]);
+
+  // State for Message Cards
+  const [messages, setMessages] = useState([
+    { id: '1', recipientName: 'User1', recipientHandle: 'handle1', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hi', latestMessageDate: '2024-10-16' },
+    { id: '2', recipientName: 'User2', recipientHandle: 'handle2', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hello', latestMessageDate: '2024-10-15' },
+    { id: '3', recipientName: 'User3', recipientHandle: 'handle3', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hello', latestMessageDate: '2024-10-14' },
   ]);
 
   // Additional state for Marketplace posts
@@ -79,7 +86,7 @@ const Feed: React.FC = () => {
     switch (selectedButton) {
       case 'list':
         return (
-          <AllPosts
+          <MainFeed
             posts={posts}
             newPost={newPost}
             setNewPost={setNewPost}
@@ -87,7 +94,9 @@ const Feed: React.FC = () => {
           />
         );
       case 'chat':
-        return <MessageFeed />; 
+        return (
+          <MessageFeed messages={messages} /> 
+        );
       case 'cart':
         return (
           <Marketplace 
