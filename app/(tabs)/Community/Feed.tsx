@@ -1,9 +1,9 @@
 import { ThemedText } from '@/components/ThemedText';
 import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
-import MainFeed from '@/app/components/(tabs)/Community/MainFeed';
+import CommunityPosts from '@/app/components/(tabs)/Community/CommunityPosts';
 import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed';
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
 import { PostCard, MarketplacePost } from '@/types/PostCardProps';
@@ -11,11 +11,18 @@ import { PostCard, MarketplacePost } from '@/types/PostCardProps';
 const Feed: React.FC = () => {
   const navigation = useNavigation();
   
-  // Base posts for Main Feed
+  // Posts
   const [posts, setPosts] = useState<PostCard[]>([
     { id: '1', content: 'Hello', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon1.png' },
     { id: '2', content: 'Hi!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
     { id: '3', content: 'Sample!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
+  ]);
+
+  // EcoNews data
+  const [ecoNews, setEcoNews] = useState([
+    { id: '1', image: 'https://example.com/image1.png', headline: 'Eco-friendly Initiative', lead: 'A new initiative has been launched...', source: 'EcoNews Daily' },
+    { id: '2', image: 'https://example.com/image2.png', headline: 'Renewable Energy Trends', lead: 'Recent trends in renewable energy...', source: 'Green World News' },
+    { id: '3', image: 'https://example.com/image3.png', headline: 'Sustainable Living', lead: 'Tips for living sustainably...', source: 'Nature Magazine' },
   ]);
 
   // State for Message Cards
@@ -86,8 +93,9 @@ const Feed: React.FC = () => {
     switch (selectedButton) {
       case 'list':
         return (
-          <MainFeed
+          <CommunityPosts
             posts={posts}
+            ecoNews={ecoNews}
             newPost={newPost}
             setNewPost={setNewPost}
             handleCreatePost={handleCreatePost}
