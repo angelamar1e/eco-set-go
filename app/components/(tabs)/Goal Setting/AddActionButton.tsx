@@ -1,18 +1,19 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
-import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
 import { TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const StyledButton = styled(Button);
+interface AddActionButtonProps {
+  isFocused: boolean;
+  onPress: () => void;
+}
 
-const AddActionButton = () => {
+const AddActionButton: React.FC<AddActionButtonProps> = ({ isFocused, onPress }) => {
+  const iconColor = isFocused ? '#34C759' : '#A9A9A9';
+
   return (
-    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1 z-10'>
-        <ThemedText className='text-white text-center text-[14px]'>Add an action</ThemedText>
+    <TouchableOpacity className='w-8 h-8 p-1 left-[195px]' onPress={onPress}>
+      <Ionicons name="add" size={26} color={iconColor} />
     </TouchableOpacity>
-
-
   );
 };
 

@@ -3,7 +3,6 @@ import { FlatList, View } from 'react-native';
 import { Card } from 'react-native-paper';
 import { ThemedText } from '@/components/ThemedText';
 
-// Define the Reflection interface (adjust according to your Firestore structure)
 interface Reflection {
   id: string;
   title: string;
@@ -19,7 +18,7 @@ const ReflectionsList = () => {
   ]);
 
   const renderItem = ({ item }: { item: Reflection }) => (
-    <Card className='mb-2 bg-stone-100 shadow-md rounded-lg w-[315px]'>
+    <Card className='mb-2 bg-stone-100 shadow-md rounded-lg w-[352px]'>
       <Card.Content>
         <ThemedText type='default' className='text-lg text-black font-semibold'>{item.title}</ThemedText>
         <ThemedText type='default' className='text-gray-700 mt-1'>{item.content}</ThemedText>
