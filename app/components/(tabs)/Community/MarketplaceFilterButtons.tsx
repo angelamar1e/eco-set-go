@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 
 interface FilterButtonsProps {
@@ -11,16 +11,16 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
   const filters = ['ALL', 'Crops', 'Clothes', 'Others'];
 
   return (
-    <View className="bg-white p-2 flex-row justify-around mb-2 ">
+    <View className="p-2 flex-row justify-around">
       {filters.map((category) => (
         <TouchableOpacity
           key={category}
           onPress={() => onFilterChange(category)}
           className={`px-4 py-2 rounded-full ${selectedFilter === category ? 'bg-green-500' : 'bg-gray-200'}`}
         >
-          <ThemedText type='default' className={`${selectedFilter === category ? 'text-white' : 'text-black'}`}>
+          <Text className={`${selectedFilter === category ? 'text-white' : 'text-black'}`}>
             {category}
-          </ThemedText>
+          </Text>
         </TouchableOpacity>
       ))}
     </View>

@@ -12,7 +12,7 @@ const PostButton: React.FC<PostButtonProps> = ({ onPress }) => {
       onPress={onPress} 
       className="bg-[#34C759] h-8 w-[25%] items-center rounded-full justify-center" 
     >
-      <ThemedText type='default' className='text-[15px] text-white'>Post</ThemedText> 
+      <ThemedText type='default' className="text-white">Post</ThemedText> 
     </TouchableOpacity>
   );
 };

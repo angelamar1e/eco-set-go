@@ -45,7 +45,7 @@ const MarketplacePostCard: React.FC<MarketplacePostProps> = ({
         />
         <View>
           <ThemedText type='default' className="font-bold">{userName}</ThemedText>
-          <ThemedText type='default' className="text-gray-500">@{userHandle}</ThemedText>
+          <ThemedText type='default' className="text-gray-500">{userHandle}</ThemedText>
         </View>
       </View>
 
