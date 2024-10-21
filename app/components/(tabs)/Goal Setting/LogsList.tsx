@@ -16,6 +16,7 @@ const LogList = () => {
     { id: "1", title: "Recycle Plastic", completed: false },
     { id: "2", title: "Use Public Transport", completed: true },
     { id: "3", title: "Turn Off Lights", completed: true },
+    { id: "", title: "Turn Off Lights", completed: true },
   ]);
 
   // State to track completed actions

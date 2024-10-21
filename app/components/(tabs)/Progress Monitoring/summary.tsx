@@ -24,12 +24,12 @@ const SummaryReport = () => {
   };
 
   return (
-    <ThemedView className="mt-1 pt-3 items-center">
+    <View className="bg-white rounded-lg m-2 items-center">
                 
         {/* Dropdown button */}
-        <TouchableOpacity onPress={toggleExpanded} className="flex-row w-[90%] border-b border-b-stone-100 p-2 justify-between z-10">
+        <TouchableOpacity onPress={toggleExpanded} className="flex-row w-[90%] border-b border-b-stone-100 p-3 mt-2 justify-between z-10">
             <ThemedText type='defaultSemiBold' className="text-lime-800 text-[25px]">{selectedValue}</ThemedText>
-            <Entypo name={expanded ? "chevron-down" : "chevron-up"} size={20} color="#d6d3d1" />
+            <Entypo name={expanded ? "chevron-down" : "chevron-up"} size={20} color={'#d6d3d1'} />
         </TouchableOpacity>
 
         {/* Dropdown Options */}
@@ -39,15 +39,15 @@ const SummaryReport = () => {
                 <TouchableOpacity
                     key={option.value}
                     onPress={() => selectOption(option.value)}
-                    className={`pl-2 pt-1 ${selectedValue === option.value ? 'bg-stone-200' : ''}`}
+                    className={`pl-2 pt-1 ${selectedValue === option.value ? 'bg-gray-100' : ''}`}
                 >
-                    <ThemedText type='default' className="text-green-600 mb-2">{option.label}</ThemedText>
+                    <ThemedText type='default' className="text-gray-500 mb-2">{option.label}</ThemedText>
                 </TouchableOpacity>
             ))}
             </View>
         )} 
         <Figure />
-    </ThemedView>
+    </View>
   );
 };
 
