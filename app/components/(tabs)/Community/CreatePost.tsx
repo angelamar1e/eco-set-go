@@ -1,26 +1,29 @@
 import React from 'react';
-import { View, TextInput } from 'react-native';
-import PostButton from './PostButton';
+import { Card, Button, Select, Input } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
-interface CreatePostProps {
-  newPost: string; 
-  setNewPost: (text: string) => void; 
-  handleCreatePost: () => void; 
-}
+const StyledCard = styled(Card);
+const StyledButton = styled(Button);
+const StyledInput = styled(Input);
+const StyledSelect = styled(Select);
 
-const CreatePost: React.FC<CreatePostProps> = ({ newPost, setNewPost, handleCreatePost }) => {
+export const CreatePost = (): React.ReactElement => {
+  const [value, setValue] = React.useState('');
+
   return (
-    <View className="bg-white p-4 rounded-lg mt-10 mb-2 ml-2 mr-2">
-      <TextInput
-        placeholder="Write something..."
-        value={newPost}
-        onChangeText={setNewPost}
-        className="bg-gray-100 p-2 rounded-full mb-2"
+    <StyledCard className="p-4 mt-10 ml-2 mr-2">
+      <StyledInput
+        className="w-full m-2"
+        placeholder="Create a post"
+        value={value}
+        onChangeText={nextValue => setValue(nextValue)}
       />
-      <View className="flex-row justify-end">
-        <PostButton onPress={handleCreatePost} />
-      </View>
-    </View>
+      <StyledButton 
+        className="w-1/2 m-2 items-center justify-around"
+        appearance="filled">
+        Post
+      </StyledButton>
+    </StyledCard>
   );
 };
 

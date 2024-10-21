@@ -2,7 +2,7 @@ import { ThemedText } from '@/components/ThemedText';
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Card, Text } from '@ui-kitten/components'
+import { Card, Text } from '@ui-kitten/components';
 
 interface PostCardProps {
   content: string;
