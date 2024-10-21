@@ -8,7 +8,7 @@ interface FilterButtonsProps {
 }
 
 const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterChange }) => {
-  const filters = ['ALL', 'Food', 'Mobility', 'Electricity', 'Others'];
+  const filters = ['ALL', 'Food', 'Mobility', 'Electricity'];
 
   return (
     <View className="bg-white mt-4 justify-between">
