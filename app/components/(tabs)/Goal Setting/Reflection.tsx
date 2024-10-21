@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import ReflectionButton from "./ReflectionButton";
 import { View } from "react-native";
@@ -7,15 +8,18 @@ import ReflectionsList from "./ReflectionList";
 const Reflection  = () => {
 
     return(
-        <View className="bg-white rounded-lg shadow-md mb-2 ml-2 mr-2">
-            <ThemedText type="subtitle" className="text-lime-800 text-[25px] mt-1 p-3 text-center">Write your day...</ThemedText>
+        <ThemedView className="flex-1">
+            <ThemedText type="subtitle" className="text-lime-800 text-[25px] p-3 text-center">Reflection</ThemedText>
         
-            <ReflectionButton />
-
             <View className="items-center">
+                <ReflectionButton />
+
                 <ReflectionsList />
             </View>
-        </View>
+            
+
+
+        </ThemedView>
     )
 };
 

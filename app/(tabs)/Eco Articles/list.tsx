@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, Chip } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { router, Stack } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
@@ -11,7 +11,6 @@ import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
 
 const EcoActionsList = () => {
-  
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
 
@@ -23,7 +22,11 @@ const EcoActionsList = () => {
         title: doc.data().title,
       })) as EcoAction[];
 
+      // Extract unique categories from the fetched data
+      const uniqueCategories = [...new Set(data.map((item) => item.category))];
+      setCategories(uniqueCategories);
       setEcoActions(data);
+    };
     };
 
     fetchEcoActions();
@@ -72,7 +75,8 @@ const EcoActionsList = () => {
             className="mt-2"
             data={filteredActions} 
             renderItem={renderItem}
-            keyExtractor={(item) => item.id} />
+            keyExtractor={(item) => item.id}
+          />
         </View>
       </SafeAreaView>
     </ThemedView>

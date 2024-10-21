@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { View, FlatList, Text } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
@@ -10,7 +10,6 @@ import { Checkbox } from "react-native-paper";
 import DropdownEcoAction from './DropdownActionItem';
 import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
-import { EmissionsContext } from "@/contexts/EmissionsContext";
 
 const templates = [DropdownEcoAction, ActionItem];
 const doneTemplates = [DoneItem];
@@ -22,8 +21,6 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
-
-  const {overallFootprint, setOverallFootprint} = useContext(EmissionsContext);
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -48,6 +45,8 @@ const DailyLog: FC = () => {
 
   useEffect(() => {
     if (!userUid) return;
+
+    
 
     const unsubscribeDailyLog = dailyLogDoc.onSnapshot((doc) => {
       const data = doc.data();
@@ -113,10 +112,6 @@ const DailyLog: FC = () => {
     await userLogs.update({
       [currentDate]: currentLog,
     });
-
-    // const valueToRemove = currentLog[actionId] || 0; // Get the value for the actionId to subtract
-
-    // updateTotalFootprint(-valueToRemove); // Subtract the value from total
   }
 
   async function handleComplete(actionId: string, selectedOptionValue: number) {
@@ -132,18 +127,7 @@ const DailyLog: FC = () => {
         [actionId]: selectedOptionValue, // Update the specific action
       },
     });
-
-    // updateTotalFootprint(selectedOptionValue);
   }
-
-  // Update total footprint
-  const updateTotalFootprint = (change: number) => {
-    setOverallFootprint((prevTotal: number) => prevTotal + change);
-    // Update Firestore with new total footprint
-    firestore().collection('current_footprint').doc(userUid).update({
-      overall_footprint: firestore.FieldValue.increment(change), // Increment or decrement total footprint
-    });
-  };
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
@@ -160,7 +144,7 @@ const DailyLog: FC = () => {
   };
 
   const renderDoneItem = ({ item }: { item: EcoAction }) => { 
-    const DoneItemTemplate = DoneItem;
+    const DoneItemTemplate = doneTemplates[item.template];
 
     return (
       <DoneItemTemplate 
