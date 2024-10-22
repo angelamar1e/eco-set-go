@@ -1,8 +1,9 @@
-import { dark } from '@eva-design/eva';
+import { dark, light } from '@eva-design/eva';
 
 export const myTheme = {
   ...dark,
 
+  // Dark theme custom colors
   "color-primary-100": "#D0FCD5",
   "color-primary-200": "#A3FAB6",
   "color-primary-300": "#73F29C",
@@ -48,7 +49,57 @@ export const myTheme = {
   "color-danger-700": "#B7353E",
   "color-danger-800": "#932233",
   "color-danger-900": "#7A142C",
-    /* Text Styles */
+
+  // Light theme custom colors
+  light: {
+    "color-primary-100": "#E0F7E0",
+    "color-primary-200": "#B3E1B3",
+    "color-primary-300": "#80D680",
+    "color-primary-400": "#4DCB4D",
+    "color-primary-500": "#28A745",
+    "color-primary-600": "#218838",
+    "color-primary-700": "#1E7E34",
+    "color-primary-800": "#1C7431",
+    "color-primary-900": "#185724",
+    "color-success-100": "#F0F9E8",
+    "color-success-200": "#D6F4D0",
+    "color-success-300": "#B3E0B6",
+    "color-success-400": "#8ED29A",
+    "color-success-500": "#69C67D",
+    "color-success-600": "#52B56E",
+    "color-success-700": "#3E9B54",
+    "color-success-800": "#2C7A43",
+    "color-success-900": "#1A5A31",
+    "color-info-100": "#E9F5FF",
+    "color-info-200": "#C8E3FF",
+    "color-info-300": "#A6D1FF",
+    "color-info-400": "#84BFFF",
+    "color-info-500": "#62A9FF",
+    "color-info-600": "#4891DB",
+    "color-info-700": "#3674B7",
+    "color-info-800": "#24598D",
+    "color-info-900": "#123D6B",
+    "color-warning-100": "#FEFEDD",
+    "color-warning-200": "#FCF9B3",
+    "color-warning-300": "#FAF573",
+    "color-warning-400": "#F7F040",
+    "color-warning-500": "#F5ED18",
+    "color-warning-600": "#D1C711",
+    "color-warning-700": "#B2A90C",
+    "color-warning-800": "#9A9308",
+    "color-warning-900": "#7A7B04",
+    "color-danger-100": "#FFE4E1",
+    "color-danger-200": "#FFC9C3",
+    "color-danger-300": "#FFB0A6",
+    "color-danger-400": "#FF9980",
+    "color-danger-500": "#FF7A6B",
+    "color-danger-600": "#DB4E4E",
+    "color-danger-700": "#B72D3E",
+    "color-danger-800": "#93223A",
+    "color-danger-900": "#7A142C",
+  },
+
+  /* Text Styles (same for both themes) */
   "text-heading-1": {
     "fontSize": 32,
     "fontWeight": "700",
