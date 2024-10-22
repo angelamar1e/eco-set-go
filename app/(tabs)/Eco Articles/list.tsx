@@ -11,6 +11,7 @@ import { styled } from 'nativewind';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
@@ -52,8 +53,8 @@ const EcoActionsList = () => {
       </Stack>
       <SafeAreaView className='flex-1 mt-3'>
         <StyledLayout className='flex-1'>
-          <StyledLayout className='bg-[#54EA6D] h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
-            <Text category='h4'>Eco Actions</Text>
+          <StyledLayout className='bg-[#4A8B2A] h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
+            <StyledText category='h4' className='text-white'>Eco Actions</StyledText>
           </StyledLayout>
 
           <StyledLayout className="ml-2 mr-2">
