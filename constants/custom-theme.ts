@@ -48,71 +48,70 @@ export const myTheme = {
   "color-danger-700": "#B7353E",
   "color-danger-800": "#932233",
   "color-danger-900": "#7A142C",
-  
     /* Text Styles */
-    "text-heading-1": {
-      "fontSize": 32,
-      "fontWeight": "700",
-      "lineHeight": 40
-    },
-    "text-heading-2": {
-      "fontSize": 28,
-      "fontWeight": "700",
-      "lineHeight": 36
-    },
-    "text-heading-3": {
-      "fontSize": 24,
-      "fontWeight": "700",
-      "lineHeight": 32
-    },
-    "text-heading-4": {
-      "fontSize": 20,
-      "fontWeight": "700",
-      "lineHeight": 28
-    },
-    "text-heading-5": {
-      "fontSize": 16,
-      "fontWeight": "600",
-      "lineHeight": 24
-    },
-    "text-heading-6": {
-      "fontSize": 14,
-      "fontWeight": "600",
-      "lineHeight": 20
-    },
-    "text-subtitle-1": {
-      "fontSize": 16,
-      "fontWeight": "400",
-      "lineHeight": 24
-    },
-    "text-subtitle-2": {
-      "fontSize": 14,
-      "fontWeight": "400",
-      "lineHeight": 20
-    },
-    "text-paragraph-1": {
-      "fontSize": 16,
-      "fontWeight": "400",
-      "lineHeight": 24
-    },
-    "text-paragraph-2": {
-      "fontSize": 14,
-      "fontWeight": "400",
-      "lineHeight": 20
-    },
-    "text-caption-1": {
-      "fontSize": 12,
-      "fontWeight": "400",
-      "lineHeight": 16
-    },
-    "text-caption-2": {
-      "fontSize": 10,
-      "fontWeight": "400",
-      "lineHeight": 14
-    },
-    "text-label": {
-      "fontSize": 14,
-      "fontWeight": "500",
-      "lineHeight": 20
-    },
+  "text-heading-1": {
+    "fontSize": 32,
+    "fontWeight": "700",
+    "lineHeight": 40
+  },
+  "text-heading-2": {
+    "fontSize": 28,
+    "fontWeight": "700",
+    "lineHeight": 36
+  },
+  "text-heading-3": {
+    "fontSize": 24,
+    "fontWeight": "700",
+    "lineHeight": 32
+  },
+  "text-heading-4": {
+    "fontSize": 20,
+    "fontWeight": "700",
+    "lineHeight": 28
+  },
+  "text-heading-5": {
+    "fontSize": 16,
+    "fontWeight": "600",
+    "lineHeight": 24
+  },
+  "text-heading-6": {
+    "fontSize": 14,
+    "fontWeight": "600",
+    "lineHeight": 20
+  },
+  "text-subtitle-1": {
+    "fontSize": 16,
+    "fontWeight": "400",
+    "lineHeight": 24
+  },
+  "text-subtitle-2": {
+    "fontSize": 14,
+    "fontWeight": "400",
+    "lineHeight": 20
+  },
+  "text-paragraph-1": {
+    "fontSize": 16,
+    "fontWeight": "400",
+    "lineHeight": 24
+  },
+  "text-paragraph-2": {
+    "fontSize": 14,
+    "fontWeight": "400",
+    "lineHeight": 20
+  },
+  "text-caption-1": {
+    "fontSize": 12,
+    "fontWeight": "400",
+    "lineHeight": 16
+  },
+  "text-caption-2": {
+    "fontSize": 10,
+    "fontWeight": "400",
+    "lineHeight": 14
+  },
+  "text-label": {
+    "fontSize": 14,
+    "fontWeight": "500",
+    "lineHeight": 20
+  },
 };
