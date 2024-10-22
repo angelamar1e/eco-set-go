@@ -1,30 +1,34 @@
 import React from 'react';
-import { Card, Button, Select, Input } from '@ui-kitten/components';
+import { Card, Button, Input, Layout } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import { View } from 'react-native';
 
 const StyledCard = styled(Card);
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
-const StyledSelect = styled(Select);
+const StyledLayout = styled(Layout);
 
 export const CreatePost = (): React.ReactElement => {
   const [value, setValue] = React.useState('');
 
   return (
-    <StyledCard className="mt-10 ml-2 mr-2">
+    <StyledCard className="mt-10 ml-2 mr-2 rounded-lg">
         <StyledInput
           className="flex-1"
-          placeholder="Create a post"
+          placeholder="Write a post"
           value={value}
           onChangeText={nextValue => setValue(nextValue)}
+          multiline={true}
+          textStyle={{ minHeight: 50 }}
         />
-        <StyledButton 
-          className="mt-2 w-1/4"
-          size='small'
-          appearance="filled">
-          Post
-        </StyledButton>
+        <StyledLayout className='flex-row justify-end'>
+          <StyledButton 
+            className="mt-2 rounded-full"
+            size='small'
+            appearance="filled">
+            Post
+          </StyledButton>
+        </StyledLayout>
+        
     </StyledCard>
   );
 };

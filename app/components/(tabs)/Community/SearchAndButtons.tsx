@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { Layout, Input, Button } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { styled } from 'nativewind';
 
 interface SearchAndButtonsProps {
   onSearch: (text: string) => void;
@@ -8,43 +9,53 @@ interface SearchAndButtonsProps {
   setSelectedButton: (buttonName: string | null) => void; 
 }
 
+const StyledLayout = styled(Layout);
+const StyledInput = styled(Input);
+const StyledButton = styled(Button);
+
 const SearchAndButtons: React.FC<SearchAndButtonsProps> = ({ onSearch, selectedButton, setSelectedButton }) => {
   const handleButtonPress = (buttonName: string) => {
     setSelectedButton(selectedButton === buttonName ? null : buttonName);
   };
 
   return (
-    <View className="absolute -bottom-8 left-4 right-4 bg-white p-2 rounded-full shadow flex-row items-center">
-      <View className="flex-1 flex-row bg-gray-100 p-2 rounded-full items-center mr-2">
-        <Ionicons name="search" size={20} color="#A9A9A9" className="mr-2" />
-        <TextInput
-          placeholder="Search"
-          className="flex-1 text-base ml-2"
-          onChangeText={onSearch}
-        />
-      </View>
-
-      <TouchableOpacity
-        className={`p-2 rounded-full shadow mr-2 ${selectedButton === 'list' ? 'bg-green-500' : 'bg-white'}`}
+    <StyledLayout className="absolute -bottom-8 left-4 right-4 p-2 rounded-full shadow flex-row items-center">
+      <StyledInput
+        placeholder="Search"
+        className="flex-1 rounded-full"
+        onChangeText={onSearch}
+        accessoryLeft={() => (
+          <Ionicons name="search-outline" size={20} color="#1BD67C" />
+        )}
+      />
+      
+      <StyledButton
+        className='rounded-full p-1 mx-1' 
+        appearance={selectedButton === 'list' ? 'filled' : 'outline'}
+        status={selectedButton === 'list' ? 'success' : 'basic'} 
         onPress={() => handleButtonPress('list')}
       >
         <Ionicons name="list" size={24} color={selectedButton === 'list' ? "#FFFFFF" : "#A9A9A9"} />
-      </TouchableOpacity>
+      </StyledButton>
 
-      <TouchableOpacity
-        className={`p-2 rounded-full shadow mr-2 ${selectedButton === 'chat' ? 'bg-green-500' : 'bg-white'}`}
+      <StyledButton
+        className='rounded-full p-1 mx-1' 
+        appearance={selectedButton === 'chat' ? 'filled' : 'outline'}
+        status={selectedButton === 'chat' ? 'success' : 'basic'} 
         onPress={() => handleButtonPress('chat')}
-      >
+      >           
         <Ionicons name="chatbubble-outline" size={24} color={selectedButton === 'chat' ? "#FFFFFF" : "#A9A9A9"} />
-      </TouchableOpacity>
+      </StyledButton>
 
-      <TouchableOpacity
-        className={`p-2 rounded-full shadow ${selectedButton === 'cart' ? 'bg-green-500' : 'bg-white'}`}
+      <StyledButton
+        className='rounded-full p-1 mx-1' 
+        appearance={selectedButton === 'cart' ? 'filled' : 'outline'}
+        status={selectedButton === 'cart' ? 'success' : 'basic'} 
         onPress={() => handleButtonPress('cart')}
       >
         <Ionicons name="cart-outline" size={24} color={selectedButton === 'cart' ? "#FFFFFF" : "#A9A9A9"} />
-      </TouchableOpacity>
-    </View>
+      </StyledButton>
+    </StyledLayout>
   );
 };
 

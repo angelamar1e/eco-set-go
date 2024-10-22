@@ -13,14 +13,14 @@ const StyledInput = styled(Input);
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
     <StyledLayout className="absolute -bottom-4 left-4 right-4 p-1 rounded-full shadow">
-      <StyledLayout className="flex-row p-2 rounded-full items-center flex-1">
-        <Ionicons name='search-outline' size={25} color="#1BD67C"/>
-        <StyledInput
-          placeholder="Search"
-          className="ml-2 flex-1 rounded-full"
-          onChangeText={onSearch}
-        />
-      </StyledLayout>
+      <StyledInput
+        placeholder="Search"
+        className="flex-1 rounded-full"
+        onChangeText={onSearch}
+        accessoryLeft={() => (
+          <Ionicons name='search-outline' size={20} color="#1BD67C" />
+        )}
+      />
     </StyledLayout>
   );
 };

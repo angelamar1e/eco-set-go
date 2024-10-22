@@ -1,8 +1,8 @@
-import { ThemedText } from '@/components/ThemedText';
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Card, Text } from '@ui-kitten/components';
+import { Card, Text, Layout, Input } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 interface PostCardProps {
   content: string;
@@ -10,6 +10,11 @@ interface PostCardProps {
   userHandle: string; 
   userIcon: string; 
 }
+
+const StyledCard = styled(Card);
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
+const StyledInput = styled(Input);
 
 const PostCard: React.FC<PostCardProps> = ({ content, userName, userHandle, userIcon }) => {
   const [comment, setComment] = useState('');
@@ -27,52 +32,42 @@ const PostCard: React.FC<PostCardProps> = ({ content, userName, userHandle, user
   };
 
   return (
-    <View className="bg-white p-4 rounded-lg mb-2 ml-2 mr-2">
-      <View className="flex-row items-center">
+    <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
+      <StyledLayout className="flex-row items-center">
         <Image
           source={{ uri: userIcon }}
           className="w-8 h-8 rounded-full mr-2"
           alt="User Icon"
         />
-        <View>
-          <ThemedText type='default' className="font-bold">{userName}</ThemedText>
-          <ThemedText type='default' className="text-gray-500">@{userHandle}</ThemedText>
-        </View>
-      </View>
+        <StyledLayout>
+          <StyledText category='s1' className='font-bold'>{userName}</StyledText>
+          <StyledText category='c1'>@{userHandle}</StyledText>
+        </StyledLayout>
+      </StyledLayout>
 
-      <View className="mt-2">
-        <ThemedText type='default'>{content}</ThemedText>
-      </View>
+      <StyledLayout className="ml-10 mt-2">
+        <StyledText category='p1'>{content}</StyledText>
+      </StyledLayout>
 
-      <View className="flex-row items-center justify-center mt-4">
-        {/* Heart button */}
-        <TouchableOpacity onPress={handleHeartPress} className="p-2">
-          <Ionicons 
-            name={isHearted ? "heart" : "heart-outline"} 
-            size={24} 
-            color={isHearted ? "#34C759" : "#A9A9A9"} 
-          />
-        </TouchableOpacity>
+      <StyledLayout className="flex-row items-center justify-center mt-4">
+  {/* Heart button */}
+  <TouchableOpacity onPress={handleHeartPress}>
+    <Ionicons 
+      name={isHearted ? "heart" : "heart-outline"} 
+      size={20} 
+      color={isHearted ? "#34C759" : "#A9A9A9"} 
+    />
+  </TouchableOpacity>
 
-        <View className="flex-row flex-1 items-center border border-gray-300 rounded-full ml-2">
-          {/* Comment Input */}
-          <TextInput
-            className="flex-1 p-2 h-10" 
-            placeholder="Add a comment..."
-            value={comment}
-            onChangeText={setComment}
-            onFocus={() => setIsFocused(true)} // Set focus state to true on focus
-            onBlur={() => setIsFocused(false)} // Set focus state to false on blur
-          />
-          {/* Conditionally render the arrow-up icon based on focus state */}
-          {isFocused && (
-            <TouchableOpacity onPress={handleCommentSubmit} className="p-2">
-              <Ionicons name="arrow-up-circle" size={24} color="#34C759" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-    </View>
+  <StyledInput
+    className="flex-1 p-2 rounded-full ml-2"
+    placeholder="Add a comment..."
+    value={comment}
+    onChangeText={setComment}
+  />
+</StyledLayout>
+
+    </StyledCard>
   );
 };
 

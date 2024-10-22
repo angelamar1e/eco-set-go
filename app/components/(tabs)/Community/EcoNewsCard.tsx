@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { Image } from 'react-native';
+import { Card, Layout, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 interface EcoNewsCardProps {
   image: string;
@@ -9,18 +10,29 @@ interface EcoNewsCardProps {
   source: string;
 }
 
+const StyledCard = styled(Card);
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+
+
 const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ image, headline, lead, source }) => {
   return (
-    <View className="h-[110px] w-[300px] bg-white p-4 rounded-lg mb-2 mx-2 shadow-md">
-      <View className="flex-row items-start">
-        <Image source={{ uri: image }} className="w-16 h-16 rounded-md mr-4" alt="News Thumbnail" />
-        <View className="flex-1">
-          <ThemedText type='default'className="font-bold text-lg">{headline}</ThemedText>
-          <ThemedText type='default' className="text-gray-600 mt-1">{lead}</ThemedText>
-          <ThemedText type='default' className="text-blue-500 text-sm mt-2">{source}</ThemedText>
-        </View>
-      </View>
-    </View>
+    <StyledCard className="h-[140px] w-[300px] p-4 rounded-lg mb-2 mx-2 shadow-md">
+      <StyledLayout className="flex-row items-start">
+        <Image source={{ uri: image }} className="w-16 h-16 rounded-md mr-4" accessibilityLabel="News Thumbnail" />
+        <StyledLayout className="flex-1">
+          <StyledText category='h6'>
+            {headline}
+          </StyledText>
+          <StyledText category='s1'>
+            {lead}
+          </StyledText>
+          <StyledText category='s2' className="text-blue-500">
+            {source}
+          </StyledText>
+        </StyledLayout>
+      </StyledLayout>
+    </StyledCard>
   );
 };
 
