@@ -1,70 +1,96 @@
-import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { ThemedView } from '@/components/ThemedView';
-import { FontAwesome } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Image } from 'react-native';
+import { Layout, Card, Text, Select, SelectItem } from '@ui-kitten/components'; 
+import { styled } from 'nativewind';
 
-const ArticlePage = () => {
-  const navigation = useNavigation();
+interface ArticlePageProps {
+  articleTitle: string;
+  imageUri: string;
+  instructions: string;
+  facts: string;
+  benefits: string;
+  impact: string;  
+  category: string; 
+}
+
+// Styled components using NativeWind
+const StyledLayout = styled(Layout);
+const StyledCard = styled(Card);
+const StyledText = styled(Text);
+
+const ArticlePage: React.FC<ArticlePageProps> = ({
+  articleTitle,
+  imageUri,
+  instructions,
+  facts,
+  benefits,
+  impact,
+  category,   
+}) => {
+  const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <ThemedView className="flex-1 bg-white">
-      <View className="flex-row items-center p-4 bg-white">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text className="text-lg font-semibold">Back</Text>
-        </TouchableOpacity>
-        <Text className="text-xl font-semibold ml-4">🍱 Food</Text>
-      </View>
+    <StyledLayout className="flex-1 p-2">
+         <StyledText category='h5'>Category{category}</StyledText>
 
-      <View className="bg-green-600 mx-4 my-2 p-3 rounded-lg flex-row items-center justify-between">
-        <Text className="text-white text-lg font-bold">Title</Text>
-        <TouchableOpacity>
-          <FontAwesome name="plus" size={20} color="white" />
-        </TouchableOpacity>
-      </View>
+      <StyledLayout className="bg-green-600 m-2 p-3 rounded-lg flex-row justify-between items-center">
+        <StyledText category='h6'>Title{articleTitle}</StyledText>
+      </StyledLayout>
 
-      <View className="mx-4 mt-2 flex-row space-x-3">
-        <View className="flex-1 bg-white p-3 rounded-lg shadow-sm">
-          <Image
-            source={{ uri: 'https://via.placeholder.com/150' }} // Replace with your image source
-            className="w-full h-40 rounded-lg"
-          />
-          <View className="mt-3">
-            <Text className="text-lg font-bold">Instructions</Text>
-            <Text className="text-gray-600 mt-2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-            </Text>
-          </View>
-        </View>
+      <StyledLayout className="flex-row m-2">
+        {/* Column 1: Image Holder and Impact */}
+        <StyledLayout className="flex-1 mr-2">
+          {/* Image Holder Card */}
+          <StyledCard className="mb-2">
+            <Image
+              source={{ uri: imageUri }} // Use the passed imageUri prop
+              className="w-full h-40 rounded-lg"
+            />
+          </StyledCard>
 
-        <View className="flex-1 space-y-3">
-          <View className="bg-white p-3 rounded-lg shadow-sm">
-            <Text className="text-lg font-bold">Facts</Text>
-            <Text className="text-gray-600 mt-2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-            </Text>
-          </View>
+          {/* Impact Card */}
+          <StyledCard>
+            <StyledText category='h6'>Impact</StyledText>
+            <Select
+              placeholder=''
+              value={selected}
+              onSelect={(index) => setSelected(index ? index.toString() : null)}
+            >
+              <SelectItem title='Option1' />
+              <SelectItem title='Option2' />
+              <SelectItem title='Option3' />
+            </Select>
+            <StyledText category='s1' appearance='hint'>
+              100 kg{impact} 
+            </StyledText>
+          </StyledCard>
+        </StyledLayout>
 
-          <View className="bg-white p-3 rounded-lg shadow-sm">
-            <Text className="text-lg font-bold">Benefits</Text>
-            <Text className="text-gray-600 mt-2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-            </Text>
-          </View>
-        </View>
-      </View>
+        {/* Column 2: Instructions, Facts, and Benefits */}
+        <StyledLayout className="flex-1">
+          <StyledCard className="m-2">
+            <StyledText category='h6'>Instructions</StyledText>
+            <StyledText category='s2' appearance='hint'>
+            Lorem ipsum{instructions}
+            </StyledText>
+          </StyledCard>
 
-      <View className="mx-4 mt-4 p-3 bg-white rounded-lg shadow-sm flex-row items-center">
-        <TextInput
-          placeholder="Write a comment..."
-          className="flex-1 bg-gray-100 p-3 rounded-lg text-gray-800"
-        />
-      </View>
+          <StyledCard className="m-2">
+            <StyledText category='h6'>Facts</StyledText>
+            <StyledText category='s2' appearance='hint'>
+             Lorem ipsum{facts}
+            </StyledText>
+          </StyledCard>
 
-      <TouchableOpacity className="mx-4 mt-2 p-3 bg-green-600 rounded-lg">
-        <Text className="text-center text-white font-semibold">Comment</Text>
-      </TouchableOpacity>
-      </ThemedView>
+          <StyledCard className="m-2">
+            <StyledText category='h6'>Benefits</StyledText>
+            <StyledText category='s2' appearance='hint'>
+            Lorem ipsum{benefits} 
+            </StyledText>
+          </StyledCard>
+        </StyledLayout>
+      </StyledLayout>
+    </StyledLayout>
   );
 };
 

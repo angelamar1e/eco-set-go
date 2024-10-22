@@ -1,28 +1,27 @@
 import React from 'react';
-import { View, TextInput } from 'react-native';
+import { Input, Layout } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { styled } from 'nativewind';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  children?: React.ReactNode;
 }
 
-const StyledView = styled(View);
-const StyledTextInput = styled(TextInput);
+const StyledLayout = styled(Layout);
+const StyledInput = styled(Input);
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
-    <StyledView className="absolute -bottom-4 left-4 right-4 bg-white p-2 rounded-full shadow flex-row items-center">
-      <StyledView className="flex-1 flex-row bg-gray-100 p-2 rounded-full items-center mr-2">
-        <Ionicons name="search" size={20} color="#A9A9A9" className="mr-2" />
-        <StyledTextInput
+    <StyledLayout className="absolute -bottom-4 left-4 right-4 p-1 rounded-full shadow">
+      <StyledLayout className="flex-row p-2 rounded-full items-center flex-1">
+        <Ionicons name='search-outline' size={25} color="#1BD67C"/>
+        <StyledInput
           placeholder="Search"
-          className="flex-1 text-base ml-2 rounded-full bg-transparent"
+          className="ml-2 flex-1 rounded-full"
           onChangeText={onSearch}
         />
-      </StyledView>
-    </StyledView>
+      </StyledLayout>
+    </StyledLayout>
   );
 };
 

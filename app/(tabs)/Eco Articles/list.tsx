@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList } from 'react-native';
-import { Card } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore from '@react-native-firebase/firestore';
 import { router, Stack } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
-import { Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 
+const StyledLayout = styled(Layout);
+const StyledCard = styled(Card);
+
 const EcoActionsList = () => {
-  
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
 
@@ -38,48 +37,45 @@ const EcoActionsList = () => {
   });
 
   const renderItem = ({ item }: { item: EcoAction }) => (
-    <Card
-      onPress={() => router.push('/components/(tabs)/Eco Articles/ArticlePage/${item.id}')} //components/(tabs)/Eco Articles/${item.id}`
-      className='m-2 h-[150px] bg-white:transparent justify-end'
+    <StyledCard
+      onPress={() => router.push(`/components/(tabs)/Eco Articles/ArticlePage/${item.id}`)}
+      className='m-2 h-[150px] bg-transparent justify-end'
     >
-      <Card.Content className='mb-2'>
-        <ThemedText type='subtitle' className='text-[18px] text-lime-800 italic'>{item.title}</ThemedText>
-      </Card.Content>
-    </Card>
+      <Text category='s1'>{item.title}</Text>
+    </StyledCard>
   );
 
-  const StyledTitle = styled(Text);
-
   return (
-    <ThemedView className='flex-1 px-2'>
+    <StyledLayout className='flex-1 px-2'>
       <Stack>
         <Stack.Screen name="Eco Articles/list" options={{ headerShown: false }} />
       </Stack>
       <SafeAreaView className='flex-1 mt-3'>
-        <View className='flex-1'>
-          <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
-          <StyledTitle className="text-2xl font-bold text-green-600">Eco Actions</StyledTitle>
-          </View>
+        <StyledLayout className='flex-1'>
+          <StyledLayout className='bg-[#54EA6D] h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
+            <Text category='h4'>Eco Actions</Text>
+          </StyledLayout>
 
-          <View className="ml-2 mr-2">
-          <SearchBar onSearch={(query: string) => console.log('Searching for:', query)} />
-          </View>
+          <StyledLayout className="ml-2 mr-2">
+            <SearchBar onSearch={(query: string) => console.log('Searching for:', query)} />
+          </StyledLayout>
 
-          <View className="ml-2 mr-2">
-          <FilterButtons 
+          <StyledLayout className="ml-2 mt-4 mr-2">
+            <FilterButtons 
               selectedFilter={filter} 
               onFilterChange={setFilter} 
             />
-          </View>
+          </StyledLayout>
 
           <FlatList
             className="mt-2"
             data={filteredActions} 
             renderItem={renderItem}
-            keyExtractor={(item) => item.id} />
-        </View>
+            keyExtractor={(item) => item.id} 
+          />
+        </StyledLayout>
       </SafeAreaView>
-    </ThemedView>
+    </StyledLayout>
   );
 };
 
