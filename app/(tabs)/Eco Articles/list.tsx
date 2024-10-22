@@ -9,6 +9,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
+import { Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 const EcoActionsList = () => {
   
@@ -46,6 +48,8 @@ const EcoActionsList = () => {
     </Card>
   );
 
+  const StyledTitle = styled(Text);
+
   return (
     <ThemedView className='flex-1 px-2'>
       <Stack>
@@ -54,7 +58,7 @@ const EcoActionsList = () => {
       <SafeAreaView className='flex-1 mt-3'>
         <View className='flex-1'>
           <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
-            <ThemedText type='subtitle' className='text-[28px] text-gray-100'>Eco Actions</ThemedText>
+          <StyledTitle className="text-2xl font-bold text-green-600">Eco Actions</StyledTitle>
           </View>
 
           <View className="ml-2 mr-2">

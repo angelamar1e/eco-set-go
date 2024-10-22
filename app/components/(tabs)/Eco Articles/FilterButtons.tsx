@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Layout, Button } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 import { ThemedText } from '@/components/ThemedText';
 
 interface FilterButtonsProps {
@@ -7,26 +8,32 @@ interface FilterButtonsProps {
   onFilterChange: (filter: string) => void;
 }
 
+const StyledLayout = styled(Layout);
+const StyledButton = styled(Button);
+
 const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterChange }) => {
   const filters = ['ALL', 'Food', 'Mobility', 'Electricity'];
 
   return (
-    <View className="bg-white mt-4 justify-between">
-      <View className="flex-row flex-wrap justify-center">
+    <StyledLayout className="bg-white mt-4">
+      <StyledLayout className="flex-row flex-nowrap justify-center">
         {filters.map((category) => (
-          <TouchableOpacity
+          <StyledButton
             key={category}
             onPress={() => onFilterChange(category)}
-            className={`m-1 px-4 py-2 rounded-full ${selectedFilter === category ? 'bg-green-500' : 'bg-gray-200'}`}
+            className={`m-1 rounded-full ${
+              selectedFilter === category ? 'bg-green-500' : 'bg-gray-200'
+            } p-1`} 
+            appearance={selectedFilter === category ? 'filled' : 'outline'}
+            status={selectedFilter === category ? 'success' : 'basic'}
           >
-            <Text className={`${selectedFilter === category ? 'text-white' : 'text-black'}`}>   
-            {category}  
-            </Text>
-            
-          </TouchableOpacity>
+            <ThemedText className={`text-sm ${selectedFilter === category ? 'text-white' : 'text-black'}`}>
+              {category}
+            </ThemedText>
+          </StyledButton>
         ))}
-      </View>
-    </View>
+      </StyledLayout>
+    </StyledLayout>
   );
 };
 
