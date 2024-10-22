@@ -30,18 +30,18 @@ const ArticlePage: React.FC<ArticlePageProps> = ({
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <StyledLayout className="flex-1 p-2">
-         <StyledText category='h5'>Category{category}</StyledText>
+    <StyledLayout className="flex-1 mt-10 p-2">
+         <StyledText className='text-center'category='h5'>Category{category}</StyledText>
 
-      <StyledLayout className="bg-green-600 m-2 p-3 rounded-lg flex-row justify-between items-center">
+      <StyledLayout className="bg-[#4A8B2A] m-2 p-3 rounded-lg flex-row justify-between items-center">
         <StyledText category='h6'>Title{articleTitle}</StyledText>
       </StyledLayout>
 
-      <StyledLayout className="flex-row m-2">
+      <StyledLayout className="flex-row m-1">
         {/* Column 1: Image Holder and Impact */}
-        <StyledLayout className="flex-1 mr-2">
+        <StyledLayout className="flex-1">
           {/* Image Holder Card */}
-          <StyledCard className="mb-2">
+          <StyledCard className="m-1">
             <Image
               source={{ uri: imageUri }} // Use the passed imageUri prop
               className="w-full h-40 rounded-lg"
@@ -49,10 +49,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({
           </StyledCard>
 
           {/* Impact Card */}
-          <StyledCard>
-            <StyledText category='h6'>Impact</StyledText>
+          <StyledCard className='m-1'>
+            <StyledText className='mb-2' category='h6'>Impact</StyledText>
             <Select
-              placeholder=''
+              placeholder='Select..'
               value={selected}
               onSelect={(index) => setSelected(index ? index.toString() : null)}
             >
@@ -60,7 +60,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({
               <SelectItem title='Option2' />
               <SelectItem title='Option3' />
             </Select>
-            <StyledText category='s1' appearance='hint'>
+            <StyledText className='text-center mt-2' category='s1' appearance='hint'>
               100 kg{impact} 
             </StyledText>
           </StyledCard>
@@ -68,21 +68,21 @@ const ArticlePage: React.FC<ArticlePageProps> = ({
 
         {/* Column 2: Instructions, Facts, and Benefits */}
         <StyledLayout className="flex-1">
-          <StyledCard className="m-2">
+          <StyledCard className="m-1">
             <StyledText category='h6'>Instructions</StyledText>
             <StyledText category='s2' appearance='hint'>
             Lorem ipsum{instructions}
             </StyledText>
           </StyledCard>
 
-          <StyledCard className="m-2">
+          <StyledCard className="m-1">
             <StyledText category='h6'>Facts</StyledText>
             <StyledText category='s2' appearance='hint'>
              Lorem ipsum{facts}
             </StyledText>
           </StyledCard>
 
-          <StyledCard className="m-2">
+          <StyledCard className="m-1">
             <StyledText category='h6'>Benefits</StyledText>
             <StyledText category='s2' appearance='hint'>
             Lorem ipsum{benefits} 
