@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
-import Calculator from "../components/quiz/Calculator";
 import { EmissionsContext } from "@/contexts/EmissionsContext";
 import { ThemedView } from "@/components/ThemedView";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
@@ -86,7 +85,6 @@ const QuizIndex = () => {
 
   return (
     <ThemedView className="flex-1 p-4">
-      <Calculator />
       {questionData ? (
         <>
           <CurrentComponent
