@@ -1,15 +1,25 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { Button, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 import { useRouter } from 'expo-router';
-import { ThemedText } from '@/components/ThemedText';
+
+const StyledButton = styled(Button);
+const StyledText = styled(Text);
 
 const GoToMilestones = () => {
   const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => router.push('/components/(tabs)/Rewards/MilestonesPage')} activeOpacity={0.7}>
-      <ThemedText type='defaultSemiBold' className="text-green-600 text-[17px] pl-4">View Milestones</ThemedText>
-    </TouchableOpacity>
+    <StyledButton
+      onPress={() => router.push('/components/(tabs)/Rewards/MilestonesPage')}
+      status="basic" 
+      size="small"
+      className="rounded-full justify-between"
+    >
+      <StyledText category="label">
+        View Milestones
+      </StyledText>
+    </StyledButton>
   );
 };
 

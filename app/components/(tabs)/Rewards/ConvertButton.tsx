@@ -1,18 +1,22 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
-import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
-import { TouchableOpacity } from 'react-native';
+import { Button, Layout, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 const StyledButton = styled(Button);
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const ConvertButton = () => {
   return (
-    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1 z-10'>
-        <ThemedText className='text-white text-center text-[14px]'>Convert</ThemedText>
-    </TouchableOpacity>
-
-
+      <StyledButton 
+      className="p-1 m-1 h-1/2 rounded-full"
+      size="small"
+      status="success" 
+      onPress={() => {}}>
+        <StyledText category="s1">
+          Convert
+        </StyledText>
+      </StyledButton>
   );
 };
 
