@@ -20,9 +20,6 @@ const EcoPoints = () => {
 
     return (
         <ThemedView className='flex-1 px-2'>
-        <><Stack>
-            <Stack.Screen name="points" options={{ headerShown: false }} />
-        </Stack>
         <SafeAreaView className='flex-1 mt-3'>
             <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center relative'>
                 <ThemedText type='subtitle' className='text-[28px] text-gray-100 mb-2'>Eco Rewards</ThemedText>
@@ -73,7 +70,7 @@ const EcoPoints = () => {
             </View>
 
             
-        </SafeAreaView></>
+        </SafeAreaView>
         </ThemedView>
     )
 };

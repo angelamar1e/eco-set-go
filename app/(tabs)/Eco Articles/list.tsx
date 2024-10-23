@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore from '@react-native-firebase/firestore';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
@@ -48,9 +48,6 @@ const EcoActionsList = () => {
 
   return (
     <StyledLayout className='flex-1 px-2'>
-      <Stack>
-        <Stack.Screen name="Eco Articles/list" options={{ headerShown: false }} />
-      </Stack>
       <SafeAreaView className='flex-1 mt-3'>
         <StyledLayout className='flex-1'>
           <StyledLayout className='bg-[#4A8B2A] h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
@@ -70,9 +67,9 @@ const EcoActionsList = () => {
 
           <FlatList
             className="mt-2"
-            data={filteredActions} 
+            data={filteredActions}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id} 
+            keyExtractor={(item) => item.id}
           />
         </StyledLayout>
       </SafeAreaView>
