@@ -1,78 +1,72 @@
+import React, { ReactNode } from "react";
 import Incentives from "@/app/components/(tabs)/Rewards/incentives";
 import GoToMilestones from "@/app/components/(tabs)/Rewards/MilestonesButton";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { Stack } from "expo-router";
-import React, { ReactNode } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { ProgressBar } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { styled } from "nativewind";
+import { Button, Layout, Text, ProgressBar, Card } from "@ui-kitten/components";
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledButton = styled(Button);
+const StyledCard = styled(Card);
 
 const EcoPoints = () => {
-    const Card = ({ children } : {children: ReactNode}) => {
-        return (
-          <View className="bg-white rounded-lg shadow-md p-4 w-[330px] h-[138px] border border-stone-200">
-            {children}
-          </View>
-        );
-      };
+  const CustomCard = ({ children }: { children: ReactNode }) => (
+    <StyledCard className="bg-white rounded-full shadow-md p-4 w-[90%] shadow">
+      {children}
+    </StyledCard>
+  );
 
+  return (
+    <StyledLayout className="flex-1">
+          <StyledLayout className="bg-lime-800 h-1/4 rounded-lg mb-4 justify-center items-center relative">
+            <StyledText category="h4" className="text-white">Eco Rewards</StyledText>
+          </StyledLayout>
 
-    return (
-        <ThemedView className='flex-1 px-2'>
-        <SafeAreaView className='flex-1 mt-3'>
-            <View className='bg-lime-800 h-1/6 rounded-b-3xl mb-4 justify-center items-center relative'>
-                <ThemedText type='subtitle' className='text-[28px] text-gray-100 mb-2'>Eco Rewards</ThemedText>
-            </View>
+          <StyledLayout className="items-center -mt-10">
+                <CustomCard>
+                    <StyledText category="h6">Eco Points</StyledText>
+                    <StyledText category="s1">Level 10</StyledText>
 
-            <View className="items-center -mt-10">
-                <Card>
-                    <ThemedText type='subtitle' className='text-black justify-left mb-2'>Eco Points</ThemedText>
-                    <ThemedText type='default' className='text-black justify-left mt-1 text-[16px]'>Level 10</ThemedText>
+                    <StyledLayout className="mt-1">
+                        <ProgressBar
+                        progress={0.1}
+                        className="h-2 rounded-lg bg-gray-300 w-full mt-2"
+                        />
+                    </StyledLayout>
 
-                    <View className="mt-1">
-                        <ProgressBar progress={0.10}  color="#4CAF50" style={{
-                            height: 10,                   
-                            borderRadius: 5,              
-                            backgroundColor: '#e0e0e0',   
-                            marginTop: 5,                 
-                            width: '100%',                 
-                        }}/>
+                    <StyledLayout className="flex-row justify-between mt-2">
+                        <StyledText category="s1">100</StyledText>
+                        <StyledText category="c1">current EcoPoints</StyledText>
+                        <StyledText category="c1">Level 11</StyledText>
+                        <StyledText category="s1">1000</StyledText>
+                    </StyledLayout>
+                </CustomCard>
+            </StyledLayout>
 
-                    </View>
-
-                    <View className="flex-row justify-between mt-2">
-                        <ThemedText type='defaultSemiBold' className='text-black text-[15px]'>100</ThemedText>
-                        <ThemedText type='default' className='text-stone-500 text-[12px] right-[40px]'>current EcoPoints</ThemedText>
-                        <ThemedText type='default' className='text-stone-500 text-[12px]  left-[40px]'>Level 11</ThemedText>
-                        <ThemedText type='defaultSemiBold' className='text-black text-[15px]'>1000</ThemedText>
-                    </View>
-                
-                </Card>
-            </View>
-
-            <View className="flex-row p-4 justify-between items-center">
+          <StyledLayout className="flex-row p-4 justify-between items-center">
                 <GoToMilestones />
-                <ThemedText type='defaultSemiBold' className="text-[17px] text-stone-500 left-[34px]">Total</ThemedText>
-                <View className="bg-green-600 right-[15px] rounded-full px-2 py-1 flex-row w-[auto] justify-between">
-                    <ThemedText type='defaultSemiBold' className="text-white ml-2">500 </ThemedText>
-                    <ThemedText type='default' className="text-white text-[15px] mr-2">EcoPoints</ThemedText>
-                </View>
-            </View>
+                <StyledButton 
+                    className="p-1 m-1 h-1/2 rounded-full"
+                    size="small"
+                    status="primary" 
+                    onPress={() => {}}>
+                    <StyledText category="s1">5000 points</StyledText>
+                </StyledButton>
+            </StyledLayout>
 
-            <Incentives />
-            
-            {/* View More Button */}
-            <View className="flex-1 items-center bottom-[50px]">
-                <TouchableOpacity onPress={() => {}}>
-                    <ThemedText type="default" className="text-stone-500 text-[15px]">More rewards</ThemedText>
-                </TouchableOpacity>
-            </View>
+          <Incentives />
 
-            
-        </SafeAreaView>
-        </ThemedView>
-    )
+          {/* View More Button */}
+          <StyledLayout className="flex-1 items-center">
+            <StyledButton appearance="ghost" onPress={() => {}}>
+              <StyledText category="s1" className="text-stone-500 text-[15px]">
+                More rewards
+              </StyledText>
+            </StyledButton>
+          </StyledLayout>
+    </StyledLayout>
+  );
 };
 
 export default EcoPoints;
