@@ -1,12 +1,15 @@
-import { ThemedText } from '@/components/ThemedText';
+import { styled } from 'nativewind';
+import { Text, Layout } from '@ui-kitten/components';
 import React, { useState } from 'react';
-import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
 import CommunityPosts from '@/app/components/(tabs)/Community/CommunityPosts';
 import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed';
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
 import { PostCard, MarketplacePost } from '@/types/PostCardProps';
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const Feed: React.FC = () => {
   const navigation = useNavigation();
@@ -120,20 +123,20 @@ const Feed: React.FC = () => {
   };
 
   return (
-    <View className="flex-1">
-      <View className="absolute top-0 left-0 right-0 z-10 bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
-        <ThemedText type='subtitle' className='text-[28px] text-gray-100 mb-2'>Community</ThemedText>
-        <ThemedText type='default' className='text-[15px] text-gray-100'>Date</ThemedText> 
+    <StyledLayout className="flex-1">
+      <StyledLayout className="absolute top-0 left-0 right-0 z-10 bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
+        <StyledText category='h4'>Community</StyledText>
+        <StyledText category='s1'>Date</StyledText> 
 
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
           selectedButton={selectedButton}
           setSelectedButton={setSelectedButton}
         />
-      </View>
+      </StyledLayout>
 
       {renderSelectedComponent()}
-    </View>
+    </StyledLayout>
   );
 };
 

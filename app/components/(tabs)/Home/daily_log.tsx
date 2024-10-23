@@ -1,40 +1,51 @@
-import React, { FC, useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { Checkbox, IconButton } from "react-native-paper";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { View, FlatList, Text } from "react-native";
 import firestore from "@react-native-firebase/firestore";
-import { Swipeable } from "react-native-gesture-handler";
-import { styled } from "nativewind";
-import { EcoAction } from "@/types/EcoAction";
-import { getUserUid } from "@/app/utils/utils";
 import moment from "moment";
 import { ThemedText } from "@/components/ThemedText";
+import { EcoAction } from "@/types/EcoAction";
+import { getUserUid } from "@/app/utils/utils";
 
-const StyledTouchableOpacity = styled(TouchableOpacity);
+import { Checkbox } from "react-native-paper";
+import DropdownEcoAction from './DropdownActionItem';
+import ActionItem from './ActionItem';
+import DoneItem from "./DoneItem";
+import { EmissionsContext } from "@/contexts/EmissionsContext";
+
+const templates = [DropdownEcoAction, ActionItem];
+const doneTemplates = [DoneItem];
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
   const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
   const [actionIds, setActionIds] = useState<string[]>([]);
-  const [completedActionIds, setCompletedActionIds] = useState<string[]>([]);
+  const [currentLog, setCurrentLog] = useState({});
+  const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
 
-  const currentDate = moment().format("MM-DD-yy");
+  const {overallFootprint, setOverallFootprint} = useContext(EmissionsContext);
 
-  // Get User ID on Component Mount
+  const currentDate = moment().format("YYYY-MM-DD");
+
+  async function getCurrentLog(actionId: string) {
+    const currentDate = moment().format("YYYY-MM-DD");
+
+    const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
+
+    setCurrentLog(currentLog[actionId]);
+  }
+
   useEffect(() => {
     const fetchUserUid = async () => {
       const uid = await getUserUid();
       setUserUid(uid);
     };
-
     fetchUserUid();
   }, []);
 
-  // Firestore document references
   const dailyLogDoc = firestore().collection("daily_logs").doc(userUid);
   const userLogs = firestore().collection("user_logs").doc(userUid);
 
-  // Real-time Listener for Action IDs and Completed Action IDs
   useEffect(() => {
     if (!userUid) return;
 
@@ -52,25 +63,22 @@ const DailyLog: FC = () => {
       }
     });
 
-    // Clean up the real-time listeners on unmount
     return () => {
       unsubscribeDailyLog();
       unsubscribeUserLogs();
     };
   }, [userUid]);
 
-  // Fetch EcoAction information based on the Action IDs
   useEffect(() => {
     const fetchEcoActions = async () => {
       if (actionIds.length > 0) {
-        const remainingActions = actionIds.filter((id) => !completedActionIds.includes(id));
+        const remainingActions = actionIds.filter((id) => !Object.keys(completedActionIds).includes(id));
         const actionsData = await getActionInfo(remainingActions);
-        const completedActionsData = await getActionInfo(completedActionIds);
+        const completedActionsData = await getActionInfo(Object.keys(completedActionIds));
 
         setDailyLog(actionsData);
         setCompletedActions(completedActionsData);
-      }
-      else if (actionIds.length == 0){
+      } else if (actionIds.length === 0) {
         setDailyLog([]);
       }
     };
@@ -78,90 +86,108 @@ const DailyLog: FC = () => {
     fetchEcoActions();
   }, [actionIds, completedActionIds]);
 
-  // Helper Function to Fetch Multiple Action Info using a Batch Query
   async function getActionInfo(ids: string[]): Promise<EcoAction[]> {
     if (ids.length === 0) return [];
-    
     const actionCollection = firestore().collection("eco_actions");
     const actionQuery = await actionCollection.where(firestore.FieldPath.documentId(), "in", ids).get();
-
     return actionQuery.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as EcoAction[];
   }
 
-  // Handle Marking Task as Complete
-  async function handleComplete(actionId: string) {
-    await userLogs.update({
-      [currentDate]: firestore.FieldValue.arrayUnion(actionId),
-    });
-  }
-
-  
-
-  // Handle Deleting an Action from Daily Log
   const handleDelete = async (actionId: string) => {
     await dailyLogDoc.update({
       action_ids: firestore.FieldValue.arrayRemove(actionId),
     });
   };
 
-  // Handle Unmarking task
   async function handleUnmark(actionId: string) {
+    const currentDate = moment().format("YYYY-MM-DD");
+
+    const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
+
+    // Remove the specific actionId from the map for the current date
+    delete currentLog[actionId];
+
     await userLogs.update({
-      [currentDate]: firestore.FieldValue.arrayRemove(actionId),
+      [currentDate]: currentLog,
     });
+
+    // const valueToRemove = currentLog[actionId] || 0; // Get the value for the actionId to subtract
+
+    // updateTotalFootprint(-valueToRemove); // Subtract the value from total
   }
 
-  // Render Individual EcoAction Items
-  const renderItem = ({ item }: { item: EcoAction }) => (
-    <Swipeable
-      renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
-      )}
-    >
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <Text className="text-lg text-gray-700">{item.title}</Text>
-        <Checkbox
-          status={
-            completedActions.some((action) => action.id === item.id)
-              ? "checked"
-              : "unchecked"
-          }
-          onPress={() => handleComplete(item.id)}
-        />
-      </View>
-    </Swipeable>
-  );
+  async function handleComplete(actionId: string, selectedOptionValue: number) {
+    const currentDate = moment().format("YYYY-MM-DD");
+
+    // Fetch the existing log for the current date
+    const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
+
+    // Update the specific actionId within the current date without overwriting other fields
+    await userLogs.update({
+      [currentDate]: {
+        ...currentLog, // Keep the existing entries for the date
+        [actionId]: selectedOptionValue, // Update the specific action
+      },
+    });
+
+    // updateTotalFootprint(selectedOptionValue);
+  }
+
+  // Update total footprint
+  const updateTotalFootprint = (change: number) => {
+    setOverallFootprint((prevTotal: number) => prevTotal + change);
+    // Update Firestore with new total footprint
+    firestore().collection('current_footprint').doc(userUid).update({
+      overall_footprint: firestore.FieldValue.increment(change), // Increment or decrement total footprint
+    });
+  };
+
+  // Conditionally render the template based on the `template` field
+  const renderItem = ({ item }: { item: EcoAction }) => {
+    const ActionItemTemplate = templates[item.template];
+
+    return (
+      <ActionItemTemplate 
+        item={item}
+        completedActions={completedActions}
+        handleDelete={handleDelete}
+        handleComplete={handleComplete}
+      />
+    );
+  };
+
+  const renderDoneItem = ({ item }: { item: EcoAction }) => { 
+    const DoneItemTemplate = DoneItem;
+
+    return (
+      <DoneItemTemplate 
+        item={item}
+        completedActions={completedActions}
+        handleDelete={handleDelete}
+        handleUnmark={handleUnmark}
+        handleComplete={handleComplete}
+      />
+    );
+  };
 
   return (
     <View className="bg-gray">
-      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">Daily Log</ThemedText>
+      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+        Daily Log
+      </ThemedText>
       <FlatList
         data={dailyLog}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-
-      {/* Completed Actions Section */}
       <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
       {completedActions.length > 0 ? (
         <FlatList
           data={completedActions}
-          renderItem={({ item }) => (
-            <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-              <ThemedText className="text-lg text-gray-700">{item.title}</ThemedText>
-              <Checkbox
-                status={
-                  completedActions.some((action) => action.id === item.id)
-                        ? "checked"
-                        : "unchecked"
-                    }
-                    onPress={() => handleUnmark(item.id)}
-              />
-            </View>
-          )}
+          renderItem={renderDoneItem}
           keyExtractor={(item) => item.id}
         />
       ) : (

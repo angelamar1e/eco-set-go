@@ -8,9 +8,11 @@ const StyledButton = styled(Button);
 
 const SetGoalButton = () => {
   return (
-    <TouchableOpacity className='absolute bottom-6 right-10 rounded-full bg-green-500 w-[25%] p-1'>
+    <TouchableOpacity className='absolute bottom-3 right-3 rounded-full bg-lime-800 w-[30%] p-1'>
         <ThemedText className='text-white text-center text-[14px]'>Set a goal</ThemedText>
     </TouchableOpacity>
+
+
   );
 };
 

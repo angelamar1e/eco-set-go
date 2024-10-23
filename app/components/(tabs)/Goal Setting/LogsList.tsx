@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, FlatList } from "react-native";
-import { Swipeable } from "react-native-gesture-handler"; 
-import { IconButton } from "react-native-paper"; 
-import CircularCheckbox from "./CircularCheckBox";
+import { FlatList, TouchableOpacity } from "react-native";
+import { styled } from "nativewind";
+import { Text, Layout, CheckBox } from "@ui-kitten/components";
+import { Ionicons } from "@expo/vector-icons"; // Icons for options button
 
 interface EcoAction {
   id: string;
   title: string;
   completed: boolean;
 }
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const LogList = () => {
   // State to hold the list of tasks
@@ -19,59 +22,72 @@ const LogList = () => {
     { id: "", title: "Turn Off Lights", completed: true },
   ]);
 
-  // State to track completed actions
-  const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
+  // State to track which task's dropdown is open
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  // Function to toggle task completion
-  const handleComplete = (id: string) => {
+  // Function to toggle the completion status of a task
+  const toggleTaskCompletion = (id: string) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
-
-    // Update the completed actions state
-    setCompletedActions((prevCompleted) => {
-      const isCompleted = prevCompleted.some((action) => action.id === id);
-      return isCompleted
-        ? prevCompleted.filter((action) => action.id !== id) // Remove from completed
-        : [...prevCompleted, tasks.find((task) => task.id === id)!]; // Add to completed
-    });
   };
 
-  // Function to handle item deletion
-  const handleDelete = (id: string) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-    setCompletedActions((prevCompleted) =>
-      prevCompleted.filter((action) => action.id !== id)
-    );
+  // Function to handle the action button click
+  const toggleDropdown = (id: string) => {
+    setSelectedTaskId((prevId: string | null) => (prevId === id ? null : id));
   };
 
-  // Render Individual EcoAction Items
+  // Function to close the dropdown
+  const closeDropdown = () => {
+    setSelectedTaskId(null);
+  };
+
+  // Render individual task items with checkboxes and options button
   const renderItem = ({ item }: { item: EcoAction }) => (
-  <View className="flex items-center">
-    <View className="border border-stone-300 p-2 mb-2 rounded-[25px] w-[92%]">
-      <Swipeable
-        renderRightActions={() => (
-          <View className="flex items-center justify-center">
-            <IconButton
-              icon="delete"
-              onPress={() => handleDelete(item.id)}
-            />
-          </View>
-        )}
+    <StyledLayout className="flex-row justify-between w-[92%] p-2.5 mb-2 ml-4 rounded-lg items-center z-20">
+      <CheckBox
+        checked={item.completed}
+        onChange={() => toggleTaskCompletion(item.id)}
+        style={{ borderColor: "#4caf50" }}
       >
-        <View className="flex-row justify-between items-center">
-          <Text className="text-lg text-gray-700 ml-3">{item.title}</Text>
+        <StyledText category='p1'>{item.title}</StyledText>
+      </CheckBox>
 
-          <CircularCheckbox
-            isChecked={completedActions.some((action) => action.id === item.id)}  // Circular Checkbox
-            onPress={() => handleComplete(item.id)}
-          />
-        </View>
-      </Swipeable>
-    </View>
-  </View>
+      {/* Options Button */}
+      <TouchableOpacity onPress={() => toggleDropdown(item.id)}>
+        <Ionicons name="ellipsis-horizontal" size={20} color="#ccc" />
+      </TouchableOpacity>
+
+      {/* Options Menu */}
+      {selectedTaskId === item.id && (
+        <StyledLayout
+          className="absolute right-5 bg-white rounded-lg shadow-lg z-50"
+        >
+          <TouchableOpacity
+            onPress={() => {
+              console.log("View Action:", item.title);
+              closeDropdown();
+            }}
+            className="p-2"
+          >
+            <StyledText category='p1'>View</StyledText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              console.log("Delete Action:", item.title);
+              setTasks(tasks.filter((task) => task.id !== item.id));
+              closeDropdown();
+            }}
+            className="p-2"
+          >
+             <StyledText category='p1'>Delete</StyledText>
+          </TouchableOpacity>
+        </StyledLayout>
+      )}
+    </StyledLayout>
   );
 
   return (

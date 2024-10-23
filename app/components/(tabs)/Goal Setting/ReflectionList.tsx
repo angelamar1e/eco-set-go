@@ -1,39 +1,41 @@
 import React, { useState } from 'react';
-import { FlatList, View } from 'react-native';
-import { Card } from 'react-native-paper';
-import { ThemedText } from '@/components/ThemedText';
+import { FlatList } from 'react-native';
+import { Card, Text, Layout } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 interface Reflection {
   id: string;
   title: string;
   content: string;
-  date: string;
 }
 
 const ReflectionsList = () => {
-  // State to hold the dummy reflections data
   const [reflections] = useState<Reflection[]>([
-    { id: '1', title: 'August 7, 2024', content: 'Today, I learned about the importance of reducing plastic waste and its impact on the environment.', date: 'date' },
-    { id: '2', title: 'August 8, 2024', content: 'I started using reusable bags and refused single-use plastic bags at the store.', date: 'date'},
+    { id: '1', title: 'August 7, 2024', content: 'Today, I learned about the importance of reducing plastic waste and its impact on the environment.' },
+    { id: '2', title: 'August 8, 2024', content: 'I started using reusable bags and refused single-use plastic bags at the store.' },
   ]);
 
+  const StyledCard = styled(Card);
+  const StyledText = styled(Text);
+  const StyledLayout = styled(Layout);
+
   const renderItem = ({ item }: { item: Reflection }) => (
-    <Card className='mb-2 bg-stone-100 shadow-md rounded-lg w-[352px]'>
-      <Card.Content>
-        <ThemedText type='default' className='text-lg text-black font-semibold'>{item.title}</ThemedText>
-        <ThemedText type='default' className='text-gray-700 mt-1'>{item.content}</ThemedText>
-        <View className='h-[1px] bg-gray-300 my-2'></View>
-        <ThemedText type='default' className='text-gray-300 mt-1'>{item.date}</ThemedText>
-      </Card.Content>
-    </Card>
+    <StyledLayout className="m-1 p-1 rounded-lg">
+      <StyledCard>
+        <StyledText category="h6">{item.title}</StyledText>
+        <StyledText category="p2">{item.content}</StyledText>
+      </StyledCard>
+    </StyledLayout>
   );
 
   return (
-    <FlatList
-      data={reflections}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    />
+    <Layout>
+      <FlatList
+        data={reflections}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+    </Layout>
   );
 };
 

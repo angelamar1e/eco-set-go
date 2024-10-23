@@ -4,6 +4,8 @@ import SetGoalButton from "@/app/components/(tabs)/Goal Setting/SetGoalButton";
 import { ThemedText } from "@/components/ThemedText";
 import React, { ReactNode } from "react";
 import { FlatList, View } from "react-native";
+import { styled } from 'nativewind';
+import { Text, Layout } from "@ui-kitten/components";
 
 const GoalSetting = () => {
     const Card = ({ children }: { children: ReactNode }) => {
@@ -24,12 +26,15 @@ const GoalSetting = () => {
         endDate: '11/05/2024',
     };
 
+    const StyledText = styled(Text);
+    const StyledLayout = styled(Layout);
+
     return (
-        <View className='flex-1'>
-            <View className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
-                <ThemedText type='subtitle' className='text-[28px] text-gray-100 mb-2'>Daily Log</ThemedText>
-                <ThemedText type='default' className='text-[15px] text-gray-100'>Date</ThemedText>
-            </View>
+        <StyledLayout className="flex-1">
+            <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+                <StyledText category="h4" className='text-white'>Daily Log</StyledText>
+                <StyledText category="s1" className='text-white'>Date</StyledText>
+            </StyledLayout>
 
             <View className="items-center -mt-20 -bottom-5 mb-7 z-50">
                 <Card>
@@ -60,7 +65,8 @@ const GoalSetting = () => {
                     showsVerticalScrollIndicator={false}
                 /> 
             </View>  
-        </View>
+
+        </StyledLayout>
     );
 };
 

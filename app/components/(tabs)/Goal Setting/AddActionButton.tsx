@@ -1,19 +1,30 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { styled } from "nativewind";
+import { Button, Layout, Text } from '@ui-kitten/components';
 
-interface AddActionButtonProps {
-  isFocused: boolean;
-  onPress: () => void;
-}
+const StyledButton = styled(Button);
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 
-const AddActionButton: React.FC<AddActionButtonProps> = ({ isFocused, onPress }) => {
-  const iconColor = isFocused ? '#34C759' : '#A9A9A9';
-
+const AddActionButton = () => {
   return (
-    <TouchableOpacity className='w-8 h-8 p-1 left-[195px]' onPress={onPress}>
-      <Ionicons name="add" size={26} color={iconColor} />
-    </TouchableOpacity>
+    <StyledLayout>
+      <StyledButton
+        className='m-1 p-1 rounded-full'
+        status='success'
+        size='small'
+        appearance='filled'
+        onPress={() => {
+          console.log('Add Action Pressed');
+        }}
+        >
+        <StyledText category='label'>
+          Add an action
+        </StyledText>
+
+      </StyledButton>
+    </StyledLayout>
+  
   );
 };
 

@@ -1,6 +1,7 @@
-import { ThemedText } from '@/components/ThemedText';
 import React from 'react';
-import { View, Image } from 'react-native';
+import { Image } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 interface MessageCardProps {
   recipientName: string;
@@ -10,6 +11,9 @@ interface MessageCardProps {
   latestMessageDate: string; 
 }
 
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+
 const MessageCard: React.FC<MessageCardProps> = ({
   recipientName,
   recipientHandle,
@@ -17,9 +21,8 @@ const MessageCard: React.FC<MessageCardProps> = ({
   latestMessage,
   latestMessageDate,
 }) => {
-
   return (
-    <View className="flex-row items-center p-4 bg-white">
+    <StyledLayout className="flex-row items-center p-4 rounded-lg shadow">
       {/* Recipient Icon */}
       <Image
         source={{ uri: recipientIcon }}
@@ -28,18 +31,17 @@ const MessageCard: React.FC<MessageCardProps> = ({
       />
       
       {/* Name, handle, and latest message */}
-      <View className="flex-1 p-2">
-        <ThemedText type="default">
-        {recipientName} <ThemedText className="text-gray-500">@{recipientHandle}</ThemedText> 
-        <ThemedText className="text-gray-400 text-sm">{latestMessageDate}</ThemedText>
-        </ThemedText>
-        <ThemedText type="default" numberOfLines={1} ellipsizeMode="tail">
-        {latestMessage}
-        </ThemedText>
-        
-      </View>
-
-    </View>
+      <StyledLayout className="flex-1 p-2">
+        <StyledText category="s1">
+          {recipientName} 
+          <StyledText category="s1"> @{recipientHandle}</StyledText>
+          <StyledText category="s1"> {latestMessageDate}</StyledText>
+        </StyledText>
+        <StyledText category="p1" numberOfLines={1} ellipsizeMode="tail">
+          {latestMessage}
+        </StyledText>
+      </StyledLayout>
+    </StyledLayout>
   );
 };
 

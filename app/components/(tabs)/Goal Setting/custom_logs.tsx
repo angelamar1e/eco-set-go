@@ -1,50 +1,41 @@
-import { ThemedText } from "@/components/ThemedText";
 import React, { useState } from "react";
-import { ToDoButton } from "./ToDoButton";
-import { View } from "react-native";
+import { Text, Layout } from "@ui-kitten/components";
+import { styled } from "nativewind";
+import ToDoButton from "./ToDoButton";
 import AddActionButton from "./AddActionButton";
 import LogList from "./LogsList";
 
-const CustomDailyLog  = () => {
+const CustomDailyLog = () => {
+  const [selectedFilter, setSelectedFilter] = useState<string>("To-Do");
 
-    const [activeButton, setActiveButton] = useState<"todo" | "done">("todo");
-    const [isAddButtonFocused, setIsAddButtonFocused] = useState(false);
+  const StyledLayout = styled(Layout);
+  const StyledText = styled(Text);
 
-    const handleAddButtonClick = () => {
-        setIsAddButtonFocused(!isAddButtonFocused);
-      };
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+  };
 
-    return (
-        <View className="bg-white rounded-lg mb-2 ml-2 mr-2">
-            <ThemedText type="subtitle" className="text-lime-800 text-[25px] mt-1 p-3 text-center">
-                Customize your Daily Log
-            </ThemedText>
-            
-            <View className='flex-row mb-4 items-center'>
-                <View className="flex-row ml-5">
-                    <ToDoButton 
-                        title="To-Do"        
-                        isActive={activeButton === "todo"}
-                        onPress={() => setActiveButton("todo")}
-                    />
-                    <ToDoButton 
-                        title="Done"       
-                        isActive={activeButton === "done"}
-                        onPress={() => setActiveButton("done")}
-                    />
-                </View>
-                <AddActionButton isFocused={isAddButtonFocused} onPress={handleAddButtonClick} />
-            </View>
+  return (
+    <StyledLayout>
+      <StyledText category="h5" className="m-2 text-center">
+        Customize your Daily Log
+      </StyledText>
 
-            <View> 
-                <LogList />
-            </View>
-        </View>
+      <StyledLayout className="m-2 flex-row justify-between items-center">
+        <StyledLayout className="flex-row">
+          <ToDoButton 
+            selectedFilter={selectedFilter} 
+            onFilterChange={handleFilterChange} 
+          />
+        </StyledLayout>
+        <AddActionButton />
+      </StyledLayout>
 
-
-    )
-
+      <StyledLayout>
+        <LogList />
+      </StyledLayout>
+    </StyledLayout>
+  );
 };
 
 export default CustomDailyLog;
-
