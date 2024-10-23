@@ -6,7 +6,7 @@ import { SafeAreaView, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
-function CustomHeader() {
+function QuizHeader() {
   const navigation = useNavigation();
 
   return (
@@ -16,28 +16,40 @@ function CustomHeader() {
           style={{ flex: 1, alignItems: 'center', paddingTop: 20, paddingRight: 15 }}
         />
       </TouchableOpacity>
-      <View className="pt-2">
-        <Calculator />
-      </View>
+
+      <View className="pt-2"><Calculator /></View>
+
+      {/* 'as never' to avoid error temporarily */}
+      <TouchableOpacity onPress={() => navigation.navigate('components/quiz/ListScreen' as never)}>
+        <Ionicons name='list' size={35} color="#78716C" 
+          style={{alignItems: 'center', paddingTop: 20, paddingLeft: 172}}
+        />
+      </TouchableOpacity>
     </View>
   );
 }
 
-export default function Quiz() {
+function Quiz() {
+  return (
+    <SafeAreaView className="flex-1 pt-10">
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: true,
+            header: () => <QuizHeader />,
+          }}
+        />
+      </Stack>
+    </SafeAreaView>
+  );
+}
+
+export default function QuizLayout() {
   return (
     <EmissionsProvider>
       <QuizDocsProvider>
-        <SafeAreaView className="flex-1 pt-10">
-          <Stack>
-            <Stack.Screen 
-              name="index" 
-              options={{
-                headerShown: true,
-                header: () => <CustomHeader />,
-              }} 
-            />
-          </Stack>
-        </SafeAreaView>
+        <Quiz />
       </QuizDocsProvider>
     </EmissionsProvider>
   );
