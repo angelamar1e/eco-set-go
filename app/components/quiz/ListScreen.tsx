@@ -1,35 +1,52 @@
 import React from 'react';
-import { SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useNavigation } from 'expo-router';
 import QuestionList from '../../(quiz)/QuestionList';
 import { Ionicons } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
+import { Layout, Text, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components';
+import { myTheme } from "@/constants/custom-theme";
+import { styled } from 'nativewind';
+import { View } from 'react-native';
 
-function ListHeader() {
+const StyledText = styled(Text);
+
+const ListHeader = () => {
   const navigation = useNavigation();
+  const theme = useTheme();
+
+  const navigateBack = () => navigation.goBack();
+  const navigateToList = () => navigation.navigate('components/quiz/ListScreen' as never);
+
+  const BackIcon = () => <Ionicons name="chevron-back" size={35} color={theme['color-primary-900']} />;
+  const ListIcon = () => <Ionicons name="list" size={35} color={theme['color-primary-900']} />;
 
   return (
-    <View className="h-1/8 bg-white border-b border-stone-300 flex-row pl-5">
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Ionicons name="chevron-back" size={35} color="#78716C" 
-          style={{ flex: 1, alignItems: 'center', paddingTop: 20, paddingRight: 5 }}
-        />
-      </TouchableOpacity>
-
-      <ThemedText type='defaultSemiBold' className="text-4xl text-stone-600 items-center flex-1 p-4 mt-2">
-        All Questions
-      </ThemedText>
-    </View>
+    <Layout level='1' style={{ borderBottomWidth: 1, borderBottomColor: myTheme["color-primary-900"], borderStyle: 'solid' }}>
+      <TopNavigation
+        accessoryLeft={() => (
+          <View className='flex-row items-center'>
+            <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+            <StyledText 
+            category='h2'
+            style={{ color: myTheme["color-primary-700"] }} 
+            className='p-2'
+          >
+            All Questions
+          </StyledText>
+          </View> 
+        )}
+      />
+    </Layout>
   );
-}
+};
 
-function QuestionListScreen() {
+const QuestionListScreen = () => {
   return (
     <SafeAreaView className="flex-1 pt-10">
       <ListHeader />
       <QuestionList />
     </SafeAreaView>
   );
-}
+};
 
 export default QuestionListScreen;
