@@ -23,6 +23,7 @@ export const CreatePost = (): React.ReactElement => {
         <StyledLayout className='flex-row justify-end'>
           <StyledButton 
             className="mt-2 rounded-full"
+            status='success'
             size='small'
             appearance="filled">
             Post

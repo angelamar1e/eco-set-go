@@ -1,16 +1,26 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
-import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
-import { TouchableOpacity } from 'react-native';
+import { Button, Text, Layout } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 const StyledButton = styled(Button);
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 
 const ReflectionButton = () => {
   return (
-    <TouchableOpacity className='rounded-full bg-lime-800 w-[92%] p-1 mb-3'>
-        <ThemedText className='text-white text-center text-[14px]'>Write a reflection entry</ThemedText>
-    </TouchableOpacity>
+    <StyledLayout>
+      <StyledButton
+        className='m-1 p-1 rounded-full'
+        status='success'
+        size='medium'
+        appearance='filled'
+        onPress={() => { console.log('Write reflection entry pressed'); }}
+      >
+        <StyledText category='label' className="text-center">
+          Write an entry
+        </StyledText>
+      </StyledButton>
+    </StyledLayout>
   );
 };
 

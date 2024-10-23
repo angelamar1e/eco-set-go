@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { Checkbox } from "react-native-paper";
+import { FlatList, TouchableOpacity } from "react-native";
+import { styled } from "nativewind";
+import { Text, Layout, CheckBox } from "@ui-kitten/components";
 import { Ionicons } from "@expo/vector-icons"; // Icons for options button
 
 interface EcoAction {
@@ -8,6 +9,9 @@ interface EcoAction {
   title: string;
   completed: boolean;
 }
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const LogList = () => {
   // State to hold the list of tasks
@@ -41,61 +45,56 @@ const LogList = () => {
 
   // Render individual task items with checkboxes and options button
   const renderItem = ({ item }: { item: EcoAction }) => (
-    <View className="flex-row justify-between bg-stone-100 w-[92%] p-2.5 mb-2 ml-4 rounded-lg items-center z-20">
-      <Checkbox
-        status={item.completed ? "checked" : "unchecked"}
-        onPress={() => toggleTaskCompletion(item.id)}
-        color="#4caf50"
-        uncheckedColor="#ccc"
-      />
-      <Text className="text-lg text-black flex-1 ml-1">{item.title}</Text>
-    
+    <StyledLayout className="flex-row justify-between w-[92%] p-2.5 mb-2 ml-4 rounded-lg items-center z-20">
+      <CheckBox
+        checked={item.completed}
+        onChange={() => toggleTaskCompletion(item.id)}
+        style={{ borderColor: "#4caf50" }}
+      >
+        <StyledText category='p1'>{item.title}</StyledText>
+      </CheckBox>
+
       {/* Options Button */}
       <TouchableOpacity onPress={() => toggleDropdown(item.id)}>
-        <Ionicons name="ellipsis-horizontal" size={20} color="#ccc" right={10} />
+        <Ionicons name="ellipsis-horizontal" size={20} color="#ccc" />
       </TouchableOpacity>
 
       {/* Options Menu */}
       {selectedTaskId === item.id && (
-          <View style={{ 
-            position: 'absolute', 
-            right: 20, 
-            backgroundColor: '#fff', 
-            borderRadius: 8, 
-            elevation: 5, 
-            zIndex: 999, 
-          }}>
-            <TouchableOpacity
-              onPress={() => {
-                console.log("View Action:", item.title);
-                closeDropdown();
-              }}
-              style={{ padding: 10}}
-            >
-              <Text>View</Text>
-            </TouchableOpacity>
+        <StyledLayout
+          className="absolute right-5 bg-white rounded-lg shadow-lg z-50"
+        >
+          <TouchableOpacity
+            onPress={() => {
+              console.log("View Action:", item.title);
+              closeDropdown();
+            }}
+            className="p-2"
+          >
+            <StyledText category='p1'>View</StyledText>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                console.log("Delete Action:", item.title);
-                setTasks(tasks.filter(task => task.id !== item.id));
-                closeDropdown();
-              }}
-              style={{ padding: 10 }}
-            >
-              <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+          <TouchableOpacity
+            onPress={() => {
+              console.log("Delete Action:", item.title);
+              setTasks(tasks.filter((task) => task.id !== item.id));
+              closeDropdown();
+            }}
+            className="p-2"
+          >
+             <StyledText category='p1'>Delete</StyledText>
+          </TouchableOpacity>
+        </StyledLayout>
+      )}
+    </StyledLayout>
   );
 
   return (
-      <FlatList
-        data={tasks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+    <FlatList
+      data={tasks}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    />
   );
 };
 

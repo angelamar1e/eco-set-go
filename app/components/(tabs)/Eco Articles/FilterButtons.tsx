@@ -19,7 +19,7 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
           <StyledButton
             key={category}
             onPress={() => onFilterChange(category)}
-            className={`p-1 m-1 rounded-full`} 
+            className={`p-1 m-1 rounded-full h-1/2`} 
             appearance={selectedFilter === category ? 'filled' : 'outline'}
             status={selectedFilter === category ? 'success' : 'basic'}
           >

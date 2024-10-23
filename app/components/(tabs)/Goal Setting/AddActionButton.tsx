@@ -1,18 +1,30 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
 import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
-import { TouchableOpacity } from 'react-native';
+import { Button, Layout, Text } from '@ui-kitten/components';
 
 const StyledButton = styled(Button);
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 
 const AddActionButton = () => {
   return (
-    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1 z-10'>
-        <ThemedText className='text-white text-center text-[14px]'>Add an action</ThemedText>
-    </TouchableOpacity>
+    <StyledLayout>
+      <StyledButton
+        className='m-1 p-1 rounded-full'
+        status='success'
+        size='small'
+        appearance='filled'
+        onPress={() => {
+          console.log('Add Action Pressed');
+        }}
+        >
+        <StyledText category='label'>
+          Add an action
+        </StyledText>
 
-
+      </StyledButton>
+    </StyledLayout>
+  
   );
 };
 

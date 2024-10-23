@@ -45,6 +45,7 @@ const MarketplaceCreatePost: React.FC<MarketplaceCreatePostProps> = ({
       <StyledLayout className="flex-row justify-end">
         <StyledButton 
           className="mt-2 rounded-full"
+          status='success'
           size='small'
           appearance="filled"
           onPress={handleSubmit}

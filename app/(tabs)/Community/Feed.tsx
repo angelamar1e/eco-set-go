@@ -1,7 +1,6 @@
 import { styled } from 'nativewind';
 import { Text, Layout } from '@ui-kitten/components';
 import React, { useState } from 'react';
-import { TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons';
 import CommunityPosts from '@/app/components/(tabs)/Community/CommunityPosts';
@@ -126,8 +125,8 @@ const Feed: React.FC = () => {
   return (
     <StyledLayout className="flex-1">
       <StyledLayout className="absolute top-0 left-0 right-0 z-10 bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
-        <StyledText category='s1' className='text-[28px] text-gray-100 mb-2'>Community</StyledText>
-        <StyledText category='c1' className='text-[15px] text-gray-100'>Date</StyledText> 
+        <StyledText category='h4'>Community</StyledText>
+        <StyledText category='s1'>Date</StyledText> 
 
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}

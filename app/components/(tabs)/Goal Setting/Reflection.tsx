@@ -1,25 +1,26 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import ReflectionButton from "./ReflectionButton";
-import { View } from "react-native";
 import ReflectionsList from "./ReflectionList";
+import { styled } from "nativewind";
+import { Layout, Text } from '@ui-kitten/components';
 
 const Reflection  = () => {
 
+    const StyledLayout = styled(Layout);
+    const StyledText = styled(Text);
+
     return(
-        <ThemedView className="flex-1">
-            <ThemedText type="subtitle" className="text-lime-800 text-[25px] p-3 text-center">Reflection</ThemedText>
+        <StyledLayout>
+        <StyledText category='h5' className="text-center">Reflection</StyledText>
         
-            <View className="items-center">
-                <ReflectionButton />
+        
+        <StyledLayout className="items-center">
+            <ReflectionButton />
 
-                <ReflectionsList />
-            </View>
-            
+            <ReflectionsList />
+        </StyledLayout>
 
-
-        </ThemedView>
+        </StyledLayout>
     )
 };
 
