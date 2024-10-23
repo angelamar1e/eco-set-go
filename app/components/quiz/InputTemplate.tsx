@@ -29,7 +29,10 @@ const InputTemplate: FC<TemplateProps> = ({
 
   // Function to handle text input change
   const handleTextChange = (text: string) => {
-    setInputValue(text);
+    // Check if the text only contains numbers and is positive
+    if (/^\d*$/.test(text) && text !== '0') {
+      setInputValue(text);
+    }
   };
 
   const handleBlur = () => {
@@ -66,7 +69,7 @@ const InputTemplate: FC<TemplateProps> = ({
             unit={inputLabel}
             value={inputValue}
             onChangeText={handleTextChange}
-            onBlur={handleBlur}
+            onBlur={handleBlur}            
           />
         </View>
       </QuestionContainer>
