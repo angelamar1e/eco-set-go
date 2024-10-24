@@ -62,17 +62,13 @@ export default function LandingPage() {
   };
 
   const goToProfile = () => {
-    router.push(''); 
-  };
-
-  const goToQuiz = () => {
-    router.push("/(quiz)");
+    router.push('/(tabs)/Profile/user'); 
   };
 
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
-        <Header onProfilePress={goToProfile} onQuizButtonPress={goToQuiz} />
+        <Header onProfilePress={goToProfile} />
         <View className="flex-1 px-2">
           <View className="h-1/4 mt-3">
             <View className="flex-row items-center m-3">

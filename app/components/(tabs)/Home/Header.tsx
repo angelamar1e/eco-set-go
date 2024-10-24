@@ -9,10 +9,9 @@ const StyledText = styled(Text);
 
 interface HeaderProps {
   onProfilePress: () => void;
-  onQuizButtonPress: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onProfilePress, onQuizButtonPress }) => (
+const Header: React.FC<HeaderProps> = ({ onProfilePress }) => (
     <StyledLayout className="flex-row justify-end items-center p-4 rounded-b-3xl">
     <StyledButton
       onPress={onProfilePress}
