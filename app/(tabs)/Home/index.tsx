@@ -61,19 +61,9 @@ export default function LandingPage() {
     setImpactValue(impact);
   };
 
-  const goToProfile = () => {
-    try {
-      router.push('/(tabs)/Home');
-    } catch (error) {
-      console.error("Failed to navigate:", error);
-    }
-  };
-  
-
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
-        <Header onProfilePress={goToProfile} />
         <View className="flex-1 px-2">
           <View className="h-1/4 mt-3">
             <View className="flex-row items-center m-3">
