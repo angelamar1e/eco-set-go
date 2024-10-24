@@ -2,28 +2,24 @@ import React, { ReactNode } from "react";
 import Incentives from "@/app/components/(tabs)/Rewards/incentives";
 import GoToMilestones from "@/app/components/(tabs)/Rewards/MilestonesButton";
 import { styled } from "nativewind";
-import { Button, Layout, Text, ProgressBar, Card, useTheme } from "@ui-kitten/components";
+import { Layout, Text, ProgressBar, Card, useTheme } from "@ui-kitten/components";
 import { View } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
 
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
-const StyledButton = styled(Button);
 const StyledCard = styled(Card);
 
 const EcoPoints = () => {
 
   const theme = useTheme();
-
-    const subtextColor2 = theme['color-basic-600']; 
-    const subtextColor1 = theme['color-primary-900'];
     const maintextcolor = theme['color-primary-700'];
 
   return (
     <StyledLayout className="flex-1">
       <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
-        <StyledText category="h4" className="text-white">Eco Rewards</StyledText>
+        <StyledText category="h4">Eco Rewards</StyledText>
       </StyledLayout>
 
       <View className="items-center -mt-20 -bottom-5 mb-3 z-50">

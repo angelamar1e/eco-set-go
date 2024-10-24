@@ -15,10 +15,7 @@ const ListHeader = () => {
   const theme = useTheme();
 
   const navigateBack = () => navigation.goBack();
-  const navigateToList = () => navigation.navigate('components/quiz/ListScreen' as never);
-
   const BackIcon = () => <Ionicons name="chevron-back" size={35} color={theme['color-primary-900']} />;
-  const ListIcon = () => <Ionicons name="list" size={35} color={theme['color-primary-900']} />;
 
   return (
     <Layout level='1' style={{ borderBottomWidth: 1, borderBottomColor: myTheme["color-primary-900"], borderStyle: 'solid' }}>

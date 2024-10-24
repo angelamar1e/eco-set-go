@@ -1,7 +1,8 @@
 import React from "react";
 import { styled } from "nativewind";
 import { ScrollView } from "react-native";
-import { Text, Layout } from "@ui-kitten/components";
+import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
+import { myTheme } from "@/constants/custom-theme";
 
 interface Milestone {
   title: string;
@@ -11,6 +12,7 @@ interface Milestone {
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
+const StyledCard = styled(Card);
 
 const MilestoneList: React.FC = () => {
   const milestones: Milestone[] = [
@@ -31,6 +33,11 @@ const MilestoneList: React.FC = () => {
     },
   ];
 
+  const theme = useTheme();
+  const titleTextColor = theme['color-info-500'];
+  const dateTextColor = theme['color-primary-900'];
+
+
   // Define the props type for the Box component
   interface BoxProps {
     title: string;
@@ -40,13 +47,30 @@ const MilestoneList: React.FC = () => {
   }
 
   const Box: React.FC<BoxProps> = ({ title, content, date, className = "" }) => (
-    <StyledLayout
-      className={`justify-center bg-lime-800 rounded-lg p-3 mb-4 w-[22.75%] h-[20%] mr-2 ${className}`}
+    <StyledCard
+      className={`justify-center rounded-lg p-2 w-1/6 h-1/4 mr-1 ml-1 ${className}`}
+      style={{ 
+        paddingVertical: 16, 
+        paddingHorizontal: 12, 
+        flexDirection: "column", 
+        borderWidth: 1,
+        elevation: 1  
+      }}
     >
-      <StyledText category="s1">{title}</StyledText>
-      <StyledText category="p2" className="text-[14px] text-stone-300 mt-1 italic top-[50px]">{content}</StyledText>
-      <StyledText category="c1" className="text-[12px] text-stone-300 mt-3 mb-3 top-[50px]">{date}</StyledText>
-    </StyledLayout>
+      <StyledText category="h6" className="mb-4" numberOfLines={4}
+        style={{ color: titleTextColor }}
+      >
+        {title}
+      </StyledText>
+      <StyledText category="p2" className="mb-6" numberOfLines={4} ellipsizeMode="tail">
+        {content}
+      </StyledText>
+      <StyledText category="label" className="mt-auto" numberOfLines={1}
+        style={{ color: dateTextColor }}
+      >
+        {date}
+      </StyledText>
+    </StyledCard>
   );
 
   return (

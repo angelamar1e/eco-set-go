@@ -23,6 +23,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(quiz)" options={{ headerShown: false }} />
             <Stack.Screen name="components/quiz/ListScreen" options={{headerShown: false}}/>
+            <Stack.Screen name="components/(tabs)/Rewards/MilestonesPage" options={{headerShown: false}}/>
           </Stack>
         </GestureHandlerRootView>
       </ApplicationProvider>
