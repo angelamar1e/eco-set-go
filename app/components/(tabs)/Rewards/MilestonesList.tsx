@@ -1,8 +1,9 @@
 import React from "react";
 import { styled } from "nativewind";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
+import {  Ionicons } from "@expo/vector-icons";
 
 interface Milestone {
   title: string;
@@ -48,30 +49,44 @@ const MilestoneList: React.FC = () => {
 
   const Box: React.FC<BoxProps> = ({ title, content, date, className = "" }) => (
     <StyledCard
-      className={`justify-center rounded-lg p-2 w-1/6 h-1/3 mr-1 ml-1 ${className}`}
-      style={{ 
-        paddingVertical: 16, 
-        paddingHorizontal: 12, 
-        flexDirection: "column", 
+      className={`justify-center rounded-lg w-1/6 h-1/3 mr-1 ml-1 ${className}`}
+      style={{
+        paddingHorizontal: 12,
+        flexDirection: "column",
         borderWidth: 1,
-        elevation: 1  
+        position: "relative",
       }}
     >
-      <StyledText category="h6" className="mb-4" numberOfLines={4}
-        style={{ color: titleTextColor }}
+      <StyledLayout
+        className="absolute"
+        style={{
+          top: 0,
+          left: "40%",
+          right: "40%",
+          transform: [{ translateY: -20 }],
+          zIndex: 1,
+          padding: 0,
+          margin: 0,
+        }}
       >
-        {title}
-      </StyledText>
-      <StyledText category="p2" className="mb-6" numberOfLines={4} ellipsizeMode="tail">
-        {content}
-      </StyledText>
-      <StyledText category="label" className="mt-auto" numberOfLines={1}
-        style={{ color: dateTextColor }}
-      >
-        {date}
-      </StyledText>
+        <Ionicons name="ribbon-outline" size={70} style={{color: myTheme['color-success-700']}} />
+      </StyledLayout>
+      <View className="top-10 right-3">
+        <StyledText category="h6" className="mt-5 mb-2" numberOfLines={3} style={{ color: titleTextColor }}>
+          {title}
+        </StyledText>
+        <StyledText category="p2" className="mb-6" numberOfLines={4} ellipsizeMode="tail">
+          {content}
+        </StyledText>
+        <StyledText category="label" className="mt-auto" numberOfLines={1} style={{ color: dateTextColor }}>
+          {date}
+        </StyledText>
+      </View>
     </StyledCard>
   );
+  
+  
+  
 
   return (
     <StyledLayout className="relative mt-5">
