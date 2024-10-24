@@ -13,14 +13,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onProfilePress, onQuizButtonPress }) => (
-    <StyledLayout className="flex-row justify-between items-center p-4 rounded-b-3xl">
-    <StyledButton
-        onPress={onQuizButtonPress}
-        appearance="outline"
-        status="primary"
-        className="p-1 rounded-full bg-white">
-            <StyledText>Calculate your footprint</StyledText>
-    </StyledButton>
+    <StyledLayout className="flex-row justify-end items-center p-4 rounded-b-3xl">
     <StyledButton
       onPress={onProfilePress}
       appearance="outline"

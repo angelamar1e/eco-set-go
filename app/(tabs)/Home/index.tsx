@@ -62,7 +62,7 @@ export default function LandingPage() {
   };
 
   const goToProfile = () => {
-    router.push('/(tabs)Profileprofile'); 
+    router.push(''); 
   };
 
   const goToQuiz = () => {
