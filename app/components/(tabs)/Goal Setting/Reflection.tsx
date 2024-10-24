@@ -2,25 +2,34 @@ import React from "react";
 import ReflectionButton from "./ReflectionButton";
 import ReflectionsList from "./ReflectionList";
 import { styled } from "nativewind";
-import { Layout, Text } from '@ui-kitten/components';
+import { Card, Layout, Text, useTheme } from '@ui-kitten/components';
+import FilterDate from "./FilterDate";
 
 const Reflection  = () => {
 
-    const StyledLayout = styled(Layout);
+    const StyledCard = styled(Card);
     const StyledText = styled(Text);
+    const StyledLayout = styled(Layout);
+
+    const theme = useTheme();
+
+    const headertextColor = theme['color-primary-900'];
+
+    const handleFilterDateToggle = (isClicked: boolean) => {
+        console.log('Filter Date clicked:', isClicked);
+      };
 
     return(
-        <StyledLayout>
-        <StyledText category='h5' className="text-center">Reflection</StyledText>
-        
-        
-        <StyledLayout className="items-center">
-            <ReflectionButton />
-
-            <ReflectionsList />
-        </StyledLayout>
-
-        </StyledLayout>
+        <StyledCard className="rounded-lg ml-2 mr-2">
+            <StyledText category='h5' className="text-center" style={{ color: headertextColor }}>
+                Write your day...
+            </StyledText>
+                <StyledLayout  className="flex-row justify-between p-2">
+                    <FilterDate onToggle={handleFilterDateToggle}/>
+                    <ReflectionButton />
+                </StyledLayout>
+                <ReflectionsList />
+        </StyledCard>
     )
 };
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, Layout } from "@ui-kitten/components";
+import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import ToDoButton from "./ToDoButton";
 import AddActionButton from "./AddActionButton";
@@ -10,14 +10,19 @@ const CustomDailyLog = () => {
 
   const StyledLayout = styled(Layout);
   const StyledText = styled(Text);
+  const StyledCard = styled(Card)
+
+  const theme = useTheme();
+
+  const headertextColor = theme['color-primary-900'];
 
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
   };
 
   return (
-    <StyledLayout>
-      <StyledText category="h5" className="m-2 text-center">
+    <StyledCard className="rounded-lg ml-2 mr-2 mb-2">
+      <StyledText category="h5" className="text-center" style={{ color: headertextColor }}>
         Customize your Daily Log
       </StyledText>
 
@@ -34,7 +39,7 @@ const CustomDailyLog = () => {
       <StyledLayout>
         <LogList />
       </StyledLayout>
-    </StyledLayout>
+    </StyledCard>
   );
 };
 

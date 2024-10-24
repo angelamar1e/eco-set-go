@@ -1,25 +1,33 @@
-import React from 'react';
-import { Button, Text, Layout } from '@ui-kitten/components';
-import { styled } from 'nativewind';
+import React, { useState } from 'react';
+import { styled } from "nativewind";
+import { Button, Layout } from '@ui-kitten/components';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const StyledButton = styled(Button);
-const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 
 const ReflectionButton = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handlePress = () => {
+    setIsClicked(!isClicked);
+    console.log('Write reflection entry pressed');
+  };
+
+  const iconColor = isClicked ? "white" : "#8F9BB3";
+
   return (
     <StyledLayout>
       <StyledButton
         className='m-1 p-1 rounded-full'
-        status='success'
-        size='medium'
-        appearance='filled'
-        onPress={() => { console.log('Write reflection entry pressed'); }}
-      >
-        <StyledText category='label' className="text-center">
-          Write an entry
-        </StyledText>
-      </StyledButton>
+        status={isClicked ? 'success' : 'basic'}
+        size='small'
+        appearance={isClicked ? "filled" : "outline"}
+        accessoryLeft={() => (
+          <Ionicons name="pencil" size={20} color={iconColor} />
+        )}
+        onPress={handlePress}
+      />
     </StyledLayout>
   );
 };
