@@ -1,22 +1,29 @@
-import React from 'react';
-import { Button, Layout, Text } from '@ui-kitten/components';
+import React, { useState } from 'react';
+import { Button, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 
 const StyledButton = styled(Button);
-const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 
 const ConvertButton = () => {
+  const [isGoalSet, setIsGoalSet] = useState(false);
+
+  const handleSetGoal = () => {
+    setIsGoalSet((prev) => !prev); 
+  };
+
   return (
-      <StyledButton 
-      className="p-1 m-1 h-1/2 rounded-full"
+    <StyledButton
+      onPress={handleSetGoal}
+      className="rounded-full m-1 py-2 px-3"
       size="small"
-      status="success" 
-      onPress={() => {}}>
-        <StyledText category="s1">
-          Convert
-        </StyledText>
-      </StyledButton>
+      appearance={isGoalSet ? "filled" : "outline"} 
+      status={isGoalSet ? "success" : "basic"} 
+    >
+      <StyledText category="s1">
+        {isGoalSet ? 'Converted' : 'Convert'} 
+      </StyledText>
+    </StyledButton>
   );
 };
 
