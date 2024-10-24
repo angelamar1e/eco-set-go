@@ -35,7 +35,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onSettingsPress, onQuizCardPr
 
     useEffect(() => {
         const fetchUserUid = async () => {
-            const uid = await getUserUid(); // Replace with your UID fetching method
+            const uid = await getUserUid(); 
             fetchUserName(uid);
         };
 
@@ -44,7 +44,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ onSettingsPress, onQuizCardPr
 
     return (
         <StyledLayout className="p-4">
-            <StyledLayout className="flex-row justify-between mb-4">
+            <StyledLayout className="flex-row justify-end mb-4">
                 <StyledButton
                     onPress={() => router.push('/(tabs)/Home')}
                     appearance="outline"

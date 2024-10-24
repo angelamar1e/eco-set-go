@@ -62,8 +62,13 @@ export default function LandingPage() {
   };
 
   const goToProfile = () => {
-    router.push('/(tabs)/Profile/user'); 
+    try {
+      router.push('/(tabs)/Home');
+    } catch (error) {
+      console.error("Failed to navigate:", error);
+    }
   };
+  
 
   return (
     <ThemedView className="flex-1">

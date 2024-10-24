@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onProfilePress }) => (
-    <StyledLayout className="flex-row justify-end items-center p-4 rounded-b-3xl">
+    <StyledLayout className="flex-row justify-between items-center p-4 rounded-b-3xl">
     <StyledButton
       onPress={onProfilePress}
       appearance="outline"
