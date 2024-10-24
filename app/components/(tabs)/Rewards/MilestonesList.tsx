@@ -48,7 +48,7 @@ const MilestoneList: React.FC = () => {
 
   const Box: React.FC<BoxProps> = ({ title, content, date, className = "" }) => (
     <StyledCard
-      className={`justify-center rounded-lg p-2 w-1/6 h-1/4 mr-1 ml-1 ${className}`}
+      className={`justify-center rounded-lg p-2 w-1/6 h-1/3 mr-1 ml-1 ${className}`}
       style={{ 
         paddingVertical: 16, 
         paddingHorizontal: 12, 
