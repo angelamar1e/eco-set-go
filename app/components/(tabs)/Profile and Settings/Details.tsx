@@ -3,6 +3,7 @@ import { Text, Button, Layout, Card } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import LogOutButton from '../../LogOutButton';
 
 const StyledText = styled(Text);
 const StyledButton = styled(Button);
@@ -70,13 +71,16 @@ const Details: React.FC<DetailsProps> = ({
       </StyledLayout>
 
       <StyledLayout className="p-1 m-1">
-        <StyledText category="h6">Support</StyledText>
-        <StyledText category="p1">Need help or want to get in touch?</StyledText>
         <StyledButton 
           appearance="ghost">
-            Talk to us
+            Need help or want to get in touch? Contact us
         </StyledButton>
       </StyledLayout>
+
+      <StyledLayout className="p-1 m-1">
+        <LogOutButton/>
+      </StyledLayout>
+
     </StyledLayout>
   );
 };
