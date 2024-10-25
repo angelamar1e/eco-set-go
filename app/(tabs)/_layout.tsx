@@ -9,6 +9,7 @@ import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
 import UserProfile from './Profile/profile';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import Settings from './Profile/settings';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -93,12 +94,12 @@ export default function TabLayout() {
         }}
       />
       <Screen
-        name="Profile/profile"
-        component={UserProfile}
+        name="Profile/settings"
+        component={Settings}
         options={{
-          title: 'Profile',
+          title: 'Settings',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+            <TabBarIcon name={focused ? 'settings' : 'settings-outline'} color={color} />
           ),
         }}
       />
