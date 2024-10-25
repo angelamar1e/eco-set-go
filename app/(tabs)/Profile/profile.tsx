@@ -52,7 +52,7 @@ const UserProfile = () => {
                 </StyledButton>
                 <StyledButton
                     className="p-1 m-1 rounded-full"
-                    onPress={() => router.push('/(tabs)')}
+                    onPress={() => router.push('/(tabs)/Settings/setting')}
                     size="small"
                     appearance="outline"
                     status="basic">
