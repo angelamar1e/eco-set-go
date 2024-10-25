@@ -24,7 +24,7 @@ const Details: React.FC<DetailsProps> = ({
   const router = useRouter();
 
   const UpdateUsername = () => {
-    router.push('/(tabs)/Home'); // Update with the correct path
+    router.push('/components/(tabs)/Profile and Settings/UpdateUsername'); // Update with the correct path
   };
 
   const UpdateEmail = () => {
