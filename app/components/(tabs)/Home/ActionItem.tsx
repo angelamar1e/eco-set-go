@@ -1,9 +1,15 @@
-// TemplateOneItem.tsx
 import React from "react";
-import { View, Text } from "react-native";
-import { Checkbox, IconButton } from "react-native-paper";
+import { View } from "react-native";
+import { Card, Layout, Text } from "@ui-kitten/components";
 import { Swipeable } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
+import CircularCheckbox from "../Goal Setting/CircularCheckBox";
+import { styled } from "nativewind";
+import { Ionicons } from "@expo/vector-icons";
+import { myTheme } from "@/constants/custom-theme";
+
+const StyledCard = styled(Card);
+const StyledLayout = styled(Layout)
 
 const ActionItem: React.FC<ActionItemProps> = ({
   item,
@@ -11,23 +17,39 @@ const ActionItem: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
+  const isChecked = completedActions.some((action) => action.id === item.id);
+
+  const toggleComplete = (checked: boolean) => {
+    handleComplete(item.id, checked ? (item.impact ? item.impact : 0) : 0);
+  };
+
   return (
     <Swipeable
       renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
+        <View className="flex items-center justify-center mr-4">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
+        </View>
       )}
     >
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <Text className="text-lg text-gray-700">{item.title}</Text>
-        <Checkbox
-          status={
-            completedActions.some((action) => action.id === item.id)
-              ? "checked"
-              : "unchecked"
-          }
-          onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
-        />
-      </View>
+      <StyledLayout 
+        style={{
+          borderBottomEndRadius: 7, 
+          borderBottomStartRadius: 7, 
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} 
+          className="pt-1"
+        >
+      <StyledCard className="rounded-lg">
+        <View className="flex-row items-center flex-1">
+          <CircularCheckbox
+            isChecked={isChecked}
+            onPress={() => toggleComplete(!isChecked)}
+          />
+          <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
+        </View>
+      </StyledCard>
+      </StyledLayout>
     </Swipeable>
   );
 };

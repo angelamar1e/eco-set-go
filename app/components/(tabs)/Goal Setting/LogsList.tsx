@@ -40,19 +40,12 @@ const LogList = () => {
     <Swipeable
       renderRightActions={() => (
         <View className="flex items-center justify-center ml-2">
-          <Button
-            appearance="outline"
-            status="danger"
-            onPress={() => handleDelete(item.id)}
-            accessoryLeft={() => <Ionicons name="trash" size={15} />}
-          >
-            Delete
-          </Button>
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
         </View>
       )}
     >
-      <StyledLayout className="rounded-lg m-1 p-1">
-        <StyledCard>
+      <StyledLayout className="m-1">
+        <StyledCard className="rounded-lg">
           <View className="flex-row items-center flex-1">
             <CircularCheckbox
               isChecked={item.completed}

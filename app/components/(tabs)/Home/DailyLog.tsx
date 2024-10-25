@@ -1,18 +1,20 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, FlatList, Text } from "react-native";
+import { Layout, List, Text, useTheme } from "@ui-kitten/components";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
-import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
+import { styled } from "nativewind";
 
-import { Checkbox } from "react-native-paper";
 import DropdownEcoAction from './DropdownActionItem';
 import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
 
 const templates = [DropdownEcoAction, ActionItem];
 const doneTemplates = [DoneItem];
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
@@ -26,9 +28,7 @@ const DailyLog: FC = () => {
 
   async function getCurrentLog(actionId: string) {
     const currentDate = moment().format("YYYY-MM-DD");
-
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
-
     setCurrentLog(currentLog[actionId]);
   }
 
@@ -45,8 +45,6 @@ const DailyLog: FC = () => {
 
   useEffect(() => {
     if (!userUid) return;
-
-    
 
     const unsubscribeDailyLog = dailyLogDoc.onSnapshot((doc) => {
       const data = doc.data();
@@ -106,7 +104,6 @@ const DailyLog: FC = () => {
 
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Remove the specific actionId from the map for the current date
     delete currentLog[actionId];
 
     await userLogs.update({
@@ -117,10 +114,8 @@ const DailyLog: FC = () => {
   async function handleComplete(actionId: string, selectedOptionValue: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
-    // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Update the specific actionId within the current date without overwriting other fields
     await userLogs.update({
       [currentDate]: {
         ...currentLog, // Keep the existing entries for the date
@@ -128,6 +123,9 @@ const DailyLog: FC = () => {
       },
     });
   }
+
+  const theme = useTheme();
+  const headertextColor = theme['color-primary-900'];
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
@@ -158,26 +156,28 @@ const DailyLog: FC = () => {
   };
 
   return (
-    <View className="bg-gray">
-      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+    <StyledLayout style={{ backgroundColor: 'white', flex: 1 }}>
+      <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
         Daily Log
-      </ThemedText>
-      <FlatList
+      </StyledText>
+      <List
         data={dailyLog}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
+      <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', marginLeft: 16, marginVertical: 16 }}>
+        Actions Done
+      </StyledText>
       {completedActions.length > 0 ? (
-        <FlatList
+        <List
           data={completedActions}
           renderItem={renderDoneItem}
           keyExtractor={(item) => item.id}
         />
       ) : (
-        <Text className="text-center text-gray-500">No actions completed yet.</Text>
+        <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
       )}
-    </View>
+    </StyledLayout>
   );
 };
 

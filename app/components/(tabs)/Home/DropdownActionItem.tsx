@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
-import { Checkbox, IconButton, List } from "react-native-paper";
+import { View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
 import { Layout, Select, SelectItem } from "@ui-kitten/components";
 import { styled } from "nativewind";
-import { ThemedText } from "@/components/ThemedText";
+import { Ionicons } from "@expo/vector-icons";
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -24,13 +24,23 @@ const DropdownActionItem: React.FC<ActionItemProps> = ({
   return (
     <Swipeable
       renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
+        <View className="flex items-center justify-center ml-2 mr-4">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
+        </View>      
       )}
     >
-      <View className="flex-row justify-between items-center px-2 py-3 border-b border-gray-300">
-        {/* <ThemedText className="h-15 w-56 text-m">{item.title}</ThemedText> */}
+      <StyledLayout 
+        style={{
+          borderBottomEndRadius: 5, 
+          borderBottomStartRadius: 5, 
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} 
+          className="pt-1"
+        >
+      {/* <ThemedText className="h-15 w-56 text-m">{item.title}</ThemedText> */}
           {/* <StyledLayout className=""> */}
-            <StyledSelect className="w-full" placeholder={item.title}>
+            <StyledSelect className="w-full rounded-lg" placeholder={item.title}>
               {item.options ? (
             Object.entries(item.options).map(([key, value]) => (
               <StyledSelectItem className=""
@@ -46,7 +56,7 @@ const DropdownActionItem: React.FC<ActionItemProps> = ({
             <></> )}
             </StyledSelect>
           {/* </StyledLayout> */}
-      </View>
+      </StyledLayout>
     </Swipeable>
   );
 };
