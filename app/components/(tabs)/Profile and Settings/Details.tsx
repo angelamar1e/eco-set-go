@@ -41,8 +41,8 @@ const Details: React.FC<DetailsProps> = ({
         <StyledButton 
           onPress={UpdateUsername} 
           className="flex flex-row justify-between items-center"
-          appearance="outline"
-          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="green" />}>
+          status="basic"
+          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray" />}>
           {username}
         </StyledButton>
       </StyledLayout>
@@ -52,8 +52,8 @@ const Details: React.FC<DetailsProps> = ({
         <StyledButton 
           onPress={UpdateEmail} 
           className="flex flex-row justify-between items-center"
-          appearance="outline"
-          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="green" />}>
+          status="basic"
+          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>
           {email}
         </StyledButton>
       </StyledLayout>
@@ -63,8 +63,8 @@ const Details: React.FC<DetailsProps> = ({
         <StyledButton 
           onPress={UpdatePassword} 
           className="flex flex-row justify-between items-center"
-          appearance="outline"
-          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="green" />}>
+          status="basic"
+          accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>
           {password}
         </StyledButton>
       </StyledLayout>

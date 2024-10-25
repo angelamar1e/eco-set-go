@@ -95,8 +95,6 @@ const SettingsScreen = () => {
             setPushNotifications={setPushNotifications}
             actionReminders={actionReminders}
             setActionReminders={setActionReminders}
-            newsletter={newsletter}
-            setNewsletter={setNewsletter}
             />
         )}    
         </StyledLayout>
