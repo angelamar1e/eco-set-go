@@ -49,10 +49,10 @@ const EcoActionsList = () => {
   return (
     <StyledLayout className='flex-1 px-2'>
       <SafeAreaView className='flex-1 mt-3'>
-        <StyledLayout className='flex-1'>
-          <StyledLayout className='bg-[#4A8B2A] h-1/6 rounded-b-3xl mb-4 justify-center items-center'>
-            <StyledText category='h4' className='text-white'>Eco Actions</StyledText>
-          </StyledLayout>
+        <StyledLayout className="flex-1">
+        <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+          <StyledText category="h4">Eco Articles</StyledText>
+        </StyledLayout>
 
           <StyledLayout className="ml-2 mr-2">
             <SearchBar onSearch={(query: string) => console.log('Searching for:', query)} />

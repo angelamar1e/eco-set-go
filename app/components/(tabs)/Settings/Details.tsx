@@ -20,26 +20,15 @@ const Details: React.FC<DetailsProps> = ({
   email,
   password,
 }) => {
+
   const router = useRouter();
-
-  const UpdateUsername = () => {
-    router.push('/components/(tabs)/Profile and Settings/UpdateUsername'); // Update with the correct path
-  };
-
-  const UpdateEmail = () => {
-    router.push('/(tabs)/Home'); // Update with the correct path
-  };
-
-  const UpdatePassword = () => {
-    router.push('/(tabs)/Home'); // Update with the correct path
-  };
 
   return (
     <StyledLayout className="p-2 m-2">
       <StyledLayout className='p-1'>
         <StyledText category="h6" className="mb-2">Username</StyledText>
         <StyledButton 
-          onPress={UpdateUsername} 
+          onPress={() => router.push(`/components(tabs)SettingsUpdateUsername`)}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray" />}>
@@ -50,7 +39,7 @@ const Details: React.FC<DetailsProps> = ({
       <StyledLayout className='p-1'>
       <StyledText category="h6" className="mb-2">Email Address</StyledText>
         <StyledButton 
-          onPress={UpdateEmail} 
+          onPress={() => router.push('/components(tabs)SettingsUpdateUsername')}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>
@@ -61,7 +50,7 @@ const Details: React.FC<DetailsProps> = ({
       <StyledLayout className='p-1'>
       <StyledText category="h6" className="mb-2">Password</StyledText>
         <StyledButton 
-          onPress={UpdatePassword} 
+          onPress={() => router.push('/components(tabs)SettingsUpdateUsername')}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>

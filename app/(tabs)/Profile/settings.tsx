@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Layout } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import Preferences from '@/app/components/(tabs)/Profile and Settings/Preferences';
-import Details from '@/app/components/(tabs)/Profile and Settings/Details';
-import SettingsTab from '@/app/components/(tabs)/Profile and Settings/SettingsTab';
+import Preferences from '@/app/components/(tabs)/Settings/Preferences';
+import Details from '@/app/components/(tabs)/Settings/Details';
+import SettingsTab from '@/app/components/(tabs)/Settings/SettingsTab';
 import firestore from '@react-native-firebase/firestore';
 import { getUserUid } from '@/app/utils/utils';
 

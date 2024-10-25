@@ -10,7 +10,7 @@ const StyledText = styled(Text);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const UpdateUsername: React.FC = () => {
+const UpdateUsername = () => {
   const [currentUsername, setCurrentUsername] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const router = useRouter();
