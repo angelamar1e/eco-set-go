@@ -17,12 +17,6 @@ const ActionItem: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
-  const isChecked = completedActions.some((action) => action.id === item.id);
-
-  const toggleComplete = (checked: boolean) => {
-    handleComplete(item.id, checked ? (item.impact ? item.impact : 0) : 0);
-  };
-
   return (
     <Swipeable
       renderRightActions={() => (
@@ -40,11 +34,15 @@ const ActionItem: React.FC<ActionItemProps> = ({
         }} 
           className="pt-1"
         >
-      <StyledCard className="rounded-lg">
-        <View className="flex-row items-center flex-1">
+      <StyledCard className="rounded-lg flex-wrap">
+        <View className="flex-row items-center">
           <CircularCheckbox
-            isChecked={isChecked}
-            onPress={() => toggleComplete(!isChecked)}
+            status={
+              completedActions.some((action) => action.id === item.id)
+                ? "checked"
+                : "unchecked"
+            }
+            onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
           />
           <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
         </View>

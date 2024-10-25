@@ -48,8 +48,8 @@ const DoneItem: React.FC<DoneItemProps> = ({
         }} 
           className="pt-1"
         >
-        <StyledCard className="rounded-lg">
-          <View className="flex-row items-center flex-1">
+      <StyledCard className="rounded-lg flex-wrap">
+      <View className="flex-row items-center">
             <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
