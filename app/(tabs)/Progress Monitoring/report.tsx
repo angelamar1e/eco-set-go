@@ -6,7 +6,10 @@ import { ScrollView, View, Text, Dimensions, TouchableOpacity } from "react-nati
 import { ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firestore from '@react-native-firebase/firestore';
-import { LineChart } from "react-native-chart-kit";
+import { 
+  LineChart, 
+  BarChart
+} from "react-native-chart-kit";
 import SummaryReport from "@/app/components/(tabs)/Progress Monitoring/summary";
 import { getUserName, getUserUid } from "../../utils/utils";
 import { styled } from "nativewind";
@@ -87,6 +90,9 @@ const ReportWithPeriod = () => {
             } else if (period === 'monthly') {
               data = getMonthlyData(currentLog, dates);
             }
+            else {
+              data = getDailyData(currentLog, dates);
+            }
             setDataset(data);
           }
         }
@@ -131,7 +137,7 @@ const ReportWithPeriod = () => {
     const getMonthlyData = (currentLog: any, dates: string[]) => {
       const monthlyData: any = {};
       dates.forEach(date => {
-        const month = moment(date).format("MMMM");
+        const month = moment(date).format("MMMM YYYY");
         if (!monthlyData[month]) monthlyData[month] = 0;
         const dailyLogs: Array<number> = Object.values(currentLog[date]);
         monthlyData[month] += dailyLogs.reduce((total, value) => total + value, 0);
@@ -171,25 +177,40 @@ const ReportWithPeriod = () => {
   
         {/* Chart */}
         <View style={{ paddingBottom: 20 }}>
-          <Text>{period.charAt(0).toUpperCase() + period.slice(1)} User Log</Text>
-          <LineChart
+          <BarChart
             data={dataset}
-            width={Dimensions.get("window").width - 20} // Adjust width for better fit
-            height={220} // Height of the chart
-            yAxisSuffix="g"
-            chartConfig={{
-              backgroundColor: "#e26a00",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#ffa726",
-              decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: { borderRadius: 16, padding: 10 },
-              propsForDots: { r: "6", strokeWidth: "2", stroke: "#ffa726" },
-            }}
-            bezier
-            style={{ marginVertical: 8, borderRadius: 16 }}
-          />
+            width={Dimensions.get("window").width-(Dimensions.get("window").width*0.2)}
+            height={220}
+            yAxisLabel=""
+              yAxisSuffix="KG"
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundColor: "#e26a00",
+                backgroundGradientFrom: "#fb8c00",
+                backgroundGradientTo: "#ffa726",
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 0,
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726",
+                },
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
+              }}
+              fromZero={true}
+              withVerticalLabels={true}
+              withHorizontalLabels={false}
+              showValuesOnTopOfBars={true}
+            />
+          <Text>{period.charAt(0).toUpperCase() + period.slice(1)} User Log</Text>
+          {/* Line chart */}
         </View>
       </StyledView>
     );

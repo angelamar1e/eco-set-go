@@ -33,7 +33,7 @@ const DropdownActionItem: React.FC<ActionItemProps> = ({
             <StyledSelect className="w-full" placeholder={item.title}>
               {item.options ? (
             Object.entries(item.options).map(([key, value]) => (
-              <StyledSelectItem className=""
+              <StyledSelectItem className=""  
                 key={key}
                 title={key}
                 onPress={() => {
