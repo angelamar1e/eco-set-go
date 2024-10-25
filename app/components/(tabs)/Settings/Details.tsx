@@ -28,7 +28,7 @@ const Details: React.FC<DetailsProps> = ({
       <StyledLayout className='p-1'>
         <StyledText category="h6" className="mb-2">Username</StyledText>
         <StyledButton 
-          onPress={() => router.push('/(tabs)/Home')}
+          onPress={() => router.push('/components/Settings/updateusername')}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray" />}>
@@ -39,7 +39,7 @@ const Details: React.FC<DetailsProps> = ({
       <StyledLayout className='p-1'>
       <StyledText category="h6" className="mb-2">Email Address</StyledText>
         <StyledButton 
-          onPress={() => router.push('/components/(tabs)/Profile and Settings/UpdateUsername')}
+          onPress={() => router.push('/components/Settings/updateemail')}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>
@@ -50,7 +50,7 @@ const Details: React.FC<DetailsProps> = ({
       <StyledLayout className='p-1'>
       <StyledText category="h6" className="mb-2">Password</StyledText>
         <StyledButton 
-          onPress={() => router.push('/components(tabs)SettingsUpdateUsername')}
+          onPress={() => router.push('/components/Settings/updatepassword')}
           className="flex flex-row justify-between items-center"
           status="basic"
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="dark-gray"  />}>

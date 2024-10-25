@@ -51,24 +51,32 @@ const UpdateUsername = () => {
   }, []);
 
   return (
-    <StyledLayout className="flex-1">
-      <StyledLayout className="flex flex-row justify-between p-2">
-        <StyledButton appearance="ghost" onPress={() => router.back()}>
+    <StyledLayout className="flex-1 mt-4 p-2">
+      <StyledLayout className="flex flex-row justify-between p-2 items-center">
+        <StyledButton 
+          appearance="ghost" 
+          onPress={() => router.back()}
+          className="m-1 p-1 rounded-full">
           Cancel
         </StyledButton>
         <StyledText category="h6">Update Username</StyledText>
-        <StyledButton appearance="ghost" onPress={handleUpdate}>
+        <StyledButton 
+          appearance="ghost" 
+          onPress={handleUpdate}
+          className="m-1 p-1 rounded-full">
           Done
         </StyledButton>
       </StyledLayout>
+
       <StyledLayout className="flex-1 p-2">
-        <StyledText category="s1">Current Username:</StyledText>
-        <StyledText>{currentUsername}</StyledText>
-        <StyledText category="s1">New Username:</StyledText>
+        <StyledText category="s1" className="font-bold p-1">Current Username:</StyledText>
+        <StyledText category="s1" className="p-1">{currentUsername}</StyledText>
+        <StyledText category="s1" className="font-bold p-1">Current Username:</StyledText>
         <StyledInput
           value={newUsername}
+          status="basic"
           onChangeText={setNewUsername}
-          placeholder="Enter new username"
+          placeholder="Enter your new username"
         />
       </StyledLayout>
     </StyledLayout>
