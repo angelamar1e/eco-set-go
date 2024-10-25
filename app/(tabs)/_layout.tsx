@@ -9,7 +9,6 @@ import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
 import UserProfile from './Profile/profile';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import Settings from './Profile/settings';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
