@@ -13,13 +13,20 @@ import {
   computeTotalPublicTransportEmissions,
   computeTrainEmissions,
   computeTwoWheelersEmissions,
+  computeMealEmission,
+  convertKgToTons,
+  computeAdditionals,
 } from "@/app/utils/EstimationUtils";
 import {
   ElectricityEmissions,
   FoodEmission,
+  FoodItemEF,
   TransportEmission,
+  weightDistribution,
+  weightDistributionPerBreakfastType,
 } from "@/constants/DefaultValues";
 import { getUserUid } from "@/app/utils/utils";
+import { Easing } from "react-native";
 
 // Create a context
 export const EmissionsContext = createContext();
@@ -242,26 +249,130 @@ export const EmissionsProvider = ({ children }) => {
   ]);
 
   // states for breakfast emission variables
-  const [breakfastEf, setBreakfastEf] = useState(FoodEmission.Breakfast.ef);
+  const [breakfastType, setBreakfastType] = useState(
+    FoodEmission.Breakfast.type
+  );
+
+  const [breakfastEF, setBreakfastEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Breakfast`])
+  );
+
   const [breakfastEmissions, setBreakfastEmissions] = useState(
-    computeBreakfastEmissions(FoodEmission.Breakfast.ef)
+    computeBreakfastEmissions(breakfastEF)
   );
 
   useEffect(() => {
-    setBreakfastEmissions(computeBreakfastEmissions(breakfastEf));
-  }, [breakfastEf]);
+    setBreakfastEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Breakfast`])
+    );
+    setBreakfastEmissions(computeBreakfastEmissions(breakfastEF));
+  }, [breakfastType, breakfastEF]);
 
   // states for meals emission variables
   const [mealTypeFrequency, setMealTypeFrequency] = useState(
     FoodEmission.LunchesDinners.mealTypeFrequency
   );
-  const [mealEmissions, setMealEmissions] = useState(
-    computeTotalMealEmissions(mealTypeFrequency)
+
+  const [beefMealEF, setBeefMealEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Beef meat meal`])
+  );
+
+  const [chickenMealEF, setChickenMealEF] = useState(
+    computeMealEmission(
+      weightDistribution[`${breakfastType}:Chicken meat meal`]
+    )
+  );
+
+  const [porkMealEF, setPorkMealEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Pork meat meal`])
+  );
+
+  const [fishMealEF, setFishMealEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Fish meat meal`])
+  );
+
+  const [vegetarianMealEF, setVegetarianMealEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Vegetarian meal`])
+  );
+
+  const [veganMealEF, setVeganMealEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Vegan meal`])
+  );
+
+  const [addedFoodEF, setAddedFoodEF] = useState(
+    computeMealEmission(weightDistribution[`${breakfastType}:Additionals`])
+  );
+
+  const [addedFoodEmissions, setAddedFoodEmissions] = useState(
+    computeAdditionals(addedFoodEF)
   );
 
   useEffect(() => {
-    setMealEmissions(computeTotalMealEmissions(mealTypeFrequency));
-  }, [mealTypeFrequency]);
+    setBeefMealEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Beef meat meal`])
+    );
+
+    setChickenMealEF(
+      computeMealEmission(
+        weightDistribution[`${breakfastType}:Chicken meat meal`]
+      )
+    );
+
+    setPorkMealEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Pork meat meal`])
+    );
+    setFishMealEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Fish meat meal`])
+    );
+    setVegetarianMealEF(
+      computeMealEmission(
+        weightDistribution[`${breakfastType}:Vegetarian meal`]
+      )
+    );
+    setVeganMealEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Vegan meal`])
+    );
+    setAddedFoodEF(
+      computeMealEmission(weightDistribution[`${breakfastType}:Additionals`])
+    );
+    setAddedFoodEmissions(
+      computeAdditionals(addedFoodEF)
+    );
+  }, [breakfastType]);
+
+  const [mealEmissions, setMealEmissions] = useState(
+    computeTotalMealEmissions(
+      beefMealEF,
+      chickenMealEF,
+      porkMealEF,
+      fishMealEF,
+      vegetarianMealEF,
+      veganMealEF,
+      mealTypeFrequency
+    )
+  );
+
+  useEffect(() => {
+    setMealEmissions(
+      computeTotalMealEmissions(
+        beefMealEF,
+        chickenMealEF,
+        porkMealEF,
+        fishMealEF,
+        vegetarianMealEF,
+        veganMealEF,
+        mealTypeFrequency
+      )
+    );
+  }, [
+    beefMealEF,
+    chickenMealEF,
+    porkMealEF,
+    fishMealEF,
+    vegetarianMealEF,
+    veganMealEF,
+    mealTypeFrequency,
+  ]);
 
   // states for hot drinks emissions
   const [hotDrinksFrequency, setHotDrinksFrequency] = useState(
@@ -358,6 +469,7 @@ export const EmissionsProvider = ({ children }) => {
       publicTransportEmissions +
       breakfastEmissions +
       mealEmissions +
+      addedFoodEmissions +
       hotDrinksEmissions +
       coldDrinksEmissions +
       bottledWaterEmissions +
@@ -376,6 +488,7 @@ export const EmissionsProvider = ({ children }) => {
           publicTransportEmissions +
           breakfastEmissions +
           mealEmissions +
+          addedFoodEmissions +
           hotDrinksEmissions +
           coldDrinksEmissions +
           bottledWaterEmissions +
@@ -403,6 +516,7 @@ export const EmissionsProvider = ({ children }) => {
     publicTransportEmissions,
     breakfastEmissions,
     mealEmissions,
+    addedFoodEmissions,
     hotDrinksEmissions,
     coldDrinksEmissions,
     bottledWaterEmissions,
@@ -470,13 +584,27 @@ export const EmissionsProvider = ({ children }) => {
         setJeepHrsTravelled,
         setTricycleHrsTravelled,
         breakfastEmissions,
-        breakfastEf,
+        breakfastType,
+        breakfastEF,
         setBreakfastEmissions,
-        setBreakfastEf,
-        mealEmissions,
-        mealTypeFrequency,
+        setBreakfastType,
+        setBreakfastEF,
+        beefMealEF,
+        chickenMealEF,
+        porkMealEF,
+        fishMealEF,
+        vegetarianMealEF,
+        veganMealEF,
         setMealEmissions,
         setMealTypeFrequency,
+        setBeefMealEF,
+        setChickenMealEF,
+        setPorkMealEF,
+        setFishMealEF,
+        setVegetarianMealEF,
+        setVeganMealEF,
+        mealEmissions,
+        mealTypeFrequency,
         hotDrinksEmissions,
         hotDrinksFrequency,
         setHotDrinksEmissions,

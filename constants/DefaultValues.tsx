@@ -1,4 +1,8 @@
-import { FlightData } from '../types/FlightData';
+export const Multipliers = {
+  "Weeks in a year": 52,
+  "Days in a year": 365
+}
+
 export const TransportEmission = {
   Car: {
     efPerKm: 0.2136499,
@@ -79,7 +83,8 @@ export const TransportEmission = {
 
 export const FoodEmission = {
   Breakfast: {
-    ef: 0.06528 // Simple rice meal EF 
+    type: 'Traditional Filipino Breakfast',
+    ef: 0.06528 // Simple rice meal EF as default EF
   },
   LunchesDinners: {
     mealTypeFrequency: {
@@ -140,11 +145,336 @@ export const ElectricityEmissions = {
   Grid: {
     ratePerKwh: 11.6339, // in pesos
     monthlySpend: 2326.78, // for 200 kWh
-    ef: 0.6935 // per kWh
+    efPerKwh: 0.6935 // per kWh
   },
   Solar: {
     isUsed: false,
     annualProduction: 2000,
     percentConsumed: 100,
   }
+}
+
+type Meal = Record<string, number>;
+type CompositeKey = string;
+
+export const weightDistribution: Record<CompositeKey, Meal> = {
+  // Traditional Filipino Breakfast
+  "Traditional Filipino Breakfast:Breakfast": {
+    "Fish": 0.044,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.01933,
+  },
+  "Traditional Filipino Breakfast:Fish meat meal": {
+    "Fish": 0.044,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.01933,
+  },
+  "Traditional Filipino Breakfast:Chicken meat meal": {
+    "Chicken": 0.044,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.01933,
+  },
+  "Traditional Filipino Breakfast:Pork meat meal": {
+    "Pork": 0.044,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.01933,
+  },
+  "Traditional Filipino Breakfast:Beef meat meal": {
+    "Beef": 0.044,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.01933,
+  },
+  "Traditional Filipino Breakfast:Vegetarian meal": {
+    "Vegetables": 0.06333,
+    "Egg": 0.00433,
+    "Cooking Oil": 0.002,
+  },
+  "Traditional Filipino Breakfast:Vegan meal": {
+    "Vegetables": 0.06333,
+    "Cooking Oil": 0.002,
+  },
+  "Traditional Filipino Breakfast:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Other Cereal Products": 0.045,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Milk": 0.005,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Fruits": 0.021,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+
+  // Simple Rice Meal
+  "Simple Rice Meal:Breakfast": {
+    "Pork or Chicken": 0.044,
+    "Cooking Oil": 0.002,
+  },
+  "Simple Rice Meal:Fish meat meal": {
+    "Fish": 0.044,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.029,
+  },
+  "Simple Rice Meal:Chicken meat meal": {
+    "Chicken": 0.044,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.029,
+  },
+  "Simple Rice Meal:Pork meat meal": {
+    "Pork": 0.044,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.029,
+  },
+  "Simple Rice Meal:Beef meat meal": {
+    "Beef": 0.044,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.002,
+    "Vegetables": 0.029,
+  },
+  "Simple Rice Meal:Vegetarian meal": {
+    "Vegetables": 0.073,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.002,
+  },
+  "Simple Rice Meal:Vegan meal": {
+    "Vegetables": 0.073,
+    "Cooking Oil": 0.002,
+  },
+  "Simple Rice Meal:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Other Cereal Products": 0.045,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Milk": 0.005,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Fruits": 0.021,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+
+  // Dairy and Cereal
+  "Dairy and Cereal:Breakfast": {
+    "Other Cereal Products": 0.045,
+    "Milk": 0.005,
+  },
+  "Dairy and Cereal:Fish meat meal": {
+    "Fish": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Dairy and Cereal:Chicken meat meal": {
+    "Chicken": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Dairy and Cereal:Pork meat meal": {
+    "Pork": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Dairy and Cereal:Beef meat meal": {
+    "Beef": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Dairy and Cereal:Vegetarian meal": {
+    "Vegetables": 0.0945,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+  },
+  "Dairy and Cereal:Vegan meal": {
+    "Vegetables": 0.0945,
+    "Cooking Oil": 0.004,
+  },
+  "Dairy and Cereal:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Fruits": 0.021,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+
+  // Bread and Jam
+  "Bread and Jam:Breakfast": {
+    "Other Cereal Products": 0.045,
+  },
+  "Bread and Jam:Fish meat meal": {
+    "Fish": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Bread and Jam:Chicken meat meal": {
+    "Chicken": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Bread and Jam:Pork meat meal": {
+    "Pork": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Bread and Jam:Beef meat meal": {
+    "Beef": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Bread and Jam:Vegetarian meal": {
+    "Vegetables": 0.0945,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+  },
+  "Bread and Jam:Vegan meal": {
+    "Vegetables": 0.0945,
+    "Cooking Oil": 0.004,
+  },
+  "Bread and Jam:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Milk": 0.005,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Fruits": 0.021,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+
+  // Fruits
+  "Fruits:Breakfast": {
+    "Fruits": 0.021,
+  },
+  "Fruits:Fish meat meal": {
+    "Fish": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Fruits:Chicken meat meal": {
+    "Chicken": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Fruits:Pork meat meal": {
+    "Pork": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Fruits:Beef meat meal": {
+    "Beef": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "Fruits:Vegetarian meal": {
+    "Vegetables": 0.0945,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+  },
+  "Fruits:Vegan meal": {
+    "Vegetables": 0.0945,
+    "Cooking Oil": 0.004,
+  },
+  "Fruits:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Other Cereal Products": 0.045,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Milk": 0.005,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+
+  // No Breakfast
+  "No breakfast:Breakfast": {},
+  "No breakfast:Fish meat meal": {
+    "Fish": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "No breakfast:Chicken meat meal": {
+    "Chicken": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "No breakfast:Pork meat meal": {
+    "Pork": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "No breakfast:Beef meat meal": {
+    "Beef": 0.0655,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+    "Vegetables": 0.029,
+  },
+  "No breakfast:Vegetarian meal": {
+    "Vegetables": 0.0945,
+    "Egg": 0.0065,
+    "Cooking Oil": 0.004,
+  },
+  "No breakfast:Vegan meal": {
+    "Vegetables": 0.0945,
+    "Cooking Oil": 0.004,
+  },
+  "No breakfast:Additionals": {
+    "Rice and Rice Products": 0.271,
+    "Corn and Corn Products": 0.011,
+    "Other Cereal Products": 0.045,
+    "Starchy Roots and Tubers": 0.007,
+    "Sugars and Syrups": 0.051,
+    "Milk": 0.005,
+    "Dried Beans, Nuts, and Seeds": 0.006,
+    "Fruits": 0.021,
+    "Condiments and Spices": 0.002,
+    "Others": 0.003,
+  },
+};
+
+export const FoodItemEF = {
+  "Rice and Rice Products": 3.8,
+  "Corn and Corn Products": 1,
+  "Other Cereal Products": 1.4,
+  "Starchy Roots and Tubers": 0.7,
+  "Sugars and Syrups": 1,
+  "Cooking Oil": 4.8,
+  "Fish": 3.2,
+  "Pork": 7.3,
+  "Beef": 42.8,
+  "Chicken": 6.1,
+  "Pork or Chicken": 6.8,
+  "Egg": 4.5,
+  "Milk": 3.6,
+  "Dried Beans, Nuts, and Seeds": 1.1,
+  "Vegetables": 0.5,
+  "Fruits": 0.7,
+  "Condiments and Spices": 11.9,
+  "Others": 6.8
 }
