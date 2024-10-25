@@ -199,9 +199,7 @@ const ReportWithPeriod = () => {
 const CombinedReport = () => {
   return (
     <ThemedView className='flex-1 px-2'>
-      <><Stack>
-        <Stack.Screen name="report" options={{ headerShown: false }} />
-      </Stack>
+
         <SafeAreaView className='flex-1 mt-3'>
           <ScrollView>
             {/* Header */}
@@ -216,7 +214,7 @@ const CombinedReport = () => {
             {/* ReportDaily/Weekly/Monthly Chart Section */}
             <ReportWithPeriod />
           </ScrollView>
-        </SafeAreaView></>
+        </SafeAreaView>
     </ThemedView>
   );
 };

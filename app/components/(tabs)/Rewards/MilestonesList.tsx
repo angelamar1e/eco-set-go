@@ -60,16 +60,18 @@ const MilestoneList: React.FC = () => {
       <StyledLayout
         className="absolute"
         style={{
-          top: 0,
-          left: "40%",
-          right: "40%",
-          transform: [{ translateY: -20 }],
+          top: "0%",
+          left: "120%",
+          transform: [{ translateY: -40 }],
           zIndex: 1,
           padding: 0,
           margin: 0,
         }}
       >
-        <Ionicons name="ribbon-outline" size={70} style={{color: myTheme['color-success-700']}} />
+        <Ionicons name="ribbon-outline" 
+          size={35} 
+          color={'green'}
+        />
       </StyledLayout>
       <View className="top-10 right-3">
         <StyledText category="h6" className="mt-5 mb-2" numberOfLines={3} style={{ color: titleTextColor }}>
