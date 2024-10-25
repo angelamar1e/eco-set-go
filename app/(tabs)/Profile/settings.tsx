@@ -10,7 +10,7 @@ import { getUserUid } from '@/app/utils/utils';
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 
-const SettingsScreen = () => {
+const settings = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
   const [pushNotifications, setPushNotifications] = useState(false);
   const [actionReminders, setActionReminders] = useState(false);
@@ -103,4 +103,4 @@ const SettingsScreen = () => {
   );
 };
 
-export default SettingsScreen;
+export default settings;
