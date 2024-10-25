@@ -1,25 +1,35 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import React from "react";
 import ReflectionButton from "./ReflectionButton";
-import { View } from "react-native";
 import ReflectionsList from "./ReflectionList";
+import { styled } from "nativewind";
+import { Card, Layout, Text, useTheme } from '@ui-kitten/components';
+import FilterDate from "./FilterDate";
 
 const Reflection  = () => {
 
+    const StyledCard = styled(Card);
+    const StyledText = styled(Text);
+    const StyledLayout = styled(Layout);
+
+    const theme = useTheme();
+
+    const headertextColor = theme['color-primary-900'];
+
+    const handleFilterDateToggle = (isClicked: boolean) => {
+        console.log('Filter Date clicked:', isClicked);
+      };
+
     return(
-        <ThemedView className="flex-1">
-            <ThemedText type="subtitle" className="text-lime-800 text-[25px] p-3 text-center">Reflection</ThemedText>
-        
-            <View className="items-center">
-                <ReflectionButton />
-
+        <StyledCard className="rounded-lg ml-2 mr-2">
+            <StyledText category='h5' className="text-center" style={{ color: headertextColor }}>
+                Write your day...
+            </StyledText>
+                <StyledLayout  className="flex-row justify-between p-2">
+                    <FilterDate onToggle={handleFilterDateToggle}/>
+                    <ReflectionButton />
+                </StyledLayout>
                 <ReflectionsList />
-            </View>
-            
-
-
-        </ThemedView>
+        </StyledCard>
     )
 };
 

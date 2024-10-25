@@ -1,179 +1,107 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native'
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTheme } from '@ui-kitten/components';
+import LandingPage from './Home';
+import EcoActionsList from './Eco Articles/list';
+import CombinedReport from './Progress Monitoring/report';
+import GoalSetting from './Goal Setting/logs';
+import Feed from './Community/Feed';
+import EcoPoints from './Rewards/points';
+import UserProfile from './Profile/profile';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+
+const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useTheme(); // Use UI Kitten's theme
 
   return (
-    <Tabs
+    <Navigator
       screenOptions={{
-        tabBarInactiveTintColor: 'gray',
-        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: theme['color-basic-600'],
+        tabBarActiveTintColor: theme['color-success-500'],
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: 'black',
-          borderRadius: 35,         
-          height: 65, 
-          marginBottom: 5,
-          marginHorizontal:20,
-          position: 'absolute'
+          position: 'absolute',
+          backgroundColor: theme['background-basic-color-1'],
         },
-      }}>
-        <Tabs.Screen
-          name="Home/index"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 55,
-                width: 55,
-                marginTop: 10
-              }}>
-                <View style={{
-                  borderRadius: 25,
-                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                  padding: focused ? 10 : 0,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <TabBarIcon 
-                    name={focused ? 'home' : 'home-outline'} 
-                    color={color} 
-                    style={{ fontSize: 35 }}
-                  />
-                </View>
-              </View>
-            ),
-            headerShown: false
-          }}
-        />
-        <Tabs.Screen
-          name="Eco Articles/list"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 55,
-                width: 55,
-                marginTop: 10
-              }}>
-                <View style={{
-                  borderRadius: 25,
-                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                  padding: focused ? 10 : 0,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <TabBarIcon 
-                    name={focused ? 'book' : 'book-outline'} 
-                    color={color} 
-                    style={{ fontSize: 35 }}
-                  />
-                </View>
-              </View>
-            ),
-            headerShown: false
-          }}
-        />
-        <Tabs.Screen
-          name="Goal Setting/logs"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 55,
-                width: 55,
-                marginTop: 10
-              }}>
-                <View style={{
-                  borderRadius: 25,
-                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                  padding: focused ? 10 : 0,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <TabBarIcon 
-                    name={focused ? 'checkmark-done' : 'checkmark-done-outline'} 
-                    color={color} 
-                    style={{ fontSize: 35 }}
-                  />
-                </View>
-              </View>
-            ),
-            headerShown: false
-          }}
-        />
-        <Tabs.Screen
-          name="Progress Monitoring/report"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 55,
-                width: 55,
-                marginTop: 10
-              }}>
-                <View style={{
-                  borderRadius: 25,
-                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                  padding: focused ? 10 : 0,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <TabBarIcon 
-                    name={focused ? 'bar-chart' : 'bar-chart-outline'} 
-                    color={color} 
-                    style={{ fontSize: 35 }}
-                  />
-                </View>
-              </View>
-            ),
-            headerShown: false
-          }}
-        />
-        <Tabs.Screen
-          name="Rewards/points"
-          options={{
-            title: '',
-            tabBarIcon: ({ color, focused }) => (
-              <View style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 55,
-                width: 55,
-                marginTop: 10
-              }}>
-                <View style={{
-                  borderRadius: 25,
-                  backgroundColor: focused ? '#4A8B2A' : 'transparent',
-                  padding: focused ? 10 : 0,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <TabBarIcon 
-                    name={focused ? 'star' : 'star-outline'} 
-                    color={color} 
-                    style={{ fontSize: 35 }}
-                  />
-                </View>
-              </View>
-            ),
-            headerShown: false
-          }}
-        />
-      </Tabs>
+        tabBarLabelStyle: {
+          marginTop: -5,
+          fontSize: 11,
+          marginBottom: 3,
+        },
+      }}
+    >
+      <Screen
+        name="Home/index"
+        component={LandingPage}
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Eco Articles/list"
+        component={EcoActionsList}
+        options={{
+          title: 'Articles',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Goal Setting/logs"
+        component={GoalSetting}
+        options={{
+          title: 'Actions',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'checkmark-done' : 'checkmark-done-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Progress Monitoring/report"
+        component={CombinedReport}
+        options={{
+          title: 'Progress',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Community/feed"
+        component={Feed}
+        options={{
+          title: 'Community',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'people' : 'people-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Rewards/points"
+        component={EcoPoints}
+        options={{
+          title: 'Rewards',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'star' : 'star-outline'} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="Profile/profile"
+        component={UserProfile}
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+          ),
+        }}
+      />
+    </Navigator>
   );
 }

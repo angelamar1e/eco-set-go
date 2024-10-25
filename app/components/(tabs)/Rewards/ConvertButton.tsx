@@ -1,18 +1,29 @@
-import React from 'react';
-import { Button } from 'react-native-paper';
-import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
-import { TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Button, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 const StyledButton = styled(Button);
+const StyledText = styled(Text);
 
 const ConvertButton = () => {
+  const [isGoalSet, setIsGoalSet] = useState(false);
+
+  const handleSetGoal = () => {
+    setIsGoalSet((prev) => !prev); 
+  };
+
   return (
-    <TouchableOpacity className='ml-14 rounded-full bg-lime-800 w-[27%] p-1 z-10'>
-        <ThemedText className='text-white text-center text-[14px]'>Convert</ThemedText>
-    </TouchableOpacity>
-
-
+    <StyledButton
+      onPress={handleSetGoal}
+      className="rounded-full m-1 py-2 px-3"
+      size="small"
+      appearance={isGoalSet ? "filled" : "outline"} 
+      status={isGoalSet ? "success" : "basic"} 
+    >
+      <StyledText category="s1">
+        {isGoalSet ? 'Converted' : 'Convert'} 
+      </StyledText>
+    </StyledButton>
   );
 };
 

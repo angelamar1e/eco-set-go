@@ -7,13 +7,12 @@ import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
 
+
 export default function Index() {
 
-  const [loading, setLoading] = useState<true>();
-
-  useEffect(() => {
-    goToInterface();
-  }, [router]);
+ useEffect(() => {
+   goToInterface();
+   }, [router]);
 
   return (
     <ThemedView className="flex-1 justify-center">

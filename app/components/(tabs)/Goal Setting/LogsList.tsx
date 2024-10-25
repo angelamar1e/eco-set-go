@@ -1,13 +1,20 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { Checkbox } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons"; // Icons for options button
+import { FlatList, View } from "react-native";
+import { styled } from "nativewind";
+import { Text, Layout, Card, Button } from "@ui-kitten/components";
+import { Ionicons } from "@expo/vector-icons"; 
+import CircularCheckbox from "./CircularCheckBox";
+import { Swipeable } from "react-native-gesture-handler"; 
 
 interface EcoAction {
   id: string;
   title: string;
   completed: boolean;
 }
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
 
 const LogList = () => {
   // State to hold the list of tasks
@@ -17,10 +24,6 @@ const LogList = () => {
     { id: "3", title: "Turn Off Lights", completed: true },
   ]);
 
-  // State to track which task's dropdown is open
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-
-  // Function to toggle the completion status of a task
   const toggleTaskCompletion = (id: string) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -29,73 +32,47 @@ const LogList = () => {
     );
   };
 
-  // Function to handle the action button click
-  const toggleDropdown = (id: string) => {
-    setSelectedTaskId((prevId: string | null) => (prevId === id ? null : id));
+  const handleDelete = (id: string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
-  // Function to close the dropdown
-  const closeDropdown = () => {
-    setSelectedTaskId(null);
-  };
-
-  // Render individual task items with checkboxes and options button
   const renderItem = ({ item }: { item: EcoAction }) => (
-    <View className="flex-row justify-between bg-stone-100 w-[92%] p-2.5 mb-2 ml-4 rounded-lg items-center z-20">
-      <Checkbox
-        status={item.completed ? "checked" : "unchecked"}
-        onPress={() => toggleTaskCompletion(item.id)}
-        color="#4caf50"
-        uncheckedColor="#ccc"
-      />
-      <Text className="text-lg text-black flex-1 ml-1">{item.title}</Text>
-    
-      {/* Options Button */}
-      <TouchableOpacity onPress={() => toggleDropdown(item.id)}>
-        <Ionicons name="ellipsis-horizontal" size={20} color="#ccc" right={10} />
-      </TouchableOpacity>
-
-      {/* Options Menu */}
-      {selectedTaskId === item.id && (
-          <View style={{ 
-            position: 'absolute', 
-            right: 20, 
-            backgroundColor: '#fff', 
-            borderRadius: 8, 
-            elevation: 5, 
-            zIndex: 999, 
-          }}>
-            <TouchableOpacity
-              onPress={() => {
-                console.log("View Action:", item.title);
-                closeDropdown();
-              }}
-              style={{ padding: 10}}
-            >
-              <Text>View</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                console.log("Delete Action:", item.title);
-                setTasks(tasks.filter(task => task.id !== item.id));
-                closeDropdown();
-              }}
-              style={{ padding: 10 }}
-            >
-              <Text>Delete</Text>
-            </TouchableOpacity>
+    <Swipeable
+      renderRightActions={() => (
+        <View className="flex items-center justify-center ml-2">
+          <Button
+            appearance="outline"
+            status="danger"
+            onPress={() => handleDelete(item.id)}
+            accessoryLeft={() => <Ionicons name="trash" size={15} />}
+          >
+            Delete
+          </Button>
+        </View>
+      )}
+    >
+      <StyledLayout className="rounded-lg m-1 p-1">
+        <StyledCard>
+          <View className="flex-row items-center flex-1">
+            <CircularCheckbox
+              isChecked={item.completed}
+              onPress={() => toggleTaskCompletion(item.id)}
+            />
+            <StyledText category="p1" style={{ marginLeft: 8 }}>
+              {item.title}
+            </StyledText>
           </View>
-        )}
-      </View>
+        </StyledCard>
+      </StyledLayout>
+    </Swipeable>
   );
 
   return (
-      <FlatList
-        data={tasks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+    <FlatList
+      data={tasks}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    />
   );
 };
 

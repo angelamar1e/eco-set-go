@@ -1,18 +1,20 @@
+import { View } from 'react-native';
 import React, { FC } from 'react';
 import {TextInput} from 'react-native-paper';
+import { ThemedText } from '@/components/ThemedText';
 
 interface TextFieldProps {
-  label: string | undefined;
   value: string;
   onChangeText: (text: string) => void;
   onBlur: () => void;
+  unit: string;
 }
 
-export const TextField: FC<TextFieldProps> = ({label, value, onChangeText, onBlur}) => {
+export const TextField: FC<TextFieldProps> = ({unit, value, onChangeText, onBlur}) => {
 
   return (
-      <TextInput
-        label={label}
+      <View className="flex-row items-center">
+        <TextInput
         value={value}
         onChangeText={onChangeText}
         mode="outlined"
@@ -24,5 +26,8 @@ export const TextField: FC<TextFieldProps> = ({label, value, onChangeText, onBlu
         }}
         onBlur={onBlur}
       />
+      <ThemedText className="ml-4">{unit}</ThemedText>
+      </View>
+      
   );
 };

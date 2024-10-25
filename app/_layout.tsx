@@ -4,21 +4,29 @@ import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import { EmissionsProvider } from "@/contexts/EmissionsContext";
 import { myTheme } from "@/constants/custom-theme";
+import { useColorScheme } from "react-native";
 
 export default function RootLayout() {
-  
+  const colorScheme = useColorScheme(); 
+
   return (
     <EmissionsProvider>
-    <ApplicationProvider {...eva} theme={{...eva.dark, ...myTheme}}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack>
-          <Stack.Screen name="index" options={{headerShown: false}}/>
-          <Stack.Screen name="login" options={{headerShown: false}}/>
-          <Stack.Screen name="sign_up" options={{headerShown: false}}/>
-          <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-        </Stack>
-      </GestureHandlerRootView>
-    </ApplicationProvider>
+      <ApplicationProvider
+        {...eva}
+        theme={colorScheme === 'dark' ? { ...eva.dark, ...myTheme } : { ...eva.light, ...myTheme.light }}
+      >
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="login" options={{ headerShown: false }} />
+            <Stack.Screen name="sign_up" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(quiz)" options={{ headerShown: false }} />
+            <Stack.Screen name="components/quiz/ListScreen" options={{headerShown: false}}/>
+            <Stack.Screen name="components/(tabs)/Rewards/MilestonesPage" options={{headerShown: false}}/>
+          </Stack>
+        </GestureHandlerRootView>
+      </ApplicationProvider>
     </EmissionsProvider>
-    );
+  );
 }

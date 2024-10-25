@@ -1,17 +1,33 @@
-import { getUserUid } from "@/app/utils/utils";
-import React, { useContext, useEffect, useState } from "react";
-import firestore from "@react-native-firebase/firestore";
-import { Text } from "react-native-paper";
-import { EmissionsContext, EmissionsProvider } from "@/contexts/EmissionsContext";
+import React, { useContext } from "react";
+import { EmissionsContext } from "@/contexts/EmissionsContext";
+import { Text, Layout } from "@ui-kitten/components";
+import { styled } from 'nativewind';
+import { myTheme } from "@/constants/custom-theme";
+
+const StyledTextLarge = styled(Text);
+const StyledTextSmall = styled(Text);
+const StyledLayout = styled(Layout);
 
 const Calculator: React.FC = () => {
-  const { overallFootprint } = useContext(EmissionsContext); // Get carEmissions from context
+  const { overallFootprint } = useContext(EmissionsContext); 
 
   return (
-    <Text className="mt-8 ml-3 text-3xl text-lime-300">
-      {overallFootprint.toFixed(2)}
-      <Text className="text-lime-300 text-2xl"> tons of CO2e</Text>
-    </Text>
+    <StyledLayout className="flex-row items-center justify-center shadow p-2">
+      <StyledTextLarge
+        category='h1' 
+        style={{ color: myTheme["color-primary-700"] }}
+        className="ml-2"
+      >
+        {overallFootprint.toFixed(2)}
+      </StyledTextLarge>
+      <StyledTextSmall
+        category="p1"
+        style={{ color: myTheme["color-primary-900"] }} 
+        className="ml-2" 
+      >
+        tons{"\n"}of CO2e per year
+      </StyledTextSmall>
+    </StyledLayout>
   );
 };
 

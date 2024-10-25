@@ -1,18 +1,30 @@
 import React from 'react';
-import { Button } from 'react-native-paper';
-import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
+import { Button, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 import { TouchableOpacity } from 'react-native';
 
 const StyledButton = styled(Button);
+const StyledText = styled(Text)
 
 const SetGoalButton = () => {
+  const [isGoalSet, setIsGoalSet] = React.useState(false);
+
+  const handleSetGoal = () => {
+    setIsGoalSet(!isGoalSet);  
+  };
+
   return (
-    <TouchableOpacity className='absolute bottom-3 right-3 rounded-full bg-lime-800 w-[30%] p-1'>
-        <ThemedText className='text-white text-center text-[14px]'>Set a goal</ThemedText>
+    <TouchableOpacity className="ml-auto mr-5">
+      <StyledButton
+        onPress={handleSetGoal}
+        className="rounded-full p-1"
+        size="small" 
+        appearance={isGoalSet ? "filled" : "outline"}
+        status={isGoalSet ? "success" : "basic"}
+      >
+        <StyledText category='p1' className="text-center">Set a goal</StyledText>
+      </StyledButton>
     </TouchableOpacity>
-
-
   );
 };
 

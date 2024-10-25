@@ -1,10 +1,8 @@
 import { useState, FC, useEffect } from "react";
 import { View } from "react-native";
 import { QuestionContainer } from "@/app/components/quiz/QuestionContainer";
-import { NavigationButtons } from "@/app/components/quiz/NavigationButtons";
 import { ThemedText } from "@/components/ThemedText";
 import { RadioChoices } from "@/app/components/quiz/RadioChoices";
-import { ThemedView } from "@/components/ThemedView";
 import { Text } from "react-native-paper";
 import { TemplateProps } from "@/types/QuizProps";
 

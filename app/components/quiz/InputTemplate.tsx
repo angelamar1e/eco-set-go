@@ -1,18 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { QuestionContainer } from "./QuestionContainer";
 import { PresetChoices } from "./PresetChoices";
 import { TextField } from "./TextField";
-import { NavigationButtons } from "./NavigationButtons";
 import { TemplateProps } from "@/types/QuizProps";
 
 const InputTemplate: FC<TemplateProps> = ({
   category,
   question,
   choices: choices,
-  inputLabel,
+  inputLabel = "",
   defaultValue,
   onAnswer
 }) => {
@@ -31,7 +29,10 @@ const InputTemplate: FC<TemplateProps> = ({
 
   // Function to handle text input change
   const handleTextChange = (text: string) => {
-    setInputValue(text);
+    // Check if the text only contains numbers and is positive
+    if (/^\d*$/.test(text) && text !== '0') {
+      setInputValue(text);
+    }
   };
 
   const handleBlur = () => {
@@ -65,10 +66,10 @@ const InputTemplate: FC<TemplateProps> = ({
         {/* Input field */}
         <View className="ml-2 mb-5">
           <TextField
-            label={inputLabel}
+            unit={inputLabel}
             value={inputValue}
             onChangeText={handleTextChange}
-            onBlur={handleBlur}
+            onBlur={handleBlur}            
           />
         </View>
       </QuestionContainer>

@@ -3,7 +3,7 @@ import { Text, View, Button, Platform, Switch } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-// import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Notification Handler
 Notifications.setNotificationHandler({

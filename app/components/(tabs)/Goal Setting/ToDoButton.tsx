@@ -1,30 +1,33 @@
-import React, { FC } from "react";
-import { TouchableOpacity, Text, useColorScheme, ViewStyle } from "react-native";
+import React from "react";
+import { Button, Text } from "@ui-kitten/components";
+import { styled } from "nativewind";
 
 interface ToDoButtonProps {
-  title: string;
-  variant: "primary" | "secondary";
-  onPress?: () => void;
-  style?: ViewStyle;
+  selectedFilter: string;
+  onFilterChange: (filter: string) => void;
 }
 
-export const ToDoButton: FC<ToDoButtonProps> = ({ title, variant, style }) => {
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === "dark";
+const StyledButton = styled(Button);
 
-  const containerStyle =
-    variant === "primary" 
-      ? "bg-green-600 rounded-full w-[18%] p-1 ml-7 mr-1"
-      : "bg-stone-100 rounded-full w-[18%] p-1 mr-9";
-
-  const textStyle =
-    variant === "primary"
-      ? "text-white text-center text-[14px]"
-      : "text-black text-center text-[14px]"
+const ToDoButton: React.FC<ToDoButtonProps> = ({ selectedFilter, onFilterChange }) => {
+  const filters = ['To-Do', 'Done'];
 
   return (
-    <TouchableOpacity className={containerStyle}>
-      <Text className={textStyle}>{title}</Text>
-    </TouchableOpacity>
+    <>
+      {filters.map((category) => (
+        <StyledButton
+          key={category}
+          onPress={() => onFilterChange(category)}
+          className="rounded-full p-1 m-1"
+          size="small"
+          appearance={selectedFilter === category ? "filled" : "outline"}
+          status={selectedFilter === category ? "success" : "basic"}
+        >
+          <Text category="label">{category}</Text>
+        </StyledButton>
+      ))}
+    </>
   );
 };
+
+export default ToDoButton;

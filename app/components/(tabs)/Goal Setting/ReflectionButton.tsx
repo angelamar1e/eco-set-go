@@ -1,16 +1,34 @@
-import React from 'react';
-import { Button } from 'react-native-paper';
+import React, { useState } from 'react';
 import { styled } from "nativewind";
-import { ThemedText } from '@/components/ThemedText';
-import { TouchableOpacity } from 'react-native';
+import { Button, Layout } from '@ui-kitten/components';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const StyledButton = styled(Button);
+const StyledLayout = styled(Layout);
 
 const ReflectionButton = () => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handlePress = () => {
+    setIsClicked(!isClicked);
+    console.log('Write reflection entry pressed');
+  };
+
+  const iconColor = isClicked ? "white" : "#8F9BB3";
+
   return (
-    <TouchableOpacity className='rounded-full bg-lime-800 w-[92%] p-1 mb-3'>
-        <ThemedText className='text-white text-center text-[14px]'>Write a reflection entry</ThemedText>
-    </TouchableOpacity>
+    <StyledLayout>
+      <StyledButton
+        className='m-1 p-1 rounded-full'
+        status={isClicked ? 'success' : 'basic'}
+        size='small'
+        appearance={isClicked ? "filled" : "outline"}
+        accessoryLeft={() => (
+          <Ionicons name="pencil" size={20} color={iconColor} />
+        )}
+        onPress={handlePress}
+      />
+    </StyledLayout>
   );
 };
 
