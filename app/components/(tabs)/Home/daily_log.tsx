@@ -1,19 +1,23 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { View, FlatList, Text } from "react-native";
+import { Card, Layout, List, Text, useTheme } from "@ui-kitten/components";
+import { styled } from "nativewind";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
-import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
 
-import { Checkbox } from "react-native-paper";
 import DropdownEcoAction from './DropdownActionItem';
 import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
 import { EmissionsContext } from "@/contexts/EmissionsContext";
+import { myTheme } from "@/constants/custom-theme";
 
 const templates = [DropdownEcoAction, ActionItem];
 const doneTemplates = [DoneItem];
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
@@ -173,28 +177,59 @@ const DailyLog: FC = () => {
     );
   };
 
+  const theme = useTheme();
+  const headertextColor = theme['color-primary-900'];
+
   return (
-    <View className="bg-gray">
-      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+    <StyledLayout className="mt-3 ml-1 mr-1">
+      <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
         Daily Log
-      </ThemedText>
-      <FlatList
-        data={dailyLog}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-      <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
-      {completedActions.length > 0 ? (
-        <FlatList
-          data={completedActions}
-          renderItem={renderDoneItem}
+      </StyledText>
+
+      <StyledCard className="rounded-lg">
+        <StyledText category="s1" 
+          style={{ 
+            color: myTheme['color-success-700'], 
+            fontWeight: 'bold', 
+            marginBottom: 5
+            }}
+          >
+          Actions To Do
+        </StyledText>
+        {dailyLog.length > 0 ? (
+        <List
+          data={dailyLog}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
       ) : (
-        <Text className="text-center text-gray-500">No actions completed yet.</Text>
+        <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
       )}
-    </View>
+      </StyledCard>
+
+      <StyledCard className="rounded-lg mb-2 mt-2">
+        <StyledText category="s1" 
+          style={{ 
+            color: myTheme['color-success-700'], 
+            fontWeight: 'bold', 
+            marginBottom: 5
+            }}
+          >
+          Actions Done
+        </StyledText>
+        {completedActions.length > 0 ? (
+          <List
+            data={completedActions}
+            renderItem={renderDoneItem}
+            keyExtractor={(item) => item.id}
+          />
+        ) : (
+          <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+        )}
+      </StyledCard>
+    </StyledLayout>
   );
 };
+
 
 export default DailyLog;

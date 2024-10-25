@@ -5,15 +5,17 @@ import { getUserName, getUserUid, handleBackAction } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/app/components/(tabs)/Home/daily_log";
 import firestore from "@react-native-firebase/firestore";
-import LogOutButton from "@/app/components/LogOutButton";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import QuizButton from "@/app/components/QuizButton";
 import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
-import Header from "@/app/components/(tabs)/Home/Header";
+import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
+import { Card, Layout,  } from "@ui-kitten/components";
 
 const StyledView = styled(View);
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
+
 
 const Box = ({ className = "", ...props }) => (
   <StyledView
@@ -62,7 +64,7 @@ export default function LandingPage() {
   };
 
   return (
-    <ThemedView className="flex-1">
+    <StyledLayout className="flex-1">
       <SafeAreaView className="flex-1">
         <View className="flex-1 px-2">
           <View className="h-1/4 mt-3">
@@ -98,17 +100,11 @@ export default function LandingPage() {
             </View>
 
             <ImpactCalculator onImpactUpdate={handleImpactChange} />
-            <View className="flex mt-3">
-              <DailyLog />
-            </View>
-          </View>
-
-          <View className="flex-1 mb-20 mt-4">
-            <QuizButton />
-            <LogOutButton />
+            <WeekOverview />
+            <DailyLog />
           </View>
         </View>
       </SafeAreaView>
-    </ThemedView>
+    </StyledLayout>
   );
 }
