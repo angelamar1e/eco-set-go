@@ -1,14 +1,13 @@
 import React from 'react';
-import { Text, Button, Layout, Card } from '@ui-kitten/components';
+import { Text, Button, Layout } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import LogOutButton from '../../LogOutButton';
+import { handleLogOut } from '@/app/utils/utils';
 
 const StyledText = styled(Text);
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
-const StyledCard = styled(Card);
 
 interface DetailsProps {
   username: string;
@@ -70,15 +69,15 @@ const Details: React.FC<DetailsProps> = ({
         </StyledButton>
       </StyledLayout>
 
-      <StyledLayout className="p-1 m-1">
+      <StyledLayout className="p-1 mt-10">
         <StyledButton 
-          appearance="ghost">
-            Need help or want to get in touch? Contact us
-        </StyledButton>
-      </StyledLayout>
-
-      <StyledLayout className="p-1 m-1">
-        <LogOutButton/>
+          onPress={handleLogOut} 
+          status='basic' 
+          className='m-1 p-1 rounded-full'>
+        <StyledText category='label'>
+          Log Out
+        </StyledText>
+      </StyledButton>
       </StyledLayout>
 
     </StyledLayout>
