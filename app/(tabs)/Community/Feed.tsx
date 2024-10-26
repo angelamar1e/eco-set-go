@@ -124,16 +124,16 @@ const Feed: React.FC = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className="absolute top-0 left-0 right-0 z-10 bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative">
-        <StyledText category='h4'>Community</StyledText>
-        <StyledText category='s1'>Date</StyledText> 
-
+      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+        <StyledText category="h4">Community</StyledText>
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
           selectedButton={selectedButton}
           setSelectedButton={setSelectedButton}
         />
       </StyledLayout>
+
+        
 
       {renderSelectedComponent()}
     </StyledLayout>
