@@ -27,6 +27,7 @@ export default function RootLayout() {
             <Stack.Screen name="components/(tabs)/Settings/updateusername" options={{headerShown: false}}/>
             <Stack.Screen name="components/(tabs)/Settings/updateemail" options={{headerShown: false}}/>
             <Stack.Screen name="components/(tabs)/Settings/updatepassword" options={{headerShown: false}}/>
+            <Stack.Screen name="Profile" options={{ headerShown: false }} />
           </Stack>
         </GestureHandlerRootView>
       </ApplicationProvider>
