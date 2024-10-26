@@ -20,7 +20,7 @@ const theme = useTheme();
 const headertextColor = theme['color-primary-900'];
 
   return (
-    <StyledLayout className="mt-3 ml-2 mr-2 p-2 relative">
+    <StyledLayout className="mt-3 ml-2 mr-2 relative">
       <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
         Week Overview
       </StyledText>

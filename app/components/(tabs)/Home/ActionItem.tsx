@@ -20,7 +20,7 @@ const ActionItem: React.FC<ActionItemProps> = ({
   return (
     <Swipeable
       renderRightActions={() => (
-        <View className="flex items-center justify-center mr-4">
+        <View className="flex items-center justify-center mr-4 ml-2">
           <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
         </View>
       )}

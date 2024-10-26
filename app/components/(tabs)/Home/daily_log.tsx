@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { Card, Layout, List, Text, useTheme } from "@ui-kitten/components";
+import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
@@ -11,6 +11,7 @@ import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
 import { EmissionsContext } from "@/contexts/EmissionsContext";
 import { myTheme } from "@/constants/custom-theme";
+import { FlatList } from "react-native";
 
 const templates = [DropdownEcoAction, ActionItem];
 const doneTemplates = [DoneItem];
@@ -181,7 +182,7 @@ const DailyLog: FC = () => {
   const headertextColor = theme['color-primary-900'];
 
   return (
-    <StyledLayout className="mt-3 ml-1 mr-1">
+    <StyledLayout className="mt-3">
       <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
         Daily Log
       </StyledText>
@@ -197,36 +198,36 @@ const DailyLog: FC = () => {
           Actions To Do
         </StyledText>
         {dailyLog.length > 0 ? (
-        <List
-          data={dailyLog}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-      ) : (
-        <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
-      )}
-      </StyledCard>
-
-      <StyledCard className="rounded-lg mb-2 mt-2">
-        <StyledText category="s1" 
-          style={{ 
-            color: myTheme['color-success-700'], 
-            fontWeight: 'bold', 
-            marginBottom: 5
-            }}
-          >
-          Actions Done
-        </StyledText>
-        {completedActions.length > 0 ? (
-          <List
-            data={completedActions}
-            renderItem={renderDoneItem}
+          <FlatList
+            data={dailyLog}
+            renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />
         ) : (
-          <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+          <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
         )}
       </StyledCard>
+
+        <StyledCard className="rounded-lg mb-2 mt-2">
+          <StyledText category="s1" 
+            style={{ 
+              color: myTheme['color-success-700'], 
+              fontWeight: 'bold', 
+              marginBottom: 5
+              }}
+            >
+            Actions Done
+          </StyledText>
+          {completedActions.length > 0 ? (
+            <FlatList
+              data={completedActions}
+              renderItem={renderDoneItem}
+              keyExtractor={(item) => item.id}
+            />
+          ) : (
+            <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+          )}
+        </StyledCard>
     </StyledLayout>
   );
 };

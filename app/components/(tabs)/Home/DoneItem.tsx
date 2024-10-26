@@ -5,7 +5,7 @@ import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
 import { styled } from "nativewind";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { Ionicons } from "@expo/vector-icons";
-import { Card, Layout, Text } from "@ui-kitten/components";
+import { Card, Input, Layout, Text } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 
 const StyledCard = styled(Card);
@@ -73,11 +73,10 @@ const DoneItem: React.FC<DoneItemProps> = ({
         </TouchableOpacity>
 
         {showInput && (
-        <View className="">
-          <StyledLayout className="rounded-xl">
-            <TextInput
-              className="rounded-xl p-2 mb-2"
-              style={{borderWidth: 1, borderColor: myTheme['color-basic-300']}}
+        <View>
+          <StyledLayout className="rounded-xl mb-2">
+            <Input
+              className="rounded-xl"
               placeholder="Enter"
               keyboardType="numeric"
               value={inputValue}
