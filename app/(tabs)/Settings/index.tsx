@@ -10,11 +10,10 @@ import { getUserUid } from '@/app/utils/utils';
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 
-const settings = () => {
+const setting = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
   const [pushNotifications, setPushNotifications] = useState(false);
   const [actionReminders, setActionReminders] = useState(false);
-  const [newsletter, setNewsletter] = useState(false);
   const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
@@ -103,4 +102,4 @@ const settings = () => {
   );
 };
 
-export default settings;
+export default setting;

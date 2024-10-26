@@ -52,7 +52,10 @@ const UserProfile = () => {
                 </StyledButton>
                 <StyledButton
                     className="p-1 m-1 rounded-full"
-                    onPress={() => router.push('/(tabs)Settings/menu')}
+                    onPress={() => {
+                        console.log("Navigating to Settings");
+                        router.push('/Settings/index');
+                    }}
                     size="small"
                     appearance="outline"
                     status="basic">
@@ -106,6 +109,7 @@ const UserProfile = () => {
                     
                 </StyledButton>
             </StyledLayout>
+
         </StyledLayout>
     );
 };
