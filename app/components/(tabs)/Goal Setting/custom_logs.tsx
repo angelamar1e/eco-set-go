@@ -39,11 +39,11 @@ const CustomLogs = () => {
 
   const renderEmptyMessage = () => {
     if (selectedFilter === "All") {
-      return <StyledText category="p1" className="text-center">Add Eco Actions</StyledText>;
+      return <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA', marginTop: 5}}>Add Eco Actions</StyledText>;
     } else if (selectedFilter === "To Do") {
-      return <StyledText category="p1" className="text-center">No pending actions.</StyledText>;
+      return <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA', marginTop: 5 }}>No pending actions.</StyledText>;
     } else if (selectedFilter === "Done") {
-      return <StyledText category="p1" className="text-center">No actions completed yet.</StyledText>;
+      return <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA', marginTop: 5 }}>No actions completed yet.</StyledText>;
     }
     return null;
   };
