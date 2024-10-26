@@ -4,7 +4,7 @@ import { Button, Text, Card, Layout, Avatar } from '@ui-kitten/components';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
 import firestore from "@react-native-firebase/firestore";
-import { getUserUid } from "../../utils/utils";
+import { getUserUid } from "@/app/utils/utils";
 
 const StyledButton = styled(Button);
 const StyledText = styled(Text);
@@ -52,7 +52,9 @@ const UserProfile = () => {
                 </StyledButton>
                 <StyledButton
                     className="p-1 m-1 rounded-full"
-                    onPress={() => router.push('/(tabs)')}
+                    onPress={() => {
+                        console.log("Navigating to settings");
+                        router.push('/Profile/Settings/setting')}}                     
                     size="small"
                     appearance="outline"
                     status="basic">

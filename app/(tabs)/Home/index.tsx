@@ -9,7 +9,7 @@ import { ThemedText } from "@/components/ThemedText";
 import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
 import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
-import { Card, Layout,  } from "@ui-kitten/components";
+import { Button, Card, Layout,  } from "@ui-kitten/components";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -69,9 +69,10 @@ export default function LandingPage() {
         <View className="flex-1 px-2">
           <View className="h-1/4 mt-3">
             <View className="flex-row items-center m-3">
-              <ThemedText type="title" className="mt-2 w-full">
+              <ThemedText type="title" className="mt-2 w-3/4">
                 Welcome, <Text className="italic text-lime-800">{userName}!</Text>
               </ThemedText> 
+              <Button style={{marginLeft: 45}} onPress={() => router.push('/Profile/profile')} />
             </View>
             <View className="flex flex-row h-full space-x-2 content-center">
               <Box className="rounded-[20px]">
