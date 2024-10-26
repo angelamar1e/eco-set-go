@@ -1,32 +1,60 @@
 import React, { useState } from "react";
-import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
+import { FlatList } from "react-native";
 import { styled } from "nativewind";
-import ToDoButton from "./ToDoButton";
+import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
+import { logList, EcoAction, LogItem } from "./LogsList";
+import ToDoButton from "./ToDoButton"; 
 import AddActionButton from "./AddActionButton";
-import LogList from "./LogsList";
 
-const CustomDailyLog = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string>("To-Do");
+const CustomLogs = () => {
+  const theme = useTheme();
+  const [tasks, setTasks] = useState<EcoAction[]>(logList);
+  const [selectedFilter, setSelectedFilter] = useState<string>("All");
 
   const StyledLayout = styled(Layout);
   const StyledText = styled(Text);
-  const StyledCard = styled(Card)
+  const StyledCard = styled(Card);
 
-  const theme = useTheme();
+  const toggleTaskCompletion = (id: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
 
-  const headertextColor = theme['color-primary-900'];
+  const handleDelete = (id: string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
 
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
   };
 
+  const filteredTasks = tasks.filter((task) => {
+    if (selectedFilter === "To Do") return !task.completed;
+    if (selectedFilter === "Done") return task.completed;
+    return true; // "All" filter
+  });
+
+  const renderEmptyMessage = () => {
+    if (selectedFilter === "All") {
+      return <StyledText category="p1" className="text-center">Add Eco Actions</StyledText>;
+    } else if (selectedFilter === "To Do") {
+      return <StyledText category="p1" className="text-center">No pending actions.</StyledText>;
+    } else if (selectedFilter === "Done") {
+      return <StyledText category="p1" className="text-center">No actions completed yet.</StyledText>;
+    }
+    return null;
+  };
+
   return (
     <StyledCard className="rounded-lg ml-2 mr-2 mb-2">
-      <StyledText category="h5" className="text-center" style={{ color: headertextColor }}>
+      <StyledText category="h5" className="text-center mb-2" style={{ color: theme['color-primary-900'] }}>
         Customize your Daily Log
       </StyledText>
 
-      <StyledLayout className="m-2 flex-row justify-between items-center">
+      <StyledLayout className="m-1 flex-row justify-between items-center">
         <StyledLayout className="flex-row">
           <ToDoButton 
             selectedFilter={selectedFilter} 
@@ -37,10 +65,20 @@ const CustomDailyLog = () => {
       </StyledLayout>
 
       <StyledLayout>
-        <LogList />
+        {filteredTasks.length === 0 ? (
+          renderEmptyMessage()
+        ) : (
+          <FlatList
+            data={filteredTasks}
+            renderItem={({ item }) => (
+              <LogItem item={item} onToggle={toggleTaskCompletion} onDelete={handleDelete} />
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </StyledLayout>
     </StyledCard>
   );
 };
 
-export default CustomDailyLog;
+export default CustomLogs;

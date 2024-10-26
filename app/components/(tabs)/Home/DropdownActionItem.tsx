@@ -29,15 +29,7 @@ const DropdownActionItem: React.FC<ActionItemProps> = ({
         </View>      
       )}
     >
-      <StyledLayout 
-        style={{
-          borderBottomEndRadius: 5, 
-          borderBottomStartRadius: 5, 
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} 
-          className="pt-1"
-        >
+      <StyledLayout className="pt-1 m-1">
       {/* <ThemedText className="h-15 w-56 text-m">{item.title}</ThemedText> */}
           {/* <StyledLayout className=""> */}
             <StyledSelect className="w-full rounded-lg" placeholder={item.title}>

@@ -21,14 +21,17 @@ const Reflection  = () => {
 
     return(
         <StyledCard className="rounded-lg ml-2 mr-2">
-            <StyledText category='h5' className="text-center" style={{ color: headertextColor }}>
+            <StyledText category='h5' 
+                className="text-center mb-2" 
+                style={{ color: headertextColor }}
+            >
                 Write your day...
             </StyledText>
-                <StyledLayout  className="flex-row justify-between p-2">
-                    <FilterDate onToggle={handleFilterDateToggle}/>
-                    <ReflectionButton />
-                </StyledLayout>
-                <ReflectionsList />
+            <StyledLayout  className="flex-row justify-between m-1 items-center">
+                <FilterDate onToggle={handleFilterDateToggle}/>
+                <ReflectionButton />
+            </StyledLayout>
+            <ReflectionsList />
         </StyledCard>
     )
 };
