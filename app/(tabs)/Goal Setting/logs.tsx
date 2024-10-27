@@ -20,9 +20,8 @@ const GoalSetting = () => {
 
     const theme = useTheme();
 
-    const subtextColor2 = theme['color-basic-600']; 
-    const subtextColor1 = theme['color-primary-900'];
-    const valuetextcolor = theme['color-primary-700']
+    const subtextColor1 = theme['color-basic-600']; 
+    const valuetextcolor = theme['color-success-700']
 
 
     const StyledText = styled(Text);
@@ -42,17 +41,17 @@ const GoalSetting = () => {
             <View className="items-center -mt-20 -bottom-5 mb-7 z-50">
                 <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}}>
                     <StyledText category='p1' className='text-center' style={{ color: subtextColor1 }}>Carbon Reduction Goal</StyledText>
-                    <StyledText category='h1' className='text-center mt-1' style={{ color: valuetextcolor }}>1000 g</StyledText>
+                    <StyledText category='h1' className='text-center mt-1' style={{ color: valuetextcolor }}>1000g</StyledText>
                     
                     <StyledLayout className="flex-row justify-between items-center mt-3">
                         <View className="flex-col justify-start left-5">
                             <View className="flex-row items-center">
-                                <StyledText category='s2'style={{ color: subtextColor2 }}>Start: </StyledText>
-                                <StyledText category='s2'style={{ color: subtextColor2 }}>{goalDates.startDate}</StyledText>
+                                <StyledText category='s2'style={{ color: subtextColor1 }}>Start: </StyledText>
+                                <StyledText category='s2'style={{ color: subtextColor1 }}>{goalDates.startDate}</StyledText>
                             </View>
                             <View className="flex-row items-center ">
-                                <StyledText category='s2' style={{ color: subtextColor2 }}>End: </StyledText>
-                                <StyledText category='s2' style={{ color: subtextColor2 }}>{goalDates.endDate}</StyledText>
+                                <StyledText category='s2' style={{ color: subtextColor1 }}>End: </StyledText>
+                                <StyledText category='s2' style={{ color: subtextColor1 }}>{goalDates.endDate}</StyledText>
                             </View>
                         </View>
                         <SetGoalButton />

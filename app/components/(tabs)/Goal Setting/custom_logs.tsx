@@ -50,7 +50,7 @@ const CustomLogs = () => {
 
   return (
     <StyledCard className="rounded-lg ml-2 mr-2 mb-2">
-      <StyledText category="h5" className="text-center mb-2" style={{ color: theme['color-primary-900'] }}>
+      <StyledText category="h5" className="text-center mb-2" style={{ color: theme['color-success-900'] }}>
         Customize your Daily Log
       </StyledText>
 

@@ -13,7 +13,7 @@ const Reflection  = () => {
 
     const theme = useTheme();
 
-    const headertextColor = theme['color-primary-900'];
+    const headertextColor = theme['color-success-900'];
 
     const handleFilterDateToggle = (isClicked: boolean) => {
         console.log('Filter Date clicked:', isClicked);
