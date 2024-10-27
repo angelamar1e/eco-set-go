@@ -7,6 +7,7 @@ import CommunityPosts from '@/app/components/(tabs)/Community/CommunityPosts';
 import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed';
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
 import { PostCard, MarketplacePost } from '@/types/PostCardProps';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -124,7 +125,10 @@ const Feed: React.FC = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+      <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+        style={{
+          backgroundColor: myTheme['color-success-700']
+      }}>
         <StyledText category="h4">Community</StyledText>
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}

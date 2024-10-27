@@ -6,6 +6,7 @@ import Achievements from './achievements';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
 import Search from './search';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -33,9 +34,13 @@ const Milestones = () => {
   return (
     <StyledLayout className="flex-1">
 
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+      <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+       style={{
+        backgroundColor: myTheme['color-success-700']
+        }}
+      >
         <StyledText category="h4">Milestones</StyledText>
-      </StyledLayout>
+      </StyledLayout>   
       
       <StyledLayout className="ml-2 mr-2 p-1 mb-5">
         <Search onSearch={(query: string) => console.log('Searching for:', query)} />

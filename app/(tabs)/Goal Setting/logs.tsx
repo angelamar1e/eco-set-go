@@ -5,6 +5,7 @@ import React from "react";
 import { FlatList, View } from "react-native";
 import { styled } from 'nativewind';
 import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
+import { myTheme } from "@/constants/custom-theme";
 
 const GoalSetting = () => {
     const data = [
@@ -30,7 +31,10 @@ const GoalSetting = () => {
 
     return (
         <StyledLayout className="flex-1">
-            <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+            <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+                style={{
+                    backgroundColor: myTheme['color-success-700']
+                }}>
                 <StyledText category="h4">Daily Log</StyledText>
                 <StyledText category="s1">Date</StyledText>
             </StyledLayout>

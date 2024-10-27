@@ -18,7 +18,11 @@ const EcoPoints = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+      <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+       style={{
+        backgroundColor: myTheme['color-success-700']
+        }}
+      >
         <StyledText category="h4">Eco Rewards</StyledText>
       </StyledLayout>
 
