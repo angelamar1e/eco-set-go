@@ -17,10 +17,10 @@ const doneDates = ["9", "10", "11", "12"];
 const WeekOverview: React.FC = () => {
 
 const theme = useTheme();
-const headertextColor = theme['color-primary-900'];
+const headertextColor = theme['color-success-900'];
 
   return (
-    <StyledLayout className="mt-3 ml-2 mr-2 relative">
+    <StyledLayout className="mt-4 ml-2 mr-2 relative">
       <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
         Week Overview
       </StyledText>

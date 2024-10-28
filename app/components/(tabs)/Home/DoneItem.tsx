@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, TextInput } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
 import { styled } from "nativewind";
@@ -46,50 +46,50 @@ const DoneItem: React.FC<DoneItemProps> = ({
           borderBottomWidth: 1, 
           borderBottomColor: myTheme['color-basic-500']
         }} 
-          className="pt-1"
+          className="pt-1 m-1"
         >
-      <StyledCard className="rounded-lg flex-wrap">
-      <View className="flex-row items-center">
-            <CircularCheckbox
-              status={
-                completedActions.some((action) => action.id === item.id)
-                  ? "checked"
-                  : "unchecked"
-              }
-              onPress={() => handleUnmark(item.id)}
-            />
-            <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
-          </View>
-        </StyledCard>
+        <StyledCard className="rounded-lg flex-wrap">
+          <View className="flex-row items-center">
+              <CircularCheckbox
+                status={
+                  completedActions.some((action) => action.id === item.id)
+                    ? "checked"
+                    : "unchecked"
+                }
+                onPress={() => handleUnmark(item.id)}
+              />
+              <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
+            </View>
+          </StyledCard>
 
-        <TouchableOpacity onPress={handleMoreDetails}>
-          <StyledText category="s1" 
-            className="ml-4 m-1"
-            style={{ 
-              color: myTheme['color-info-500']}}
-            >
-            Enter more details
-          </StyledText>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleMoreDetails}>
+            <StyledText category="s1" 
+              className="ml-4 m-1"
+              style={{ 
+                color: myTheme['color-info-500']}}
+              >
+              Enter more details
+            </StyledText>
+          </TouchableOpacity>
 
-        {showInput && (
-        <View>
-          <StyledLayout className="rounded-xl mb-2">
-            <Input
-              className="rounded-xl"
-              placeholder="Enter"
-              keyboardType="numeric"
-              value={inputValue}
-              onChangeText={setInputValue}
-            />
-          </StyledLayout>
-          <View className="items-center">
-            <TouchableOpacity className="bg-blue-500 rounded-full items-center p-2 w-1/2 mb-2">
-              <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
-            </TouchableOpacity>
+          {showInput && (
+          <View>
+            <StyledLayout className="rounded-xl mb-2">
+              <Input
+                className="rounded-xl"
+                placeholder="Enter"
+                keyboardType="numeric"
+                value={inputValue}
+                onChangeText={setInputValue}
+              />
+            </StyledLayout>
+            <View className="items-center">
+              <TouchableOpacity className="bg-blue-500 rounded-full items-center p-2 w-1/2 mb-2">
+                <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      )}
+        )}
       </StyledLayout>
     </Swipeable>
   );

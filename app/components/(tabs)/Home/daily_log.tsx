@@ -11,7 +11,9 @@ import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
 import { EmissionsContext } from "@/contexts/EmissionsContext";
 import { myTheme } from "@/constants/custom-theme";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const templates = [DropdownEcoAction, ActionItem];
 const doneTemplates = [DoneItem];
@@ -179,18 +181,29 @@ const DailyLog: FC = () => {
   };
 
   const theme = useTheme();
-  const headertextColor = theme['color-primary-900'];
+  const headertextColor = theme['color-success-900'];
 
   return (
-    <StyledLayout className="mt-3">
-      <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
-        Daily Log
-      </StyledText>
+    <StyledLayout className="mt-4">
+      <StyledLayout className="items-center">
+        <View style={{ flexDirection: "row",}}>
+          <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
+            Daily Log
+          </StyledText>
+          <TouchableOpacity
+            style={{ marginLeft: 8, 
+            }}
+            onPress={() => router.push('/(tabs)/Goal Setting/logs')}
+          >
+            <Ionicons name="pencil" color="#8F9BB3" size={18} />
+          </TouchableOpacity>
+        </View>
+      </StyledLayout>
 
       <StyledCard className="rounded-lg">
         <StyledText category="s1" 
           style={{ 
-            color: myTheme['color-success-700'], 
+            color: myTheme['color-success-900'], 
             fontWeight: 'bold', 
             marginBottom: 5
             }}
@@ -211,7 +224,7 @@ const DailyLog: FC = () => {
         <StyledCard className="rounded-lg mb-2 mt-2">
           <StyledText category="s1" 
             style={{ 
-              color: myTheme['color-success-700'], 
+              color: myTheme['color-success-900'], 
               fontWeight: 'bold', 
               marginBottom: 5
               }}
