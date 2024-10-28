@@ -125,7 +125,7 @@ const EcoActionDetail = () => {
     <Card style={{ margin: 10 }}>
       <Card.Content>
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{item.content}</Text>
-        {item.element_url && (
+        {item.media && (
           <Text
             style={{ color: "blue" }}
             // onPress={() => Linking.openURL(item.element_url)}
