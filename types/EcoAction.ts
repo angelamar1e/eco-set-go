@@ -8,6 +8,6 @@ export interface EcoAction {
     template: number;
     options?: Map<string,number>;
     baseMeal?: Map<string, string>;
-    baseEmission?: string;
+    baseEmission?: any;
     defaultKmTravelled?: number
 }

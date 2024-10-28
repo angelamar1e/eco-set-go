@@ -213,7 +213,7 @@ useEffect(() => {
   };
 
   // Define and persist car emissions state
-  const [kmTravelled, setKmTravelled] = useState(TransportEmission.Car.kmTravelled);
+  const [kmTravelled, setKmTravelled] = useState(Car.kmTravelled);
   const [constructionScale, setConstructionScale] = useState(TransportEmission.Car.constructionScale);
   const [lifeSpanInKm, setLifeSpanInKm] = useState(TransportEmission.Car.lifeSpan);
   const [footprintPerLiter, setFootprintPerLiter] = useState(TransportEmission.Car.footprintPerLiter);

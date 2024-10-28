@@ -5,18 +5,20 @@ import moment from "moment";
 import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
-import DoneItem from "./DoneItem";
+import StaticDone from "./StaticDone";
 import { EmissionsContext } from "@/contexts/Emissions";
-import {DoneMealAction, MealAction, MealData} from './MealAction';
+import {MealDone, Meal, MealData} from './MealAction';
 import DropdownActionItem from "./DropdownActionItem";
 import Static from './StaticAction';
 import Parameterized from "./ParameterizedAction";
-import EcoDriving from "./EcoDriving";
+import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
+import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
+import { Transportation } from "./TransportAction";
 
 const emissionsContext = useContext(EmissionsContext);
 
-const templates = [MealAction, Static, Parameterized, EcoDriving, DropdownActionItem];
-const doneTemplates = [DoneItem];
+const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
+const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
@@ -27,11 +29,19 @@ const DailyLog: FC = () => {
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
   const [baseMeal, setSelectedBaseMeal] = useState<MealData | undefined>();
   const [chosenMeal, setSelectedChosenMeal] = useState<MealData | undefined>();
+  const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
+  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
 
   // Handler to update meal states from MealAction
   const handleMealSelection = (base: MealData, chosen: MealData) => {
     setSelectedBaseMeal(base);
     setSelectedChosenMeal(chosen);
+  };
+
+  // Handler to update vehicle states for Transportation actions
+  const handleVehicleSelection = (lessEF: number, higherEF: number) => {
+    setVehicleLessEF(lessEF);
+    setVehicleHigherEF(higherEF);
   };
 
   const currentDate = moment().format("YYYY-MM-DD");
@@ -141,7 +151,7 @@ const DailyLog: FC = () => {
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
-    const ActionItemTemplate = templates[item.template ?? 0];
+    const ActionItemTemplate = templates[item.template];
 
     return (
       <ActionItemTemplate
@@ -150,22 +160,25 @@ const DailyLog: FC = () => {
         handleDelete={handleDelete}
         handleComplete={handleComplete}
         setMealSelection={handleMealSelection} // Pass down the handler
+        setSelectedVehicles={handleVehicleSelection}
       />
     );
   };
 
   const renderDoneItem = ({ item }: { item: EcoAction }) => { 
-    const DoneItemTemplate = DoneMealAction;
+    const ItemDoneTemplate = doneTemplates[item.template];
 
     return (
-      <DoneItemTemplate 
+      <ItemDoneTemplate
         item={item}
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleUnmark={handleUnmark}
         handleComplete={handleComplete}
-        baseMeal={baseMeal} // Pass down selected meals
+        baseMeal={baseMeal}
         chosenMeal={chosenMeal}
+        lessEF={vehicleLessEF}
+        higherEF={vehicleHigherEF}
       />
     );
   };

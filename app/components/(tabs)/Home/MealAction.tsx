@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
@@ -13,7 +13,7 @@ import {
   CustomWeights,
 } from "@/app/utils/EstimationUtils";
 import { EcoAction } from "@/types/EcoAction";
-import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
+import { FoodItem, Meals, MeanOneDayConsumption, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
 import { convertGramsToKg } from '../../../utils/EstimationUtils';
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
@@ -28,7 +28,7 @@ export interface MealData {
   mealEF: number;
 }
 
-export const MealAction: React.FC<ActionItemProps & {setMealSelection: (base: MealData, chosen: MealData) => void}> = ({
+export const Meal: React.FC<ActionItemProps & {setMealSelection: (base: MealData, chosen: MealData) => void}> = ({
   item,
   handleComplete,
   handleDelete,
@@ -43,7 +43,7 @@ export const MealAction: React.FC<ActionItemProps & {setMealSelection: (base: Me
   const toggleDropdown = () => setExpanded(!expanded);
 
   function getMealBase(mealType: string) {
-    return Meals[mealType]?.[0] || undefined; // Handles missing mealType gracefully
+    return Meals[mealType]?.[0] || undefined;
   }
 
   function getImpact(chosenMealType: string, chosenMealEF: string) {
@@ -100,7 +100,7 @@ export const MealAction: React.FC<ActionItemProps & {setMealSelection: (base: Me
   );
 };
 
-export const DoneMealAction: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMeal?: MealData }> = ({
+export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMeal?: MealData }> = ({
   item,
   handleComplete,
   completedActions,
@@ -108,7 +108,7 @@ export const DoneMealAction: React.FC<DoneItemProps & { baseMeal?: MealData; cho
   baseMeal,
   chosenMeal,
 }) => {
-  const emissionsContext = useContext(EmissionsContext);
+  const { emissionsData } = useContext(EmissionsDataContext);
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
 
@@ -116,20 +116,47 @@ export const DoneMealAction: React.FC<DoneItemProps & { baseMeal?: MealData; cho
     setShowInput(!showInput);
   };
 
+    // Function to calculate maximum replacement quantity
+  function getMaxReplacementAmount(baseAmount = 0.15, minReduction = 0.1) {
+    // Get the emission factors for the chosen meal and replacement
+    const baseEF = MeanOneDayConsumption[baseMeal!.mealBase].efPerKg
+    const replacementEF = MeanOneDayConsumption[chosenMeal!.mealBase].efPerKg
+
+    // Calculate emissions for the base meal and target reduction
+    const baseEmissions = baseMeal!.mealEF;  // Emissions of the original meal (150 grams by default)
+    const targetReduction = baseEmissions - minReduction; // Target emissions after 100 grams reduction
+
+    // Calculate the maximum amount of replacement to meet the reduction goal
+    const maxReplacementAmount = targetReduction / replacementEF;
+
+    // Convert to grams for clarity
+    return convertKgToGrams(maxReplacementAmount);
+  }
+
   const handleCompleteDetails = () => {
     if (!baseMeal || !chosenMeal) return;
 
     const weightInGrams = inputValue ? parseFloat(inputValue) : 0.15;
-    const additionals = emissionsContext["additionals"] || {};
+    const additionals = emissionsData['foodAdditionals'] || {};
+    const maxReplacementAmount = getMaxReplacementAmount();
+    console.log(maxReplacementAmount);
 
-    const impact = computeImpact(
-      computeMealEmission(baseMeal.mealType, additionals, { [baseMeal.mealBase]: convertGramsToKg(weightInGrams)}),
-      computeMealEmission(chosenMeal.mealType, additionals, { [chosenMeal.mealBase]: convertGramsToKg(weightInGrams) }), 
-    );
+    if (weightInGrams > maxReplacementAmount) {
+      Alert.alert(
+          "Oops! 🐔🍲",
+          `Looks like you've got a bit too much on your plate! For a more climate-friendly meal, try keeping ${chosenMeal.mealBase} under ${maxReplacementAmount} grams. 🌎`
+        );
+    }
+    else{
+      const impact = computeImpact(
+        computeMealEmission(baseMeal.mealType, additionals, { [baseMeal.mealBase]: convertGramsToKg(weightInGrams)}),
+        computeMealEmission(chosenMeal.mealType, additionals, { [chosenMeal.mealBase]: convertGramsToKg(weightInGrams) }), 
+      );
 
-    handleComplete(item.id, convertKgToGrams(impact));
-    setInputValue("");
-    setShowInput(false);
+      handleComplete(item.id, convertKgToGrams(impact));
+      setInputValue("");
+      setShowInput(false);
+    }
   };
 
   return (
@@ -156,8 +183,7 @@ export const DoneMealAction: React.FC<DoneItemProps & { baseMeal?: MealData; cho
           {showInput && (
             <View className="mt-2 px-4 flex-row">
               <Text>
-                Input amount of {chosenMeal?.mealBase || "food"} eaten (in
-                grams)
+                Input amount of {chosenMeal?.mealBase || "food"} eaten
               </Text>
               <TextInput
                 className="border text-white border-gray-400 rounded p-2 mb-2"
@@ -166,6 +192,9 @@ export const DoneMealAction: React.FC<DoneItemProps & { baseMeal?: MealData; cho
                 value={inputValue}
                 onChangeText={setInputValue}
               />
+              <Text>
+                grams
+              </Text>
               <TouchableOpacity
                 className="bg-blue-500 rounded p-2"
                 onPress={handleCompleteDetails}
