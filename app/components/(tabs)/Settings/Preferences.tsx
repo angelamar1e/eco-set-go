@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Platform, Alert } from 'react-native';
-import { Toggle, Text, Layout } from '@ui-kitten/components';
+import { Toggle, Text, Layout, Button } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Divider } from 'react-native-paper';
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 const StyledToggle = styled(Toggle);
+const StyledButton = styled(Button);
 
 const Preferences: React.FC = () => {
   const [pushNotifications, setPushNotifications] = useState(false);
@@ -46,7 +48,7 @@ const Preferences: React.FC = () => {
     } else {
       cancelNotifications();
     }
-  }, [pushNotifications, selectedTime]);
+  }, [pushNotifications]);
 
   // Notification registration and scheduling functions
   const registerForPushNotificationsAsync = async () => {
@@ -107,11 +109,12 @@ const Preferences: React.FC = () => {
 
   // Time picker change handler
   const onTimeChange = (event: any, selectedDate: Date | undefined) => {
-    const currentTime = selectedDate || selectedTime;
-    setShowTimePicker(Platform.OS === 'ios');
-    setSelectedTime(currentTime);
-    if (pushNotifications) {
-      scheduleDailyNotification(currentTime);
+    setShowTimePicker(false); // Hide time picker after selecting time
+    if (selectedDate && selectedDate.getTime() !== selectedTime.getTime()) {
+      setSelectedTime(selectedDate);
+      if (pushNotifications) {
+        scheduleDailyNotification(selectedDate);
+      }
     }
   };
 
@@ -126,20 +129,40 @@ const Preferences: React.FC = () => {
         />
       </StyledLayout>
 
-      {/* Time Picker for Notification */}
       {pushNotifications && (
-        <StyledLayout>
-          <Text>Select Notification Time:</Text>
-          <DateTimePicker
-            value={selectedTime}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={onTimeChange}
-          />
-          <Text>Selected Time: {selectedTime.getHours()}:{selectedTime.getMinutes()}</Text>
+      <StyledLayout className="p-2 m-1">
+        <StyledLayout className="flex flex-row items-center justify-between">
+          <StyledText category="s1">Selected Time:</StyledText>
+          <StyledButton 
+            className="rounded-full" 
+            status='basic'
+            size="small"
+            onPress={() => setShowTimePicker(true)}
+          >
+            Edit Time
+          </StyledButton>
         </StyledLayout>
-      )}
+
+        {/* Separate row for displaying the selected time */}
+        <StyledLayout className="mt-2">
+          <StyledText category="h6">{selectedTime.getHours()}:{selectedTime.getMinutes().toString().padStart(2, '0')}</StyledText>
+        </StyledLayout>
+
+        {/* Time Picker */}
+        {showTimePicker && (
+          <StyledLayout className="mt-2">
+            <DateTimePicker
+              value={selectedTime}
+              mode="time"
+              is24Hour={true}
+              display="default"
+              onChange={onTimeChange}
+            />
+          </StyledLayout>
+        )}
+      </StyledLayout>
+    )}
+      
     </StyledLayout>
   );
 };
