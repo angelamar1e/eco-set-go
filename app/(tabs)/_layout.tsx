@@ -8,12 +8,11 @@ import GoalSetting from './Goal Setting/logs';
 import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import Notification from './Notifications';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function TabLayout() {
-  const theme = useTheme(); // Use UI Kitten's theme
+  const theme = useTheme();
 
   return (
     <Navigator
@@ -30,6 +29,7 @@ export default function TabLayout() {
           fontSize: 11,
           marginBottom: 3,
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Screen
