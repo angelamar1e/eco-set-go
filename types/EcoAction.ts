@@ -7,4 +7,7 @@ export interface EcoAction {
     updated_at: Date;
     template: number;
     options?: Map<string,number>;
+    baseMeal?: Map<string, string>;
+    baseEmission?: string;
+    defaultKmTravelled?: number
 }

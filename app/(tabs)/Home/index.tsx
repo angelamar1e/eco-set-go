@@ -3,7 +3,7 @@ import { BackHandler, View, Text } from "react-native";
 import { styled } from "nativewind";
 import { getUserName, getUserUid, handleBackAction } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DailyLog from "@/app/components/(tabs)/Home/daily_log";
+import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import firestore from "@react-native-firebase/firestore";
 import LogOutButton from "@/app/components/LogOutButton";
 import { ThemedText } from "@/components/ThemedText";
@@ -104,7 +104,7 @@ export default function LandingPage() {
           </View>
 
           <View className="flex-1 mb-20 mt-4">
-            <QuizButton />
+            {/* <QuizButton /> */}
             <LogOutButton />
           </View>
         </View>

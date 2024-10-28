@@ -5,7 +5,7 @@ import { Checkbox, IconButton } from "react-native-paper";
 import { Swipeable } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
 
-const ActionItem: React.FC<ActionItemProps> = ({
+const Static: React.FC<ActionItemProps> = ({
   item,
   completedActions,
   handleComplete,
@@ -25,11 +25,11 @@ const ActionItem: React.FC<ActionItemProps> = ({
               ? "checked"
               : "unchecked"
           }
-          onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
+          onPress={() => handleComplete(item.id, item.impact ?? 0)}
         />
       </View>
     </Swipeable>
   );
 };
 
-export default ActionItem;
+export default Static;

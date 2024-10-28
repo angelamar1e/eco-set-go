@@ -1,12 +1,20 @@
 import {
-  FoodEmission,
-  FoodItemEF,
+  Beverages,
+  FoodItem,
+  mealBase,
+  Meals,
+  MeanOneDayConsumption,
   Multipliers,
   TransportEmission,
-  weightDistribution,
 } from "@/constants/DefaultValues";
 import { FlightData } from "@/types/FlightData";
 import { ElectricityEmissions } from "../../constants/DefaultValues";
+
+export function convertKgToGrams(inKg: number){
+  let inGrams = inKg * 1000;
+
+  return inGrams;
+}
 
 export function convertKgToTons(inKg: number) {
   // metric tons
@@ -15,10 +23,27 @@ export function convertKgToTons(inKg: number) {
   return inTons;
 }
 
+export function convertGramsToKg(inGrams: number) {
+  // metric tons
+  let inKg = inGrams / 1000;
+
+  return inKg;
+}
+
+export function computeImpact(higherEF: number, lessEF: number) {
+  const impact = higherEF - lessEF;
+
+  return impact;
+}
+
 export function frequencyMultiplier(value: number, multiplier: number) {
   let result = value * multiplier;
 
   return result;
+}
+
+export function getCarEFPerKm(footprintPerLiter: number, consumptionPerKm: number){
+  return (consumptionPerKm / 100) * footprintPerLiter;
 }
 
 export function computeCarEmissions(
@@ -36,7 +61,7 @@ export function computeCarEmissions(
     return (carEmission = 0);
   }
 
-  let efPerKm = (consumptionPerKm / 100) * footprintPerLiter;
+  let efPerKm = getCarEFPerKm(footprintPerLiter, consumptionPerKm);
   let amortization = 1 / lifeSpanInKm;
   let constructionPerKm = constructionScale * amortization;
   let thresholdKm = lifeSpanInKm / 20;
@@ -228,13 +253,6 @@ export function computeTotalPublicTransportEmissions(
   return convertKgToTons(publicTransportEmissions);
 }
 
-type FoodItem = keyof typeof FoodItemEF;
-
-// Define the structure for the breakfast weights
-type Weights = {
-  [key: string]: number; // A mapping of food item names to their weights
-};
-
 // Update the function to calculate breakfast emissions
 export function computeBreakfastEmissions(breakfastEF: number): number {
   let breakfastEmission = 0;
@@ -254,22 +272,70 @@ interface MealTypeFrequency {
   "Fish meat meal": number;
 }
 
-export function computeMealEmission(mealWeights: Weights) {
-  let mealEmission = 0;
+export function getAdditionals(breakfastType: string): FoodItem[] {
+  let additionals: FoodItem[] = [];
+  const breakfast = Meals[breakfastType];
 
-  if (mealWeights){
-    // Calculate emissions by matching food item to its emission factor and summing the total
-    for (const item in mealWeights) {
-      const weight = mealWeights[item]; // Weight in kg
-      const emissionFactor = FoodItemEF[item as FoodItem]; // Emission factor in kg CO2e per kg
-
-      if (emissionFactor) {
-        mealEmission += weight * emissionFactor;
-      }
+  // Add item keys from MeanOneDayConsumption that are not in breakfast
+  for (const item in MeanOneDayConsumption) {
+    if (!(breakfast.includes(item)) && !(mealBase.includes(item))) {
+      additionals.push(item); // Add the item key to additionals if not in breakfast
     }
   }
 
+  return additionals;
+}
+
+// Type definition to include optional custom weights for each food item
+export type CustomWeights = Record<FoodItem, number>;
+
+export function computeMealEmission(
+  mealType: string,
+  additionals: FoodItem[],
+  customWeights?: CustomWeights
+): number {
+
+  let baseMealEmission = 0;
+  const mealComposition = Meals[mealType];
+
+  // Use custom-weight emissions if provided
+  if (customWeights) {
+    baseMealEmission = calculateEmission(customWeights);
+  }
+  else {
+    baseMealEmission = calculateEmission(mealComposition);
+  }
+
+  // Filter out "Egg" and "Milk" if the meal type is vegan
+  if (mealType === "Vegan") {
+    additionals = additionals.filter(item => item !== "Egg" && item !== "Milk");
+  }
+
+  // Calculate the additional emissions and add to base meal emission, adjusting by factor
+  let mealEmission = baseMealEmission + (calculateEmission(additionals) / 3);
+
   return mealEmission;
+}
+
+// Helper function to calculate emissions from either an array or an object of custom weights
+export function calculateEmission(items: FoodItem[] | CustomWeights): number {
+  if (Array.isArray(items)) {
+    // Process array of FoodItem strings
+    return items.reduce((total, item) => {
+      const data = MeanOneDayConsumption[item];
+      if (!data) return total;  // Skip items not found in MeanOneDayConsumption
+      const { efPerKg, weightInKg } = data;
+      return total + efPerKg * weightInKg;
+    }, 0);
+  } else {
+    // Process object with custom weights
+    return Object.entries(items).reduce((total, [item, customWeight]) => {
+      const data = MeanOneDayConsumption[item];
+      if (!data) return total;  // Skip items not found in MeanOneDayConsumption
+      const { efPerKg } = data;
+      return total + efPerKg * customWeight;
+    }, 0);
+  }
 }
 
 export function computeTotalMealEmissions(
@@ -321,7 +387,7 @@ export function computeHotDrinkEmission(
   frequencyPerDay: number
 ) {
   let efPerCup = ef * kgPerCup;
-  let hotDrinkEmission = frequencyPerDay * efPerCup * 365; // days in a year
+  let hotDrinkEmission = frequencyPerDay * efPerCup
 
   return hotDrinkEmission;
 }
@@ -337,24 +403,24 @@ export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency) {
 
   if (frequency["Coffee"] > 0) {
     totalHotDrinksEmissions += computeHotDrinkEmission(
-      FoodEmission.HotDrinks.drinkTypeEF.coffee,
-      FoodEmission.HotDrinks.kgPerCup.coffee,
+      Beverages.HotDrinks.drinkTypeEF.coffee,
+      Beverages.HotDrinks.kgPerCup.coffee,
       frequency["Coffee"]
-    );
+    ) * 365;
   }
   if (frequency["Tea"] > 0) {
     totalHotDrinksEmissions += computeHotDrinkEmission(
-      FoodEmission.HotDrinks.drinkTypeEF.tea,
-      FoodEmission.HotDrinks.kgPerCup.tea,
+      Beverages.HotDrinks.drinkTypeEF.tea,
+      Beverages.HotDrinks.kgPerCup.tea,
       frequency["Tea"]
-    );
+    ) * 365;
   }
   if (frequency["Hot Chocolate"] > 0) {
     totalHotDrinksEmissions += computeHotDrinkEmission(
-      FoodEmission.HotDrinks.drinkTypeEF.hotChoco,
-      FoodEmission.HotDrinks.kgPerCup.hotChoco,
+      Beverages.HotDrinks.drinkTypeEF.hotChoco,
+      Beverages.HotDrinks.kgPerCup.hotChoco,
       frequency["Hot Chocolate"]
-    );
+    ) * 365;
   }
 
   return convertKgToTons(totalHotDrinksEmissions);
@@ -381,15 +447,15 @@ export function computeTotalColdDrinkEmissions(
   if (sweetDrinksFrequency > 0) {
     totalColdDrinksEmissions += computeColdDrinkEmission(
       sweetDrinksFrequency,
-      FoodEmission.ColdDrinks.sweetDrinks.litersPerDay,
-      FoodEmission.ColdDrinks.sweetDrinks.ef
+      Beverages.ColdDrinks.sweetDrinks.litersPerDay,
+      Beverages.ColdDrinks.sweetDrinks.ef
     );
   }
   if (alcoholFrequency > 0) {
     totalColdDrinksEmissions += computeColdDrinkEmission(
       alcoholFrequency,
-      FoodEmission.ColdDrinks.alcohol.litersPerDay,
-      FoodEmission.ColdDrinks.sweetDrinks.ef
+      Beverages.ColdDrinks.alcohol.litersPerDay,
+      Beverages.ColdDrinks.sweetDrinks.ef
     );
   }
 
@@ -400,8 +466,8 @@ export function computeBottledWaterEmissions(buysBottledWater: boolean) {
   let bottledWaterEmissions = 0;
 
   if (buysBottledWater) {
-    let annualConsumption = FoodEmission.BottledWater.consumption * 365;
-    bottledWaterEmissions = annualConsumption * FoodEmission.BottledWater.ef;
+    let annualConsumption = Beverages.BottledWater.consumption * 365;
+    bottledWaterEmissions = annualConsumption * Beverages.BottledWater.ef;
   }
 
   return convertKgToTons(bottledWaterEmissions);

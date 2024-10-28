@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
-import { EmissionsContext } from "@/contexts/EmissionsContext";
+import { EmissionsContext } from "@/contexts/Emissions";
 import { ThemedView } from "@/components/ThemedView";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
 import { Text } from "react-native-paper";

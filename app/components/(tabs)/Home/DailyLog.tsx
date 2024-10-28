@@ -1,17 +1,21 @@
-import React, { FC, useEffect, useState } from "react";
-import { View, FlatList, Text } from "react-native";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { View, FlatList, Text, KeyboardAvoidingView } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
-
-import { Checkbox } from "react-native-paper";
-import DropdownEcoAction from './DropdownActionItem';
-import ActionItem from './ActionItem';
 import DoneItem from "./DoneItem";
+import { EmissionsContext } from "@/contexts/Emissions";
+import {DoneMealAction, MealAction, MealData} from './MealAction';
+import DropdownActionItem from "./DropdownActionItem";
+import Static from './StaticAction';
+import Parameterized from "./ParameterizedAction";
+import EcoDriving from "./EcoDriving";
 
-const templates = [DropdownEcoAction, ActionItem];
+const emissionsContext = useContext(EmissionsContext);
+
+const templates = [MealAction, Static, Parameterized, EcoDriving, DropdownActionItem];
 const doneTemplates = [DoneItem];
 
 const DailyLog: FC = () => {
@@ -21,6 +25,14 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
+  const [baseMeal, setSelectedBaseMeal] = useState<MealData | undefined>();
+  const [chosenMeal, setSelectedChosenMeal] = useState<MealData | undefined>();
+
+  // Handler to update meal states from MealAction
+  const handleMealSelection = (base: MealData, chosen: MealData) => {
+    setSelectedBaseMeal(base);
+    setSelectedChosenMeal(chosen);
+  };
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -45,8 +57,6 @@ const DailyLog: FC = () => {
 
   useEffect(() => {
     if (!userUid) return;
-
-    
 
     const unsubscribeDailyLog = dailyLogDoc.onSnapshot((doc) => {
       const data = doc.data();
@@ -114,7 +124,7 @@ const DailyLog: FC = () => {
     });
   }
 
-  async function handleComplete(actionId: string, selectedOptionValue: number) {
+  async function handleComplete(actionId: string, impact: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
     // Fetch the existing log for the current date
@@ -124,27 +134,28 @@ const DailyLog: FC = () => {
     await userLogs.update({
       [currentDate]: {
         ...currentLog, // Keep the existing entries for the date
-        [actionId]: selectedOptionValue, // Update the specific action
+        [actionId]: impact, // Update the specific action
       },
     });
   }
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
-    const ActionItemTemplate = templates[item.template];
+    const ActionItemTemplate = templates[item.template ?? 0];
 
     return (
-      <ActionItemTemplate 
+      <ActionItemTemplate
         item={item}
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleComplete={handleComplete}
+        setMealSelection={handleMealSelection} // Pass down the handler
       />
     );
   };
 
   const renderDoneItem = ({ item }: { item: EcoAction }) => { 
-    const DoneItemTemplate = doneTemplates[item.template];
+    const DoneItemTemplate = DoneMealAction;
 
     return (
       <DoneItemTemplate 
@@ -153,32 +164,36 @@ const DailyLog: FC = () => {
         handleDelete={handleDelete}
         handleUnmark={handleUnmark}
         handleComplete={handleComplete}
+        baseMeal={baseMeal} // Pass down selected meals
+        chosenMeal={chosenMeal}
       />
     );
   };
 
-  return (
-    <View className="bg-gray">
-      <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
-        Daily Log
-      </ThemedText>
-      <FlatList
-        data={dailyLog}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-      <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
-      {completedActions.length > 0 ? (
+    return (
+      // <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
+      <View className="bg-gray">
+        <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+          Daily Log
+        </ThemedText>
         <FlatList
-          data={completedActions}
-          renderItem={renderDoneItem}
+          data={dailyLog}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
-      ) : (
-        <Text className="text-center text-gray-500">No actions completed yet.</Text>
-      )}
-    </View>
-  );
+        <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
+        {completedActions.length > 0 ? (
+          <FlatList
+            data={completedActions}
+            renderItem={renderDoneItem}
+            keyExtractor={(item) => item.id}
+          />
+        ) : (
+          <Text className="text-center text-gray-500">No actions completed yet.</Text>
+        )}
+      </View>
+      // </KeyboardAvoidingView>
+    );
 };
 
 export default DailyLog;
