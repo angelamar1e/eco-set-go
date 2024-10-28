@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as eva from "@eva-design/eva";
 import { ApplicationProvider, Layout } from "@ui-kitten/components";
+// import { EmissionsProvider } from "@/contexts/EmissionsContext";
 import { myTheme } from "@/constants/custom-theme";
 import { useColorScheme } from "react-native";
 import { EmissionsProvider } from "@/contexts/Emissions";
@@ -11,7 +12,7 @@ export default function ProfileLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <EmissionsProvider>
+    // <EmissionsProvider>
       <ApplicationProvider
         {...eva}
         theme={colorScheme === "dark" ? { ...eva.dark, ...myTheme } : { ...eva.light, ...myTheme.light }}
@@ -25,6 +26,5 @@ export default function ProfileLayout() {
           </Layout>
         </GestureHandlerRootView>
       </ApplicationProvider>
-    </EmissionsProvider>
   );
 }

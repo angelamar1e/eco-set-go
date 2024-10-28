@@ -49,7 +49,9 @@ const DailyLog: FC = () => {
 
   async function getCurrentLog(actionId: string) {
     const currentDate = moment().format("YYYY-MM-DD");
+
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
+
     setCurrentLog(currentLog[actionId]);
   }
 
@@ -125,6 +127,7 @@ const DailyLog: FC = () => {
 
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
+    // Remove the specific actionId from the map for the current date
     delete currentLog[actionId];
 
     await userLogs.update({
@@ -135,8 +138,10 @@ const DailyLog: FC = () => {
   async function handleComplete(actionId: string, impact: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
+    // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
+    // Update the specific actionId within the current date without overwriting other fields
     await userLogs.update({
       [currentDate]: {
         ...currentLog, // Keep the existing entries for the date
@@ -144,9 +149,6 @@ const DailyLog: FC = () => {
       },
     });
   }
-
-  const theme = useTheme();
-  const headertextColor = theme['color-primary-900'];
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
