@@ -18,7 +18,6 @@ const settings = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
   const [pushNotifications, setPushNotifications] = useState(false);
   const [actionReminders, setActionReminders] = useState(false);
-  const [newsletter, setNewsletter] = useState(false);
   const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
@@ -76,30 +75,21 @@ const settings = () => {
   }, []);
   
   return (
-    <StyledLayout className="flex-1">
-      <StyledLayout className="mt-5 flex-row p-1 justify-between">
-          <StyledButton
-              onPress={() => router.push('/(tabs)/Home')}
-              className="p-1 mt-1 rounded-full"
-              size="small"
-              appearance="outline"
-              status="basic">
-              <Ionicons name="chevron-back-outline"></Ionicons>
-          </StyledButton>
-        </StyledLayout>
+    <StyledLayout className='flex-1'>
+      
       <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
          <StyledText category="h4" className='text-white'>Settings</StyledText>
       </StyledLayout>
 
-        <StyledLayout className="ml-2 mr-2">
-            <SettingsTab 
-            selectedTab={selectedTab} 
-            setSelectedTab={setSelectedTab}
-            />
-        </StyledLayout>
+      <StyledLayout className="ml-2 mr-2">
+        <SettingsTab 
+          selectedTab={selectedTab} 
+          setSelectedTab={setSelectedTab}
+        />
+      </StyledLayout>
       
-        <StyledLayout className="mt-5">
+      <StyledLayout className="mt-5">
         {selectedTab === 'Details' ? (
             <Details 
                 username={username}
@@ -107,15 +97,9 @@ const settings = () => {
                 password={password}
             />
         ) : (
-            <Preferences
-            pushNotifications={pushNotifications}
-            setPushNotifications={setPushNotifications}
-            actionReminders={actionReminders}
-            setActionReminders={setActionReminders}
-            />
+            <Preferences/>
         )}    
-        </StyledLayout>
-
+      </StyledLayout>
     </StyledLayout>
   );
 };

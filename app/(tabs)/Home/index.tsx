@@ -7,7 +7,6 @@ import DailyLog from "@/app/components/(tabs)/Home/daily_log";
 import firestore from "@react-native-firebase/firestore";
 import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
-import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
 import { Button, Card, Layout, Text,  } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -72,14 +71,14 @@ export default function LandingPage() {
         <StyledLayout className="flex-1 px-2">
           <StyledLayout className="h-1/4 mt-3">
             <StyledLayout className="flex-row items-center m-3 justify-between">
-              <StyledText category="h1" className="w-3/4">
-                  Welcome, <StyledText category="h1" className="italic"
-                  style={{color: myTheme['color-success-900']}}
+              <StyledText category="h4" className="w-3/4">
+                  Welcome, <StyledText category="h4" className="italic"
+                  style={{color: myTheme['color-success-600']}}
                 >{userName}!</StyledText>
               </StyledText> 
               <StyledButton 
                 className="p-1 m-1 rounded-full"
-                size="large"
+                size="medium"
                 appearance="outline"
                 status="basic"
                 onPress={() => router.push('/Profile/profile')} 
@@ -90,13 +89,13 @@ export default function LandingPage() {
             
             <StyledLayout className="flex flex-row h-auto space-x-2 content-center">
               <Box>
-                <StyledText category="p1" className="text-center mb-3">
+                <StyledText category="p1" className="text-center text-white mb-3">
                   Carbon Footprint
                 </StyledText>
-                <StyledText category="h6" className="text-center text-6xl">
+                <StyledText category="h6" className="text-center text-white text-6xl">
                   {overallFP}
                 </StyledText>
-                <StyledText className="text-center italic text-sm">
+                <StyledText className="text-center text-white italic text-sm">
                   tons of{'\n'}CO2 equivalent
                 </StyledText>
               </Box>
@@ -115,7 +114,6 @@ export default function LandingPage() {
             </StyledLayout>
 
             <ImpactCalculator onImpactUpdate={handleImpactChange} />
-            <WeekOverview />
             {/*<DailyLog />*/}
           </StyledLayout>
         </StyledLayout>

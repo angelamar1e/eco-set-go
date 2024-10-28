@@ -93,17 +93,6 @@ export default function TabLayout() {
         }}
       />
 
-<Screen
-        name="Notifications"
-        component={Notification}
-        options={{
-          title: 'Notifications',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'notifications' : 'notifications-outline'} color={color} />
-          ),
-        }}
-      />
-
     </Navigator>
   );
 }
