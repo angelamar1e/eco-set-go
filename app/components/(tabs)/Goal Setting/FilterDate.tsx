@@ -5,10 +5,10 @@ import { Text } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
 import { myTheme } from '@/constants/custom-theme';
 
+const StyledButton = styled(TouchableOpacity);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-// Define the props interface
 interface FilterDateProps {
   onToggle: (isClicked: boolean) => void; 
 }
@@ -23,27 +23,30 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle }) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} className="flex-row items-center">
-      <Ionicons name="calendar" size={18} color="#8F9BB3" />
-      <StyledView className="border rounded-full p-1 m-1 flex-row items-center" 
+    <StyledButton
+      onPress={handlePress}
+      className="flex-row items-center border rounded-full p-1 px-3 py-1 m-1"
       style={{
         borderColor: myTheme['color-basic-600'], 
         backgroundColor: myTheme['color-basic-transparent-100']
+      }}
+    >
+      <Ionicons name="calendar" size={18} color="#8F9BB3" />
+      <Text category="label"
+        style={{
+          color: myTheme['color-basic-600'],
+          marginLeft: 5,
+          marginRight: 5
         }}
       >
-        <StyledText category="label" className="ml-1 mr-2 text-sm" 
-          style={{
-            color: myTheme['color-basic-600']
-            }}
-          >Filter date
-        </StyledText>
+        Filter date
+      </Text>
         {isClicked ? (
           <Ionicons name="chevron-up" size={13} color="#8F9BB3" />
         ) : (
-          <Ionicons name="chevron-down" size={13} color="#8F9BB3"  />
+          <Ionicons name="chevron-down" size={13} color="#8F9BB3" />
         )}
-      </StyledView>
-    </TouchableOpacity>
+    </StyledButton>
   );
 };
 

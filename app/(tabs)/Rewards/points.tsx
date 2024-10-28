@@ -14,11 +14,14 @@ const StyledCard = styled(Card);
 const EcoPoints = () => {
 
   const theme = useTheme();
-    const maintextcolor = theme['color-primary-700'];
+    const maintextcolor = theme['color-success-700'];
+    const subtextColor1 = theme['color-basic-600']; 
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
+      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+          style={{ backgroundColor: myTheme['color-success-700']}}>
+         <StyledText category="h4" className='text-white'>Eco Rewards</StyledText>
         <StyledText category="h4">Eco Rewards</StyledText>
       </StyledLayout>
 
@@ -35,8 +38,8 @@ const EcoPoints = () => {
 
           <StyledLayout className="flex-row items-center justify-between mt-2">
             <StyledText category="s1">100</StyledText>
-            <StyledText category="c1" className="right-11">current EcoPoints</StyledText>
-            <StyledText category="c1" className="left-11">Level 11</StyledText>
+            <StyledText category="c1" className="right-11" style={{ color: subtextColor1 }}>current EcoPoints</StyledText>
+            <StyledText category="c1" className="left-11" style={{ color: subtextColor1 }}>Level 11</StyledText>
             <StyledText category="s1">1000</StyledText>
           </StyledLayout>
         </StyledCard>
@@ -45,11 +48,11 @@ const EcoPoints = () => {
       <StyledLayout className="flex-row p-4 mt-2 justify-between items-center">
         <GoToMilestones />
         <StyledLayout className="flex-row items-center">
-          <StyledText category='label' className="text-sm">Total</StyledText>
+          <StyledText category='c1' className="text-sm" style={{ color: subtextColor1 }}>Total</StyledText>
           <StyledLayout 
             className="py-2 px-3 m-1 rounded-full"
             style={{
-              backgroundColor: myTheme['color-primary-700']
+              backgroundColor: myTheme['color-success-700']
             }}
           >
             <StyledText category="label">5000 EcoPoints</StyledText>

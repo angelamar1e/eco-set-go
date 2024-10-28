@@ -7,13 +7,12 @@ import CombinedReport from './Progress Monitoring/report';
 import GoalSetting from './Goal Setting/logs';
 import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
-import UserProfile from './Profile/profile';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function TabLayout() {
-  const theme = useTheme(); // Use UI Kitten's theme
+  const theme = useTheme();
 
   return (
     <Navigator
@@ -30,6 +29,7 @@ export default function TabLayout() {
           fontSize: 11,
           marginBottom: 3,
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Screen
@@ -92,16 +92,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Screen
-        name="Profile/profile"
-        component={UserProfile}
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
-          ),
-        }}
-      />
+
     </Navigator>
   );
 }

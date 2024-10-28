@@ -1,8 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { View, FlatList, Text, KeyboardAvoidingView } from "react-native";
+import { Layout, List, Text, useTheme } from "@ui-kitten/components";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
-import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
 import StaticDone from "./StaticDone";
@@ -16,9 +15,15 @@ import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAc
 import { Transportation } from "./TransportAction";
 
 const emissionsContext = useContext(EmissionsContext);
+import { styled } from "nativewind";
+
+import DropdownEcoAction from './DropdownActionItem';
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
 const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
@@ -48,9 +53,7 @@ const DailyLog: FC = () => {
 
   async function getCurrentLog(actionId: string) {
     const currentDate = moment().format("YYYY-MM-DD");
-
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
-
     setCurrentLog(currentLog[actionId]);
   }
 
@@ -126,7 +129,6 @@ const DailyLog: FC = () => {
 
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Remove the specific actionId from the map for the current date
     delete currentLog[actionId];
 
     await userLogs.update({
@@ -137,10 +139,8 @@ const DailyLog: FC = () => {
   async function handleComplete(actionId: string, impact: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
-    // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Update the specific actionId within the current date without overwriting other fields
     await userLogs.update({
       [currentDate]: {
         ...currentLog, // Keep the existing entries for the date
@@ -148,6 +148,9 @@ const DailyLog: FC = () => {
       },
     });
   }
+
+  const theme = useTheme();
+  const headertextColor = theme['color-primary-900'];
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
@@ -183,30 +186,30 @@ const DailyLog: FC = () => {
     );
   };
 
-    return (
-      // <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
-      <View className="bg-gray">
-        <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
-          Daily Log
-        </ThemedText>
-        <FlatList
-          data={dailyLog}
-          renderItem={renderItem}
+  return (
+    <StyledLayout style={{ backgroundColor: 'white', flex: 1 }}>
+      <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
+        Daily Log
+      </StyledText>
+      <List
+        data={dailyLog}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+      <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', marginLeft: 16, marginVertical: 16 }}>
+        Actions Done
+      </StyledText>
+      {completedActions.length > 0 ? (
+        <List
+          data={completedActions}
+          renderItem={renderDoneItem}
           keyExtractor={(item) => item.id}
         />
-        <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
-        {completedActions.length > 0 ? (
-          <FlatList
-            data={completedActions}
-            renderItem={renderDoneItem}
-            keyExtractor={(item) => item.id}
-          />
-        ) : (
-          <Text className="text-center text-gray-500">No actions completed yet.</Text>
-        )}
-      </View>
-      // </KeyboardAvoidingView>
-    );
+      ) : (
+        <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+      )}
+    </StyledLayout>
+  );
 };
 
 export default DailyLog;

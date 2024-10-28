@@ -10,7 +10,7 @@ interface ToDoButtonProps {
 const StyledButton = styled(Button);
 
 const ToDoButton: React.FC<ToDoButtonProps> = ({ selectedFilter, onFilterChange }) => {
-  const filters = ['To-Do', 'Done'];
+  const filters = ['All', 'To Do', 'Done'];
 
   return (
     <>

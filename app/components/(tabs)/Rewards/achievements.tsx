@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import MilestoneList from "./MilestonesList";
 import { styled } from "nativewind";
@@ -9,7 +8,7 @@ const Achievements = () => {
     const StyledText = styled(Text);
 
     const theme = useTheme();
-    const headertextColor = theme['color-primary-900'];
+    const headertextColor = theme['color-success-900'];
 
     return (
         <StyledLayout className="items-center">

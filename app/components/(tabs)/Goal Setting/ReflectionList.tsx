@@ -30,20 +30,13 @@ const ReflectionsList = () => {
   const renderItem = ({ item }: { item: Reflection }) => (
     <Swipeable
       renderRightActions={() => (
-        <View className="flex items-center justify-center ml-2">
-          <Button
-            appearance="outline"
-            status="danger"
-            onPress={() => handleDelete(item.id)}
-            accessoryLeft={() => <Ionicons name="trash" size={15} />}
-          >
-            Delete
-          </Button>
+        <View className="flex items-center justify-center mr-4 ml-2">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
         </View>
       )}
     >
-      <StyledLayout className="m-1 p-1 rounded-lg">
-        <StyledCard>
+      <StyledLayout className="m-1 p-1">
+        <StyledCard className='rounded-lg'>
           <StyledText category="h6">{item.title}</StyledText>
           <StyledText category="p2">{item.content}</StyledText>
         </StyledCard>

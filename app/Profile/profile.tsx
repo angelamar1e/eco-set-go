@@ -1,17 +1,18 @@
+
 import React, { useEffect, useState } from "react";
 import { styled } from "nativewind";
 import { Button, Text, Card, Layout, Avatar } from '@ui-kitten/components';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
 import firestore from "@react-native-firebase/firestore";
-import { getUserUid } from "../../utils/utils";
+import { getUserUid } from "@/app/utils/utils";
 
 const StyledButton = styled(Button);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 const StyledLayout = styled(Layout);
 
-const UserProfile: React.FC = () => {
+const UserProfile = () => {
     const router = useRouter();
     const [userName, setUserName] = useState<string | undefined>();
     const [points, setPoints] = useState<string>("0");
@@ -43,7 +44,7 @@ const UserProfile: React.FC = () => {
         <StyledLayout className="p-4">
             <StyledLayout className=" mt-5 flex-row p-1 justify-between">
                 <StyledButton
-                    onPress={() => router.push('/(tabs)/Profile/settings')}
+                    onPress={() => router.push('/(tabs)/Home')}
                     className="p-1 m-1 rounded-full"
                     size="small"
                     appearance="outline"
@@ -52,6 +53,9 @@ const UserProfile: React.FC = () => {
                 </StyledButton>
                 <StyledButton
                     className="p-1 m-1 rounded-full"
+                    onPress={() => {
+                        console.log("Navigating to settings");
+                        router.push('/Profile/Settings/setting')}}                     
                     size="small"
                     appearance="outline"
                     status="basic">
