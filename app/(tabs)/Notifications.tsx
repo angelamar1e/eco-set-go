@@ -3,7 +3,7 @@ import { Text, View, Button, Platform, Switch } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Notification Handler
 Notifications.setNotificationHandler({
@@ -162,15 +162,6 @@ export default function Notification() {
         <View>
           <Button title="Select Time" onPress={() => setShowTimePicker(true)} />
           <Text>Selected Time: {selectedTime.getHours()}:{selectedTime.getMinutes()}</Text>
-          {showTimePicker && (
-            <DateTimePicker
-              value={selectedTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={onTimeChange}
-            />
-          )}
         </View>
       )}
 
