@@ -5,7 +5,6 @@ import { styled } from 'nativewind';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Divider } from 'react-native-paper';
 
 const StyledText = styled(Text);
@@ -151,13 +150,6 @@ const Preferences: React.FC = () => {
         {/* Time Picker */}
         {showTimePicker && (
           <StyledLayout className="mt-2">
-            <DateTimePicker
-              value={selectedTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={onTimeChange}
-            />
           </StyledLayout>
         )}
       </StyledLayout>

@@ -74,7 +74,7 @@ export default function LandingPage() {
               <StyledText category="h4" className="w-3/4">
                   Welcome, <StyledText category="h4" className="italic"
                   style={{color: myTheme['color-success-600']}}
-                >{userName}!</StyledText>
+                >{userName!}!</StyledText>
               </StyledText> 
               <StyledButton 
                 className="p-1 m-1 rounded-full"
@@ -114,7 +114,7 @@ export default function LandingPage() {
             </StyledLayout>
 
             <ImpactCalculator onImpactUpdate={handleImpactChange} />
-            {/*<DailyLog />*/}
+            <DailyLog/>
           </StyledLayout>
         </StyledLayout>
       </SafeAreaView>
