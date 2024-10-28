@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Layout, Button } from '@ui-kitten/components';
+import { Text, Layout } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import Preferences from '@/app/components/(tabs)/Settings/Preferences';
 import Details from '@/app/components/(tabs)/Settings/Details';
@@ -7,22 +7,18 @@ import SettingsTab from '@/app/components/(tabs)/Settings/SettingsTab';
 import firestore from '@react-native-firebase/firestore';
 import { getUserUid } from '@/app/utils/utils';
 import { myTheme } from "@/constants/custom-theme";
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
-const StyledButton = styled(Button);
 
-const settings = () => {
+const setting = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
   const [pushNotifications, setPushNotifications] = useState(false);
   const [actionReminders, setActionReminders] = useState(false);
   const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
-
-  const router = useRouter();
+  
 
   // Function to get the username from Firestore
   const fetchUserName = async (userUid: string) => {
@@ -75,21 +71,20 @@ const settings = () => {
   }, []);
   
   return (
-    <StyledLayout className='flex-1'>
-      
-      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+    <StyledLayout className="flex-1">
+        <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
          <StyledText category="h4" className='text-white'>Settings</StyledText>
-      </StyledLayout>
+        </StyledLayout>
 
-      <StyledLayout className="ml-2 mr-2">
-        <SettingsTab 
-          selectedTab={selectedTab} 
-          setSelectedTab={setSelectedTab}
-        />
-      </StyledLayout>
+        <StyledLayout className="ml-2 mr-2">
+            <SettingsTab 
+            selectedTab={selectedTab} 
+            setSelectedTab={setSelectedTab}
+            />
+        </StyledLayout>
       
-      <StyledLayout className="mt-5">
+        <StyledLayout className="mt-5">
         {selectedTab === 'Details' ? (
             <Details 
                 username={username}
@@ -97,11 +92,17 @@ const settings = () => {
                 password={password}
             />
         ) : (
-            <Preferences/>
+            <Preferences
+            pushNotifications={pushNotifications}
+            setPushNotifications={setPushNotifications}
+            actionReminders={actionReminders}
+            setActionReminders={setActionReminders}
+            />
         )}    
-      </StyledLayout>
+        </StyledLayout>
+
     </StyledLayout>
   );
 };
 
-export default settings;
+export default setting;

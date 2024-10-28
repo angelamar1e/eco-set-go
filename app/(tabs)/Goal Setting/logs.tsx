@@ -6,6 +6,7 @@ import { FlatList, View } from "react-native";
 import { styled } from 'nativewind';
 import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
+import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
 
 const GoalSetting = () => {
     const data = [
@@ -30,12 +31,11 @@ const GoalSetting = () => {
 
     return (
         <StyledLayout className="flex-1">
-            <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+            <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
                 style={{
                     backgroundColor: myTheme['color-success-700']
                 }}>
-                <StyledText category="h4">Daily Log</StyledText>
-                <StyledText category="s1">Date</StyledText>
+                <StyledText category="h4" className="text-white">Daily Log</StyledText>
             </StyledLayout>
 
             <View className="items-center -mt-20 -bottom-5 mb-7 z-50">
@@ -58,6 +58,8 @@ const GoalSetting = () => {
                     </StyledLayout>
                 </StyledCard>
             </View>
+
+            <WeekOverview />
 
             <View className="flex-1 relative">
                 <FlatList

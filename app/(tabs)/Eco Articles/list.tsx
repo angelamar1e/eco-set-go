@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
 import { styled } from 'nativewind';
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -47,11 +48,11 @@ const EcoActionsList = () => {
   );
 
   return (
-    <StyledLayout className='flex-1 px-2'>
-      <SafeAreaView className='flex-1 mt-3'>
+    <StyledLayout className='flex-1'>
         <StyledLayout className="flex-1">
-        <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
-          <StyledText category="h4">Eco Articles</StyledText>
+        <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+          style={{ backgroundColor: myTheme['color-success-700']}}>
+         <StyledText category="h4" className='text-white'>Eco Articles</StyledText>
         </StyledLayout>
 
           <StyledLayout className="ml-2 mr-2">
@@ -72,7 +73,6 @@ const EcoActionsList = () => {
             keyExtractor={(item) => item.id}
           />
         </StyledLayout>
-      </SafeAreaView>
     </StyledLayout>
   );
 };

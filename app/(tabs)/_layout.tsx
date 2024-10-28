@@ -12,7 +12,7 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function TabLayout() {
-  const theme = useTheme(); // Use UI Kitten's theme
+  const theme = useTheme();
 
   return (
     <Navigator
@@ -29,6 +29,7 @@ export default function TabLayout() {
           fontSize: 11,
           marginBottom: 3,
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Screen
