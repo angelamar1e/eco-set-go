@@ -1,17 +1,26 @@
-import React, { FC, useEffect, useState } from "react";
-import { Layout, List, Text, useTheme } from "@ui-kitten/components";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { View, FlatList, Text, KeyboardAvoidingView } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
 import { getUserUid } from "@/app/utils/utils";
+import StaticDone from "./StaticDone";
+import { EmissionsContext } from "@/contexts/Emissions";
+import {MealDone, Meal, MealData} from './MealAction';
+import DropdownActionItem from "./DropdownActionItem";
+import Static from './StaticAction';
+import Parameterized from "./ParameterizedAction";
+import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
+import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
+import { Transportation } from "./TransportAction";
+import { ThemedText } from "@/components/ThemedText";
+import { Layout, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 
-import DropdownEcoAction from './DropdownActionItem';
-import ActionItem from './ActionItem';
-import DoneItem from "./DoneItem";
+const emissionsContext = useContext(EmissionsContext);
 
-const templates = [DropdownEcoAction, ActionItem];
-const doneTemplates = [DoneItem];
+const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
+const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -23,6 +32,22 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
+  const [baseMeal, setSelectedBaseMeal] = useState<MealData | undefined>();
+  const [chosenMeal, setSelectedChosenMeal] = useState<MealData | undefined>();
+  const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
+  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
+
+  // Handler to update meal states from MealAction
+  const handleMealSelection = (base: MealData, chosen: MealData) => {
+    setSelectedBaseMeal(base);
+    setSelectedChosenMeal(chosen);
+  };
+
+  // Handler to update vehicle states for Transportation actions
+  const handleVehicleSelection = (lessEF: number, higherEF: number) => {
+    setVehicleLessEF(lessEF);
+    setVehicleHigherEF(higherEF);
+  };
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -111,7 +136,7 @@ const DailyLog: FC = () => {
     });
   }
 
-  async function handleComplete(actionId: string, selectedOptionValue: number) {
+  async function handleComplete(actionId: string, impact: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
@@ -119,7 +144,7 @@ const DailyLog: FC = () => {
     await userLogs.update({
       [currentDate]: {
         ...currentLog, // Keep the existing entries for the date
-        [actionId]: selectedOptionValue, // Update the specific action
+        [actionId]: impact, // Update the specific action
       },
     });
   }
@@ -132,53 +157,59 @@ const DailyLog: FC = () => {
     const ActionItemTemplate = templates[item.template];
 
     return (
-      <ActionItemTemplate 
+      <ActionItemTemplate
         item={item}
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleComplete={handleComplete}
+        setMealSelection={handleMealSelection} // Pass down the handler
+        setSelectedVehicles={handleVehicleSelection}
       />
     );
   };
 
   const renderDoneItem = ({ item }: { item: EcoAction }) => { 
-    const DoneItemTemplate = doneTemplates[item.template];
+    const ItemDoneTemplate = doneTemplates[item.template];
 
     return (
-      <DoneItemTemplate 
+      <ItemDoneTemplate
         item={item}
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleUnmark={handleUnmark}
         handleComplete={handleComplete}
+        baseMeal={baseMeal}
+        chosenMeal={chosenMeal}
+        lessEF={vehicleLessEF}
+        higherEF={vehicleHigherEF}
       />
     );
   };
 
-  return (
-    <StyledLayout style={{ backgroundColor: 'white', flex: 1 }}>
-      <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
-        Daily Log
-      </StyledText>
-      <List
-        data={dailyLog}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-      <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', marginLeft: 16, marginVertical: 16 }}>
-        Actions Done
-      </StyledText>
-      {completedActions.length > 0 ? (
-        <List
-          data={completedActions}
-          renderItem={renderDoneItem}
+    return (
+      // <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
+      <View className="bg-gray">
+        <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+          Daily Log
+        </ThemedText>
+        <FlatList
+          data={dailyLog}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
-      ) : (
-        <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
-      )}
-    </StyledLayout>
-  );
+        <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
+        {completedActions.length > 0 ? (
+          <FlatList
+            data={completedActions}
+            renderItem={renderDoneItem}
+            keyExtractor={(item) => item.id}
+          />
+        ) : (
+          <Text className="text-center text-gray-500">No actions completed yet.</Text>
+        )}
+      </View>
+      // </KeyboardAvoidingView>
+    );
 };
 
 export default DailyLog;

@@ -3,7 +3,7 @@ import { BackHandler, View } from "react-native";
 import { styled } from "nativewind";
 import { getUserName, getUserUid, handleBackAction } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DailyLog from "@/app/components/(tabs)/Home/daily_log";
+import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import firestore from "@react-native-firebase/firestore";
 import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
@@ -11,6 +11,7 @@ import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
 import { Button, Card, Layout, Text,  } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
+import LogOutButton from "@/app/components/LogOutButton";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -115,9 +116,15 @@ export default function LandingPage() {
             </StyledLayout>
 
             <ImpactCalculator onImpactUpdate={handleImpactChange} />
-            <WeekOverview />
-            {/*<DailyLog />*/}
+            <View className="flex mt-3">
+              <DailyLog />
+            </View>
           </StyledLayout>
+
+          <View className="flex-1 mb-20 mt-4">
+            {/* <QuizButton /> */}
+            <LogOutButton />
+          </View>
         </StyledLayout>
       </SafeAreaView>
     </StyledLayout>

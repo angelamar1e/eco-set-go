@@ -2,5 +2,5 @@
 export interface ArticleInfo{
     id: string;
     content: string;
-    element_url?: string;
+    media?: {uri: string; type: string | undefined}
 }
