@@ -123,7 +123,7 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
     const replacementEF = MeanOneDayConsumption[chosenMeal!.mealBase].efPerKg
 
     // Calculate emissions for the base meal and target reduction
-    const baseEmissions = baseMeal!.mealEF;  // Emissions of the original meal (150 grams by default)
+    const baseEmissions = baseEF * baseAmount;  // Emissions of the original meal (150 grams by default)
     const targetReduction = baseEmissions - minReduction; // Target emissions after 100 grams reduction
 
     // Calculate the maximum amount of replacement to meet the reduction goal
@@ -136,20 +136,22 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
   const handleCompleteDetails = () => {
     if (!baseMeal || !chosenMeal) return;
 
-    const weightInGrams = inputValue ? parseFloat(inputValue) : 0.15;
+    const weightInGrams = parseFloat(inputValue) <= 0 ? 0.15 : parseFloat(inputValue);
     const additionals = emissionsData['foodAdditionals'] || {};
     const maxReplacementAmount = getMaxReplacementAmount();
     console.log(maxReplacementAmount);
 
     if (weightInGrams > maxReplacementAmount) {
       Alert.alert(
-          "Oops! 🐔🍲",
-          `Looks like you've got a bit too much on your plate! For a more climate-friendly meal, try keeping ${chosenMeal.mealBase} under ${maxReplacementAmount} grams. 🌎`
-        );
-    }
+          "Oops 🥘",
+          `Looks like you've got a bit too much on your plate! For a more climate-friendly meal, try keeping ${
+              chosenMeal?.mealBase === "Cereal Products" ? chosenMeal?.mealType : chosenMeal?.mealBase
+          } under ${maxReplacementAmount.toFixed(0)} grams. 🌎`
+      );
+  }
     else{
       const impact = computeImpact(
-        computeMealEmission(baseMeal.mealType, additionals, { [baseMeal.mealBase]: convertGramsToKg(weightInGrams)}),
+        baseMeal.mealEF,
         computeMealEmission(chosenMeal.mealType, additionals, { [chosenMeal.mealBase]: convertGramsToKg(weightInGrams) }), 
       );
 
@@ -183,7 +185,7 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
           {showInput && (
             <View className="mt-2 px-4 flex-row">
               <Text>
-                Input amount of {chosenMeal?.mealBase || "food"} eaten
+                Input amount of {chosenMeal?.mealBase === "Cereal Products" ? chosenMeal?.mealType : chosenMeal?.mealBase} eaten
               </Text>
               <TextInput
                 className="border text-white border-gray-400 rounded p-2 mb-2"

@@ -13,17 +13,13 @@ import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
+import { useTheme } from "@ui-kitten/components";
 import { ThemedText } from "@/components/ThemedText";
-import { Layout, useTheme } from "@ui-kitten/components";
-import { styled } from "nativewind";
 
 const emissionsContext = useContext(EmissionsContext);
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
 const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
-
-const StyledLayout = styled(Layout);
-const StyledText = styled(Text);
 
 const DailyLog: FC = () => {
   const [userUid, setUserUid] = useState<string | undefined>();
