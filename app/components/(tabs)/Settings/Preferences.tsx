@@ -1,82 +1,143 @@
-import React, { useState } from 'react'; 
-import { Toggle, Text, Layout, Divider, Select, SelectItem, IndexPath } from '@ui-kitten/components';
+import React, { useState, useEffect, useRef } from 'react';
+import { Platform, Alert } from 'react-native';
+import { Toggle, Text, Layout } from '@ui-kitten/components';
 import { styled } from 'nativewind';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 const StyledToggle = styled(Toggle);
-const StyledDivider = styled(Divider);
-const StyledSelect = styled(Select);
-const StyledSelectItem = styled(SelectItem);
 
-interface PreferencesProps {
-  pushNotifications: boolean;
-  setPushNotifications: (value: boolean) => void;
-  actionReminders: boolean;
-  setActionReminders: (value: boolean) => void;
-}
+const Preferences: React.FC = () => {
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
-const Preferences: React.FC<PreferencesProps> = ({
-  pushNotifications,
-  setPushNotifications,
-  actionReminders,
-  setActionReminders,
-}) => {
-  const [selectedFrequencyIndex, setSelectedFrequencyIndex] = useState<IndexPath | null>(null);
-  const frequencyOptions = ['Once a day', 'Twice a day', 'Thrice a day'];
+  // Request notification permissions and set listeners
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => {
+      if (token) setExpoPushToken(token);
+    });
 
-  const handleSelected = (index: IndexPath | IndexPath[]) => {
-    const selectedIndex = Array.isArray(index) ? index[0] : index;
-    setSelectedFrequencyIndex(selectedIndex);
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('Notification response received:', response);
+    });
+
+    return () => {
+      notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
+      responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  // Effect to handle enabling or disabling notifications
+  useEffect(() => {
+    if (pushNotifications) {
+      scheduleDailyNotification(selectedTime);
+    } else {
+      cancelNotifications();
+    }
+  }, [pushNotifications, selectedTime]);
+
+  // Notification registration and scheduling functions
+  const registerForPushNotificationsAsync = async () => {
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        Alert.alert('Permission not granted', 'You need to allow notifications to use this feature.');
+        return;
+      }
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+      try {
+        const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+        return pushTokenString;
+      } catch (error) {
+        console.error('Error getting push token:', error);
+      }
+    } else {
+      Alert.alert('Error', 'Must use physical device for push notifications');
+    }
   };
 
-  const selectedFrequency = selectedFrequencyIndex
-    ? frequencyOptions[selectedFrequencyIndex.row]
-    : 'Select frequency';
+  const scheduleDailyNotification = async (time: Date) => {
+    const trigger = new Date(time);
+    trigger.setSeconds(0);
+
+    await Notifications.cancelAllScheduledNotificationsAsync();
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Daily Reminder',
+        body: 'This is your scheduled daily reminder!',
+      },
+      trigger: {
+        hour: trigger.getHours(),
+        minute: trigger.getMinutes(),
+        repeats: true,
+      },
+    });
+  };
+
+  const cancelNotifications = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  };
+
+  // Time picker change handler
+  const onTimeChange = (event: any, selectedDate: Date | undefined) => {
+    const currentTime = selectedDate || selectedTime;
+    setShowTimePicker(Platform.OS === 'ios');
+    setSelectedTime(currentTime);
+    if (pushNotifications) {
+      scheduleDailyNotification(currentTime);
+    }
+  };
 
   return (
     <StyledLayout className="m-2 p-2">
       <StyledLayout className="mt-4 ml-2 mr-2 p-1 flex flex-row">
-        <StyledText category="h6">Push notifications</StyledText>
+        <StyledText category="h6">Daily reminders</StyledText>
         <StyledToggle
           className="ml-auto"
           checked={pushNotifications}
           onChange={setPushNotifications}
         />
       </StyledLayout>
-      
-      <StyledDivider className="ml-2 mr-2 mt-5" />
 
-      <StyledLayout className="mb-4 mt-4 ml-2 mr-2 p-1 flex flex-row">
-        <StyledText category="h6">Action reminders</StyledText>
-        <StyledToggle
-          className="ml-auto"
-          checked={actionReminders}
-          onChange={(value) => {
-            setActionReminders(value);
-            if (!value) {
-              setSelectedFrequencyIndex(null); 
-            }
-          }}
-        />
-      </StyledLayout>
-
-      {actionReminders && (
-        <StyledLayout className="ml-2 mr-2">
-          <StyledSelect
-            className="w-full"
-            placeholder="Select frequency"
-            value={selectedFrequency}
-            selectedIndex={selectedFrequencyIndex}
-            onSelect={handleSelected}
-          >
-            {frequencyOptions.map((option, index) => (
-              <StyledSelectItem
-                key={index}
-                title={option}
-              />
-            ))}
-          </StyledSelect>
+      {/* Time Picker for Notification */}
+      {pushNotifications && (
+        <StyledLayout>
+          <Text>Select Notification Time:</Text>
+          <DateTimePicker
+            value={selectedTime}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={onTimeChange}
+          />
+          <Text>Selected Time: {selectedTime.getHours()}:{selectedTime.getMinutes()}</Text>
         </StyledLayout>
       )}
     </StyledLayout>

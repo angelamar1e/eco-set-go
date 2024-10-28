@@ -8,6 +8,7 @@ import GoalSetting from './Goal Setting/logs';
 import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import Notification from './Notifications';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -88,6 +89,17 @@ export default function TabLayout() {
           title: 'Rewards',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'star' : 'star-outline'} color={color} />
+          ),
+        }}
+      />
+
+<Screen
+        name="Notifications"
+        component={Notification}
+        options={{
+          title: 'Notifications',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'notifications' : 'notifications-outline'} color={color} />
           ),
         }}
       />

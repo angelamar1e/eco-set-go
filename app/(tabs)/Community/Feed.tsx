@@ -125,11 +125,9 @@ const Feed: React.FC = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
-        style={{
-          backgroundColor: myTheme['color-success-700']
-      }}>
-        <StyledText category="h4">Community</StyledText>
+        <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+          style={{ backgroundColor: myTheme['color-success-700']}}>
+         <StyledText category="h4" className='text-white'>Community</StyledText>
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
           selectedButton={selectedButton}

@@ -6,6 +6,7 @@ import Details from '@/app/components/(tabs)/Settings/Details';
 import SettingsTab from '@/app/components/(tabs)/Settings/SettingsTab';
 import firestore from '@react-native-firebase/firestore';
 import { getUserUid } from '@/app/utils/utils';
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -17,6 +18,7 @@ const setting = () => {
   const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
+  
 
   // Function to get the username from Firestore
   const fetchUserName = async (userUid: string) => {
@@ -70,9 +72,10 @@ const setting = () => {
   
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
-        <StyledText category="h4">Settings</StyledText>
-      </StyledLayout>
+        <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+          style={{ backgroundColor: myTheme['color-success-700']}}>
+         <StyledText category="h4" className='text-white'>Settings</StyledText>
+        </StyledLayout>
 
         <StyledLayout className="ml-2 mr-2">
             <SettingsTab 

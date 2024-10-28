@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Layout } from '@ui-kitten/components';
+import { Text, Layout, Button } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import Preferences from '@/app/components/(tabs)/Settings/Preferences';
 import Details from '@/app/components/(tabs)/Settings/Details';
 import SettingsTab from '@/app/components/(tabs)/Settings/SettingsTab';
 import firestore from '@react-native-firebase/firestore';
 import { getUserUid } from '@/app/utils/utils';
+import { myTheme } from "@/constants/custom-theme";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
+const StyledButton = styled(Button);
 
 const settings = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
@@ -18,6 +22,8 @@ const settings = () => {
   const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
+
+  const router = useRouter();
 
   // Function to get the username from Firestore
   const fetchUserName = async (userUid: string) => {
@@ -71,8 +77,19 @@ const settings = () => {
   
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='bg-lime-800 h-1/4 rounded-b-3xl justify-center items-center relative'>
-        <StyledText category="h4">Settings</StyledText>
+      <StyledLayout className="mt-5 flex-row p-1 justify-between">
+          <StyledButton
+              onPress={() => router.push('/(tabs)/Home')}
+              className="p-1 mt-1 rounded-full"
+              size="small"
+              appearance="outline"
+              status="basic">
+              <Ionicons name="chevron-back-outline"></Ionicons>
+          </StyledButton>
+        </StyledLayout>
+      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+          style={{ backgroundColor: myTheme['color-success-700']}}>
+         <StyledText category="h4" className='text-white'>Settings</StyledText>
       </StyledLayout>
 
         <StyledLayout className="ml-2 mr-2">
