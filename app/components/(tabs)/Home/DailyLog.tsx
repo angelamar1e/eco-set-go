@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { View, FlatList, KeyboardAvoidingView } from "react-native";
+import {  FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
@@ -7,14 +7,12 @@ import { getUserUid } from "@/app/utils/utils";
 import StaticDone from "./StaticDone";
 import { EmissionsContext } from "@/contexts/Emissions";
 import {MealDone, Meal, MealData} from './MealAction';
-import DropdownActionItem from "./DropdownActionItem";
 import Static from './StaticAction';
 import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
 import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
-import { ThemedText } from "@/components/ThemedText";
 import { styled } from "nativewind";
 
 
@@ -27,7 +25,7 @@ const StyledCard = styled(Card);
 
 
 const DailyLog: FC = () => {
-  const emissionsContext = useContext(EmissionsContext);
+const emissionsContext = useContext(EmissionsContext);
 
   const [userUid, setUserUid] = useState<string | undefined>();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
@@ -194,39 +192,53 @@ const DailyLog: FC = () => {
   const theme = useTheme();
   const headertextColor = theme['color-success-900'];
 
+  // const data = [
+  //  { id: '1', title: 'Actions To Do', actions: dailyLog, renderItem: renderItem },
+   // { id: '2', title: 'Actions Done', actions: completedActions, renderItem: renderDoneItem },
+  //];
+
     return (
-      //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
+      //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">*/}
       <StyledLayout className="mt-4 relative">
         <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
           Daily Log
         </StyledText>
+
         <StyledLayout className="pt-1">
-        <StyledCard className="rounded-lg mb-2">
-          <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold',}}>          
-            Actions To Do
-          </StyledText>
-          <FlatList
-            data={dailyLog}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-        </StyledCard>
-        <StyledCard className="rounded-lg">
-          <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold',}}>          
-            Actions Done
-          </StyledText>
-          {completedActions.length > 0 ? (
-            <FlatList
-              data={completedActions}
-              renderItem={renderDoneItem}
-              keyExtractor={(item) => item.id}
-            />
-          ) : (
-            <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>)}
-        </StyledCard>
+          <StyledCard className="rounded-lg mb-2">
+            <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', }}>
+              Actions To Do
+            </StyledText>
+            {dailyLog.length > 0 ? (
+              <FlatList
+                data={dailyLog}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+            )}
+          </StyledCard>
+          
+          <StyledCard className="rounded-lg">
+            <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', }}>
+              Actions Done
+            </StyledText>
+            {completedActions.length > 0 ? (
+              <FlatList
+                data={completedActions}
+                renderItem={renderDoneItem}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
+            )}
+          </StyledCard>
         </StyledLayout>
       </StyledLayout>
-      // </KeyboardAvoidingView>
+      //*</KeyboardAvoidingView>*/}
     );
 };
 

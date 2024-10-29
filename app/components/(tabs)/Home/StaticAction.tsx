@@ -7,6 +7,7 @@ import { ActionItemProps } from "@/types/ActionItemProps";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { styled } from "nativewind";
 import { Card, Layout, Text } from "@ui-kitten/components";
+import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -23,7 +24,9 @@ const Static: React.FC<ActionItemProps> = ({
   return (
     <Swipeable
       renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
+        <View className="flex items-center justify-center ml-2 mr-4">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
+        </View>        
       )}
     >
       <StyledLayout className="pt-1 m-1">
