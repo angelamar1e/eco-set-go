@@ -10,6 +10,7 @@ import { Card, Layout, Text } from "@ui-kitten/components";
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 const Static: React.FC<ActionItemProps> = ({
   item,

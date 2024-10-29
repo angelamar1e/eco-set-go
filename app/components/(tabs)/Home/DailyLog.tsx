@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { View, FlatList, Text, KeyboardAvoidingView } from "react-native";
+import { View, FlatList, KeyboardAvoidingView } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
@@ -13,15 +13,22 @@ import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
-import { useTheme } from "@ui-kitten/components";
+import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { ThemedText } from "@/components/ThemedText";
+import { styled } from "nativewind";
 
-const emissionsContext = useContext(EmissionsContext);
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
 const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
 
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
+
+
 const DailyLog: FC = () => {
+  const emissionsContext = useContext(EmissionsContext);
+
   const [userUid, setUserUid] = useState<string | undefined>();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
   const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
@@ -184,28 +191,41 @@ const DailyLog: FC = () => {
     );
   };
 
+  const theme = useTheme();
+  const headertextColor = theme['color-success-900'];
+
     return (
-      // <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
-      <View className="bg-gray">
-        <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
+      //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
+      <StyledLayout className="mt-4 relative">
+        <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
           Daily Log
-        </ThemedText>
-        <FlatList
-          data={dailyLog}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-        <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
-        {completedActions.length > 0 ? (
+        </StyledText>
+        <StyledLayout className="pt-1">
+        <StyledCard className="rounded-lg mb-2">
+          <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold',}}>          
+            Actions To Do
+          </StyledText>
           <FlatList
-            data={completedActions}
-            renderItem={renderDoneItem}
+            data={dailyLog}
+            renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />
-        ) : (
-          <Text className="text-center text-gray-500">No actions completed yet.</Text>
-        )}
-      </View>
+        </StyledCard>
+        <StyledCard className="rounded-lg">
+          <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold',}}>          
+            Actions Done
+          </StyledText>
+          {completedActions.length > 0 ? (
+            <FlatList
+              data={completedActions}
+              renderItem={renderDoneItem}
+              keyExtractor={(item) => item.id}
+            />
+          ) : (
+            <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>)}
+        </StyledCard>
+        </StyledLayout>
+      </StyledLayout>
       // </KeyboardAvoidingView>
     );
 };
