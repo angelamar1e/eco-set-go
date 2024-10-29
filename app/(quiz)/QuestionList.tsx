@@ -52,7 +52,7 @@ const QuestionList = () => {
 
   const renderItem: ListRenderItem<QuestionItem> = ({ item }) => (
     <StyledButton  
-      onPress={() => router.push(`/quiz/${item.id}`)} // Navigate to the specific question page
+      onPress={() => router.push(`/(quiz)/${item.id}`)} // Navigate to the specific question page
       style={{ 
         marginBottom: 10, 
         borderRadius: 15, 
