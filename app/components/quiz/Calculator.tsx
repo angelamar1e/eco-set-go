@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { EmissionsContext } from "@/contexts/EmissionsContext";
+import { EmissionsContext } from "@/contexts/Emissions";
 import { Text, Layout } from "@ui-kitten/components";
 import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";

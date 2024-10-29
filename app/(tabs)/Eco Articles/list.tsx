@@ -40,7 +40,7 @@ const EcoActionsList = () => {
 
   const renderItem = ({ item }: { item: EcoAction }) => (
     <StyledCard
-      onPress={() => router.push(`/components/(tabs)/Eco Articles/ArticlePage/${item.id}`)}
+      onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
       className='m-2 h-[150px] bg-transparent justify-end'
     >
       <Text category='s1'>{item.title}</Text>

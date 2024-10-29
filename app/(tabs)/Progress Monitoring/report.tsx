@@ -6,11 +6,15 @@ import { ScrollView, View, Text, Dimensions, TouchableOpacity } from "react-nati
 import { ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firestore from '@react-native-firebase/firestore';
-import { LineChart } from "react-native-chart-kit";
+import { 
+  LineChart, 
+  BarChart
+} from "react-native-chart-kit";
 import SummaryReport from "@/app/components/(tabs)/Progress Monitoring/summary";
 import { getUserName, getUserUid } from "../../utils/utils";
 import { styled } from "nativewind";
 import moment from "moment";
+import { stringify } from "postcss";
 
 // Card component used in ProgressReport
 const Card = ({ children }: { children: ReactNode }) => {
@@ -24,6 +28,7 @@ const Card = ({ children }: { children: ReactNode }) => {
 const StyledView = styled(View);
 // Periods: daily, weekly, monthly
 type Period = 'daily' | 'weekly' | 'monthly';
+type Category = 'All' | 'Food' | 'Transportation' | 'Electricity';
 
 // ProgressReport component
 const ProgressReport = () => {
@@ -59,6 +64,7 @@ const ReportWithPeriod = () => {
     const [userUid, setUserUid] = useState<string | undefined>();
     const [dataset, setDataset] = useState<any>(null);
     const [period, setPeriod] = useState<Period>('daily'); // State to manage period (daily, weekly, monthly)
+    const [category, setCategory] = useState<Category>('All');
   
     useEffect(() => {
       const fetchUserUid = async () => {
@@ -74,76 +80,117 @@ const ReportWithPeriod = () => {
       const fetchUserData = async () => {
         if (userUid) {
           const userLogs = firestore().collection("user_logs").doc(userUid);
-          const currentLog = (await userLogs.get()).data();
-  
+          const data = (await userLogs.get()).data();
+          
+          if (!data) {
+            throw new Error("No logs found with user");
+          }
+          const currentLog = new Map<string, Map<string, number>>(
+            Object.entries(data).map(([date, logs]) => [
+              date,
+              new Map<string, number>(Object.entries(logs)),
+            ])
+          );
           if (currentLog) {
-            const dates = Object.keys(currentLog).sort();  // Get all the dates and sort them
-            
+
             let data = null;
-            if (period === 'daily') {
-              data = getDailyData(currentLog, dates);
-            } else if (period === 'weekly') {
-              data = getWeeklyData(currentLog, dates);
-            } else if (period === 'monthly') {
-              data = getMonthlyData(currentLog, dates);
-            }
+            data = await getEmissionsData(currentLog, period, category);
             setDataset(data);
           }
         }
       };
   
       fetchUserData();
-    }, [userUid, period]);
-  
-    // Function to extract daily data
-    const getDailyData = (currentLog: any, dates: string[]) => {
-      const dailyTotals = dates.map(date => {
-        const dailyLogs: Array<number> = Object.values(currentLog[date]);
-        return dailyLogs.reduce((total, value) => total + value, 0);
-      });
-  
-      return {
-        labels: dates,
-        datasets: [{ data: dailyTotals }],
-      };
+    }, [userUid, period, category]);
+
+    // Gets the total emissions of the user based on the currentLog and dates provided
+    // Outputs a labels and datasets to be able to use it for visualizations
+    // Parameters:
+    // REQUIRED: 
+    // currentLog: contains the user_logs data of the user
+    // OPTIONAL: 
+    // date_range: This indicates whether the output shows the data aggragated between
+    // Daily, Weekly, Monthly, or Yearly. Only accepts the values "daily", "weekly", 
+    // "monthly", "yearly"
+    // category: This indicates if the logs considered should only be a portion such as
+    // "Food", "Transportation", "Electricity" or everything with "All".
+    const getEmissionsData = async (currentLog: Map<string, Map<string, number>>, 
+      date_range: string = "daily", category: string = 'All') => {
+        const emissionData: any = {};
+        console.log("Processing");
+        const filteredLog = await getCategoricalData(currentLog, category);
+        const dates = Array.from(filteredLog.keys()).sort(); // Get all the dates and sort them
+        dates.forEach(date => {
+          const currDate = getDateFormat(date, date_range);
+          // Initialize emission date range to 0 if it does not exist
+          if (!emissionData[currDate]) {emissionData[currDate] = 0; }
+          const dateFilteredLogs = filteredLog.get(date);
+          if (!dateFilteredLogs) {
+            emissionData[currDate] += 0;
+            return;
+          }
+          const arrDateFilteredLogs = dateFilteredLogs.values();
+          
+          for (const value of arrDateFilteredLogs) {
+            emissionData[currDate] += value;
+          }
+        });
+        
+        const aggragatedDates = Object.keys(emissionData);
+        const emissionTotal = Object.values(emissionData);
+        console.log(aggragatedDates);
+        console.log(emissionTotal);
+        return {
+          labels: aggragatedDates,
+          datasets: [{data: emissionTotal}]
+        }
     };
-  
-    // Function to aggregate weekly data
-    const getWeeklyData = (currentLog: any, dates: string[]) => {
-      const weeklyData: any = {};
-      dates.forEach(date => {
-        const week = moment(date).week();
-        if (!weeklyData[week]) weeklyData[week] = 0;
-        const dailyLogs: Array<number> = Object.values(currentLog[date]);
-        weeklyData[week] += dailyLogs.reduce((total, value) => total + value, 0);
-      });
-  
-      const weeks = Object.keys(weeklyData);
-      const weeklyTotals = Object.values(weeklyData);
-  
-      return {
-        labels: weeks,
-        datasets: [{ data: weeklyTotals }],
-      };
-    };
-  
-    // Function to aggregate monthly data
-    const getMonthlyData = (currentLog: any, dates: string[]) => {
-      const monthlyData: any = {};
-      dates.forEach(date => {
-        const month = moment(date).format("MMMM");
-        if (!monthlyData[month]) monthlyData[month] = 0;
-        const dailyLogs: Array<number> = Object.values(currentLog[date]);
-        monthlyData[month] += dailyLogs.reduce((total, value) => total + value, 0);
-      });
-  
-      const months = Object.keys(monthlyData);
-      const monthlyTotals = Object.values(monthlyData);
-  
-      return {
-        labels: months,
-        datasets: [{ data: monthlyTotals }],
-      };
+
+    // Get Date format assuming that the string date is of a date format
+    const getDateFormat = (date: string, date_range: string) => {
+      switch(date_range) {
+        case 'daily':
+          return date;
+        case 'weekly':
+          return moment(date).week();
+        case 'monthly':
+          return moment(date).format("MMMM YYYY");
+        case 'yearly':
+          return moment(date).format("YYYY");
+        default:
+          throw new Error("Date Range does not accept this string");
+      }
+    }
+
+    // Returns the valid logs with the specified category.
+    // Category can only be "All", "Transportation", "Food", or "Electricity"
+    const getCategoricalData = async (currentLog: Map<string, Map<string, number>>, category: string) => {
+      if (category === "All") {
+        return currentLog;
+      } else if (!["Transportation", "Food", "Electricity"].includes(category)) {
+        throw new Error("Categorical Data does not exist");
+      }
+      // Create a new Map to store the filtered results
+      const filteredLog = new Map<string, Map<string, number>>();
+      for (const [date, logs] of currentLog) {
+
+        const filteredLogs = new Map<string, number>();
+
+        for (const [key, value] of logs) {
+          const eco_action = firestore().collection('eco_actions').doc(key);
+          const action = (await eco_action.get()).data();
+
+          if (action && action['category'] === category) {
+            filteredLogs.set(key, value);
+          }
+        }
+
+        // Only add the date if there are any filtered logs for that date
+        if (filteredLogs.size > 0) {
+          filteredLog.set(date, filteredLogs);
+        }
+      }
+      return filteredLog;
     };
   
     if (!dataset) {
@@ -168,28 +215,59 @@ const ReportWithPeriod = () => {
             <Text style={{ color: period === 'monthly' ? 'blue' : 'black' }}>Monthly</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Category Switcher */}
+        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+          <TouchableOpacity onPress={() => setCategory('All')} style={{ marginRight: 10 }}>
+            <Text style={{ color: category === 'All' ? 'blue' : 'white' }}>All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCategory('Food')} style={{ marginRight: 10 }}>
+            <Text style={{ color: category === 'Food' ? 'blue' : 'white' }}>Food</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCategory('Transportation')}>
+            <Text style={{ color: category === 'Transportation' ? 'blue' : 'white' }}>Transportation</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCategory('Electricity')}>
+            <Text style={{ color: category === 'Electricity' ? 'blue' : 'white' }}>Electricity</Text>
+          </TouchableOpacity>
+        </View>
   
         {/* Chart */}
         <View style={{ paddingBottom: 20 }}>
-          <Text>{period.charAt(0).toUpperCase() + period.slice(1)} User Log</Text>
-          <LineChart
+          <BarChart
             data={dataset}
-            width={Dimensions.get("window").width - 20} // Adjust width for better fit
-            height={220} // Height of the chart
-            yAxisSuffix="g"
-            chartConfig={{
-              backgroundColor: "#e26a00",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#ffa726",
-              decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: { borderRadius: 16, padding: 10 },
-              propsForDots: { r: "6", strokeWidth: "2", stroke: "#ffa726" },
-            }}
-            bezier
-            style={{ marginVertical: 8, borderRadius: 16 }}
-          />
+            width={Dimensions.get("window").width-(Dimensions.get("window").width*0.2)}
+            height={220}
+            yAxisLabel=""
+              yAxisSuffix="KG"
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundColor: "#e26a00",
+                backgroundGradientFrom: "#fb8c00",
+                backgroundGradientTo: "#ffa726",
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 0,
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726",
+                },
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
+              }}
+              fromZero={true}
+              withVerticalLabels={true}
+              withHorizontalLabels={false}
+              showValuesOnTopOfBars={true}
+            />
+          <Text>{period.charAt(0).toUpperCase() + period.slice(1)} User Log</Text>
+          {/* Line chart */}
         </View>
       </StyledView>
     );

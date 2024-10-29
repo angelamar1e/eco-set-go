@@ -1,344 +1,520 @@
-import { FoodEmission, TransportEmission } from '@/constants/DefaultValues';
-import { FlightData } from '@/types/FlightData';
-import { ElectricityEmissions } from '../../constants/DefaultValues';
+import {
+  Beverages,
+  FoodItem,
+  mealBase,
+  Meals,
+  MeanOneDayConsumption,
+  Multipliers,
+  TransportEmission,
+} from "@/constants/DefaultValues";
+import { FlightData } from "@/types/FlightData";
+import { ElectricityEmissions } from "../../constants/DefaultValues";
 
-export function converKgToTons(inTons: number){ // metric tons
-    let inKg = inTons / 1000; 
+export function convertKgToGrams(inKg: number){
+  let inGrams = inKg * 1000;
 
-    return inKg;
+  return inGrams;
+}
+
+export function convertKgToTons(inKg: number) {
+  // metric tons
+  let inTons = inKg / 1000;
+
+  return inTons;
+}
+
+export function convertGramsToKg(inGrams: number) {
+  // metric tons
+  let inKg = inGrams / 1000;
+
+  return inKg;
+}
+
+export function computeImpact(higherEF: number, lessEF: number) {
+  const impact = higherEF - lessEF;
+
+  return impact;
+}
+
+export function frequencyMultiplier(value: number, multiplier: number) {
+  let result = value * multiplier;
+
+  return result;
+}
+
+export function getCarEFPerKm(footprintPerLiter: number, consumptionPerKm: number){
+  return (consumptionPerKm / 100) * footprintPerLiter;
 }
 
 export function computeCarEmissions(
-    kmTravelled: number, 
-    constructionScale: number,
-    lifeSpanInKm : number,
-    footprintPerLiter: number,
-    consumptionPerKm: number,
-    numOfPassengers: number,
-    user: string)
-{
-    let carEmission: number;
+  kmTravelled: number,
+  constructionScale: number,
+  lifeSpanInKm: number,
+  footprintPerLiter: number,
+  consumptionPerKm: number,
+  numOfPassengers: number,
+  user: string
+) {
+  let carEmission: number;
 
-    if (kmTravelled == 0){
-        return carEmission = 0;
-    }
-    
-    let efPerKm = (consumptionPerKm / 100) * footprintPerLiter;
-    let amortization = 1 / lifeSpanInKm;
-    let constructionPerKm = constructionScale * amortization;
-    let thresholdKm = lifeSpanInKm / 20;
-    let manufacture: number;
+  if (kmTravelled == 0) {
+    return (carEmission = 0);
+  }
 
-    switch (user) {
-        case 'owner': 
-            manufacture = constructionPerKm * thresholdKm
-            break;
-        case 'non-owner': 
-            manufacture = constructionPerKm * kmTravelled
-            break;
-        case 'car-sharer':
-            manufacture = 0;
-            efPerKm = TransportEmission.Car.efPerKm;
-            break;
-        default: 
-            manufacture = constructionPerKm * thresholdKm;
-            break;
-        }
-    
-    let useOfCar: number = efPerKm * kmTravelled;
-    carEmission = (useOfCar + manufacture) / numOfPassengers;
+  let efPerKm = getCarEFPerKm(footprintPerLiter, consumptionPerKm);
+  let amortization = 1 / lifeSpanInKm;
+  let constructionPerKm = constructionScale * amortization;
+  let thresholdKm = lifeSpanInKm / 20;
+  let manufacture: number;
 
-    return carEmission / 1000;
+  switch (user) {
+    case "owner":
+      manufacture = constructionPerKm * thresholdKm;
+      break;
+    case "non-owner":
+      manufacture = constructionPerKm * kmTravelled;
+      break;
+    case "car-sharer":
+      manufacture = 0;
+      efPerKm = TransportEmission.Car.efPerKm;
+      break;
+    default:
+      manufacture = constructionPerKm * thresholdKm;
+      break;
+  }
+
+  let useOfCar: number = efPerKm * kmTravelled;
+  carEmission = (useOfCar + manufacture) / numOfPassengers;
+
+  return convertKgToTons(carEmission);
 }
 
-export function computeAirplaneEmission(data: FlightData): number{
-    let aveSpeed: number = data['aveDistance'] / data['aveDuration'];
-    let airplaneEmission: number = data['flightDuration'] * aveSpeed * TransportEmission.Airplane.efPerKm;
+export function computeAirplaneEmission(data: FlightData): number {
+  let aveSpeed: number = data["aveDistance"] / data["aveDuration"];
+  let airplaneEmission: number =
+    data["flightDuration"] * aveSpeed * TransportEmission.Airplane.efPerKm;
 
-    return airplaneEmission
+  return airplaneEmission;
 }
 
 export function computeTotalAirplaneEmissions(
-    travelledbyPlane: boolean,
-    shortHaulDuration: number,
-    mediumHaulDuration: number,
-    longHaulDuration: number,
-)
-{
-    let airplaneEmission: number = 0;
+  travelledbyPlane: boolean,
+  shortHaulDuration: number,
+  mediumHaulDuration: number,
+  longHaulDuration: number
+) {
+  let airplaneEmission: number = 0;
 
-    if (travelledbyPlane == false){
-        return airplaneEmission
-    }
-    else {
-        airplaneEmission += computeAirplaneEmission({
-            aveDistance: TransportEmission.Airplane.shortHaul.aveDistance,
-            aveDuration: TransportEmission.Airplane.shortHaul.aveDuration,
-            flightDuration: shortHaulDuration
-        })
-        airplaneEmission += computeAirplaneEmission({
-            aveDistance: TransportEmission.Airplane.mediumHaul.aveDistance,
-            aveDuration: TransportEmission.Airplane.mediumHaul.aveDuration,
-            flightDuration: mediumHaulDuration
-        })
-        airplaneEmission += computeAirplaneEmission({
-            aveDistance: TransportEmission.Airplane.longHaul.aveDistance,
-            aveDuration: TransportEmission.Airplane.longHaul.aveDuration,
-            flightDuration: longHaulDuration
-        })
-    }
+  if (travelledbyPlane == false) {
+    return airplaneEmission;
+  } else {
+    airplaneEmission += computeAirplaneEmission({
+      aveDistance: TransportEmission.Airplane.shortHaul.aveDistance,
+      aveDuration: TransportEmission.Airplane.shortHaul.aveDuration,
+      flightDuration: shortHaulDuration,
+    });
+    airplaneEmission += computeAirplaneEmission({
+      aveDistance: TransportEmission.Airplane.mediumHaul.aveDistance,
+      aveDuration: TransportEmission.Airplane.mediumHaul.aveDuration,
+      flightDuration: mediumHaulDuration,
+    });
+    airplaneEmission += computeAirplaneEmission({
+      aveDistance: TransportEmission.Airplane.longHaul.aveDistance,
+      aveDuration: TransportEmission.Airplane.longHaul.aveDuration,
+      flightDuration: longHaulDuration,
+    });
+  }
 
-    return converKgToTons(airplaneEmission); // results in kg, converted to tons by dividing by 1000
+  return convertKgToTons(airplaneEmission); // results in kg, converted to tons by dividing by 1000
 }
 
-export function computeTwoWheelersEmissions(usesTwoWheelers: boolean, efPerKm: number, kmTravelled: number){
-    let twoWheelersEmissions = 0;
+export function computeTwoWheelersEmissions(
+  usesTwoWheelers: boolean,
+  efPerKm: number,
+  kmTravelled: number
+) {
+  let twoWheelersEmissions = 0;
 
-    if (usesTwoWheelers) {
-        twoWheelersEmissions = kmTravelled * efPerKm;
-        return converKgToTons(twoWheelersEmissions);
-    }
+  if (usesTwoWheelers) {
+    twoWheelersEmissions = kmTravelled * efPerKm;
+    return convertKgToTons(twoWheelersEmissions);
+  }
 
-    return twoWheelersEmissions;
+  return twoWheelersEmissions;
 }
 
-export function computeEfficientTravelEmissions(efPerKm: number, kmTravelled: number, construction: number, lifespan: number){
-    const emissions = (efPerKm * kmTravelled) + (construction/lifespan)
-    
-    return emissions;
+export function computeEfficientTravelEmissions(
+  efPerKm: number,
+  kmTravelled: number,
+  construction: number,
+  lifespan: number
+) {
+  const emissions = efPerKm * kmTravelled + construction / lifespan;
+
+  return emissions;
 }
 
-export function computeBicycleEmissions(){
-    let bicycleEmissions: number;
+export function computeBicycleEmissions() {
+  let bicycleEmissions: number;
 
-    const bicycleConstruction = TransportEmission.EfficientTransport.bicycle.construction;
-    const bicycleLifespan = TransportEmission.EfficientTransport.bicycle.lifespan;
+  const bicycleConstruction =
+    TransportEmission.EfficientTransport.bicycle.construction;
+  const bicycleLifespan = TransportEmission.EfficientTransport.bicycle.lifespan;
 
-    return bicycleEmissions = bicycleConstruction / bicycleLifespan;
+  return (bicycleEmissions = bicycleConstruction / bicycleLifespan);
 }
 
 export function computeTotalEfficientTravelEmissions(
-    selectedTransports: string[],
-    eBikeKmTravelled: number,
-    smallVehKmTravelled: number,
-){
-    let efficientTravelEmissions = 0;
+  selectedTransports: string[],
+  eBikeKmTravelled: number,
+  smallVehKmTravelled: number
+) {
+  let efficientTravelEmissions = 0;
 
-    if (selectedTransports.length === 0){
-        return efficientTravelEmissions;
-    }
-    if (selectedTransports.includes('bike')){
-        efficientTravelEmissions += computeBicycleEmissions();
-    }
-    if (selectedTransports.includes('eBike')){
-        efficientTravelEmissions += computeEfficientTravelEmissions(
-            TransportEmission.EfficientTransport.electricBike.efPerKm,
-            eBikeKmTravelled,
-            TransportEmission.EfficientTransport.electricBike.construction, 
-            TransportEmission.EfficientTransport.electricBike.lifespan)
-    }
-    if (selectedTransports.includes('smallVh')){
-        efficientTravelEmissions += computeEfficientTravelEmissions(
-            TransportEmission.EfficientTransport.smallElectricVehicles.efPerKm,
-            smallVehKmTravelled,
-            TransportEmission.EfficientTransport.smallElectricVehicles.construction,
-            TransportEmission.EfficientTransport.smallElectricVehicles.lifespan)
-    }
+  if (selectedTransports.length === 0) {
+    return efficientTravelEmissions;
+  }
+  if (selectedTransports.includes("bike")) {
+    efficientTravelEmissions += computeBicycleEmissions();
+  }
+  if (selectedTransports.includes("eBike")) {
+    efficientTravelEmissions += computeEfficientTravelEmissions(
+      TransportEmission.EfficientTransport.electricBike.efPerKm,
+      eBikeKmTravelled,
+      TransportEmission.EfficientTransport.electricBike.construction,
+      TransportEmission.EfficientTransport.electricBike.lifespan
+    );
+  }
+  if (selectedTransports.includes("smallVh")) {
+    efficientTravelEmissions += computeEfficientTravelEmissions(
+      TransportEmission.EfficientTransport.smallElectricVehicles.efPerKm,
+      smallVehKmTravelled,
+      TransportEmission.EfficientTransport.smallElectricVehicles.construction,
+      TransportEmission.EfficientTransport.smallElectricVehicles.lifespan
+    );
+  }
 
-    return converKgToTons(efficientTravelEmissions);
+  return convertKgToTons(efficientTravelEmissions);
 }
 
-export function computeTrainEmissions(kmTravelled: number){
-    let trainEmissions = 0;
+export function computeTrainEmissions(kmTravelled: number) {
+  let trainEmissions = 0;
 
-    trainEmissions = kmTravelled * TransportEmission.Train.efPerKm;
+  trainEmissions = kmTravelled * TransportEmission.Train.efPerKm;
 
-    return converKgToTons(trainEmissions);
+  return convertKgToTons(trainEmissions);
 }
 
-export function computePublicTransportEmissions(efPerKm: number, aveSpeed: number, hrsTravelled: number){
-    let efPerHr: number;
-    efPerHr = efPerKm * aveSpeed;
-    const emissions = (efPerHr * hrsTravelled) * 52 // weeks in a year
-    
-    return emissions;
+export function computePublicTransportEmissions(
+  efPerKm: number,
+  aveSpeed: number,
+  hrsTravelled: number
+) {
+  let efPerHr: number;
+  efPerHr = efPerKm * aveSpeed;
+  const emissions = efPerHr * hrsTravelled * Multipliers["Weeks in a year"];
+
+  return emissions;
 }
+
 export function computeTotalPublicTransportEmissions(
-    selectedTransports: string[],
-    busHrsTravelled: number,
-    jeepHrsTravelled: number,
-    tricycleHrsTravelled: number,
-){
-    let publicTransportEmissions = 0;
+  selectedTransports: string[],
+  busHrsTravelled: number,
+  jeepHrsTravelled: number,
+  tricycleHrsTravelled: number
+) {
+  let publicTransportEmissions = 0;
 
-    if (selectedTransports.length === 0){
-        return publicTransportEmissions;
-    }
-    if (selectedTransports.includes('bus')){
-        publicTransportEmissions += computePublicTransportEmissions(
-            TransportEmission.PublicTransport.bus.efPerKm,
-            TransportEmission.PublicTransport.bus.aveSpeed,
-            busHrsTravelled
-        );
-    }
-    if (selectedTransports.includes('jeep')){
-        publicTransportEmissions += computePublicTransportEmissions(
-            TransportEmission.PublicTransport.jeepney.efPerKm,
-            TransportEmission.PublicTransport.jeepney.aveSpeed,
-            jeepHrsTravelled
-        );
-    }
-    if (selectedTransports.includes('trike')){
-        publicTransportEmissions += computePublicTransportEmissions(
-            TransportEmission.PublicTransport.tricycle.efPerKm,
-            TransportEmission.PublicTransport.tricycle.aveSpeed,
-            tricycleHrsTravelled
-        );
-    }
+  if (selectedTransports.length === 0) {
+    return publicTransportEmissions;
+  }
+  if (selectedTransports.includes("bus")) {
+    publicTransportEmissions += computePublicTransportEmissions(
+      TransportEmission.PublicTransport.bus.efPerKm,
+      TransportEmission.PublicTransport.bus.aveSpeed,
+      busHrsTravelled
+    );
+  }
+  if (selectedTransports.includes("jeep")) {
+    publicTransportEmissions += computePublicTransportEmissions(
+      TransportEmission.PublicTransport.jeepney.efPerKm,
+      TransportEmission.PublicTransport.jeepney.aveSpeed,
+      jeepHrsTravelled
+    );
+  }
+  if (selectedTransports.includes("trike")) {
+    publicTransportEmissions += computePublicTransportEmissions(
+      TransportEmission.PublicTransport.tricycle.efPerKm,
+      TransportEmission.PublicTransport.tricycle.aveSpeed,
+      tricycleHrsTravelled
+    );
+  }
 
-    return converKgToTons(publicTransportEmissions);
+  return convertKgToTons(publicTransportEmissions);
 }
 
-export function computeBreakfastEmissions(breakfastEf: number){
-    let breakfastEmission = 0;
+// Update the function to calculate breakfast emissions
+export function computeBreakfastEmissions(breakfastEF: number): number {
+  let breakfastEmission = 0;
 
-    if (breakfastEf > 0){
-        breakfastEmission = breakfastEf * 365; // days in a year
-    }
+  // Get the selected breakfast meal and corresponding weights
+  breakfastEmission = breakfastEF * 365; // days in a year
 
-    return converKgToTons(breakfastEmission);
-}
-
-export function computeMealEmission(ef: number, frequencyPerWeek: number){
-    let mealEmission: number;
-
-    mealEmission = (frequencyPerWeek * 52) * ef;
-
-    return mealEmission;
+  return convertKgToTons(breakfastEmission);
 }
 
 interface MealTypeFrequency {
-    'Vegan': number,
-    'Vegetarian': number,
-    'Beef meat meal': number,
-    'Chicken meat meal': number,
-    'Pork meat meal': number,
-    'Fish meat meal': number;
+  "Vegan": number;
+  "Vegetarian": number;
+  "Beef meat meal": number;
+  "Chicken meat meal": number;
+  "Pork meat meal": number;
+  "Fish meat meal": number;
 }
 
-export function computeTotalMealEmissions(frequency: MealTypeFrequency){
-    let totalMealEmissions = 0;
-    
-    if (frequency['Beef meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.beef, frequency['Beef meat meal']);
-    }
-    if (frequency['Chicken meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.chicken, frequency['Chicken meat meal']);
-    }
-    if (frequency['Fish meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.fish, frequency['Fish meat meal']);
-    }
-    if (frequency['Pork meat meal'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.pork, frequency['Pork meat meal']);
-    }
-    if (frequency['Vegan'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.vegan, frequency['Vegan']);
-    }
-    if (frequency['Vegetarian'] > 0){
-        totalMealEmissions += computeMealEmission(FoodEmission.LunchesDinners.mealTypeEF.vegetarian, frequency['Vegetarian']);
-    }
+export function getAdditionals(breakfastType: string): FoodItem[] {
+  let additionals: FoodItem[] = [];
+  const breakfast = Meals[breakfastType];
 
-    return converKgToTons(totalMealEmissions);
+  // Add item keys from MeanOneDayConsumption that are not in breakfast
+  for (const item in MeanOneDayConsumption) {
+    if (!(breakfast.includes(item)) && !(mealBase.includes(item))) {
+      additionals.push(item); // Add the item key to additionals if not in breakfast
+    }
+  }
+
+  return additionals;
 }
 
-export function computeHotDrinkEmission(ef: number, kgPerCup: number, frequencyPerDay: number){
-    let efPerCup = ef * kgPerCup;
-    let hotDrinkEmission = (frequencyPerDay * efPerCup) * 365; // days in a year
-    
-    return hotDrinkEmission;
+// Type definition to include optional custom weights for each food item
+export type CustomWeights = Record<FoodItem, number>;
+
+export function computeMealEmission(
+  mealType: string,
+  additionals: FoodItem[],
+  customWeights?: CustomWeights
+): number {
+
+  let baseMealEmission = 0;
+  const mealComposition = Meals[mealType];
+
+  // Use custom-weight emissions if provided
+  if (customWeights) {
+    baseMealEmission = calculateEmission(customWeights);
+  }
+  else {
+    baseMealEmission = calculateEmission(mealComposition);
+  }
+
+  // Filter out "Egg" and "Milk" if the meal type is vegan
+  if (mealType === "Vegan") {
+    additionals = additionals.filter(item => item !== "Egg" && item !== "Milk");
+  }
+
+  // Calculate the additional emissions and add to base meal emission, adjusting by factor
+  let mealEmission = baseMealEmission + (calculateEmission(additionals) / 3);
+
+  return mealEmission;
+}
+
+// Helper function to calculate emissions from either an array or an object of custom weights
+export function calculateEmission(items: FoodItem[] | CustomWeights): number {
+  if (Array.isArray(items)) {
+    // Process array of FoodItem strings
+    return items.reduce((total, item) => {
+      const data = MeanOneDayConsumption[item];
+      if (!data) return total;  // Skip items not found in MeanOneDayConsumption
+      const { efPerKg, weightInKg } = data;
+      return total + efPerKg * weightInKg;
+    }, 0);
+  } else {
+    // Process object with custom weights
+    return Object.entries(items).reduce((total, [item, customWeight]) => {
+      const data = MeanOneDayConsumption[item];
+      if (!data) return total;  // Skip items not found in MeanOneDayConsumption
+      const { efPerKg } = data;
+      return total + efPerKg * customWeight;
+    }, 0);
+  }
+}
+
+export function computeTotalMealEmissions(
+  beefMealEF: number,
+  chickenMealEF: number,
+  porkMealEF: number,
+  fishMealEF: number,
+  vegetarianMealEF: number,
+  veganMealEF: number,
+  frequency: MealTypeFrequency
+) {
+  let totalMealEmissions = 0;
+
+  if (frequency["Beef meat meal"] > 0) {
+    totalMealEmissions += beefMealEF * frequency["Beef meat meal"];
+  }
+  if (frequency["Pork meat meal"] > 0) {
+    totalMealEmissions += porkMealEF * frequency["Pork meat meal"];
+  }
+  if (frequency["Chicken meat meal"] > 0) {
+    totalMealEmissions += chickenMealEF * frequency["Chicken meat meal"];
+  }
+  if (frequency["Fish meat meal"] > 0) {
+    totalMealEmissions += fishMealEF * frequency["Fish meat meal"];
+  }
+  if (frequency["Vegetarian"] > 0) {
+    totalMealEmissions += vegetarianMealEF * frequency["Vegetarian"];
+  }
+  if (frequency["Vegan"] > 0) {
+    totalMealEmissions += veganMealEF * frequency["Vegan"];
+  }
+
+  totalMealEmissions *= 52 // weeks in a year
+
+  return convertKgToTons(totalMealEmissions);
+}
+
+export function computeAdditionals(addedFoodEF: number){
+  let addedFoodEmissions = 0;
+  
+  addedFoodEmissions = addedFoodEF * Multipliers['Days in a year'];
+
+  return convertKgToTons(addedFoodEmissions);
+}
+
+export function computeHotDrinkEmission(
+  ef: number,
+  kgPerCup: number,
+  frequencyPerDay: number
+) {
+  let efPerCup = ef * kgPerCup;
+  let hotDrinkEmission = frequencyPerDay * efPerCup
+
+  return hotDrinkEmission;
 }
 
 interface DrinkTypeFrequency {
-    'Coffee': number,
-    'Tea': number,
-    'Hot Chocolate': number
+  Coffee: number;
+  Tea: number;
+  "Hot Chocolate": number;
 }
 
-export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency){
-    let totalHotDrinksEmissions = 0;
-    
-    if (frequency['Coffee'] > 0){
-        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.coffee, FoodEmission.HotDrinks.kgPerCup.coffee, frequency['Coffee']);
-    }
-    if (frequency['Tea'] > 0){
-        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.tea, FoodEmission.HotDrinks.kgPerCup.tea, frequency['Tea']);
-    }
-    if (frequency['Hot Chocolate'] > 0){
-        totalHotDrinksEmissions += computeHotDrinkEmission(FoodEmission.HotDrinks.drinkTypeEF.hotChoco, FoodEmission.HotDrinks.kgPerCup.hotChoco, frequency['Hot Chocolate']);
-    }
+export function computeTotalHotDrinksEmissions(frequency: DrinkTypeFrequency) {
+  let totalHotDrinksEmissions = 0;
 
-    return converKgToTons(totalHotDrinksEmissions);
+  if (frequency["Coffee"] > 0) {
+    totalHotDrinksEmissions += computeHotDrinkEmission(
+      Beverages.HotDrinks.drinkTypeEF.coffee,
+      Beverages.HotDrinks.kgPerCup.coffee,
+      frequency["Coffee"]
+    ) * 365;
+  }
+  if (frequency["Tea"] > 0) {
+    totalHotDrinksEmissions += computeHotDrinkEmission(
+      Beverages.HotDrinks.drinkTypeEF.tea,
+      Beverages.HotDrinks.kgPerCup.tea,
+      frequency["Tea"]
+    ) * 365;
+  }
+  if (frequency["Hot Chocolate"] > 0) {
+    totalHotDrinksEmissions += computeHotDrinkEmission(
+      Beverages.HotDrinks.drinkTypeEF.hotChoco,
+      Beverages.HotDrinks.kgPerCup.hotChoco,
+      frequency["Hot Chocolate"]
+    ) * 365;
+  }
+
+  return convertKgToTons(totalHotDrinksEmissions);
 }
 
-export function computeColdDrinkEmission(frequency: number, litersPerDay: number, ef: number){
-    let consumption = (frequency * litersPerDay);
+export function computeColdDrinkEmission(
+  frequency: number,
+  litersPerDay: number,
+  ef: number
+) {
+  let consumption = frequency * litersPerDay;
 
-    let coldDrinkEmission = (consumption * 52) * ef;
+  let coldDrinkEmission = consumption * 52 * ef;
 
-    return coldDrinkEmission;
+  return coldDrinkEmission;
 }
 
-export function computeTotalColdDrinkEmissions(sweetDrinksFrequency: number, alcoholFrequency: number){
-    let totalColdDrinksEmissions = 0;
+export function computeTotalColdDrinkEmissions(
+  sweetDrinksFrequency: number,
+  alcoholFrequency: number
+) {
+  let totalColdDrinksEmissions = 0;
 
-    if (sweetDrinksFrequency > 0){
-        totalColdDrinksEmissions += computeColdDrinkEmission(sweetDrinksFrequency, FoodEmission.ColdDrinks.sweetDrinks.litersPerDay, FoodEmission.ColdDrinks.sweetDrinks.ef);
-    }
-    if (alcoholFrequency > 0){
-        totalColdDrinksEmissions += computeColdDrinkEmission(alcoholFrequency, FoodEmission.ColdDrinks.alcohol.litersPerDay, FoodEmission.ColdDrinks.sweetDrinks.ef);
-    }
+  if (sweetDrinksFrequency > 0) {
+    totalColdDrinksEmissions += computeColdDrinkEmission(
+      sweetDrinksFrequency,
+      Beverages.ColdDrinks.sweetDrinks.litersPerDay,
+      Beverages.ColdDrinks.sweetDrinks.ef
+    );
+  }
+  if (alcoholFrequency > 0) {
+    totalColdDrinksEmissions += computeColdDrinkEmission(
+      alcoholFrequency,
+      Beverages.ColdDrinks.alcohol.litersPerDay,
+      Beverages.ColdDrinks.sweetDrinks.ef
+    );
+  }
 
-    return converKgToTons(totalColdDrinksEmissions);
+  return convertKgToTons(totalColdDrinksEmissions);
 }
 
-export function computeBottledWaterEmissions(buysBottledWater: boolean){
-    let bottledWaterEmissions = 0;
+export function computeBottledWaterEmissions(buysBottledWater: boolean) {
+  let bottledWaterEmissions = 0;
 
-    if (buysBottledWater){
-        let annualConsumption = FoodEmission.BottledWater.consumption * 365 
-        bottledWaterEmissions = annualConsumption * FoodEmission.BottledWater.ef;
-    }
+  if (buysBottledWater) {
+    let annualConsumption = Beverages.BottledWater.consumption * 365;
+    bottledWaterEmissions = annualConsumption * Beverages.BottledWater.ef;
+  }
 
-    return converKgToTons(bottledWaterEmissions);
+  return convertKgToTons(bottledWaterEmissions);
 }
 
-export function computeGridConsumption(gridMonthlySpend: number){
-    let gridConsumption: number;
+export function computeGridConsumption(gridMonthlySpend: number) {
+  let gridConsumption: number;
 
-    gridConsumption = (gridMonthlySpend / ElectricityEmissions.Grid.ratePerKwh) * 12;
-    
-    return gridConsumption;
+  gridConsumption =
+    (gridMonthlySpend / ElectricityEmissions.Grid.ratePerKwh) * 12;
+
+  return gridConsumption;
 }
 
-export function computeSolarProduction(solarProduction: number, solarConsumptionPercent: number){
-    let solarConsumption = solarProduction * (solarConsumptionPercent / 100);
+export function computeSolarProduction(
+  solarProduction: number,
+  solarConsumptionPercent: number
+) {
+  let solarConsumption = solarProduction * (solarConsumptionPercent / 100);
 
-    return solarConsumption;
+  return solarConsumption;
 }
 
-export function computeElectricityEmissions(householdSize: number, solarIsUsed: boolean, solarProduction: number, solarConsumptionPercent: number, gridMonthlySpend: number){
-    let electricityEmissions = 0;
-    let electricityConsumption = 0;
-    
-    // compute annual consumption
-    electricityConsumption += computeGridConsumption(gridMonthlySpend);
+export function computeElectricityEmissions(
+  householdSize: number,
+  solarIsUsed: boolean,
+  solarProduction: number,
+  solarConsumptionPercent: number,
+  gridMonthlySpend: number
+) {
+  let electricityEmissions = 0;
+  let electricityConsumption = 0;
 
-    if (solarIsUsed){
-        electricityConsumption += computeSolarProduction(solarProduction, solarConsumptionPercent);
-    }
+  // compute annual consumption
+  electricityConsumption += computeGridConsumption(gridMonthlySpend);
 
-    // compute annual emissions
-    electricityEmissions = (electricityConsumption * ElectricityEmissions.Grid.ef) / householdSize;
+  if (solarIsUsed) {
+    electricityConsumption += computeSolarProduction(
+      solarProduction,
+      solarConsumptionPercent
+    );
+  }
 
-    return converKgToTons(electricityEmissions);
+  // compute annual emissions
+  electricityEmissions =
+    (electricityConsumption * ElectricityEmissions.Grid.efPerKwh) /
+    householdSize;
+
+  return convertKgToTons(electricityEmissions);
 }

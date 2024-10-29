@@ -1,27 +1,29 @@
+// TemplateOneItem.tsx
 import React from "react";
 import { View } from "react-native";
-import { Card, Layout, Text } from "@ui-kitten/components";
+import { Checkbox, IconButton } from "react-native-paper";
 import { Swipeable } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { styled } from "nativewind";
-import { Ionicons } from "@expo/vector-icons";
+import { Card, Layout, Text } from "@ui-kitten/components";
 
+const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
-const StyledLayout = styled(Layout)
+const StyledText = styled(Text);
 
-const ActionItem: React.FC<ActionItemProps> = ({
+const Static: React.FC<ActionItemProps> = ({
   item,
   completedActions,
   handleComplete,
   handleDelete,
 }) => {
+
+
   return (
     <Swipeable
       renderRightActions={() => (
-        <View className="flex items-center justify-center mr-4 ml-2">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>
+        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
       )}
     >
       <StyledLayout className="pt-1 m-1">
@@ -43,4 +45,4 @@ const ActionItem: React.FC<ActionItemProps> = ({
   );
 };
 
-export default ActionItem;
+export default Static;

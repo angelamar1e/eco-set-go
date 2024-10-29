@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { QuizDocsProvider } from "@/contexts/QuizContext";
-import { EmissionsProvider } from "@/contexts/EmissionsContext";
+import { EmissionsProvider } from "@/contexts/Emissions";
 import Calculator from "../components/quiz/Calculator";
 import { SafeAreaView, View } from "react-native";
 import { useNavigation } from '@react-navigation/native';

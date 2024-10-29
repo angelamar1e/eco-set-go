@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, ScrollView, KeyboardAvoidingView, FlatList, Image, TouchableOpacity } from "react-native";
 import { ArticleInfo } from "@/types/ArticleInfo";
 import { Card, IconButton, Button, TextInput } from "react-native-paper";
-import { FlatList, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as ImagePicker from "expo-image-picker";
+// import * as VideoThumbnails from 'expo-video-thumbnails'; // For video thumbnails
 import firestore from '@react-native-firebase/firestore';
-import moment from "moment";
 import { router } from "expo-router";
+import { Video } from 'expo-av'; // Import Video from expo-av
 
 const AddArticle = () => {
   const [title, setTitle] = useState<string>();
@@ -17,8 +18,10 @@ const AddArticle = () => {
   const [newFact, setNewFact] = useState<ArticleInfo>({ id: "", content: "" });
   const [newBenefit, setNewBenefit] = useState<ArticleInfo>({ id: "", content: "" });
   const [newInstruction, setNewInstruction] = useState<ArticleInfo>({ id: "", content: "" });
-  
-  const [visibleInput, setVisibleInput] = useState<string | null>(null);
+
+  const [visibleInput, setVisibleInput] = useState<string>();
+  const [selectedMedia, setSelectedMedia] = useState<{uri: string; type: string | undefined}>(); // New state for media
+  const scrollRef = useRef<ScrollView>(null);
 
   const clearAllInput = () => {
     setTitle(undefined);
@@ -27,29 +30,33 @@ const AddArticle = () => {
     setFacts([]);
     setBenefits([]);
     setInstructions([]);
-  }
+    setSelectedMedia(undefined); // Clear selected media
+  };
 
   const handleAddFact = () => {
     if (newFact.content.trim()) {
-      setFacts([...facts, newFact]);
+      setFacts([...facts, { ...newFact, media: selectedMedia }]); // Add media to the fact
       setNewFact({ id: "", content: "" });
-      setVisibleInput(null);
+      setVisibleInput(undefined);
+      setSelectedMedia(undefined); // Reset media selection
     }
   };
 
   const handleAddBenefit = () => {
-    if (newBenefit!.content.trim()) {
-      setBenefits([...benefits, newBenefit]);
+    if (newBenefit.content.trim()) {
+      setBenefits([...benefits, { ...newBenefit, media: selectedMedia }]); // Add media to the benefit
       setNewBenefit({ id: "", content: "" });
-      setVisibleInput(null);
+      setVisibleInput(undefined);
+      setSelectedMedia(undefined); // Reset media selection
     }
   };
 
   const handleAddInstruction = () => {
     if (newInstruction.content.trim()) {
-      setInstructions([...instructions, newInstruction]);
+      setInstructions([...instructions, { ...newInstruction, media: selectedMedia }]); // Add media to the instruction
       setNewInstruction({ id: "", content: "" });
-      setVisibleInput(null);
+      setVisibleInput(undefined);
+      setSelectedMedia(undefined); // Reset media selection
     }
   };
 
@@ -67,77 +74,93 @@ const AddArticle = () => {
     }
   };
 
-  const handleAddEcoAction = () => {
-    const timestamp = Date().toString();
-    const ecoActionsCollection = firestore().collection('eco_actions');
+  const handleMediaSelect = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    return ecoActionsCollection.add({
-      category: category,
-      impact: impact,
-      title: title,
-      updated_at: timestamp
-    })
-  } 
+    if (permissionResult.granted) {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All, // Allow images and videos
+        quality: 1,
+      });
 
-  const handleAddArticleInfo = async (actionId : string) => {
-    const factsCollection = firestore().collection('eco_facts');
-    const benefitsCollection = firestore().collection('eco_benefits');
-    const instructionsCollection = firestore().collection('eco_instructions');
-
-    if (facts.length > 0){
-      await Promise.all(facts.map(async (fact) => {
-        await factsCollection.add({
-          content: fact.content,
-          action: actionId
-        });
-      }))  
+      if (!result.canceled && result.assets) {
+        const selectedAsset = result.assets[0];
+        setSelectedMedia({uri: selectedAsset.uri, type: selectedAsset.type});
+      }
+    } else {
+      alert("Permission to access media library is required!");
     }
-
-    if (benefits.length > 0){
-      await Promise.all(benefits.map(async (benefit) => {
-        await benefitsCollection.add({
-          content: benefit.content,
-          action: actionId
-        });
-      }))  
-    }
-
-    if (instructions.length > 0){
-      await Promise.all(instructions.map(async (instruction) => {
-        await instructionsCollection.add({
-          content: instruction.content,
-          action: actionId
-        });
-      }))  
-    }
-  }
+  };
 
   const handleSubmit = async () => {
-    if (title && category && impact){
-      const newEcoAction = await handleAddEcoAction();
+    if (title && category && impact) {
+      const ecoActionsCollection = firestore().collection('eco_actions');
+      const newEcoAction = await ecoActionsCollection.add({
+        category: category,
+        impact: impact,
+        title: title,
+        updated_at: new Date().toISOString(),
+      });
 
-      handleAddArticleInfo(newEcoAction.id);
+      if (newEcoAction.id) {
+        const factsCollection = firestore().collection('eco_facts');
+        const benefitsCollection = firestore().collection('eco_benefits');
+        const instructionsCollection = firestore().collection('eco_instructions');
+
+        const promises = [
+          ...facts.map(fact => factsCollection.add({ content: fact.content, media: fact.media, action: newEcoAction.id })),
+          ...benefits.map(benefit => benefitsCollection.add({ content: benefit.content, media: benefit.media, action: newEcoAction.id })),
+          ...instructions.map(instruction => instructionsCollection.add({ content: instruction.content, media: instruction.media, action: newEcoAction.id })),
+        ];
+
+        await Promise.all(promises);
+      }
+
+      clearAllInput();
+      router.push('/(admin)/Eco Articles/list');
     }
-
-    router.push('/(admin)/Eco Articles/list');
-    clearAllInput();
-  }
+  };
 
   const renderItem = (item: ArticleInfo, type: string) => (
     <Card style={{ margin: 10 }} onLongPress={() => handleDelete(item, type)}>
       <Card.Content>
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{item.content}</Text>
+        <Card.Cover source={{uri: item.media?.uri}}></Card.Cover>
+        {item.media && (
+          <TouchableOpacity>
+            {item.media.type && item.media.type.startsWith('image/') ? (
+              <Image source={{ uri: item.media.uri }} style={{ width: 100, height: 100 }} /> // Display image
+            ) : item.media.type && item.media.type.startsWith('video/') ? (
+              <Video
+                source={{ uri: item.media.uri }} // Display video
+                style={{ width: 100, height: 100 }}
+                // resizeMode=""
+                shouldPlay={false}
+                isLooping
+                useNativeControls
+              />
+            ) : null}
+          </TouchableOpacity>
+        )}
       </Card.Content>
     </Card>
   );
 
   return (
-    <View style={{ padding: 20 }}>
-      <View className="flex-row justify-between items-end mb-3">
-        <Text className="text-2xl">Adding {"\n"}a new article</Text>
-        <Button className="h-10" mode="contained" onPress={handleSubmit}>Submit</Button>
-      </View>
-      <ScrollView>
+    <KeyboardAvoidingView
+      behavior={'padding'}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={80}
+    >
+      <ScrollView 
+        ref={scrollRef} 
+        contentContainerStyle={{ padding: 20 }} 
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 10 }}>
+          <Text style={{ fontSize: 24 }}>Adding a New Article</Text>
+          <Button mode="contained" onPress={handleSubmit}>Submit</Button>
+        </View>
         <TextInput
           placeholder="Title"
           value={title}
@@ -161,7 +184,6 @@ const AddArticle = () => {
         {["Facts", "Benefits", "Instructions"].map((sectionTitle, index) => {
           const isFact = sectionTitle === "Facts";
           const isBenefit = sectionTitle === "Benefits";
-          const isInstruction = sectionTitle === "Instructions";
 
           return (
             <View key={index}>
@@ -169,37 +191,49 @@ const AddArticle = () => {
                 <Text style={{ fontSize: 24, fontWeight: "bold" }}>{sectionTitle}</Text>
                 <IconButton
                   icon="plus"
-                  onPress={() => {
-                    setVisibleInput(isFact ? 'fact' : isBenefit ? 'benefit' : 'instruction');
-                  }}
+                  onPress={() => setVisibleInput(isFact ? 'fact' : isBenefit ? 'benefit' : 'instruction')}
                 />
               </View>
 
               {visibleInput === (isFact ? 'fact' : isBenefit ? 'benefit' : 'instruction') && (
-                // <TouchableWithoutFeedback onPress={() => setVisibleInput(null)}>
-                  <Card style={{ margin: 10 }}>
-                    <TextInput className="max-h-32 hwrap"
-                      placeholder="Content"
-                      value={isFact ? newFact.content : isBenefit ? newBenefit.content : newInstruction.content}
-                      onChangeText={(text) => {
-                        if (isFact) {
-                          setNewFact({ content: text } as ArticleInfo);
-                        } else if (isBenefit) {
-                          setNewBenefit({ content: text } as ArticleInfo) ;
-                        } else {
-                          setNewInstruction({ content: text } as ArticleInfo);
-                        }
-                      }}
-                    multiline />
-                    <Card.Actions>
-                      <Button
-                        onPress={isFact ? handleAddFact : isBenefit ? handleAddBenefit : handleAddInstruction}
-                      >
-                        Done
-                      </Button>
-                    </Card.Actions>
-                  </Card>
-                // </TouchableWithoutFeedback>
+                <Card style={{ margin: 10 }}>
+                  <TextInput
+                    placeholder="Content"
+                    value={isFact ? newFact.content : isBenefit ? newBenefit.content : newInstruction.content}
+                    onChangeText={(text) => {
+                      if (isFact) setNewFact({ content: text } as ArticleInfo);
+                      else if (isBenefit) setNewBenefit({ content: text } as ArticleInfo);
+                      else setNewInstruction({ content: text } as ArticleInfo);
+                    }}
+                    multiline
+                    style={{ minHeight: 60 }} // Adjust the height for better UX
+                  />
+                  <Button onPress={handleMediaSelect}>Select Media</Button>
+                  {selectedMedia && (
+                    <>
+                    <Card.Cover source={{uri: selectedMedia.uri}}></Card.Cover>
+                    <View style={{ marginVertical: 10 }}>
+                      {selectedMedia.type && selectedMedia.type.startsWith('image') ? (
+                        <Image source={{ uri: selectedMedia.uri }} style={{ width: 100, height: 100 }} /> // Display selected image
+                      ) : selectedMedia.type && selectedMedia.type.startsWith('video') ? (
+                        <Video
+                          source={{ uri: selectedMedia.uri }} // Display selected video
+                          style={{ width: 100, height: 100 }}
+                          // resizeMode="cover"
+                          shouldPlay={false}
+                          isLooping
+                          useNativeControls
+                        />
+                      ) : null}
+                    </View>
+                    </>
+                  )}
+                  <Card.Actions>
+                    <Button onPress={isFact ? handleAddFact : isBenefit ? handleAddBenefit : handleAddInstruction}>
+                      Done
+                    </Button>
+                  </Card.Actions>
+                </Card>
               )}
 
               <FlatList
@@ -211,7 +245,7 @@ const AddArticle = () => {
           );
         })}
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
