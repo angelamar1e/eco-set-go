@@ -25,21 +25,18 @@ import {
   TransportEmission,
   Food,
 } from "@/constants/DefaultValues";
-import { getUserUid } from "@/app/utils/utils";
+import { useUserContext } from "./UserContext";
 
 export const EmissionsContext = createContext();
 
 export const EmissionsProvider = ({ children }) => {
-  const [userUid, setUserUid] = useState("");
+  const {userUid} = useUserContext();
   const [initialized, setInitialized] = useState(false);
 
 // Load initial data from Firestore for the logged-in user
 
   const initializeData = async () => {
-    const uid = await getUserUid();
-    setUserUid(uid);
-
-    const doc = await firestore().collection("emissions_data").doc(uid).get();
+    const doc = await firestore().collection("emissions_data").doc(userUid).get();
     const data = doc.exists ? doc.data() : {};
 
     // Car emissions data

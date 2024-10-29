@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { BackHandler, View } from "react-native";
 import { styled } from "nativewind";
-import { getUserName, getUserUid, handleBackAction } from "../../utils/utils";
+import { handleBackAction } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import firestore from "@react-native-firebase/firestore";
-import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
 import { Button, Card, Layout, Text,  } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useUserContext } from "@/contexts/UserContext";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -28,29 +28,10 @@ const Box = ({ className = "", style = "", ...props }) => (
 
 export default function LandingPage() {
   const router = useRouter();
-  const [userUid, setUserUid] = useState<string | undefined>();
+  const { userUid, username, overallFootprint } = useUserContext();
   const [userName, setUserName] = useState<string | undefined>();
-  const [overallFP, setOverallFP] = useState<number | undefined>();
   const [impactValue, setImpactValue] = useState<number>(0);
   const footprint = firestore().collection("current_footprint").doc(userUid);
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-      setUserName(await getUserName(uid));
-    };
-
-    fetchUserUid();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = footprint.onSnapshot((doc) => {
-      setOverallFP(doc.data()!.overall_footprint!.toFixed(2));
-    });
-
-    return () => unsubscribe();
-  }, [footprint]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -61,10 +42,6 @@ export default function LandingPage() {
     return () => backHandler.remove();
   }, []);
 
-  const handleImpactChange = (impact: number) => {
-    setImpactValue(impact);
-  };
-
   return (
     <StyledLayout className="flex-1">
       <SafeAreaView className="flex-1">
@@ -74,7 +51,7 @@ export default function LandingPage() {
               <StyledText category="h4" className="w-3/4">
                   Welcome, <StyledText category="h4" className="italic"
                   style={{color: myTheme['color-success-600']}}
-                >{userName!}!</StyledText>
+                >{username}!</StyledText>
               </StyledText> 
               <StyledButton 
                 className="p-1 m-1 rounded-full"
@@ -93,7 +70,7 @@ export default function LandingPage() {
                   Carbon Footprint
                 </StyledText>
                 <StyledText category="h6" className="text-center text-white text-6xl">
-                  {overallFP}
+                  {overallFootprint.toFixed(2)}
                 </StyledText>
                 <StyledText className="text-center text-white italic text-sm">
                   tons of{'\n'}CO2 equivalent
@@ -113,7 +90,6 @@ export default function LandingPage() {
               </StyledLayout>
             </StyledLayout>
 
-            <ImpactCalculator onImpactUpdate={handleImpactChange} />
             <DailyLog/>
           </StyledLayout>
         </StyledLayout>

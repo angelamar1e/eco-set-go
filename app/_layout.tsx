@@ -6,11 +6,13 @@ import { EmissionsProvider } from "@/contexts/Emissions"
 import { myTheme } from "@/constants/custom-theme";
 import { useColorScheme } from "react-native";
 import { EmissionsDataProvider } from '@/contexts/EmissionsData';
+import { UserProvider } from '@/contexts/UserContext'
 
 export default function RootLayout() {
   const colorScheme = useColorScheme(); 
 
   return (
+    <UserProvider>
     <EmissionsProvider>
       <EmissionsDataProvider>
       <ApplicationProvider
@@ -35,5 +37,6 @@ export default function RootLayout() {
       </ApplicationProvider>
       </EmissionsDataProvider>
     </EmissionsProvider>
+    </UserProvider>
   );
 }

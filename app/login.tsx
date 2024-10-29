@@ -10,6 +10,7 @@ import { SignUpButton } from "@/components/SignUpButton";
 import { TextInput } from "react-native-paper";
 import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { goToInterface } from "./utils/utils";
+import { useUserContext } from "@/contexts/UserContext";
 
 interface CustomAlertProps {
   visible: boolean;
@@ -44,6 +45,8 @@ export default function LogInScreen() {
   const [alertVisible, setAlertVisible] = useState<boolean>(false); // State for alert visibility
   const [alertMessage, setAlertMessage] = useState<string>(''); // State for alert message
 
+  const { role } = useUserContext();
+
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!re.test(email)) {
@@ -71,7 +74,7 @@ export default function LogInScreen() {
       try {
         await auth().signInWithEmailAndPassword(email, password);
         // Navigate to the interface after successful login
-        goToInterface();
+        goToInterface(role);
         clearAllInput();
       } catch (e) {
         setAlertMessage("Login Error");

@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
-import { getUserUid } from '@/app/utils/utils';
+import { useUserContext } from './UserContext';
 
 // Create the context
 export const EmissionsDataContext = createContext();
@@ -10,17 +10,14 @@ export const EmissionsDataProvider = ({ children }) => {
   const [emissionsData, setEmissionsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userUid, setUserUid] = useState("");
+  const {userUid} = useUserContext();
 
   useEffect(() => {
     const initializeData = async () => {
       try {
-        const uid = await getUserUid();
-        setUserUid(uid);
-
         const unsubscribe = firestore()
           .collection('emissions_data')
-          .doc(uid) // Use the uid obtained from getUserUid
+          .doc(userUid) // Use the uid obtained from getUserUid
           .onSnapshot((doc) => {
             if (doc.exists) {
               setEmissionsData(doc.data());
@@ -42,7 +39,7 @@ export const EmissionsDataProvider = ({ children }) => {
     };
 
     initializeData();
-  }, []); // Empty dependency array to run only once on mount
+  }, [userUid]); // Empty dependency array to run only once on mount
 
   return (
     <EmissionsDataContext.Provider value={{ emissionsData, loading, error }}>

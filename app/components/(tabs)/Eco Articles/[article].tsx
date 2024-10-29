@@ -5,24 +5,15 @@ import firestore, { arrayUnion } from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from '../../../../types/ArticleInfo';
-import { getUserUid } from "@/app/utils/utils";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { useUserContext } from "@/contexts/UserContext";
 
 const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
   const actionId = article.toString();
 
-  const [userUid, setUserUid] = useState<string>();
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-    };
-
-    fetchUserUid();
-  }, []);
+  const {userUid} = useUserContext();
 
   const [visible, setVisible] = useState(false);
 
