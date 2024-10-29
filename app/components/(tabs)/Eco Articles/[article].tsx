@@ -140,7 +140,7 @@ const EcoActionDetail = () => {
   return (
     <ThemedView className="flex-1 px-5">
       <View className="flex-column">
-          <Text className="text-lime-800 mt-5 font-bold text-2xl">
+          <Text className="text-lime-800 mt-5 font-bold text-xl">
             {actionDetail.title} </Text>
         <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end bg-lime-800" onPress={handleAddToLog}>Add to Daily Log</Button>
       </View>
@@ -153,7 +153,7 @@ const EcoActionDetail = () => {
           data={facts}
           renderItem={renderFactItem}
           keyExtractor={(item) => item.id}
-          className="max-h-20"
+          className="max-h-30"
         />
 
         <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
@@ -163,7 +163,7 @@ const EcoActionDetail = () => {
           data={benefits}
           renderItem={renderFactItem}
           keyExtractor={(item) => item.id}
-          className="max-h-20"
+          className="max-h-30"
         />
 
         <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
