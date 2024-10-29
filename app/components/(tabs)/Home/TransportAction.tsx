@@ -19,6 +19,7 @@ import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils'
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { Ionicons } from "@expo/vector-icons";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -68,12 +69,17 @@ export const Transportation: React.FC<ActionItemProps> = ({
       renderRightActions={() => (
         <View className="flex items-center justify-center ml-2 mr-4">
           <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>       )}
+        </View>       
+      )}
     >
-      <StyledLayout className="pt-1 m-1">
-        <StyledCard className="rounded-lg flex-wrap">
-          <View className="flex-row items-center">
-            <CircularCheckbox
+      <StyledLayout className="pt-1 m-1" 
+        style={{
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} >
+        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
               status={
               completedActions.some((action) => action.id === item.id)
                 ? "checked"
@@ -82,8 +88,10 @@ export const Transportation: React.FC<ActionItemProps> = ({
             // onPress={() => getImpact()}
             onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
           />
-          <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
-        </View>
+          <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+            {item.title}
+          </StyledText>        
+          </View>
         </StyledCard>
       </StyledLayout>
     </Swipeable>

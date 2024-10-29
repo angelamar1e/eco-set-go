@@ -86,9 +86,14 @@ export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehic
         </View>        
       )}
     >
-       <StyledLayout className="pt-1 m-1">
-       <StyledSelect
-            className="w-full rounded-lg"
+       <StyledLayout className="pt-1 m-1"
+          style={{
+            borderBottomWidth: 1, 
+            borderBottomColor: myTheme['color-basic-500']
+          }} 
+        >
+          <StyledSelect
+            className="w-full rounded-lg mb-2"
             placeholder={() => (
               <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%" }}>
                 {item.title}
@@ -159,9 +164,9 @@ export const DoneTransportAction: React.FC<DoneItemProps & {lessEF: number, high
         }} 
           className="pt-1 m-1"
         >
-        <StyledCard className="rounded-lg flex-wrap">
-          <View className="flex-row items-center">
-            <CircularCheckbox
+        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
@@ -169,7 +174,7 @@ export const DoneTransportAction: React.FC<DoneItemProps & {lessEF: number, high
                 }
                 onPress={() => handleUnmark(item.id)}
               />
-              <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%",}} className="ml-1">
+              <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
                 {item.title}
               </StyledText>
           </View>

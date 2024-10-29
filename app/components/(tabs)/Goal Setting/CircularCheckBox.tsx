@@ -17,7 +17,7 @@ const CircularCheckbox: React.FC<CircularCheckboxProps> = ({ status, isChecked, 
   return (
     <TouchableOpacity onPress={onPress} className="items-center justify-center p-2">
       <View
-        className="w-6 h-6 rounded-full border-2 flex items-center justify-center"
+        className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
         style={{
           backgroundColor: checked ? theme['color-primary-default'] : 'transparent',
           borderColor: checked ? theme['color-primary-default'] : theme['color-basic-300'],

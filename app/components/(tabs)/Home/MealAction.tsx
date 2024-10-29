@@ -86,11 +86,13 @@ export const Meal: React.FC<ActionItemProps & {setMealSelection: (base: MealData
         </View>        
       )}
     >
-       <StyledLayout className="pt-1 m-1">
-      {/* <ThemedText className="h-15 w-56 text-m">{item.title}</ThemedText> */}
-          {/* <StyledLayout className=""> */}
+       <StyledLayout className="pt-1 m-1"
+        style={{
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} >
           <StyledSelect
-            className="w-full rounded-lg"
+            className="w-full rounded-lg mb-2"
             placeholder={() => (
               <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%" }}>
                 {item.title}
@@ -180,16 +182,14 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
 
   return (
     <View>
-      <StyledLayout 
+      <StyledLayout className="pt-1 m-1" 
         style={{
           borderBottomWidth: 1, 
           borderBottomColor: myTheme['color-basic-500']
-        }} 
-          className="pt-1 m-1"
-        >
-        <StyledCard className="rounded-lg flex-wrap">
-          <View className="flex-row items-center">
-            <CircularCheckbox
+        }} >
+        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center'}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
@@ -197,9 +197,9 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
                 }
                 onPress={() => handleUnmark(item.id)}
               />
-              <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%",}} className="ml-1">
-                {item.title}
-              </StyledText>
+            <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-1 bottom-1">
+              {item.title}
+            </StyledText>
           </View>
         </StyledCard>
 

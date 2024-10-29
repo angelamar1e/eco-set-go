@@ -14,6 +14,8 @@ import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAc
 import { Transportation } from "./TransportAction";
 import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
+import AddActionButton from "../Goal Setting/AddActionButton";
+import { myTheme } from "@/constants/custom-theme";
 
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
@@ -189,26 +191,10 @@ const emissionsContext = useContext(EmissionsContext);
     );
   };
 
-  const theme = useTheme();
-  const headertextColor = theme['color-success-900'];
-
-  // const data = [
-  //  { id: '1', title: 'Actions To Do', actions: dailyLog, renderItem: renderItem },
-   // { id: '2', title: 'Actions Done', actions: completedActions, renderItem: renderDoneItem },
-  //];
-
     return (
       //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">*/}
-      <StyledLayout className="mt-4 relative">
-        <StyledText category="h5" className="text-center mb-2" style={{ color: headertextColor }}>
-          Daily Log
-        </StyledText>
-
+      <StyledLayout className=" relative">
         <StyledLayout className="pt-1">
-          <StyledCard className="rounded-lg mb-2">
-            <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', }}>
-              Actions To Do
-            </StyledText>
             {dailyLog.length > 0 ? (
               <FlatList
                 data={dailyLog}
@@ -217,12 +203,17 @@ const emissionsContext = useContext(EmissionsContext);
                 showsVerticalScrollIndicator={false}
               />
             ) : (
-              <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions completed yet.</StyledText>
+              <StyledLayout className="pt-1 m-1"
+                style={{
+                  borderBottomWidth: 1, 
+                  borderBottomColor: myTheme['color-basic-500']
+                }} 
+              >
+                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
+              </StyledLayout>            
             )}
-          </StyledCard>
-          
-          <StyledCard className="rounded-lg">
-            <StyledText category="s1" style={{ color: '#8BC34A', fontWeight: 'bold', }}>
+        
+            <StyledText category="s1" style={{ fontWeight: 'bold', }} className="mt-1 ml-3">
               Actions Done
             </StyledText>
             {completedActions.length > 0 ? (
@@ -233,9 +224,15 @@ const emissionsContext = useContext(EmissionsContext);
                 showsVerticalScrollIndicator={false}
               />
             ) : (
-              <StyledText category="p2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
+              <StyledLayout className="pt-1 m-1"
+                style={{
+                  borderBottomWidth: 1, 
+                  borderBottomColor: myTheme['color-basic-500']
+                }} 
+              >
+                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
+              </StyledLayout>
             )}
-          </StyledCard>
         </StyledLayout>
       </StyledLayout>
       //*</KeyboardAvoidingView>*/}

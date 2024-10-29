@@ -26,7 +26,7 @@ const EcoPoints = () => {
       </StyledLayout>
 
       <View className="items-center -mt-14 -bottom-2 mb-3 z-50">
-        <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%',}} className="bg-white">
+        <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}} className="bg-white border-0">
           <StyledText category="h1" className='text-center' style={{ color: maintextcolor }}>Level 10</StyledText>
 
           <StyledLayout className="mt-1">
