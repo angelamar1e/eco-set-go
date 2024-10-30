@@ -27,21 +27,21 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
-  const [baseMeal, setSelectedBaseMeal] = useState<MealData | undefined>();
-  const [chosenMeal, setSelectedChosenMeal] = useState<MealData | undefined>();
+  const [baseMeal, setBaseMeal] = useState<MealData>();
+  const [chosenMeal, setChosenMeal] = useState<MealData>();
   const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
   const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
 
-  // Handler to update meal states from MealAction
-  const handleMealSelection = (base: MealData, chosen: MealData) => {
-    setSelectedBaseMeal(base);
-    setSelectedChosenMeal(chosen);
+  // Handler to update vehicle states for Transportation actions
+  const handleMealSelection = (baseMeal: MealData, chosenMeal: MealData) => {
+    setBaseMeal(baseMeal);
+    setChosenMeal(chosenMeal);
   };
 
   // Handler to update vehicle states for Transportation actions
-  const handleVehicleSelection = (lessEF: number, higherEF: number) => {
-    setVehicleLessEF(lessEF);
+  const handleVehicleSelection = (higherEF: number, lessEF: number) => {
     setVehicleHigherEF(higherEF);
+    setVehicleLessEF(lessEF);
   };
 
   const currentDate = moment().format("YYYY-MM-DD");
@@ -126,20 +126,43 @@ const DailyLog: FC = () => {
     });
   }
 
-  async function handleComplete(actionId: string, impact: number) {
+  async function handleComplete(actionId: string, template: number, impact: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
     // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Update the specific actionId within the current date without overwriting other fields
-    await userLogs.update({
-      [currentDate]: {
-        ...currentLog, // Keep the existing entries for the date
-        [actionId]: impact, // Update the specific action
-      },
-    });
-  }
+    // Define the update payload for each case
+    let updatePayload;
+
+    if (template === 0) {
+        updatePayload = {
+            impact,
+            baseMeal,
+            chosenMeal
+        };
+    } else if (template === 1 || template === 2 || template === 3) {
+        updatePayload = impact;
+    } else if (template === 4 || template === 5) {
+        updatePayload = {
+            impact,
+            vehicleLessEF,
+            vehicleHigherEF
+        };
+    }
+
+    try {
+        await userLogs.update({
+            [currentDate]: {
+                ...currentLog, // Keep existing entries for the date
+                [actionId]: updatePayload
+            }
+        });
+        console.log(`Successfully updated Firestore with actionId: ${actionId}`, updatePayload);
+    } catch (error) {
+        console.error("Error updating Firestore:", error);
+    }
+}
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
@@ -167,10 +190,6 @@ const DailyLog: FC = () => {
         handleDelete={handleDelete}
         handleUnmark={handleUnmark}
         handleComplete={handleComplete}
-        baseMeal={baseMeal}
-        chosenMeal={chosenMeal}
-        lessEF={vehicleLessEF}
-        higherEF={vehicleHigherEF}
       />
     );
   };
