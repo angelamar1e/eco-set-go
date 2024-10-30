@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, ScrollView } from "react-native";
+import { View, FlatList, Image } from "react-native";
 import { Button, Snackbar } from "react-native-paper";
 import firestore from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
-import { ArticleInfo } from '../../../../types/ArticleInfo';
+import { ArticleInfo } from "../../../../types/ArticleInfo";
 import { getUserUid } from "@/app/utils/utils";
 import { styled } from "nativewind";
 import { Text, Layout, Card } from "@ui-kitten/components";
 import EcoActionHeader from "./EcoArticleDetailsHeader";
-
+import storage from '@react-native-firebase/storage';
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
@@ -25,6 +25,7 @@ const EcoActionDetail = () => {
   const [facts, setFacts] = useState<ArticleInfo[]>([]);
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
   const [instructions, setInstructions] = useState<ArticleInfo[]>([]);
+  const [factsWithImages, setFactsWithImages] = useState<ArticleInfo[]>([]);
 
   useEffect(() => {
     const fetchUserUid = async () => {
@@ -43,12 +44,19 @@ const EcoActionDetail = () => {
     const unsubscribeAction = ecoActionDoc.onSnapshot((doc) => {
       setActionDetail({
         id: doc.id,
-        title: doc.data()!.title
+        title: doc.data()!.title,
       } as EcoAction);
     });
 
     const unsubscribeFacts = factsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      setFacts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
+      const fetchedFacts = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        content: doc.data().content,
+        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
+      })) as ArticleInfo[];
+
+      setFacts(fetchedFacts);
+      loadImagesForFacts(fetchedFacts);
     });
 
     const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
@@ -67,13 +75,32 @@ const EcoActionDetail = () => {
     };
   }, [actionId]);
 
-  if (!actionDetail) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  const loadImagesForFacts = async (facts: ArticleInfo[]) => {
+    const updatedFacts = await Promise.all(facts.map(async (fact) => {
+      if (fact.media) {
+        const url = await loadImage(fact.media.uri);
+        // Return fact with updated media URI
+        return { ...fact, media: { ...fact.media, uri: url } };
+      }
+      return fact; // Return unchanged fact if no media
+    }));
+  
+    // Filter out facts where media.uri is null
+    const validFactsWithImages = updatedFacts.filter(fact => fact.media?.uri !== null) as ArticleInfo[];
+  
+    setFactsWithImages(validFactsWithImages);
+  };
+  
+
+  const loadImage = async (gsUrl: string): Promise<string | null> => {
+    try {
+      const ref = storage().refFromURL(gsUrl);
+      return await ref.getDownloadURL();
+    } catch (error) {
+      console.error("Error fetching image URL: ", error);
+      return null;
+    }
+  };
 
   const showSnackbar = () => setVisible(true);
 
@@ -85,16 +112,13 @@ const EcoActionDetail = () => {
     showSnackbar();
   };
 
-  const renderFactItem = ({ item }: { item: ArticleInfo }) => (
-    <StyledCard className="m-2">
-      <StyledText category="c1">{item.content}</StyledText>
-      {item.media && (
-        <StyledText className="text-blue-500">
-          More Info
-        </StyledText>
-      )}
-    </StyledCard>
-  );
+  if (!actionDetail) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <StyledLayout className="flex-1 p-3">
@@ -118,9 +142,20 @@ const EcoActionDetail = () => {
         <StyledLayout className="flex-1">
           <StyledText category="s1" className="font-bold ml-3 mb-1">Facts</StyledText>
           <FlatList
-            data={facts}
-            renderItem={renderFactItem}
+            data={factsWithImages}
             keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <StyledCard className="m-2">
+                {item.media && item.media.uri && (
+                  <Image
+                    source={{ uri: item.media.uri }}
+                    className="w-30 h-20 rounded-md m-2"
+                    accessibilityLabel="Image"
+                  />
+                )}
+                <StyledText category="c1">{item.content}</StyledText>
+              </StyledCard>
+            )}
             showsVerticalScrollIndicator={false}
           />
         </StyledLayout>
@@ -130,15 +165,23 @@ const EcoActionDetail = () => {
           <StyledText category="s1" className="font-bold ml-3 mb-1">Benefits</StyledText>
           <FlatList
             data={benefits}
-            renderItem={renderFactItem}
             keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <StyledCard className="m-2">
+                <StyledText category="c1">{item.content}</StyledText>
+              </StyledCard>
+            )}
             showsVerticalScrollIndicator={false}
           />
           <StyledText category="s1" className="font-bold ml-3 mb-1">Instructions</StyledText>
           <FlatList
             data={instructions}
-            renderItem={renderFactItem}
             keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <StyledCard className="m-2">
+                <StyledText category="c1">{item.content}</StyledText>
+              </StyledCard>
+            )}
             showsVerticalScrollIndicator={false}
           />
         </StyledLayout>
