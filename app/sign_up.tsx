@@ -14,9 +14,11 @@ import { LoginButton } from '@/components/LoginButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
+import { useUserContext } from '@/contexts/UserContext';
 
 
 export default function SignUp() {
+  const {userUid, role} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -67,7 +69,7 @@ export default function SignUp() {
           const response = await auth().createUserWithEmailAndPassword(email, password);
           createProfile(response);
           clearAllInput();
-          goToInterface();
+          goToInterface(role);
       } catch (error){
           handleError(error);
       }
