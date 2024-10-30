@@ -11,7 +11,6 @@ import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "@/contexts/UserContext";
 import LogOutButton from "@/app/components/LogOutButton";
-import LogOutButton from "@/app/components/LogOutButton";
 import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
 import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
 
@@ -59,7 +58,7 @@ export default function LandingPage() {
                   className="italic"
                   style={{ color: myTheme['color-success-600'] }}
                 >
-                  {userName!}!
+                  {username!}!
                 </StyledText>
               </StyledText>
               <StyledButton
@@ -95,7 +94,6 @@ export default function LandingPage() {
                 </StyledCard>
               </StyledLayout>
             </StyledLayout>
-            <ImpactCalculator onImpactUpdate={handleImpactChange} />
             <StyledLayout className="flex-row items-center justify-between mt-4 ml-3">
               <StyledText category="h4" style={{ color: headertextColor, flex: 1 }}>
                 Daily Log <Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>
