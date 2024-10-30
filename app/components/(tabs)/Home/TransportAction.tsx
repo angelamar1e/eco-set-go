@@ -34,35 +34,54 @@ function isBicycle(title: string){
     }
 }
 
-export const Transportation: React.FC<ActionItemProps> = ({
+export const Transportation: React.FC<ActionItemProps & {setSelectedVehicles: (higherEF: number, lessEF: number) => void}> = ({
   item,
   handleComplete,
   handleDelete,
-  completedActions
+  completedActions,
+  setSelectedVehicles
 }) => {
   const { emissionsData } = useContext(EmissionsDataContext);
-  const [expanded, setExpanded] = useState(false);
-
-  const toggleDropdown = () => setExpanded(!expanded);
+  const [isSelectionSet, setIsSelectionSet] = useState(false);
+  const [vehicleLessEF, setVehicleLessEF] = useState<number>();
+  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>();
+  const kmTravelled = item.defaultKmTravelled!;
 
   function getImpact() {
+    console.log("PRESSED");
     const higherEF = emissionsData[item.impact] ?? item.impact;
     const lessEF = emissionsData[item.baseEmission] ?? item.baseEmission;
-    const kmTravelled = item.defaultKmTravelled!;
 
-    const higherEmissions = higherEF * kmTravelled;
-    const lessEmissions = lessEF * kmTravelled;
-    let impact = 0;
-
-    if (isBicycle(item.title)){
-        impact = higherEmissions;
-    }
-    else{
-        impact = computeImpact(higherEmissions, lessEmissions);
-    }
-
-    handleComplete(item.id, convertKgToGrams(impact));
+    setVehicleHigherEF(higherEF);
+    setVehicleLessEF(lessEF);
   }
+
+  useEffect(() => {
+    if (vehicleHigherEF || 0 && vehicleLessEF || 0) {
+      setSelectedVehicles(vehicleHigherEF!, vehicleLessEF!);
+      setIsSelectionSet(true); // Update the state to indicate selection is set
+      console.log(vehicleHigherEF, vehicleLessEF);
+    }
+  }, [vehicleHigherEF, vehicleLessEF]);
+  
+  useEffect(() => {
+    if (isSelectionSet) {
+      const higherEmissions = vehicleHigherEF! * kmTravelled;
+      const lessEmissions = vehicleLessEF! * kmTravelled;
+
+      let impact = 0;
+
+      if (isBicycle(item.title)){
+          impact = higherEmissions;
+      }
+      else{
+          impact = computeImpact(higherEmissions, lessEmissions);
+      }
+      
+      handleComplete(item.id, item.template, convertKgToGrams(impact));
+      setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
+    }
+  }, [isSelectionSet]);
 
   return (
       <Swipeable
@@ -85,8 +104,8 @@ export const Transportation: React.FC<ActionItemProps> = ({
                 ? "checked"
                 : "unchecked"
             }
-            // onPress={() => getImpact()}
-            onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
+            onPress={() => getImpact()}
+            // onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
           />
           <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
             {item.title}
