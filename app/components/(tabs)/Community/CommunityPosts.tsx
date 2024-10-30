@@ -1,18 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, ScrollView } from 'react-native';
 import PostCard from './PostCard';
 import CreatePost from './CreatePost';
 import EcoNewsCard from './EcoNewsCard';
+import firestore from "@react-native-firebase/firestore";
+
+interface Post {
+  id: string;
+  content: string;
+  userName: string;
+  userHandle: string;
+  userIcon: string;
+}
+
+interface EcoNewsItem {
+  id: string;
+  thumbnail: string;
+  headline: string;
+  date: string;
+  link: string;
+}
 
 interface CommunityPostsProps {
-  posts: Array<{ id: string; content: string; userName: string; userHandle: string; userIcon: string; }>;
-  ecoNews: Array<{ id: string; image: string; headline: string; lead: string; source: string; }>;
+  posts: Post[];
   newPost: string;
   setNewPost: (text: string) => void;
   handleCreatePost: () => void;
 }
 
-const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts, ecoNews, newPost, setNewPost, handleCreatePost }) => {
+const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts }) => {
+  const [ecoNews, setEcoNews] = useState<EcoNewsItem[]>([]);
+
+  useEffect(() => {
+    const ecoNewsCollection = firestore().collection('econews');
+
+    const unsubscribe = ecoNewsCollection.onSnapshot(snapshot => {
+      const newsItems = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as EcoNewsItem[];
+      setEcoNews(newsItems);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <FlatList
       data={posts}
@@ -28,11 +60,7 @@ const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts, ecoNews, newPost
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={
         <>
-          <CreatePost
-            newPost={newPost}
-            setNewPost={setNewPost}
-            handleCreatePost={handleCreatePost}
-          />
+          <CreatePost />
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -41,10 +69,10 @@ const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts, ecoNews, newPost
             {ecoNews.map((newsItem) => (
               <EcoNewsCard
                 key={newsItem.id}
-                image={newsItem.image}
+                thumbnail={newsItem.thumbnail}
                 headline={newsItem.headline}
-                lead={newsItem.lead}
-                source={newsItem.source}
+                date={newsItem.date}
+                link={newsItem.link}
               />
             ))}
           </ScrollView>

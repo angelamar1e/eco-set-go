@@ -10,6 +10,7 @@ import { styled } from "nativewind";
 import { Text, Layout, Card } from "@ui-kitten/components";
 import EcoActionHeader from "./EcoArticleDetailsHeader";
 
+
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
