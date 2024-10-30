@@ -171,14 +171,12 @@ const EcoActionDetail = () => {
         </Button>
       </View>
 
-      <StyledLayout className="flex-row">
-        <StyledLayout className="flex-1">
-          <StyledText category="s1" className="font-bold ml-3 mb-1">Facts</StyledText>
+          <StyledText category="s1" className="font-bold ml-2 mb-1">Facts</StyledText>
           <FlatList
             data={factsWithImages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <StyledLayout className="h-100 items-center m-1 p-3 rounded-md border border-gray-200">
+              <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200">
                 {item.media && item.media.uri && (
                   <Image
                     source={{ uri: item.media.uri }}
@@ -186,20 +184,18 @@ const EcoActionDetail = () => {
                     accessibilityLabel="Fact Image"
                   />
                 )}
-                <StyledText category="c1" className="ml-2 mr-2" >{item.content}</StyledText>
+                <StyledText category="c1" className="ml-2 mr-2 flex-shrink" >{item.content}</StyledText>
               </StyledLayout>
             )}
             showsVerticalScrollIndicator={false}
           />
-        </StyledLayout>
 
-        <StyledLayout className="flex-1">
-          <StyledText category="s1" className="font-bold ml-3 mb-1">Benefits</StyledText>
+          <StyledText category="s1" className="font-bold ml-2 mb-1">Benefits</StyledText>
           <FlatList
             data={benefitsWithImages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <StyledLayout className="h-100 items-center m-1 p-3 rounded-md border border-gray-200">
+              <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200">
                 {item.media && item.media.uri && (
                   <Image
                     source={{ uri: item.media.uri }}
@@ -207,21 +203,19 @@ const EcoActionDetail = () => {
                     accessibilityLabel="Benefit Image"
                   />
                 )}
-                <StyledText category="c1" className="ml-2 mr-2" >{item.content}</StyledText>
+                <StyledText category="c1" className="ml-2 mr-2 flex-shrink" >{item.content}</StyledText>
               </StyledLayout>
             )}
             showsVerticalScrollIndicator={false}
           />
-        </StyledLayout>
-      </StyledLayout>
 
       {/* Instructions section */}
-      <StyledText category="s1" className="font-bold ml-3 mt-4 mb-1">Instructions</StyledText>
+      <StyledText category="s1" className="font-bold ml-2 mb-1">Instructions</StyledText>
       <FlatList
         data={instructionsWithImages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <StyledLayout className="flex-row h-100 items-center m-1 p-3 rounded-md border border-gray-200"> 
+          <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200"> 
             {item.media && item.media.uri && (
               <Image
                 source={{ uri: item.media.uri }}
