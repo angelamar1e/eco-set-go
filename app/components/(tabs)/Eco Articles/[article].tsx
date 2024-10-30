@@ -26,6 +26,8 @@ const EcoActionDetail = () => {
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
   const [instructions, setInstructions] = useState<ArticleInfo[]>([]);
   const [factsWithImages, setFactsWithImages] = useState<ArticleInfo[]>([]);
+  const [benefitsWithImages, setBenefitsWithImages] = useState<ArticleInfo[]>([]);
+  const [instructionsWithImages, setInstructionsWithImages] = useState<ArticleInfo[]>([]);
 
   useEffect(() => {
     const fetchUserUid = async () => {
@@ -60,11 +62,24 @@ const EcoActionDetail = () => {
     });
 
     const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      setBenefits(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
+      const fetchedBenefits = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        content: doc.data().content,
+        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
+      })) as ArticleInfo[];
+
+      setBenefits(fetchedBenefits);
+      loadImagesForBenefits(fetchedBenefits);
     });
 
     const unsubscribeInstructions = instructionsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      setInstructions(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
+      const fetchedInstructions = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        content: doc.data().content,
+        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
+      })) as ArticleInfo[];
+      setInstructions(fetchedInstructions);
+      loadImagesForInstructions(fetchedInstructions);
     });
 
     return () => {
@@ -79,18 +94,37 @@ const EcoActionDetail = () => {
     const updatedFacts = await Promise.all(facts.map(async (fact) => {
       if (fact.media) {
         const url = await loadImage(fact.media.uri);
-        // Return fact with updated media URI
         return { ...fact, media: { ...fact.media, uri: url } };
       }
-      return fact; // Return unchanged fact if no media
+      return fact;
     }));
-  
-    // Filter out facts where media.uri is null
     const validFactsWithImages = updatedFacts.filter(fact => fact.media?.uri !== null) as ArticleInfo[];
-  
     setFactsWithImages(validFactsWithImages);
   };
-  
+
+  const loadImagesForBenefits = async (benefits: ArticleInfo[]) => {
+    const updatedBenefits = await Promise.all(benefits.map(async (benefit) => {
+      if (benefit.media) {
+        const url = await loadImage(benefit.media.uri);
+        return { ...benefit, media: { ...benefit.media, uri: url } };
+      }
+      return benefit;
+    }));
+    const validBenefitsWithImages = updatedBenefits.filter(benefit => benefit.media?.uri !== null) as ArticleInfo[];
+    setBenefitsWithImages(validBenefitsWithImages);
+  };
+
+  const loadImagesForInstructions = async (instructions: ArticleInfo[]) => {
+    const updatedInstructions = await Promise.all(instructions.map(async (instruction) => {
+      if (instruction.media) {
+        const url = await loadImage(instruction.media.uri);
+        return { ...instruction, media: { ...instruction.media, uri: url } };
+      }
+      return instruction;
+    }));
+    const validInstructionsWithImages = updatedInstructions.filter(instruction => instruction.media?.uri !== null) as ArticleInfo[];
+    setInstructionsWithImages(validInstructionsWithImages);
+  };
 
   const loadImage = async (gsUrl: string): Promise<string | null> => {
     try {
@@ -130,7 +164,7 @@ const EcoActionDetail = () => {
         <Button
           icon="note-plus"
           mode="contained"
-          className="w-40 m-3 self-end bg-lime-800"
+          className="w-40 m-2 self-end bg-lime-800"
           onPress={handleAddToLog}
         >
           Add to Daily Log
@@ -138,62 +172,76 @@ const EcoActionDetail = () => {
       </View>
 
       <StyledLayout className="flex-row">
-        {/* First column with Facts */}
         <StyledLayout className="flex-1">
           <StyledText category="s1" className="font-bold ml-3 mb-1">Facts</StyledText>
           <FlatList
             data={factsWithImages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <StyledCard className="m-2">
+              <StyledLayout className="h-100 items-center m-1 p-3 rounded-md border border-gray-200">
                 {item.media && item.media.uri && (
                   <Image
                     source={{ uri: item.media.uri }}
-                    className="w-30 h-20 rounded-md m-2"
-                    accessibilityLabel="Image"
+                    className="w-20 h-20 rounded-md m-3"
+                    accessibilityLabel="Fact Image"
                   />
                 )}
-                <StyledText category="c1">{item.content}</StyledText>
-              </StyledCard>
+                <StyledText category="c1" className="ml-2 mr-2" >{item.content}</StyledText>
+              </StyledLayout>
             )}
             showsVerticalScrollIndicator={false}
           />
         </StyledLayout>
 
-        {/* Second column with Benefits and Instructions */}
         <StyledLayout className="flex-1">
           <StyledText category="s1" className="font-bold ml-3 mb-1">Benefits</StyledText>
           <FlatList
-            data={benefits}
+            data={benefitsWithImages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <StyledCard className="m-2">
-                <StyledText category="c1">{item.content}</StyledText>
-              </StyledCard>
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-          <StyledText category="s1" className="font-bold ml-3 mb-1">Instructions</StyledText>
-          <FlatList
-            data={instructions}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <StyledCard className="m-2">
-                <StyledText category="c1">{item.content}</StyledText>
-              </StyledCard>
+              <StyledLayout className="h-100 items-center m-1 p-3 rounded-md border border-gray-200">
+                {item.media && item.media.uri && (
+                  <Image
+                    source={{ uri: item.media.uri }}
+                    className="w-20 h-20 rounded-md m-3"
+                    accessibilityLabel="Benefit Image"
+                  />
+                )}
+                <StyledText category="c1" className="ml-2 mr-2" >{item.content}</StyledText>
+              </StyledLayout>
             )}
             showsVerticalScrollIndicator={false}
           />
         </StyledLayout>
       </StyledLayout>
 
+      {/* Instructions section */}
+      <StyledText category="s1" className="font-bold ml-3 mt-4 mb-1">Instructions</StyledText>
+      <FlatList
+        data={instructionsWithImages}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <StyledLayout className="flex-row h-100 items-center m-1 p-3 rounded-md border border-gray-200"> 
+            {item.media && item.media.uri && (
+              <Image
+                source={{ uri: item.media.uri }}
+                className="w-20 h-20 rounded-md m-3"
+                accessibilityLabel="Instruction Image"
+              />
+            )}
+            <StyledText category="c1" className="ml-2 mr-2 flex-shrink">{item.content}</StyledText>
+          </StyledLayout>
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+
+
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
-        duration={Snackbar.DURATION_SHORT}
-        className="w-full"
+        duration={2000}
       >
-        Action added to your Daily Log
+        Added to Daily Log
       </Snackbar>
     </StyledLayout>
   );

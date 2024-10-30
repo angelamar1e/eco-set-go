@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity, Linking } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import storage from '@react-native-firebase/storage';
-import { myTheme } from '@/constants/custom-theme'; // Ensure you have this import
+import { myTheme } from '@/constants/custom-theme';
 
 interface EcoNewsCardProps {
   thumbnail: string;
@@ -41,22 +41,29 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
     loadImage();
   }, [thumbnail]);
 
+  const handlePress = () => {
+    if (link) {
+      Linking.openURL(link).catch((err) => console.error("Failed to open link: ", err));
+    }
+  };
+
   return (
     <StyledLayout className="h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border border-gray-200">
       <StyledLayout className="flex-row items-start">
-        <StyledLayout>
-        {imageUrl && (
-          <Image source={{ uri: imageUrl }} className="w-[130px] h-full rounded-l-md" accessibilityLabel="News Thumbnail" />
-        )}
+      <StyledLayout>
+          {imageUrl && (
+            <TouchableOpacity onPress={handlePress}>
+              <Image source={{ uri: imageUrl }} className="w-[130px] h-full rounded-l-md" accessibilityLabel="News Thumbnail" />
+            </TouchableOpacity>
+          )}
         </StyledLayout>
       
         <StyledLayout className="flex-1 m-2 p-2">
-          <StyledText category='p2' className="font-bold text-gray-800">
-            {headline}
-          </StyledText>
-          <StyledText category='c1' className="text-gray-600">
-            {date}
-          </StyledText>
+          <TouchableOpacity onPress={handlePress}>
+            <StyledText category='p2' className="font-bold text-gray-800">
+              {headline}
+            </StyledText>
+          </TouchableOpacity>
         </StyledLayout>
       </StyledLayout>
     </StyledLayout>
