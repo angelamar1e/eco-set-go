@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import firestore from "@react-native-firebase/firestore";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
@@ -17,6 +18,8 @@ import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
 import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils';
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { useUserContext } from "@/contexts/UserContext";
+import moment from "moment";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -31,14 +34,19 @@ function isBicycle(title: string){
     }
 }
 
-export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehicles: (lessEF: number, higherEF: number) => void}> = ({
+export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehicles: (higherEF: number, lessEF: number) => void}> = ({
   item,
   handleComplete,
   handleDelete,
   setSelectedVehicles
 }) => {
+  
   const { emissionsData } = useContext(EmissionsDataContext);
+  const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [vehicleLessEF, setVehicleLessEF] = useState<number>();
+  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>();
+  const kmTravelled = item.defaultKmTravelled!;
 
   const toggleDropdown = () => setExpanded(!expanded);
 
@@ -51,27 +59,39 @@ export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehic
     const higherEF = EFPerKmValue > baseEmissionValue ? EFPerKmValue : baseEmissionValue;
     const lessEF = EFPerKmValue > baseEmissionValue ? baseEmissionValue : EFPerKmValue;
 
-    return { higherEF, lessEF };
-}
+    setVehicleHigherEF(higherEF);
+    setVehicleLessEF(lessEF);
+  }
 
   function getImpact(EFPerKm: number) {
-    const { higherEF, lessEF } = assignEmissionFactors(emissionsData, EFPerKm, item);
-    const kmTravelled = item.defaultKmTravelled!;
-
-    const higherEmissions = higherEF * kmTravelled;
-    const lessEmissions = lessEF * kmTravelled;
-    let impact = 0;
-
-    if (isBicycle(item.title)){
-        impact = higherEmissions;
-    }
-    else{
-        impact = computeImpact(higherEmissions, lessEmissions);
-    }
-    
-    setSelectedVehicles(lessEF, higherEF);
-    handleComplete(item.id, convertKgToGrams(impact));
+    assignEmissionFactors(emissionsData, EFPerKm, item);
   }
+
+  useEffect(() => {
+    if (vehicleHigherEF || 0  && vehicleLessEF || 0) {
+      setSelectedVehicles(vehicleHigherEF!, vehicleLessEF!);
+      setIsSelectionSet(true); // Update the state to indicate selection is set
+    }
+  }, [vehicleHigherEF, vehicleLessEF]);
+  
+  useEffect(() => {
+    if (isSelectionSet) {
+      const higherEmissions = vehicleHigherEF! * kmTravelled;
+      const lessEmissions = vehicleLessEF! * kmTravelled;
+
+      let impact = 0;
+
+      if (isBicycle(item.title)){
+          impact = higherEmissions;
+      }
+      else{
+          impact = computeImpact(higherEmissions, lessEmissions);
+      }
+      
+      handleComplete(item.id, item.template, convertKgToGrams(impact));
+      setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
+    }
+  }, [isSelectionSet]);
 
   return (
     <Swipeable
@@ -101,27 +121,49 @@ export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehic
   );
 };
 
-export const DoneTransportAction: React.FC<DoneItemProps & {lessEF: number, higherEF: number}> = ({
+export const DoneTransportAction: React.FC<DoneItemProps> = ({
   item,
   handleComplete,
   completedActions,
   handleUnmark,
-  lessEF,
-  higherEF
 }) => {
+  const {userUid, loading} = useUserContext();
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const [vehicleLessEF, setVehicleLessEF] = useState();
+  const [vehicleHigherEF, setVehicleHigherEF] = useState();
   let impact = 0;
 
   const handleMoreDetails = () => {
     setShowInput(!showInput);
   };
 
+  useEffect(() => {
+    // Only fetch data if `userUid` is available
+    if (!userUid) return;
+
+    const getVehicleData = async () => {
+      try {
+        const currentDate = moment().format("YYYY-MM-DD");
+        const currentLog = (
+          await firestore().collection("user_logs").doc(userUid).get()
+        ).data()?.[currentDate] || {};
+
+        setVehicleLessEF(currentLog[item.id]?.vehicleLessEF || null);
+        setVehicleHigherEF(currentLog[item.id]?.vehicleHigherEF || null);
+      } catch (error) {
+        console.error("Error fetching vehicle data:", error);
+      }
+    };
+
+    getVehicleData();
+  }, [userUid, loading]);
+
   const handleCompleteDetails = () => {
     const kmTravelled = inputValue ? parseFloat(inputValue) : item.defaultKmTravelled!;
 
-    const higherEmissions = higherEF * kmTravelled;
-    const lessEmissions = lessEF * kmTravelled;
+    const higherEmissions = vehicleHigherEF! * kmTravelled;
+    const lessEmissions = vehicleLessEF! * kmTravelled;
 
     if (isBicycle(item.title)){
         impact = higherEmissions;
@@ -130,7 +172,7 @@ export const DoneTransportAction: React.FC<DoneItemProps & {lessEF: number, high
         impact = computeImpact(higherEmissions, lessEmissions);
     }
 
-    handleComplete(item.id, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact));
 
     setInputValue("");
     setShowInput(false);
