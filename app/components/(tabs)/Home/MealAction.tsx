@@ -31,11 +31,10 @@ export interface MealData {
   mealEF: number;
 }
 
-export const Meal: React.FC<ActionItemProps & { setMealSelection: (baseMeal: MealData, chosenMeal: MealData) => void }> = ({
+export const Meal: React.FC<ActionItemProps> = ({
   item,
   handleComplete,
   handleDelete,
-  setMealSelection,
 }) => {
   const { emissionsData } = useContext(EmissionsDataContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
@@ -69,18 +68,10 @@ export const Meal: React.FC<ActionItemProps & { setMealSelection: (baseMeal: Mea
 
   useEffect(() => {
     if (baseMeal && chosenMeal) {
-      setMealSelection(baseMeal, chosenMeal);
-      setIsSelectionSet(true); // Update the state to indicate selection is set
+      const impact = computeImpact(baseMeal!.mealEF, chosenMeal!.mealEF);
+      handleComplete(item.id, item.template, convertKgToGrams(impact), baseMeal, chosenMeal);
     }
   }, [baseMeal, chosenMeal]);
-  
-  useEffect(() => {
-    if (isSelectionSet) {
-      const impact = computeImpact(baseMeal!.mealEF, chosenMeal!.mealEF);
-      handleComplete(item.id, item.template, convertKgToGrams(impact));
-      setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
-    }
-  }, [isSelectionSet]);
 
   return (
     <Swipeable
@@ -128,25 +119,29 @@ export const MealDone: React.FC<DoneItemProps> = ({
   };
 
   useEffect(() => {
-    // Only fetch data if `userUid` is available
+    // Only add a listener if `userUid` is available
     if (!userUid) return;
-
-    const getMealData = async () => {
-      try {
-        const currentDate = moment().format("YYYY-MM-DD");
-        const currentLog = (
-          await firestore().collection("user_logs").doc(userUid).get()
-        ).data()?.[currentDate] || {};
-
-        setBaseMeal(currentLog[item.id]?.baseMeal || null);
-        setChosenMeal(currentLog[item.id]?.chosenMeal || null);
-      } catch (error) {
-        console.error("Error fetching meal data:", error);
-      }
-    };
-
-    getMealData();
-  }, [userUid, loading]);
+  
+    const currentDate = moment().format("YYYY-MM-DD");
+  
+    // Set up a Firestore listener for real-time updates
+    const unsubscribe = firestore()
+      .collection("user_logs")
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          const currentLog = doc.data()?.[currentDate] || {};
+          setBaseMeal(currentLog[item.id]?.baseMeal || null);
+          setChosenMeal(currentLog[item.id]?.chosenMeal || null);
+        },
+        (error) => {
+          console.error("Error fetching real-time meal data:", error);
+        }
+      );
+  
+    // Cleanup the listener when the component unmounts or userUid changes
+    return () => unsubscribe();
+  }, [userUid]);
 
     // Function to calculate maximum replacement quantity
   function getMaxReplacementAmount(baseAmount = 0.15, minReduction = 0.1) {
@@ -185,7 +180,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
         computeMealEmission(chosenMeal!.mealType, additionals, { [chosenMeal!.mealBase]: convertGramsToKg(weightInGrams) }), 
       );
 
-      handleComplete(item.id, item.template, convertKgToGrams(impact), chosenMeal, baseMeal);
+      handleComplete(item.id, item.template, convertKgToGrams(impact), baseMeal, chosenMeal);
       setInputValue("");
       setShowInput(false);
     }

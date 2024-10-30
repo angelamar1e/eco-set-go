@@ -5,7 +5,7 @@ export interface ActionItemProps {
   item: EcoAction;
   completedActions: EcoAction[];
   handleDelete: (id: string) => void;
-  handleComplete: (actionId: string, template: number, impact: number, chosenMeal?: MealData, baseMeal?: MealData) => void;
+  handleComplete: (actionId: string, template: number, impact: number, baseMeal?: MealData, chosenMeal?: MealData, vehicleHigherEF?: number, vehicleLessEF?: number) => void;
 }
 
 export interface DoneItemProps extends ActionItemProps {

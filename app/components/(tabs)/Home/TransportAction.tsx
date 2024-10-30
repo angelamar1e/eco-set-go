@@ -17,6 +17,7 @@ import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
 import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils';
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { MealData } from "./MealAction";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -31,21 +32,19 @@ function isBicycle(title: string){
     }
 }
 
-export const Transportation: React.FC<ActionItemProps & {setSelectedVehicles: (higherEF: number, lessEF: number) => void}> = ({
+export const Transportation: React.FC<ActionItemProps> = ({
   item,
   handleComplete,
   handleDelete,
   completedActions,
-  setSelectedVehicles
 }) => {
   const { emissionsData } = useContext(EmissionsDataContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
-  const [vehicleLessEF, setVehicleLessEF] = useState<number>();
-  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>();
+  const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
+  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
   const kmTravelled = item.defaultKmTravelled!;
 
   function getImpact() {
-    console.log("PRESSED");
     const higherEF = emissionsData[item.impact] ?? item.impact;
     const lessEF = emissionsData[item.baseEmission] ?? item.baseEmission;
 
@@ -55,14 +54,6 @@ export const Transportation: React.FC<ActionItemProps & {setSelectedVehicles: (h
 
   useEffect(() => {
     if (vehicleHigherEF || 0 && vehicleLessEF || 0) {
-      setSelectedVehicles(vehicleHigherEF!, vehicleLessEF!);
-      setIsSelectionSet(true); // Update the state to indicate selection is set
-      console.log(vehicleHigherEF, vehicleLessEF);
-    }
-  }, [vehicleHigherEF, vehicleLessEF]);
-  
-  useEffect(() => {
-    if (isSelectionSet) {
       const higherEmissions = vehicleHigherEF! * kmTravelled;
       const lessEmissions = vehicleLessEF! * kmTravelled;
 
@@ -75,10 +66,10 @@ export const Transportation: React.FC<ActionItemProps & {setSelectedVehicles: (h
           impact = computeImpact(higherEmissions, lessEmissions);
       }
       
-      handleComplete(item.id, item.template, convertKgToGrams(impact));
+      handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
       setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
     }
-  }, [isSelectionSet]);
+  }, [vehicleHigherEF, vehicleLessEF]);
 
   return (
     <Swipeable
