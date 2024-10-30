@@ -29,7 +29,7 @@ const Parameterized: React.FC<ActionItemProps> = ({
           impact = computeImpact(baseEmissions, replacementEmissions);
         }
 
-        handleComplete(item.id, convertKgToGrams(impact));
+        handleComplete(item.id, item.template, convertKgToGrams(impact));
     }
 
   return (

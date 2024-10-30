@@ -33,7 +33,7 @@ const Static: React.FC<ActionItemProps> = ({
                   ? "checked"
                   : "unchecked"
               }
-              onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
+              onPress={() => handleComplete(item.id, item.template, item.impact ? item.impact : 0)}
             />
             <Text category="p1" style={{ marginLeft: 8 }}>{item.title}</Text>
           </View>

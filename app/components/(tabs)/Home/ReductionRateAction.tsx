@@ -37,7 +37,7 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
       impact = (baseEmissions * reductionRate) / passengers;
     }
 
-    handleComplete(item.id, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact));
   }
 
   return (
@@ -86,7 +86,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
       impact = (baseEmissions * reductionRate) / emissionsData['carNumOfPassengers'];
     }
     
-    handleComplete(item.id, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact));
   }
 
   return (
