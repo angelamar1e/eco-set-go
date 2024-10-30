@@ -28,10 +28,7 @@ const Box = ({ className = "", style = "", ...props }) => (
 
 export default function LandingPage() {
   const router = useRouter();
-  const { userUid, username, overallFootprint } = useUserContext();
-  const [userName, setUserName] = useState<string | undefined>();
-  const [impactValue, setImpactValue] = useState<number>(0);
-  const footprint = firestore().collection("current_footprint").doc(userUid);
+  const { username, overallFootprint } = useUserContext();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
