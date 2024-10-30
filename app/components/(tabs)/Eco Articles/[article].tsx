@@ -171,7 +171,7 @@ const EcoActionDetail = () => {
         </Button>
       </View>
 
-          <StyledText category="s1" className="font-bold ml-2 mb-1">Facts</StyledText>
+          <StyledText category="h6" className="font-bold ml-2 mb-1">Facts 🔍</StyledText>
           <FlatList
             data={factsWithImages}
             keyExtractor={(item) => item.id}
@@ -190,7 +190,7 @@ const EcoActionDetail = () => {
             showsVerticalScrollIndicator={false}
           />
 
-          <StyledText category="s1" className="font-bold ml-2 mb-1">Benefits</StyledText>
+          <StyledText category="h6" className="font-bold ml-2 mb-1">Benefits 🌟</StyledText>
           <FlatList
             data={benefitsWithImages}
             keyExtractor={(item) => item.id}
@@ -210,7 +210,7 @@ const EcoActionDetail = () => {
           />
 
       {/* Instructions section */}
-      <StyledText category="s1" className="font-bold ml-2 mb-1">Instructions</StyledText>
+      <StyledText category="h6" className="font-bold ml-2 mb-1">Instructions 📝</StyledText>
       <FlatList
         data={instructionsWithImages}
         keyExtractor={(item) => item.id}
