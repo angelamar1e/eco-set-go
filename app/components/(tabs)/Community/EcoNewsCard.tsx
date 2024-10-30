@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import storage from '@react-native-firebase/storage';
+import { myTheme } from '@/constants/custom-theme'; // Ensure you have this import
 
 interface EcoNewsCardProps {
   thumbnail: string;
@@ -26,7 +27,7 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
       console.error("Error fetching image URL: ", error);
       return null;
     }
-  };  
+  };
 
   useEffect(() => {
     const loadImage = async () => {
@@ -41,21 +42,24 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
   }, [thumbnail]);
 
   return (
-    <StyledCard className="h-[160px] w-[300px] p-1 rounded-lg mb-2 mx-2 shadow-md">
+    <StyledLayout className="h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border border-gray-200">
       <StyledLayout className="flex-row items-start">
+        <StyledLayout>
         {imageUrl && (
-          <Image source={{ uri: imageUrl }} className="w-16 h-16 rounded-md mr-4" accessibilityLabel="News Thumbnail" />
+          <Image source={{ uri: imageUrl }} className="w-[130px] h-full rounded-l-md" accessibilityLabel="News Thumbnail" />
         )}
-        <StyledLayout className="flex-1">
-          <StyledText category='p1' className="font-bold">
+        </StyledLayout>
+      
+        <StyledLayout className="flex-1 m-2 p-2">
+          <StyledText category='p2' className="font-bold text-gray-800">
             {headline}
           </StyledText>
-          <StyledText category='c1'>
+          <StyledText category='c1' className="text-gray-600">
             {date}
           </StyledText>
         </StyledLayout>
       </StyledLayout>
-    </StyledCard>
+    </StyledLayout>
   );
 };
 
