@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import firestore from "@react-native-firebase/firestore";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
@@ -17,6 +18,8 @@ import { FoodItem, Meals, MeanOneDayConsumption, mealBase } from "../../../../co
 import { computeImpact } from "@/app/utils/EstimationUtils";
 import { convertGramsToKg } from '../../../utils/EstimationUtils';
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { useUserContext } from "@/contexts/UserContext";
+import moment from "moment";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -28,14 +31,14 @@ export interface MealData {
   mealEF: number;
 }
 
-export const Meal: React.FC<ActionItemProps & {setMealSelection: (base: MealData, chosen: MealData) => void}> = ({
+export const Meal: React.FC<ActionItemProps & { setMealSelection: (baseMeal: MealData, chosenMeal: MealData) => void }> = ({
   item,
   handleComplete,
   handleDelete,
   setMealSelection,
 }) => {
-  // const emissionsData = useContext(EmissionsContext);
   const { emissionsData } = useContext(EmissionsDataContext);
+  const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
   const [expanded, setExpanded] = useState(false);
@@ -47,30 +50,37 @@ export const Meal: React.FC<ActionItemProps & {setMealSelection: (base: MealData
   }
 
   function getImpact(chosenMealType: string, chosenMealEF: string) {
-    if (item && item.baseMeal) {
-      for (const [type, EF] of Object.entries(item.baseMeal)) {
-        setBaseMeal({
-          mealType: type,
-          mealBase: getMealBase(type) || "", // Add fallback in case getMealBase returns undefined
-          mealEF: emissionsData[EF] || 0, // Fallback for undefined emissions
-        });
+      if (item && item.baseMeal) {
+        for (const [type, EF] of Object.entries(item.baseMeal)) {
+          setBaseMeal({
+            mealType: type,
+            mealBase: getMealBase(type) || "", // Add fallback in case getMealBase returns undefined
+            mealEF: emissionsData[EF] || 0, // Fallback for undefined emissions
+          });
+        }
       }
-    }
-
-    setChosenMeal({
-      mealType: chosenMealType,
-      mealBase: getMealBase(chosenMealType) || "",
-      mealEF: emissionsData[chosenMealEF] || 0, // Fallback for undefined emissions
-    });
+  
+      setChosenMeal({
+        mealType: chosenMealType,
+        mealBase: getMealBase(chosenMealType) || "",
+        mealEF: emissionsData[chosenMealEF] || 0, // Fallback for undefined emissions
+      });
   }
 
   useEffect(() => {
-    if (chosenMeal && baseMeal){
-      const impact = computeImpact(baseMeal!.mealEF, chosenMeal!.mealEF);
-      handleComplete(item.id, convertKgToGrams(impact));
+    if (baseMeal && chosenMeal) {
       setMealSelection(baseMeal, chosenMeal);
+      setIsSelectionSet(true); // Update the state to indicate selection is set
     }
-  }, [chosenMeal, baseMeal])
+  }, [baseMeal, chosenMeal]);
+  
+  useEffect(() => {
+    if (isSelectionSet) {
+      const impact = computeImpact(baseMeal!.mealEF, chosenMeal!.mealEF);
+      handleComplete(item.id, item.template, convertKgToGrams(impact));
+      setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
+    }
+  }, [isSelectionSet]);
 
   return (
     <Swipeable
@@ -100,21 +110,43 @@ export const Meal: React.FC<ActionItemProps & {setMealSelection: (base: MealData
   );
 };
 
-export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMeal?: MealData }> = ({
+export const MealDone: React.FC<DoneItemProps> = ({
   item,
   handleComplete,
   completedActions,
   handleUnmark,
-  baseMeal,
-  chosenMeal,
 }) => {
+  const {userUid, loading} = useUserContext();
   const { emissionsData } = useContext(EmissionsDataContext);
+  const [baseMeal, setBaseMeal] = useState<MealData>()
+  const [chosenMeal, setChosenMeal] = useState<MealData>()
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
 
   const handleMoreDetails = () => {
     setShowInput(!showInput);
   };
+
+  useEffect(() => {
+    // Only fetch data if `userUid` is available
+    if (!userUid) return;
+
+    const getMealData = async () => {
+      try {
+        const currentDate = moment().format("YYYY-MM-DD");
+        const currentLog = (
+          await firestore().collection("user_logs").doc(userUid).get()
+        ).data()?.[currentDate] || {};
+
+        setBaseMeal(currentLog[item.id]?.baseMeal || null);
+        setChosenMeal(currentLog[item.id]?.chosenMeal || null);
+      } catch (error) {
+        console.error("Error fetching meal data:", error);
+      }
+    };
+
+    getMealData();
+  }, [userUid, loading]);
 
     // Function to calculate maximum replacement quantity
   function getMaxReplacementAmount(baseAmount = 0.15, minReduction = 0.1) {
@@ -133,9 +165,7 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
     return convertKgToGrams(maxReplacementAmount);
   }
 
-  const handleCompleteDetails = () => {
-    if (!baseMeal || !chosenMeal) return;
-
+  const handleCompleteDetails = async () => {
     const weightInGrams = parseFloat(inputValue) <= 0 ? 0.15 : parseFloat(inputValue);
     const additionals = emissionsData['foodAdditionals'] || {};
     const maxReplacementAmount = getMaxReplacementAmount();
@@ -151,11 +181,11 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
   }
     else{
       const impact = computeImpact(
-        baseMeal.mealEF,
-        computeMealEmission(chosenMeal.mealType, additionals, { [chosenMeal.mealBase]: convertGramsToKg(weightInGrams) }), 
+        baseMeal!.mealEF,
+        computeMealEmission(chosenMeal!.mealType, additionals, { [chosenMeal!.mealBase]: convertGramsToKg(weightInGrams) }), 
       );
 
-      handleComplete(item.id, convertKgToGrams(impact));
+      handleComplete(item.id, item.template, convertKgToGrams(impact), chosenMeal, baseMeal);
       setInputValue("");
       setShowInput(false);
     }
@@ -185,7 +215,7 @@ export const MealDone: React.FC<DoneItemProps & { baseMeal?: MealData; chosenMea
           {showInput && (
             <View className="mt-2 px-4 flex-row">
               <Text>
-                Input amount of {chosenMeal?.mealBase === "Cereal Products" ? chosenMeal?.mealType : chosenMeal?.mealBase} eaten
+                Input amount of <Text className="italic">{chosenMeal?.mealBase === "Cereal Products" ? chosenMeal?.mealType : chosenMeal?.mealBase}</Text> eaten
               </Text>
               <TextInput
                 className="border text-white border-gray-400 rounded p-2 mb-2"
