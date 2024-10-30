@@ -15,18 +15,18 @@ const EcoPoints = () => {
 
   const theme = useTheme();
     const maintextcolor = theme['color-success-700'];
-    const subtextColor1 = theme['color-basic-600']; 
+    const subtextColor1 = theme['color-basic-700']; 
+    const subtextColor2 = theme['color-basic-900']; 
 
   return (
     <StyledLayout className="flex-1">
       <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
          <StyledText category="h4" className='text-white'>Eco Rewards</StyledText>
-        <StyledText category="h4">Eco Rewards</StyledText>
       </StyledLayout>
 
-      <View className="items-center -mt-20 -bottom-5 mb-3 z-50">
-        <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}}>
+      <View className="items-center -mt-14 -bottom-2 mb-3 z-50">
+        <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}} className="bg-white border-0">
           <StyledText category="h1" className='text-center' style={{ color: maintextcolor }}>Level 10</StyledText>
 
           <StyledLayout className="mt-1">
@@ -36,11 +36,11 @@ const EcoPoints = () => {
             />
           </StyledLayout>
 
-          <StyledLayout className="flex-row items-center justify-between mt-2">
-            <StyledText category="s1">100</StyledText>
+          <StyledLayout className="flex-row items-center justify-between mt-2 bg-white">
+            <StyledText category="s1" style={{ color: subtextColor2 }}>100</StyledText>
             <StyledText category="c1" className="right-11" style={{ color: subtextColor1 }}>current EcoPoints</StyledText>
             <StyledText category="c1" className="left-11" style={{ color: subtextColor1 }}>Level 11</StyledText>
-            <StyledText category="s1">1000</StyledText>
+            <StyledText category="s1" style={{ color: subtextColor2 }}>1000</StyledText>
           </StyledLayout>
         </StyledCard>
       </View>

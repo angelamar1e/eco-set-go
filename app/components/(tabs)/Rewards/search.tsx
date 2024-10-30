@@ -12,7 +12,7 @@ const StyledInput = styled(Input);
 
 const Search: React.FC<SearchProps> = ({ onSearch }) => {
   return (
-    <StyledLayout className="absolute -bottom-5 left-4 right-4 p-2 rounded-full shadow z-50">
+    <StyledLayout className="absolute -bottom-4 left-4 right-4 p-1 rounded-full shadow">
       <StyledInput
         placeholder="Search"
         className="flex-1 rounded-full"

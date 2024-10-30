@@ -71,7 +71,8 @@ const Details: React.FC<DetailsProps> = ({
 
       <StyledLayout className="p-1">
         <StyledButton 
-          onPress={handleLogOut} 
+          //onPress={handleLogOut} 
+          onPress={() => router.push('/login')}
           status='basic' 
           className='m-1 p-1 rounded-full'>
         <StyledText category='label'>

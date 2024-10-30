@@ -6,11 +6,14 @@ import { FlatList, View } from "react-native";
 import { styled } from 'nativewind';
 import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
-import WeekOverview from "@/app/components/(tabs)/Home/WeekOverview";
+import WeekOverview from "@/app/components/(tabs)/Goal Setting/WeekOverview";
+import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
+import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
+import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
 
 const GoalSetting = () => {
     const data = [
-        { id: '1', component: <CustomDailyLog /> },
+        { id: '1', component: <DailyLog /> },
         { id: '2', component: <Reflection /> },
     ];
 
@@ -38,7 +41,7 @@ const GoalSetting = () => {
                 <StyledText category="h4" className="text-white">Daily Log</StyledText>
             </StyledLayout>
 
-            <View className="items-center -mt-20 -bottom-5 mb-7 z-50">
+           {/* <View className="items-center -mt-20 -bottom-5 mb-7 z-50">
                 <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}}>
                     <StyledText category='p1' className='text-center' style={{ color: subtextColor1 }}>Carbon Reduction Goal</StyledText>
                     <StyledText category='h1' className='text-center mt-1' style={{ color: valuetextcolor }}>1000g</StyledText>
@@ -57,9 +60,16 @@ const GoalSetting = () => {
                         <SetGoalButton />
                     </StyledLayout>
                 </StyledCard>
-            </View>
-
+            </View> */}
+        <StyledLayout className="flex-1 px-2">
             <WeekOverview />
+            <View className="flex-row m-1 items-center justify-between">
+                <Text style={{ fontSize: 40, marginLeft: 10 }}>🌞💭</Text>
+                <View className="flex-row items-center">
+                    <AddActionButton />
+                    <ReflectionButton />
+                </View>
+            </View>
 
             <View className="flex-1 relative">
                 <FlatList
@@ -70,9 +80,9 @@ const GoalSetting = () => {
                     )}
                     showsVerticalScrollIndicator={false}
                 /> 
-            </View>  
-
+            </View> 
         </StyledLayout>
+    </StyledLayout>
     );
 };
 

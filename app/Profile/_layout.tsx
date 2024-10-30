@@ -6,6 +6,7 @@ import { ApplicationProvider, Layout } from "@ui-kitten/components";
 // import { EmissionsProvider } from "@/contexts/EmissionsContext";
 import { myTheme } from "@/constants/custom-theme";
 import { useColorScheme } from "react-native";
+import { EmissionsProvider } from "@/contexts/Emissions";
 
 export default function ProfileLayout() {
   const colorScheme = useColorScheme();

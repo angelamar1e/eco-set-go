@@ -15,7 +15,33 @@ import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
 import { useUserContext } from '@/contexts/UserContext';
+import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
+import { Ionicons } from '@expo/vector-icons';
+import { styled } from 'nativewind';
 
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+
+interface CustomAlertProps {
+  visible: boolean;
+  message: string;
+  onClose: () => void;
+}
+
+const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) => (
+  <Modal
+    visible={visible}
+    animationType="fade"
+  >
+    <StyledLayout style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.3)" }}>
+      <StyledLayout level="3" style={{ width: 280, padding: 20, borderRadius: 10, alignItems: "center" }}>
+        <Ionicons name="alert-circle-outline" size={30} color='red' style={{ width: 32, height: 32, marginBottom: 10 }} />
+        <Text style={{ textAlign: "center", marginBottom: 10, fontSize: 16 }}>{message}</Text>
+        <Button appearance="ghost" onPress={onClose}>OK</Button>
+      </StyledLayout>
+    </StyledLayout>
+  </Modal>
+);
 
 export default function SignUp() {
   const {userUid, role} = useUserContext();
@@ -23,14 +49,42 @@ export default function SignUp() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const current_date = Date().toString();
 
-  const clearAllInput = () => {
-    setUsername('');
-    setEmail('');
-    setPassword('');
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) {
+      setEmailError("Invalid email address");
+      return false;
+    }
+    setEmailError(null);
+    return true;
   };
+
+  const validatePassword = (password: string) => {
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+      return false;
+    }
+    setPasswordError(null);
+    return true;
+  };
+
+  const validateUsername = (username: string) => {
+    if (username.length < 3) {
+      setUsernameError("Username must be at least 3 characters long");
+      return false;
+    }
+    setUsernameError(null);
+    return true;
+  };
+
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
     const userUid = response.user.uid;
@@ -99,32 +153,73 @@ export default function SignUp() {
         message = error.message; // Generic error message
     }
 
-    Alert.alert('Sign Up Error', message);
+    setAlertMessage(message);
+    setAlertVisible(true);
   };
- 
+
+  const clearAllInput = () => {
+    setUsername('');
+    setEmail('');
+    setPassword('');
+  };
+
   return (
-      <ThemedView className="flex-1 justify-center w-full px-8">
-        <Container>
-          <TitleComponent />
+    <StyledLayout style={{ flex: 1, justifyContent: "center", paddingHorizontal: 35 }}>
+      <Container>
+        <TitleComponent />
 
-          <View className= "mt-20 flex-grow">
-            <AuthInputFields formType='signup' />
-          </View>  
+        <StyledLayout className="mt-2">
+          <Input
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            onBlur={() => validateUsername(username || '')}
+            status={usernameError ? "danger" : "basic"}
+            caption={usernameError || ""}
+            accessoryLeft={<Ionicons name="person" size={25} color="#8F9BB3" />}
+            style={{ marginVertical: 8, borderRadius: 7 }}
+          />
 
-          <SignUpButton
-            title={loading ? "Signing Up..." : "Sign Up"}
-            onPress={handleSignUp}
-            variant="primary"
+          <Input
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            onBlur={() => email && validateEmail(email)}
+            status={emailError ? "danger" : "basic"}
+            caption={emailError || ""}
+            accessoryLeft={<Ionicons name="mail" size={25} color="#8F9BB3" />}
+            style={{ marginVertical: 8, borderRadius: 7 }}
           />
-        </Container>
-          
-        <View className="absolute bottom-10 left-0 right-0 items-center">
-          <LoginButton
-            title="Have an account already? Login"
-            onPress={() => router.push('/login')}
-            variant='secondary'
+
+          <Input
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            onBlur={() => password && validatePassword(password)}
+            secureTextEntry
+            status={passwordError ? "danger" : "basic"}
+            caption={passwordError || ""}
+            accessoryLeft={<Ionicons name="lock-closed" size={25} color="#8F9BB3" />}
+            style={{ marginVertical: 8, borderRadius: 7 }}
           />
-        </View>        
-      </ThemedView>
+        </StyledLayout>
+
+        <SignUpButton title="Sign up" onPress={handleSignUp} />
+
+        <StyledLayout className="flex-row items-center justify-center">
+          <ThemedText>Already have an account?</ThemedText>
+          <Button appearance="ghost" 
+             style={{ marginLeft: -16 }}
+             onPress={() => router.push("/login")}
+          >Login</Button>    
+          </StyledLayout>
+      </Container>
+
+      <CustomAlert
+        visible={alertVisible}
+        message={alertMessage}
+        onClose={() => setAlertVisible(false)}
+      />
+    </StyledLayout>
   );
 }

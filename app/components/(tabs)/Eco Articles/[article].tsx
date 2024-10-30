@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Linking } from "react-native";
-import { Button, Card, Snackbar } from "react-native-paper";
-import firestore, { arrayUnion } from "@react-native-firebase/firestore";
+import { View, FlatList, ScrollView } from "react-native";
+import { Button, Snackbar } from "react-native-paper";
+import firestore from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from '../../../../types/ArticleInfo';
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+import { styled } from "nativewind";
+import { Text, Layout, Card } from "@ui-kitten/components";
+import EcoActionHeader from "./EcoArticleDetailsHeader";
+
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
+const StyledCard = styled(Card);
 import { useUserContext } from "@/contexts/UserContext";
 
 const EcoActionDetail = () => {
@@ -29,58 +34,24 @@ const EcoActionDetail = () => {
 
   useEffect(() => {
     const unsubscribeAction = ecoActionDoc.onSnapshot((doc) => {
-        setActionDetail({
-            id: doc.id,
-            title: doc.data()!.title
-        } as EcoAction)
-      });
-
-    const unsubscribeFacts = factsCollection
-      .where(
-        "action",
-        "==",
-        actionId
-      )
-      .onSnapshot((snapshot) => {
-        const facts = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as ArticleInfo[];
-
-        setFacts(facts);
-      });
-
-    const unsubscribeBenefits = benefitsCollection
-    .where(
-      "action",
-      "==",
-      actionId
-    )
-    .onSnapshot((snapshot) => {
-      const benefits = snapshot.docs.map((doc) => ({
+      setActionDetail({
         id: doc.id,
-        ...doc.data(),
-      })) as ArticleInfo[];
-
-      setBenefits(benefits);
+        title: doc.data()!.title
+      } as EcoAction);
     });
 
-    const unsubscribeInstructions = instructionsCollection
-    .where(
-      "action",
-      "==",
-      actionId
-    )
-    .onSnapshot((snapshot) => {
-      const instructions = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ArticleInfo[];
-
-      setInstructions(instructions);
+    const unsubscribeFacts = factsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+      setFacts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
     });
 
-    // Cleanup listeners on unmount
+    const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+      setBenefits(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
+    });
+
+    const unsubscribeInstructions = instructionsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+      setInstructions(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as ArticleInfo[]);
+    });
+
     return () => {
       unsubscribeAction();
       unsubscribeFacts();
@@ -97,87 +68,84 @@ const EcoActionDetail = () => {
     );
   }
 
-  const showSnackbar = () => {
-
-    setVisible(true);
-  };
+  const showSnackbar = () => setVisible(true);
 
   const handleAddToLog = () => {
     const dailyLogDoc = firestore().collection('daily_logs').doc(userUid);
-
     dailyLogDoc.update({
-        action_ids: firestore.FieldValue.arrayUnion(actionId)
-    })
-
+      action_ids: firestore.FieldValue.arrayUnion(actionId)
+    });
     showSnackbar();
-  }
+  };
 
   const renderFactItem = ({ item }: { item: ArticleInfo }) => (
-    <Card style={{ margin: 10 }}>
-      <Card.Content>
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{item.content}</Text>
-        {item.media && (
-          <Text
-            style={{ color: "blue" }}
-            // onPress={() => Linking.openURL(item.element_url)}
-          >
-            More Info
-          </Text>
-        )}
-      </Card.Content>
-    </Card>
+    <StyledCard className="m-2">
+      <StyledText category="c1">{item.content}</StyledText>
+      {item.media && (
+        <StyledText className="text-blue-500">
+          More Info
+        </StyledText>
+      )}
+    </StyledCard>
   );
 
   return (
-    <ThemedView className="flex-1 px-5">
+    <StyledLayout className="flex-1 p-3">
+      <EcoActionHeader />
       <View className="flex-column">
-          <Text className="text-lime-800 mt-5 font-bold text-2xl">
-            {actionDetail.title} </Text>
-        <Button icon="note-plus" mode="contained" className="w-42 m-3 self-end bg-lime-800" onPress={handleAddToLog}>Add to Daily Log</Button>
+        <StyledText className="m-1" category="h6">
+          {actionDetail.title}
+        </StyledText>
+        <Button
+          icon="note-plus"
+          mode="contained"
+          className="w-40 m-3 self-end bg-lime-800"
+          onPress={handleAddToLog}
+        >
+          Add to Daily Log
+        </Button>
       </View>
 
-      <View className="bg-white h-auto border-2 border-lime-800 bg-transparent rounded-[25px] mt-2">
-        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
-          Facts
-        </ThemedText>
-        <FlatList
-          data={facts}
-          renderItem={renderFactItem}
-          keyExtractor={(item) => item.id}
-          className="max-h-20"
-        />
+      <StyledLayout className="flex-row">
+        {/* First column with Facts */}
+        <StyledLayout className="flex-1">
+          <StyledText category="s1" className="font-bold ml-3 mb-1">Facts</StyledText>
+          <FlatList
+            data={facts}
+            renderItem={renderFactItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+        </StyledLayout>
 
-        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
-          Benefits
-        </ThemedText>
-        <FlatList
-          data={benefits}
-          renderItem={renderFactItem}
-          keyExtractor={(item) => item.id}
-          className="max-h-20"
-        />
+        {/* Second column with Benefits and Instructions */}
+        <StyledLayout className="flex-1">
+          <StyledText category="s1" className="font-bold ml-3 mb-1">Benefits</StyledText>
+          <FlatList
+            data={benefits}
+            renderItem={renderFactItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+          <StyledText category="s1" className="font-bold ml-3 mb-1">Instructions</StyledText>
+          <FlatList
+            data={instructions}
+            renderItem={renderFactItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+        </StyledLayout>
+      </StyledLayout>
 
-        <ThemedText type="default" className="text-[23px] text-lime-800 mt-5 ml-6 italic">
-          Instructions
-        </ThemedText>
-        <FlatList
-          data={instructions}
-          renderItem={renderFactItem}
-          keyExtractor={(item) => item.id}
-          className="max-h-20"
-        />
-      </View>
-      
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
-        duration={Snackbar.DURATION_SHORT} // Optional, set a duration if you want
-      className="w-full"
+        duration={Snackbar.DURATION_SHORT}
+        className="w-full"
       >
         Action added to your Daily Log
-
       </Snackbar>
-    </ThemedView>
+    </StyledLayout>
   );
 };
 

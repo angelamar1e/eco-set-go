@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
@@ -7,7 +7,15 @@ import { computeImpact, convertKgToGrams, getCarEFPerKm } from '../../../utils/E
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { ThemedText } from "@/components/ThemedText";
 import { DoneItemProps } from '../../../../types/ActionItemProps';
+import { styled } from "nativewind";
+import { Card, Input, Layout, Text } from "@ui-kitten/components";
+import { Ionicons } from "@expo/vector-icons";
+import CircularCheckbox from "../Goal Setting/CircularCheckBox";
+import { myTheme } from "@/constants/custom-theme";
 
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
+const StyledLayout = styled(Layout);
 
 export const ReductionRate: React.FC<ActionItemProps> = ({
   item,
@@ -43,16 +51,34 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
   return (
     <Swipeable
       renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
+        <View className="flex items-center justify-center ml-2 mr-4">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
+        </View>        
       )}
     >
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <Text className="text-lg text-gray-700">{item.title}</Text>
-        <Checkbox
-          status={completedActions.some((action) => action.id === item.id) ? "checked" : "unchecked"}
-          onPress={() => getImpact()} // Call the updated getImpact function
-        />
-      </View>
+    <StyledLayout 
+        style={{
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} 
+          className="pt-1 m-1"
+        >
+       <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
+            status={
+              completedActions.some((action) => action.id === item.id)
+                ? "checked"
+                : "unchecked"
+            }
+            onPress={() => getImpact()}
+          />
+          <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+              {item.title}
+          </StyledText>
+        </View>
+      </StyledCard>
+    </StyledLayout>    
     </Swipeable>
   );
 };
@@ -91,50 +117,64 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
 
   return (
     <View>
-      <View className="flex-column">
-        <View className="flex-row justify-between items-center px-4 py-3 border-gray-300">
-          <ThemedText className="text-lg text-gray-700">
-            {item.title}
-          </ThemedText>
-          <Checkbox
-            status={
-              completedActions.some((action) => action.id === item.id)
-                ? "checked"
-                : "unchecked"
-            }
-            onPress={() => handleUnmark(item.id)}
-          />
-        </View>
-        <View className="border-b border-gray-300">
-          <TouchableOpacity onPress={handleMoreDetails}>
-            <Text className="mx-5 mb-3 text-lime-700">Enter more details</Text>
-          </TouchableOpacity>
+      <StyledLayout 
+        style={{
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} 
+          className="pt-1 m-1"
+        >
+       <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
+              status={
+                completedActions.some((action) => action.id === item.id)
+                  ? "checked"
+                  : "unchecked"
+                }
+                onPress={() => handleUnmark(item.id)}
+              />
+              <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+              {item.title}
+            </StyledText>
+          </View>
+        </StyledCard>
+        
+        <TouchableOpacity onPress={handleMoreDetails}>
+          <StyledText category="s1" 
+            className="ml-4 m-1"
+            style={{ 
+              color: myTheme['color-info-500']}}
+            >
+              Enter more details
+          </StyledText>
+        </TouchableOpacity>
 
-          {showInput && (
-            <View className="mt-2 px-4 flex-row">
-              <Text>
+        {showInput && (
+          <View>
+            <StyledLayout className="rounded-xl mb-3 ml-1 flex-row items-center">
+              <StyledText className="mr-2">
                 Input distance travelled
-              </Text>
-              <TextInput
-                className="border text-white border-gray-400 rounded p-2 mb-2"
+              </StyledText>
+              <Input
+                style={{width: "30%"}}
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
                 onChangeText={setInputValue}
               />
-              <Text>
+              <StyledText category='label' className="ml-2 mr-8 text-sm">
                 km
-              </Text>
-              <TouchableOpacity
-                className="bg-blue-500 rounded p-2"
-                onPress={handleCompleteDetails}
-              >
-                <Text className="text-white text-center">Submit</Text>
+              </StyledText>
+            </StyledLayout>
+            <View className="items-center">
+              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3" onPress={handleCompleteDetails}>
+                <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
               </TouchableOpacity>
             </View>
+          </View>
           )}
-        </View>
-      </View>
+      </StyledLayout>
     </View>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
-import { Layout, Select, SelectItem } from "@ui-kitten/components";
+import { Card, Layout, Select, SelectItem, Text } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import { ThemedText } from "@/components/ThemedText";
 import { EmissionsContext } from "@/contexts/Emissions";
@@ -17,11 +17,14 @@ import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
 import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils';
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { Ionicons } from "@expo/vector-icons";
+import CircularCheckbox from "../Goal Setting/CircularCheckBox";
+import { myTheme } from "@/constants/custom-theme";
 import { MealData } from "./MealAction";
 
 const StyledLayout = styled(Layout);
-const StyledSelect = styled(Select);
-const StyledSelectItem = styled(SelectItem);
+const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 function isBicycle(title: string){
     if (title.startsWith("Use a bicycle")){
@@ -72,22 +75,35 @@ export const Transportation: React.FC<ActionItemProps> = ({
   }, [vehicleHigherEF, vehicleLessEF]);
 
   return (
-    <Swipeable
+      <Swipeable
       renderRightActions={() => (
-        <IconButton icon="delete" onPress={() => handleDelete(item.id)} />
+        <View className="flex items-center justify-center ml-2 mr-4">
+          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
+        </View>       
       )}
     >
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <Text className="text-lg text-gray-700">{item.title}</Text>
-        <Checkbox
-            status={
+      <StyledLayout className="pt-1 m-1" 
+        style={{
+          borderBottomWidth: 1, 
+          borderBottomColor: myTheme['color-basic-500']
+        }} >
+        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+          <View className="flex-row items-center justify-start bottom-1">
+              <CircularCheckbox
+              status={
               completedActions.some((action) => action.id === item.id)
                 ? "checked"
                 : "unchecked"
             }
             onPress={() => getImpact()}
+            // onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
           />
-      </View>
+          <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+            {item.title}
+          </StyledText>        
+          </View>
+        </StyledCard>
+      </StyledLayout>
     </Swipeable>
   );
 };

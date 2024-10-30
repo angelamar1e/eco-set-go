@@ -31,13 +31,12 @@ const Milestones = () => {
 
   return (
     <StyledLayout className="flex-1">
-
-      <StyledLayout className='h-1/4 rounded-b-3xl justify-center items-center relative'
+      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
        style={{
         backgroundColor: myTheme['color-success-700']
         }}
       >
-        <StyledText category="h4">Milestones</StyledText>
+        <StyledText category="h4" className='text-white'>Milestones</StyledText>
       </StyledLayout>   
       
       <StyledLayout className="ml-2 mr-2 p-1 mb-5">
@@ -45,7 +44,6 @@ const Milestones = () => {
       </StyledLayout>
       <Achievements />
       <BackButton />
-
     </StyledLayout>
   );
 };

@@ -1,24 +1,30 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { View, FlatList, Text, KeyboardAvoidingView } from "react-native";
+import {  FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
-import { ThemedText } from "@/components/ThemedText";
 import { EcoAction } from "@/types/EcoAction";
 import StaticDone from "./StaticDone";
 import { EmissionsContext } from "@/contexts/Emissions";
 import {MealDone, Meal, MealData} from './MealAction';
-import DropdownActionItem from "./DropdownActionItem";
 import Static from './StaticAction';
 import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
 import { useUserContext } from "@/contexts/UserContext";
+import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
+import { styled } from "nativewind";
+import AddActionButton from "../Goal Setting/AddActionButton";
+import { myTheme } from "@/constants/custom-theme";
 
-const emissionsContext = useContext(EmissionsContext);
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
 const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, DoneTransportAction, DoneTransportAction];
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
+const StyledCard = styled(Card);
+
 
 const DailyLog: FC = () => {
   const { userUid } = useUserContext();
@@ -177,28 +183,50 @@ const DailyLog: FC = () => {
   };
 
     return (
-      // <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">
-      <View className="bg-gray">
-        <ThemedText type="subtitle" className="text-lime-800 text-center text-[28px] mt-2 mb-4">
-          Daily Log
-        </ThemedText>
-        <FlatList
-          data={dailyLog}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-        <Text className="text-lime-800 text-lg font-semibold mt-4 mb-4 pl-4">Actions Done</Text>
-        {completedActions.length > 0 ? (
-          <FlatList
-            data={completedActions}
-            renderItem={renderDoneItem}
-            keyExtractor={(item) => item.id}
-          />
-        ) : (
-          <Text className="text-center text-gray-500">No actions completed yet.</Text>
-        )}
-      </View>
-      // </KeyboardAvoidingView>
+      //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">*/}
+      <StyledLayout className=" relative">
+        <StyledLayout className="pt-1">
+            {dailyLog.length > 0 ? (
+              <FlatList
+                data={dailyLog}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <StyledLayout className="pt-1 m-1"
+                style={{
+                  borderBottomWidth: 1, 
+                  borderBottomColor: myTheme['color-basic-500']
+                }} 
+              >
+                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
+              </StyledLayout>            
+            )}
+        
+            <StyledText category="s1" style={{ fontWeight: 'bold', }} className="mt-1 ml-3">
+              Actions Done
+            </StyledText>
+            {completedActions.length > 0 ? (
+              <FlatList
+                data={completedActions}
+                renderItem={renderDoneItem}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : (
+              <StyledLayout className="pt-1 m-1"
+                style={{
+                  borderBottomWidth: 1, 
+                  borderBottomColor: myTheme['color-basic-500']
+                }} 
+              >
+                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
+              </StyledLayout>
+            )}
+        </StyledLayout>
+      </StyledLayout>
+      //*</KeyboardAvoidingView>*/}
     );
 };
 
