@@ -5,7 +5,6 @@ import firestore from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from '../../../../types/ArticleInfo';
-import { getUserUid } from "@/app/utils/utils";
 import { styled } from "nativewind";
 import { Text, Layout, Card } from "@ui-kitten/components";
 import EcoActionHeader from "./EcoArticleDetailsHeader";
@@ -13,25 +12,20 @@ import EcoActionHeader from "./EcoArticleDetailsHeader";
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+import { useUserContext } from "@/contexts/UserContext";
 
 const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
   const actionId = article.toString();
 
-  const [userUid, setUserUid] = useState<string>();
+  const {userUid} = useUserContext();
+
   const [visible, setVisible] = useState(false);
+
   const [actionDetail, setActionDetail] = useState<EcoAction>();
   const [facts, setFacts] = useState<ArticleInfo[]>([]);
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
   const [instructions, setInstructions] = useState<ArticleInfo[]>([]);
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-    };
-    fetchUserUid();
-  }, []);
 
   const ecoActionDoc = firestore().collection('eco_actions').doc(actionId);
   const factsCollection = firestore().collection('eco_facts');

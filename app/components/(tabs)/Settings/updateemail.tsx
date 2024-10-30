@@ -3,7 +3,7 @@ import { styled } from "nativewind";
 import { Layout, Input, Button, Text } from "@ui-kitten/components";
 import { useRouter } from "expo-router";
 import firestore from '@react-native-firebase/firestore';
-import { getUserUid } from '@/app/utils/utils';
+import { useUserContext } from "@/contexts/UserContext";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -11,6 +11,7 @@ const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
 const UpdateEmail = () => {
+  const {userUid} = useUserContext();
   const [currentEmail, setCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const router = useRouter();
@@ -28,7 +29,6 @@ const UpdateEmail = () => {
 
   const handleUpdate = async () => {
     if (newEmail) {
-      const userUid = await getUserUid();
       try {
         await firestore().collection('users').doc(userUid).update({ email: newEmail });
         setCurrentEmail(newEmail);
@@ -41,10 +41,7 @@ const UpdateEmail = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const uid = await getUserUid();
-      if (uid) {
-        fetchUserEmail(uid);
-      }
+        fetchUserEmail(userUid);
     };
 
     fetchUserDetails();

@@ -3,7 +3,6 @@ import {  FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
-import { getUserUid } from "@/app/utils/utils";
 import StaticDone from "./StaticDone";
 import { EmissionsContext } from "@/contexts/Emissions";
 import {MealDone, Meal, MealData} from './MealAction';
@@ -12,6 +11,7 @@ import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
+import { useUserContext } from "@/contexts/UserContext";
 import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import AddActionButton from "../Goal Setting/AddActionButton";
@@ -27,9 +27,7 @@ const StyledCard = styled(Card);
 
 
 const DailyLog: FC = () => {
-const emissionsContext = useContext(EmissionsContext);
-
-  const [userUid, setUserUid] = useState<string | undefined>();
+  const { userUid } = useUserContext();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
   const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
   const [actionIds, setActionIds] = useState<string[]>([]);
@@ -61,14 +59,6 @@ const emissionsContext = useContext(EmissionsContext);
 
     setCurrentLog(currentLog[actionId]);
   }
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-    };
-    fetchUserUid();
-  }, []);
 
   const dailyLogDoc = firestore().collection("daily_logs").doc(userUid);
   const userLogs = firestore().collection("user_logs").doc(userUid);

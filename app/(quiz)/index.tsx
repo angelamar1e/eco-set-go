@@ -10,6 +10,7 @@ import InputTemplate from "../components/quiz/InputTemplate";
 import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
 import StepperTemplate from "../components/quiz/StepperTemplate";
 import RadioTemplate from "../components/quiz/RadioTemplate";
+import { router } from "expo-router";
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
@@ -62,7 +63,7 @@ const QuizIndex = () => {
     if (newIndex < questionDocumentIds.length) {
       setCurrentQuestionIndex(newIndex);
     } else {
-      console.log("No more components");
+      router.push('/(quiz)/QuizEnd')
     }
   };
 

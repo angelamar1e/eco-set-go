@@ -14,6 +14,7 @@ import { LoginButton } from '@/components/LoginButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
+import { useUserContext } from '@/contexts/UserContext';
 import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
@@ -43,6 +44,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
+  const {userUid, role} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -121,7 +123,7 @@ export default function SignUp() {
           const response = await auth().createUserWithEmailAndPassword(email, password);
           createProfile(response);
           clearAllInput();
-          goToInterface();
+          goToInterface(role);
       } catch (error){
           handleError(error);
       }

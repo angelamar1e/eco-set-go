@@ -5,7 +5,7 @@ import { Button, Text, Card, Layout, Avatar } from '@ui-kitten/components';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
 import firestore from "@react-native-firebase/firestore";
-import { getUserUid } from "@/app/utils/utils";
+import { useUserContext } from "@/contexts/UserContext";
 
 const StyledButton = styled(Button);
 const StyledText = styled(Text);
@@ -14,31 +14,10 @@ const StyledLayout = styled(Layout);
 
 const UserProfile = () => {
     const router = useRouter();
-    const [userName, setUserName] = useState<string | undefined>();
+    const { username, userUid } = useUserContext();
+
     const [points, setPoints] = useState<string>("0");
     const [level, setLevel] = useState<string>("1");
-    
-
-    // Function to get the username from Firestore
-    const fetchUserName = async (userUid: string) => {
-        try {
-            const userDoc = await firestore().collection('users').doc(userUid).get();
-            if (userDoc.exists) {
-                setUserName(userDoc.data()?.username);
-            }
-        } catch (error) {
-            console.error("Error fetching username: ", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchUserUid = async () => {
-            const uid = await getUserUid(); 
-            if (uid) fetchUserName(uid);
-        };
-
-        fetchUserUid();
-    }, []);
 
     return (
         <StyledLayout className="p-4">
@@ -70,7 +49,7 @@ const UserProfile = () => {
                 />
                 <StyledLayout className="items-left mt-4">
                     <StyledText category="h6">Name</StyledText>
-                    <StyledText category="s1">@{userName}</StyledText>
+                    <StyledText category="s1">@{username}</StyledText>
                     <Ionicons name="time"><StyledText>  Joined (date)</StyledText></Ionicons>
                 </StyledLayout>
                 
