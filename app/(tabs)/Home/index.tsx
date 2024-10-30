@@ -29,6 +29,7 @@ const Box = ({ className = "", style = "", ...props }) => (
 export default function LandingPage() {
   const router = useRouter();
   const { username, overallFootprint } = useUserContext();
+  const [impactValue, setImpactValue] = useState<number>(0);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
