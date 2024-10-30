@@ -23,6 +23,7 @@ import { myTheme } from "@/constants/custom-theme";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { useUserContext } from "@/contexts/UserContext";
 import moment from "moment";
+import { MealData } from "./MealAction";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -39,11 +40,10 @@ function isBicycle(title: string){
     }
 }
 
-export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehicles: (higherEF: number, lessEF: number) => void}> = ({
+export const TransportationOptions: React.FC<ActionItemProps> = ({
   item,
   handleComplete,
   handleDelete,
-  setSelectedVehicles
 }) => {
   
   const { emissionsData } = useContext(EmissionsDataContext);
@@ -74,13 +74,6 @@ export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehic
 
   useEffect(() => {
     if (vehicleHigherEF || 0  && vehicleLessEF || 0) {
-      setSelectedVehicles(vehicleHigherEF!, vehicleLessEF!);
-      setIsSelectionSet(true); // Update the state to indicate selection is set
-    }
-  }, [vehicleHigherEF, vehicleLessEF]);
-  
-  useEffect(() => {
-    if (isSelectionSet) {
       const higherEmissions = vehicleHigherEF! * kmTravelled;
       const lessEmissions = vehicleLessEF! * kmTravelled;
 
@@ -93,11 +86,10 @@ export const TransportationOptions: React.FC<ActionItemProps & {setSelectedVehic
           impact = computeImpact(higherEmissions, lessEmissions);
       }
       
-      handleComplete(item.id, item.template, convertKgToGrams(impact));
-      setIsSelectionSet(false); // Reset to avoid reruns unless selection changes
+      handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
     }
-  }, [isSelectionSet]);
-
+  }, [vehicleHigherEF, vehicleLessEF]);
+  
   return (
     <Swipeable
       renderRightActions={() => (
@@ -191,7 +183,7 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
         impact = computeImpact(higherEmissions, lessEmissions);
     }
 
-    handleComplete(item.id, item.template, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
 
     setInputValue("");
     setShowInput(false);

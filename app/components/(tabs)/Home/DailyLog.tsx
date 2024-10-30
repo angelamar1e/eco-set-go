@@ -33,22 +33,6 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
-  const [baseMeal, setBaseMeal] = useState<MealData>();
-  const [chosenMeal, setChosenMeal] = useState<MealData>();
-  const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
-  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
-
-  // Handler to update vehicle states for Transportation actions
-  const handleMealSelection = (baseMeal: MealData, chosenMeal: MealData) => {
-    setBaseMeal(baseMeal);
-    setChosenMeal(chosenMeal);
-  };
-
-  // Handler to update vehicle states for Transportation actions
-  const handleVehicleSelection = (higherEF: number, lessEF: number) => {
-    setVehicleHigherEF(higherEF);
-    setVehicleLessEF(lessEF);
-  };
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -132,7 +116,7 @@ const DailyLog: FC = () => {
     });
   }
 
-  async function handleComplete(actionId: string, template: number, impact: number) {
+  async function handleComplete(actionId: string, template: number, impact: number, baseMeal?: MealData, chosenMeal?: MealData, vehicleHigherEF?: number, vehicleLessEF?: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
     // Fetch the existing log for the current date
@@ -180,8 +164,6 @@ const DailyLog: FC = () => {
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleComplete={handleComplete}
-        setMealSelection={handleMealSelection} // Pass down the handler
-        setSelectedVehicles={handleVehicleSelection}
       />
     );
   };
