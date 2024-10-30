@@ -2,7 +2,7 @@ import auth from '@react-native-firebase/auth';
 import db from '@react-native-firebase/database';
 import { router } from 'expo-router';
 import { Platform, BackHandler } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 
 export async function goToInterface(role: string) {
     if (role == 'user'){
@@ -16,8 +16,8 @@ export async function goToInterface(role: string) {
     }
 }
 
-export async function handleLogOut() {
-    auth().signOut;
+export function handleLogOut() {
+    firebase.auth().signOut();
     router.push('..');
 }
 

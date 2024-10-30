@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import auth from '@react-native-firebase/auth'; // Firebase Auth
 import firestore from '@react-native-firebase/firestore'; // Firebase Firestore
+import { router } from 'expo-router';
+import { goToInterface } from '@/app/utils/utils';
 
 // Create a User Context
 const UserContext = createContext();
@@ -57,9 +59,11 @@ export const UserProvider = ({ children }) => {
         const unsubscribe = auth().onAuthStateChanged((user) => {
             if (user) {
                 fetchUserDetails(user.uid); // Fetch details if user is logged in
+                goToInterface(role);
             } else {
                 // Reset user details when user signs out
                 resetUserDetails(null);
+                setLoading(false);
             }
         });
 
@@ -68,7 +72,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading }}>
+        <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading, setLoading }}>
             {children}
         </UserContext.Provider>
     );

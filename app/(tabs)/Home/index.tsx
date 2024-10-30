@@ -10,6 +10,7 @@ import { Button, Card, Layout, Text,  } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "@/contexts/UserContext";
+import LogOutButton from "@/app/components/LogOutButton";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -89,6 +90,7 @@ export default function LandingPage() {
             </StyledLayout>
 
             <DailyLog/>
+            <LogOutButton/>
           </StyledLayout>
         </StyledLayout>
       </SafeAreaView>

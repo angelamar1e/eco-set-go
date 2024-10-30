@@ -10,18 +10,19 @@ import { useUserContext } from '@/contexts/UserContext';
 
 
 export default function Index() {
+  const {role, loading, setLoading} = useUserContext();
 
-  const [loading, setLoading] = useState(true);
-  const {role} = useUserContext();
+  // Effect to handle role-based navigation
+  useEffect(() => {
+    if (role){
+      setLoading(true);
+      goToInterface(role); // Redirect only if role is valid
+    }
+  },[role])
 
- useEffect(() => {
-   goToInterface(role);
-   setLoading(false);
-  }, [router, role]);
-
-  if (loading) {
+  if (loading){
     return null;
-  }  
+  }
 
   return (
     <ThemedView className="flex-1 justify-center">
