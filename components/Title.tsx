@@ -1,16 +1,15 @@
 import React from 'react';
-import { ThemedText } from '@/components/ThemedText'; 
-import { ThemedView } from './ThemedView';
+import { Layout, Text } from '@ui-kitten/components';
 
 export const TitleComponent = () => {
-    return (
-      <ThemedView>
-        <ThemedText type="title" lightColor="black" darkColor="white" className="text-center">
-          Eco Set Go
-        </ThemedText>
-        <ThemedText type="subtitle" lightColor="black" darkColor="white" className="text-center text-sm font-normal">
-          Everyday Habits for Greener Tomorrow
-        </ThemedText>
-      </ThemedView>
-    );
+  return (
+    <Layout style={{ alignItems: 'center', marginVertical: 16 }}>
+      <Text category="h1" style={{ textAlign: 'center'}}>
+        Eco Set Go
+      </Text>
+      <Text category="s1" style={{ textAlign: 'center'}}>
+        Everyday Habits for a Greener Tomorrow
+      </Text>
+    </Layout>
+  );
 };
