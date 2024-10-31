@@ -3,7 +3,7 @@ import { TouchableOpacity, View, Modal, Alert, TouchableWithoutFeedback } from '
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Card, Text, Layout, Input, Button } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import { formatTimeAgo, handleCommentSubmit, handleHeartPress, handleEditSubmit, confirmDeletePost, handleDeletePress } from '@/app/utils/communityUtils';
+import { formatTimeAgo, handleEditSubmit, confirmDeletePost, handleDeletePress } from '@/app/utils/communityUtils';
 import { Timestamp } from '@react-native-firebase/firestore';
 
 interface PostCardProps {

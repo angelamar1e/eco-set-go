@@ -49,17 +49,6 @@ export const handleEditPost = async (id: string, newContent: string) => {
   }
 };
 
-// New utility functions
-export const handleCommentSubmit = (setComment: React.Dispatch<React.SetStateAction<string>>, comment: string) => {
-  console.log('Comment submitted:', comment);
-  setComment('');
-};
-
-export const handleHeartPress = (setIsHearted: React.Dispatch<React.SetStateAction<boolean>>, isHearted: boolean) => {
-  setIsHearted(!isHearted);
-  console.log('Heart pressed!');
-};
-
 export const handleEditSubmit = async (
   onEdit: (newContent: string) => Promise<void>, 
   editedContent: string, 

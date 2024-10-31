@@ -1,65 +1,57 @@
-import React, { useState } from 'react';
-import { View, FlatList } from 'react-native';
-import MarketplacePostCard from './MarketplacePostCard';
-import CreateMarketplacePost from '@/app/components/(tabs)/Community/MarketplaceCreatePost';
-import FilterButtons from '@/app/components/(tabs)/Community/MarketplaceFilterButtons'
-import { MarketplacePost } from '@/types/PostCardProps';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, ScrollView, Text } from 'react-native';
+import ListingCard from './MarketplacePostCard';
+import CreateListing from './MarketplaceCreatePost';
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { handleEditListing, handleDeleteListing } from '@/app/utils/marketplaceUtils'; // Import marketplace utility functions
 
-interface MarketplaceProps {
-  posts: MarketplacePost[];
-  newPost: string;
-  setNewPost: (text: string) => void;
-  handleCreateMarketplacePost: (contactNumber: string, price: string) => void;
+interface Listing {
+  id: string;
+  content: string;
+  userName: string;
+  price: string;
+  timestamp: Timestamp;
 }
 
-const Marketplace: React.FC<MarketplaceProps> = ({
-  posts,
-  newPost,
-  setNewPost,
-  handleCreateMarketplacePost,
-}) => {
-  const [filter, setFilter] = useState<string>('ALL');
+const MarketplacePosts: React.FC = () => {
+  const [listings, setListings] = useState<Listing[]>([]);
 
-  // Filter posts based on selected category
-  const filteredPosts = posts.filter((post) => {
-    if (filter === 'ALL') return true;
-    return post.content.toLowerCase().includes(filter.toLowerCase());
-  });
+  useEffect(() => {
+    const unsubscribeListings = firestore()
+      .collection('listings')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const fetchedListings = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Listing[];
+        setListings(fetchedListings);
+      });
+
+    return () => {
+      unsubscribeListings();
+    };
+  }, []);
 
   return (
-    <View className="flex-1">
-      <FlatList
-        data={filteredPosts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <MarketplacePostCard 
-            id={item.id}
-            content={item.content}
-            userName={item.userName}
-            userHandle={item.userHandle}
-            userIcon={item.userIcon}
-            contactNumber={item.contactNumber}
-            price={item.price}
-          />
-        )}
-        showsVerticalScrollIndicator={false}
-        style={{ flexGrow: 1 }}
-        ListHeaderComponent={
-          <>
-            <CreateMarketplacePost 
-              newPost={newPost}
-              setNewPost={setNewPost}
-              handleCreateMarketplacePost={handleCreateMarketplacePost}
-            />
-            <FilterButtons 
-              selectedFilter={filter} 
-              onFilterChange={setFilter} 
-            />
-          </>
-        }
-      />
-    </View>
+    <FlatList
+      data={listings}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <ListingCard
+          id={item.id} // Pass the ID
+          content={item.content}
+          userName={item.userName}
+          price={item.price}
+          timestamp={item.timestamp}
+          onEdit={(newContent) => handleEditListing(item.id, newContent)} // Pass the edit handler
+          onDelete={() => handleDeleteListing(item.id)} // Pass the delete handler
+        />
+      )}
+      showsVerticalScrollIndicator={false}
+      ListHeaderComponent={<CreateListing />} // Include the CreateListing component
+    />
   );
 };
 
-export default Marketplace;
+export default MarketplacePosts;
