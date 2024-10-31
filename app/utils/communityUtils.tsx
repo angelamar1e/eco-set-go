@@ -1,21 +1,31 @@
 import { Timestamp } from '@react-native-firebase/firestore';
 import firestore from '@react-native-firebase/firestore';
 
-export const formatTimeAgo = (timestamp: Timestamp) => {
-  const now = new Date();
-  const seconds = Math.floor((now.getTime() - timestamp.toDate().getTime()) / 1000);
-  let interval = Math.floor(seconds / 31536000);
-  if (interval > 1) return `${interval} years ago`;
-  interval = Math.floor(seconds / 2592000);
-  if (interval > 1) return `${interval} months ago`;
-  interval = Math.floor(seconds / 86400);
-  if (interval > 1) return `${interval} days ago`;
-  interval = Math.floor(seconds / 3600);
-  if (interval > 1) return `${interval} hours ago`;
-  interval = Math.floor(seconds / 60);
-  if (interval > 1) return `${interval} minutes ago`;
-  return `${seconds} seconds ago`;
-};
+export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined) => {
+    // Return a default message if the timestamp is null or undefined
+    if (!timestamp) return 'Unknown time';
+  
+    // Convert to Date if it's a Firestore Timestamp
+    const date = timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
+  
+    // Calculate the time difference in seconds
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+    // Format based on the interval
+    let interval = Math.floor(seconds / 31536000);
+    if (interval > 1) return `${interval} years ago`;
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) return `${interval} months ago`;
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) return `${interval} days ago`;
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) return `${interval} hours ago`;
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) return `${interval} minutes ago`;
+  
+    return `${seconds} seconds ago`;
+  };
 
 export const handleDeletePost = async (id: string) => {
   try {
