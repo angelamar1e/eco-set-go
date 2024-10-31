@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ScrollView } from 'react-native';
+import { View, FlatList, ScrollView, Text } from 'react-native';
 import PostCard from './PostCard';
 import { CreatePost } from './CreatePost';
 import EcoNewsCard from './EcoNewsCard';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { handleEditPost, handleDeletePost } from '@/app/utils/communityUtils'; // Import the utility functions
 
 interface Post {
   id: string;
@@ -52,34 +53,6 @@ const CommunityPosts: React.FC = () => {
     };
   }, []);
 
-  // Function to handle editing a post
-  const handleEditPost = (id: string, newContent: string) => {
-    firestore()
-      .collection('posts')
-      .doc(id)
-      .update({ content: newContent })
-      .then(() => {
-        console.log('Post updated successfully!');
-      })
-      .catch(error => {
-        console.error('Error updating post: ', error);
-      });
-  };
-
-  // Function to handle deleting a post
-  const handleDeletePost = (id: string) => {
-    firestore()
-      .collection('posts')
-      .doc(id)
-      .delete()
-      .then(() => {
-        console.log('Post deleted successfully!');
-      })
-      .catch(error => {
-        console.error('Error deleting post: ', error);
-      });
-  };
-
   return (
     <FlatList
       data={posts}
@@ -91,6 +64,7 @@ const CommunityPosts: React.FC = () => {
           userName={item.userName}
           timestamp={item.timestamp} 
           onEdit={(newContent) => handleEditPost(item.id, newContent)} // Pass the edit handler
+          onDelete={() => handleDeletePost(item.id)} // Pass the delete handler
         />
       )}
       showsVerticalScrollIndicator={false}
@@ -98,15 +72,19 @@ const CommunityPosts: React.FC = () => {
         <>
           <CreatePost />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-2">
-            {ecoNews.map((newsItem) => (
-              <EcoNewsCard
-                key={newsItem.id}
-                thumbnail={newsItem.thumbnail}
-                headline={newsItem.headline}
-                date={newsItem.date}
-                link={newsItem.link}
-              />
-            ))}
+            {ecoNews.length > 0 ? ( // Check if ecoNews has items
+              ecoNews.map((newsItem) => (
+                <EcoNewsCard
+                  key={newsItem.id}
+                  thumbnail={newsItem.thumbnail}
+                  headline={newsItem.headline}
+                  date={newsItem.date}
+                  link={newsItem.link}
+                />
+              ))
+            ) : (
+              <Text>No eco news available.</Text> // Optional: Display a message if no news is available
+            )}
           </ScrollView>
         </>
       }
