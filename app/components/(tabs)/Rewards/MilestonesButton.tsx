@@ -12,8 +12,8 @@ const GoToMilestones = () => {
 
   return (
     <TouchableOpacity onPress={() => router.push('/components/(tabs)/Rewards/MilestonesPage')}>
-      <StyledText category="h6" className=" items-center ml-3"
-        style={{color: myTheme['color-success-900']}}
+      <StyledText className="text-2sm items-center"
+        style={{color: myTheme['color-success-900'], fontFamily: 'Poppins-Bold'}}
       >
         View Milestones
       </StyledText>

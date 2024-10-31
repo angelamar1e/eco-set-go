@@ -52,7 +52,7 @@ const MilestoneList: React.FC = () => {
       }}
     >
       <View className="top-20 right-3">
-        <StyledText category="h6" className="mt-5 mb-2" numberOfLines={3} style={{ color: titleTextColor }}>
+        <StyledText className="mt-5 mb-1 text-lg" numberOfLines={3} style={{ color: titleTextColor, fontFamily: 'Poppins-SemiBold' }}>
           {title}
         </StyledText>
         <StyledText category="p2" className="mb-6" numberOfLines={4} ellipsizeMode="tail">
