@@ -7,13 +7,12 @@ import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from "../../../../types/ArticleInfo";
 import { getUserUid } from "@/app/utils/utils";
 import { styled } from "nativewind";
-import { Text, Layout, Card } from "@ui-kitten/components";
-import EcoActionHeader from "./EcoArticleDetailsHeader";
+import { Text, Layout } from "@ui-kitten/components";
 import storage from '@react-native-firebase/storage';
+import BackButton from "./BackButton";
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
-const StyledCard = styled(Card);
 
 const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
@@ -26,8 +25,6 @@ const EcoActionDetail = () => {
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
   const [instructions, setInstructions] = useState<ArticleInfo[]>([]);
   const [factsWithImages, setFactsWithImages] = useState<ArticleInfo[]>([]);
-  const [benefitsWithImages, setBenefitsWithImages] = useState<ArticleInfo[]>([]);
-  const [instructionsWithImages, setInstructionsWithImages] = useState<ArticleInfo[]>([]);
 
   useEffect(() => {
     const fetchUserUid = async () => {
@@ -58,7 +55,7 @@ const EcoActionDetail = () => {
       })) as ArticleInfo[];
 
       setFacts(fetchedFacts);
-      loadImagesForFacts(fetchedFacts);
+      loadImagesForFacts(fetchedFacts); 
     });
 
     const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
@@ -69,7 +66,6 @@ const EcoActionDetail = () => {
       })) as ArticleInfo[];
 
       setBenefits(fetchedBenefits);
-      loadImagesForBenefits(fetchedBenefits);
     });
 
     const unsubscribeInstructions = instructionsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
@@ -79,7 +75,6 @@ const EcoActionDetail = () => {
         media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
       })) as ArticleInfo[];
       setInstructions(fetchedInstructions);
-      loadImagesForInstructions(fetchedInstructions);
     });
 
     return () => {
@@ -100,30 +95,6 @@ const EcoActionDetail = () => {
     }));
     const validFactsWithImages = updatedFacts.filter(fact => fact.media?.uri !== null) as ArticleInfo[];
     setFactsWithImages(validFactsWithImages);
-  };
-
-  const loadImagesForBenefits = async (benefits: ArticleInfo[]) => {
-    const updatedBenefits = await Promise.all(benefits.map(async (benefit) => {
-      if (benefit.media) {
-        const url = await loadImage(benefit.media.uri);
-        return { ...benefit, media: { ...benefit.media, uri: url } };
-      }
-      return benefit;
-    }));
-    const validBenefitsWithImages = updatedBenefits.filter(benefit => benefit.media?.uri !== null) as ArticleInfo[];
-    setBenefitsWithImages(validBenefitsWithImages);
-  };
-
-  const loadImagesForInstructions = async (instructions: ArticleInfo[]) => {
-    const updatedInstructions = await Promise.all(instructions.map(async (instruction) => {
-      if (instruction.media) {
-        const url = await loadImage(instruction.media.uri);
-        return { ...instruction, media: { ...instruction.media, uri: url } };
-      }
-      return instruction;
-    }));
-    const validInstructionsWithImages = updatedInstructions.filter(instruction => instruction.media?.uri !== null) as ArticleInfo[];
-    setInstructionsWithImages(validInstructionsWithImages);
   };
 
   const loadImage = async (gsUrl: string): Promise<string | null> => {
@@ -155,80 +126,102 @@ const EcoActionDetail = () => {
   }
 
   return (
-    <StyledLayout className="flex-1 p-3">
-      <EcoActionHeader />
-      <View className="flex-column">
-        <StyledText className="m-1" category="h6">
-          {actionDetail.title}
-        </StyledText>
-        <Button
-          icon="note-plus"
-          mode="contained"
-          className="w-40 m-2 self-end bg-lime-800"
-          onPress={handleAddToLog}
-        >
-          Add to Daily Log
-        </Button>
-      </View>
+    <StyledLayout className="flex-1">
+      <StyledLayout className="p-1 rounded-b-3xl border border-gray-200">
+        <BackButton/>
 
-          <StyledText category="h6" className="font-bold ml-2 mb-1">Facts 🔍</StyledText>
-          <FlatList
-            data={factsWithImages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200">
-                {item.media && item.media.uri && (
-                  <Image
-                    source={{ uri: item.media.uri }}
-                    className="w-20 h-20 rounded-md m-3"
-                    accessibilityLabel="Fact Image"
-                  />
-                )}
-                <StyledText category="c1" className="ml-2 mr-2 flex-shrink" >{item.content}</StyledText>
-              </StyledLayout>
-            )}
-            showsVerticalScrollIndicator={false}
+        {factsWithImages.length > 0 && factsWithImages[0].media?.uri && (
+          <Image
+            source={{ uri: factsWithImages[0].media.uri }}
+            style={{
+              width: '80%', 
+              aspectRatio: 16 / 9, 
+              resizeMode: 'contain', 
+              alignSelf: 'center'
+            }}
           />
-
-          <StyledText category="h6" className="font-bold ml-2 mb-1">Benefits 🌟</StyledText>
-          <FlatList
-            data={benefitsWithImages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200">
-                {item.media && item.media.uri && (
-                  <Image
-                    source={{ uri: item.media.uri }}
-                    className="w-20 h-20 rounded-md m-3"
-                    accessibilityLabel="Benefit Image"
-                  />
-                )}
-                <StyledText category="c1" className="ml-2 mr-2 flex-shrink" >{item.content}</StyledText>
-              </StyledLayout>
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-
-      {/* Instructions section */}
-      <StyledText category="h6" className="font-bold ml-2 mb-1">Instructions 📝</StyledText>
-      <FlatList
-        data={instructionsWithImages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <StyledLayout className="flex-row flex-1 items-center m-1 p-2 rounded-md border border-gray-200"> 
-            {item.media && item.media.uri && (
-              <Image
-                source={{ uri: item.media.uri }}
-                className="w-20 h-20 rounded-md m-3"
-                accessibilityLabel="Instruction Image"
-              />
-            )}
-            <StyledText category="c1" className="ml-2 mr-2 flex-shrink">{item.content}</StyledText>
-          </StyledLayout>
         )}
-        showsVerticalScrollIndicator={false}
-      />
 
+        {/* Title and Button Section */}
+        <StyledLayout className="items-center">
+          <StyledText className="m-1 text-center" category="h6">
+            {actionDetail.title}
+          </StyledText>
+
+          <StyledLayout className="flex-row justify-between m-2">
+          <Button
+            icon="star"
+            mode="contained"
+            className="w-30 bg-lime-800 mx-1"
+          >
+            Points
+          </Button>
+          <Button
+            icon="note-plus"
+            mode="contained"
+            className="w-40 bg-lime-800 mx-1"
+            onPress={handleAddToLog}
+          >
+            Add to Daily Log
+          </Button>
+          </StyledLayout>
+        </StyledLayout>
+      </StyledLayout>
+
+      <StyledLayout className="p-1 m-2">
+        <StyledText category="s1" className="font-bold ml-2 mb-1">Facts</StyledText>
+        <FlatList
+          data={factsWithImages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+              <StyledText category="h5" className="ml-2 mr-2">
+                🔍
+              </StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
+                {item.content}
+              </StyledText>
+            </StyledLayout>
+
+          )}
+          showsVerticalScrollIndicator={false}
+        />
+
+        <StyledText category="s1" className="font-bold ml-2 mb-1">Benefits </StyledText>
+        <FlatList
+          data={benefits}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+              <StyledText category="h5" className="ml-2 mr-2">
+                🌟
+              </StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
+                {item.content}
+              </StyledText>
+            </StyledLayout>
+          )}
+          showsVerticalScrollIndicator={false}
+        />
+
+        <StyledText category="s1" className="font-bold ml-2 mb-1">Instructions </StyledText>
+        <FlatList
+          data={instructions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+              <StyledText category="h5" className="ml-2 mr-2">
+                📝
+              </StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
+                {item.content}
+              </StyledText>
+            </StyledLayout>
+          )}
+          showsVerticalScrollIndicator={false}
+        />
+
+      </StyledLayout>
 
       <Snackbar
         visible={visible}
