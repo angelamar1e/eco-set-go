@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { styled } from "nativewind";
 import { Layout, Input, Button, Text, Tooltip } from "@ui-kitten/components";
 import { useRouter } from "expo-router";
-import { getUserUid } from '@/app/utils/utils';
 import { Ionicons } from "@expo/vector-icons";
+import { useUserContext } from "@/contexts/UserContext";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -11,6 +11,7 @@ const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
 const UpdatePassword = () => {
+  const {userUid} = useUserContext();
   const [currentPassword, setCurrentPassword] = useState(""); 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,7 +29,6 @@ const UpdatePassword = () => {
 
   const handleUpdate = async () => {
     if (newPassword) {
-      const userUid = await getUserUid();
       try {
         // Update password logic here
         setNewPassword("");

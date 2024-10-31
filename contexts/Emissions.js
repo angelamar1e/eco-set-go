@@ -25,21 +25,18 @@ import {
   TransportEmission,
   Food,
 } from "@/constants/DefaultValues";
-import { getUserUid } from "@/app/utils/utils";
+import { useUserContext } from "./UserContext";
 
 export const EmissionsContext = createContext();
 
 export const EmissionsProvider = ({ children }) => {
-  const [userUid, setUserUid] = useState("");
+  const {userUid} = useUserContext();
   const [initialized, setInitialized] = useState(false);
 
 // Load initial data from Firestore for the logged-in user
 
   const initializeData = async () => {
-    const uid = await getUserUid();
-    setUserUid(uid);
-
-    const doc = await firestore().collection("emissions_data").doc(uid).get();
+    const doc = await firestore().collection("emissions_data").doc(userUid).get();
     const data = doc.exists ? doc.data() : {};
 
     // Car emissions data
@@ -286,23 +283,33 @@ useEffect(() => {
   );
 
   useEffect(() => {
-      setAirplaneTravelEmissions(
-          computeTotalAirplaneEmissions(
-            travelledByPlane,
-            shortHaulDuration,
-            mediumHaulDuration,
-            longHaulDuration
-          )
-      );
-
+    // Calculate the new airplane travel emissions based on various parameters
+    const newAirplaneEmissions = computeTotalAirplaneEmissions(
+      travelledByPlane,
+      shortHaulDuration,
+      mediumHaulDuration,
+      longHaulDuration
+    );
+  
+    // Update the local state for airplane travel emissions
+    setAirplaneTravelEmissions(newAirplaneEmissions);
+  
+    // Persist updated state to Firestore if initialized
     if (initialized) {
       persistState("travelledByPlane", travelledByPlane);
       persistState("airTravelShortHaulDuration", shortHaulDuration);
       persistState("airTravelMediumHaulDuration", mediumHaulDuration);
       persistState("airTravelLongHaulDuration", longHaulDuration);
-      persistState("airTravelEmissions", airplaneTravelEmissions);
+      persistState("airTravelEmissions", newAirplaneEmissions); // Persist calculated airplane emissions
     }
-  }, [travelledByPlane, shortHaulDuration, mediumHaulDuration, longHaulDuration]);
+  }, [
+    travelledByPlane,
+    shortHaulDuration,
+    mediumHaulDuration,
+    longHaulDuration,
+    initialized // Include initialized to ensure persistence only happens when context is ready
+  ]);
+  
 
   // Define and persist two-wheeler emissions state
   const [usesTwoWheelers, setUsesTwoWheelers] = useState(TransportEmission.TwoWheelers.usesTwoWheelers);
@@ -317,21 +324,30 @@ useEffect(() => {
   );
 
   useEffect(() => {
-      setTwoWheelersEmissions(
-        computeTwoWheelersEmissions(
-          usesTwoWheelers,
-          twoWheelerEFPerKm,
-          twoWheelersKmTravelled
-        )
-      );
-
+    // Calculate the new two-wheelers emissions based on various parameters
+    const newTwoWheelersEmissions = computeTwoWheelersEmissions(
+      usesTwoWheelers,
+      twoWheelerEFPerKm,
+      twoWheelersKmTravelled
+    );
+  
+    // Update the local state for two-wheelers emissions
+    setTwoWheelersEmissions(newTwoWheelersEmissions);
+  
+    // Persist updated state to Firestore if initialized
     if (initialized) {
       persistState("usesTwoWheelers", usesTwoWheelers);
       persistState("twoWheelerEFPerKm", twoWheelerEFPerKm);
       persistState("twoWheelersKmTravelled", twoWheelersKmTravelled);
-      persistState("twoWheelersEmissions", twoWheelersEmissions);
+      persistState("twoWheelersEmissions", newTwoWheelersEmissions); // Persist calculated two-wheelers emissions
     }
-  }, [usesTwoWheelers, twoWheelerEFPerKm, twoWheelersKmTravelled]);
+  }, [
+    usesTwoWheelers,
+    twoWheelerEFPerKm,
+    twoWheelersKmTravelled,
+    initialized // Include initialized to ensure persistence only happens when context is ready
+  ]);
+
 
   // Define and persist efficient transport emission variables
 const [selectedTransports, setSelectedTransports] = useState(TransportEmission.EfficientTransport.selectedTransports);
@@ -339,29 +355,52 @@ const [eBikeKmTravelled, setEBikeKmTravelled] = useState(TransportEmission.Effic
 const [smallVehKmTravelled, setSmallVehKmTravelled] = useState(TransportEmission.EfficientTransport.smallElectricVehicles.kmTravelled);
 const [efficientTravelEmissions, setEfficientTravelEmissions] = useState(computeTotalEfficientTravelEmissions(selectedTransports, eBikeKmTravelled, smallVehKmTravelled));
 
-// Effect to update efficient travel emissions
 useEffect(() => {
-  setEfficientTravelEmissions(computeTotalEfficientTravelEmissions(selectedTransports, eBikeKmTravelled, smallVehKmTravelled));
+  // Calculate the new efficient travel emissions based on selected parameters
+  const newEfficientTravelEmissions = computeTotalEfficientTravelEmissions(
+    selectedTransports,
+    eBikeKmTravelled,
+    smallVehKmTravelled
+  );
+
+  // Update the local state for efficient travel emissions
+  setEfficientTravelEmissions(newEfficientTravelEmissions);
+
+  // Persist updated state to Firestore if initialized
   if (initialized) {
     persistState("selectedEfficientTransports", selectedTransports);
     persistState("eBikeKmTravelled", eBikeKmTravelled);
     persistState("smallEVehKmTravelled", smallVehKmTravelled);
-    persistState("efficientTravelEmissions", efficientTravelEmissions);
+    persistState("efficientTravelEmissions", newEfficientTravelEmissions); // Persist calculated efficient travel emissions
   }
-}, [selectedTransports, eBikeKmTravelled, smallVehKmTravelled]);
+}, [
+  selectedTransports,
+  eBikeKmTravelled,
+  smallVehKmTravelled,
+  initialized // Include initialized to ensure persistence only happens when context is ready
+]);
+
 
 // Define and persist train emission variables
 const [trainKmTravelled, setTrainKmTravelled] = useState(TransportEmission.Train.kmTravelled);
 const [trainEmissions, setTrainEmissions] = useState(computeTrainEmissions(trainKmTravelled));
 
-// Effect to update train emissions
 useEffect(() => {
-  setTrainEmissions(computeTrainEmissions(trainKmTravelled));
+  // Calculate the new train emissions based on kilometers traveled by train
+  const newTrainEmissions = computeTrainEmissions(trainKmTravelled);
+
+  // Update the local state for train emissions
+  setTrainEmissions(newTrainEmissions);
+
+  // Persist updated state to Firestore if initialized
   if (initialized) {
     persistState("trainKmTravelled", trainKmTravelled);
-    persistState("trainEmissions", trainEmissions);
+    persistState("trainEmissions", newTrainEmissions); // Persist calculated train emissions
   }
-}, [trainKmTravelled]);
+}, [
+  trainKmTravelled,
+  initialized // Include initialized to ensure persistence only happens when context is ready
+]);
 
 // Define and persist public transport emissions
 const [selectedPublicTransport, setSelectedPublicTransport] = useState(TransportEmission.PublicTransport.selectedPublicTransport);
@@ -370,17 +409,34 @@ const [jeepHrsTravelled, setJeepHrsTravelled] = useState(TransportEmission.Publi
 const [tricycleHrsTravelled, setTricycleHrsTravelled] = useState(TransportEmission.PublicTransport.tricycle.hrsTravelled);
 const [publicTransportEmissions, setPublicTransportEmissions] = useState(computeTotalPublicTransportEmissions(selectedPublicTransport, busHrsTravelled, jeepHrsTravelled, tricycleHrsTravelled));
 
-// Effect to update public transport emissions
 useEffect(() => {
-  setPublicTransportEmissions(computeTotalPublicTransportEmissions(selectedPublicTransport, busHrsTravelled, jeepHrsTravelled, tricycleHrsTravelled));
+  // Calculate the new public transport emissions based on selected parameters
+  const newPublicTransportEmissions = computeTotalPublicTransportEmissions(
+    selectedPublicTransport,
+    busHrsTravelled,
+    jeepHrsTravelled,
+    tricycleHrsTravelled
+  );
+
+  // Update the local state for public transport emissions
+  setPublicTransportEmissions(newPublicTransportEmissions);
+
+  // Persist updated state to Firestore if initialized
   if (initialized) {
     persistState("selectedPublicTransport", selectedPublicTransport);
     persistState("busHrsTravelled", busHrsTravelled);
     persistState("jeepHrsTravelled", jeepHrsTravelled);
     persistState("tricycleHrsTravelled", tricycleHrsTravelled);
-    persistState("publicTransportEmissions", publicTransportEmissions);
+    persistState("publicTransportEmissions", newPublicTransportEmissions); // Persist calculated public transport emissions
   }
-}, [selectedPublicTransport, busHrsTravelled, jeepHrsTravelled, tricycleHrsTravelled, initialized]);
+}, [
+  selectedPublicTransport,
+  busHrsTravelled,
+  jeepHrsTravelled,
+  tricycleHrsTravelled,
+  initialized // Include initialized to ensure persistence only happens when context is ready
+]);
+
 
   // Define and persist breakfast emissions state 
   const [breakfastType, setBreakfastType] = useState(Food.defaultBreakfastType);
@@ -401,12 +457,20 @@ useEffect(() => {
   const updatedBreakfastEF = computeMealEmission(breakfastType, updatedAdditionals);
   setBreakfastEF(updatedBreakfastEF);
 
-  setBreakfastEmissions(computeBreakfastEmissions(updatedBreakfastEF));
-  setTraditionalBreakfastEF(computeMealEmission("Traditional Filipino Breakfast", updatedAdditionals));
-  setSimpleBreakfastEF(computeMealEmission("Simple Rice Meal", updatedAdditionals));
-  setCerealsBreakfastEF(computeMealEmission("Dairy and Cereal", updatedAdditionals));
-  setBreadBreakfastEF(computeMealEmission("Bread and Jam", updatedAdditionals));
-  setFruitsBreakfastEF(computeMealEmission("Fruits", updatedAdditionals));
+  const traditionalBreakfastEF = computeMealEmission("Traditional Filipino Breakfast", updatedAdditionals);
+  setTraditionalBreakfastEF(traditionalBreakfastEF);
+  
+  const simpleBreakfastEF = computeMealEmission("Simple Rice Meal", updatedAdditionals);
+  setSimpleBreakfastEF(simpleBreakfastEF);
+  
+  const cerealsBreakfastEF = computeMealEmission("Dairy and Cereal", updatedAdditionals);
+  setCerealsBreakfastEF(cerealsBreakfastEF);
+  
+  const breadBreakfastEF = computeMealEmission("Bread and Jam", updatedAdditionals);
+  setBreadBreakfastEF(breadBreakfastEF);
+  
+  const fruitsBreakfastEF = computeMealEmission("Fruits", updatedAdditionals);
+  setFruitsBreakfastEF(fruitsBreakfastEF);
 }, [breakfastType]);
 
 // Persist updated state to Firestore after emissions values are updated
@@ -551,15 +615,20 @@ const [coldDrinksEmissions, setColdDrinksEmissions] = useState(computeTotalColdD
 
 // Effect to update cold drinks emissions
 useEffect(() => {
-    setColdDrinksEmissions(
-        computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency)
-      );
+  // Calculate and set cold drinks emissions based on frequencies
+  const updatedColdDrinksEmissions = computeTotalColdDrinkEmissions(sweetDrinksFrequency, alcoholFrequency);
+  setColdDrinksEmissions(updatedColdDrinksEmissions);
+}, [sweetDrinksFrequency, alcoholFrequency]);
+
+// Effect to persist cold drinks frequency and emissions
+useEffect(() => {
   if (initialized) {
     persistState("sweetDrinksFrequency", sweetDrinksFrequency);
     persistState("alcoholFrequency", alcoholFrequency);
-    persistState("coldDrinksEmissions", coldDrinksEmissions);
+    persistState("coldDrinksEmissions", coldDrinksEmissions); // Persist the most recently calculated emissions
   }
-}, [sweetDrinksFrequency, alcoholFrequency]);
+}, [sweetDrinksFrequency, alcoholFrequency, initialized, coldDrinksEmissions]); // Ensure this runs whenever relevant data changes
+
 
 // Define and persist bottled water emissions state
 const [buysBottledWater, setBuysBottledWater] = useState(Beverages.BottledWater.boughtRegularly);
@@ -567,13 +636,19 @@ const [bottledWaterEmissions, setBottledWaterEmissions] = useState(computeBottle
 
 // Effect to update bottled water emissions
 useEffect(() => {
-    setBottledWaterEmissions(computeBottledWaterEmissions(buysBottledWater));
+  // Calculate and set bottled water emissions based on purchases
+  const updatedBottledWaterEmissions = computeBottledWaterEmissions(buysBottledWater);
+  setBottledWaterEmissions(updatedBottledWaterEmissions);
+}, [buysBottledWater]);
 
+// Effect to persist bottled water purchases and emissions
+useEffect(() => {
   if (initialized) {
     persistState("buysBottledWater", buysBottledWater);
-    persistState("bottledWaterEmissions", bottledWaterEmissions);
+    persistState("bottledWaterEmissions", bottledWaterEmissions); // Persist the most recently calculated emissions
   }
-}, [buysBottledWater]);
+}, [buysBottledWater, initialized, bottledWaterEmissions]); // Include relevant dependencies
+
 
 // Define and persist electricity consumption emission variables
 const [householdSize, setHouseholdSize] = useState(ElectricityEmissions.householdSize);
@@ -593,23 +668,15 @@ const [electricityEmissions, setElectricityEmissions] = useState(
 
 // Effect to update electricity emissions
 useEffect(() => {
-    setElectricityEmissions(
-        computeElectricityEmissions(
-          householdSize,
-          usesSolarPanels,
-          solarProduction,
-          solarConsumptionPercent,
-          gridMonthlySpend
-        )
-      );
-  if (initialized) {
-    persistState("householdSize", householdSize);
-    persistState("usesSolarPanels", usesSolarPanels);
-    persistState("solarProduction", solarProduction);
-    persistState("solarConsumptionPercent", solarConsumptionPercent);
-    persistState("gridMonthlySpend", gridMonthlySpend);
-    persistState("electricityEmissions", electricityEmissions);
-  }
+  // Calculate and set electricity emissions based on household parameters
+  const updatedElectricityEmissions = computeElectricityEmissions(
+    householdSize,
+    usesSolarPanels,
+    solarProduction,
+    solarConsumptionPercent,
+    gridMonthlySpend
+  );
+  setElectricityEmissions(updatedElectricityEmissions);
 }, [
   householdSize,
   usesSolarPanels,
@@ -617,6 +684,27 @@ useEffect(() => {
   solarConsumptionPercent,
   gridMonthlySpend,
 ]);
+
+// Effect to persist electricity-related data
+useEffect(() => {
+  if (initialized) {
+    persistState("householdSize", householdSize);
+    persistState("usesSolarPanels", usesSolarPanels);
+    persistState("solarProduction", solarProduction);
+    persistState("solarConsumptionPercent", solarConsumptionPercent);
+    persistState("gridMonthlySpend", gridMonthlySpend);
+    persistState("electricityEmissions", electricityEmissions); // Persist the most recently calculated emissions
+  }
+}, [
+  householdSize,
+  usesSolarPanels,
+  solarProduction,
+  solarConsumptionPercent,
+  gridMonthlySpend,
+  initialized,
+  electricityEmissions,
+]);
+
 
   // states for over all footprint
   const [overallFootprint, setOverallFootprint] = useState(

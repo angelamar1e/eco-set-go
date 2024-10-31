@@ -45,6 +45,13 @@ const Quiz = () => (
           header: () => <QuizHeader />,
         }}
       />
+      <Stack.Screen
+        name="QuizEnd"
+        options={{
+          headerShown: true,
+          header: () => <QuizHeader />,
+        }}
+      />
     </Stack>
   </SafeAreaView>
 );

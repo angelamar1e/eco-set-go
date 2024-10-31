@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { BackHandler, View, FlatList } from "react-native";
 import { styled } from "nativewind";
-import { getUserName, getUserUid, handleBackAction } from "../../utils/utils";
+import { handleBackAction } from "../../utils/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import firestore from "@react-native-firebase/firestore";
-import ImpactCalculator from "@/app/components/(tabs)/Home/impact_calculator";
 import { useRouter } from 'expo-router';
 import { Button, Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useUserContext } from "@/contexts/UserContext";
 import LogOutButton from "@/app/components/LogOutButton";
 import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
 import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
@@ -31,28 +31,8 @@ const Box = ({ className = "", style = "", ...props }) => (
 
 export default function LandingPage() {
   const router = useRouter();
-  const [userUid, setUserUid] = useState<string | undefined>();
-  const [userName, setUserName] = useState<string | undefined>();
-  const [overallFP, setOverallFP] = useState<number | undefined>();
+  const { username, overallFootprint } = useUserContext();
   const [impactValue, setImpactValue] = useState<number>(0);
-  const footprint = firestore().collection("current_footprint").doc(userUid);
-  const fontsLoaded = useLoadFonts(); 
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-      setUserName(await getUserName(uid));
-    };
-    fetchUserUid();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = footprint.onSnapshot((doc) => {
-      setOverallFP(doc.data()!.overall_footprint!.toFixed(2));
-    });
-    return () => unsubscribe();
-  }, [footprint]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -61,10 +41,6 @@ export default function LandingPage() {
     );
     return () => backHandler.remove();
   }, []);
-
-  const handleImpactChange = (impact: number) => {
-    setImpactValue(impact);
-  };
 
   const theme = useTheme();
   const headertextColor = theme['color-success-900'];
@@ -85,7 +61,7 @@ export default function LandingPage() {
                     fontFamily: 'Poppins-Italic' 
                   }}
                 >
-                  {userName!}!
+                  {username!}!
                 </StyledText>
               </StyledText>
               <StyledButton
@@ -105,8 +81,8 @@ export default function LandingPage() {
                 >
                   Carbon Footprint
                 </StyledText>
-                <StyledText className="text-center text-white text-6xl pt-2" style={{ fontFamily: 'Poppins-Bold'}}>
-                  {overallFP}
+                <StyledText className="text-center text-white text-6xl pt-2" style={{ fontFamily: 'Poppins-Bold'}} >
+                  {overallFootprint.toFixed(2)}
                 </StyledText>
                 <StyledText className="text-center text-white text-sm" style={{ fontFamily: 'Poppins-Regular'}}>
                   tons of{'\n'}CO2 equivalent
@@ -123,7 +99,6 @@ export default function LandingPage() {
                 </StyledCard>
               </StyledLayout>
             </StyledLayout>
-            <ImpactCalculator onImpactUpdate={handleImpactChange} />
             <StyledLayout className="flex-row items-center justify-between mt-4 ml-3">
               <StyledText className="text-3xl" style={{ color: headertextColor, flex: 1, fontFamily: 'Poppins-SemiBold' }}>
                 Daily Log <Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>
@@ -139,10 +114,6 @@ export default function LandingPage() {
       ),
     },
   ];
-
-  if (!fontsLoaded) {
-    return <View />; // Or a loading spinner
-  }
 
   return (
     <StyledLayout className="flex-1">
