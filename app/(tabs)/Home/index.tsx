@@ -33,6 +33,7 @@ export default function LandingPage() {
   const router = useRouter();
   const { username, overallFootprint } = useUserContext();
   const [impactValue, setImpactValue] = useState<number>(0);
+  const fontsLoaded = useLoadFonts(); 
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -114,6 +115,10 @@ export default function LandingPage() {
       ),
     },
   ];
+
+  if (!fontsLoaded) {
+    return <View />; // Or a loading spinner
+  }
 
   return (
     <StyledLayout className="flex-1">
