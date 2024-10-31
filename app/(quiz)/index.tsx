@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { View } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
 import { EmissionsContext } from "@/contexts/Emissions";
-import { ThemedView } from "@/components/ThemedView";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
 import { Text } from "react-native-paper";
 import { QuestionData } from "@/types/QuestionData";
@@ -11,6 +10,10 @@ import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
 import StepperTemplate from "../components/quiz/StepperTemplate";
 import RadioTemplate from "../components/quiz/RadioTemplate";
 import { router } from "expo-router";
+import { styled } from "nativewind";
+import { Layout } from "@ui-kitten/components";
+
+const StyledLayout = styled(Layout);
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
@@ -85,7 +88,7 @@ const QuizIndex = () => {
     : templates[0];
 
   return (
-    <ThemedView className="flex-1 p-4">
+    <StyledLayout className="flex-1 p-4">
       {questionData ? (
         <>
           <CurrentComponent
@@ -116,7 +119,7 @@ const QuizIndex = () => {
           <Text>Loading...</Text>
         </View> // or any other loading indicator
       )}
-    </ThemedView>
+    </StyledLayout>
   );
 };
 
