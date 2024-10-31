@@ -86,9 +86,11 @@ const CommunityPosts: React.FC = () => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <PostCard
+          id={item.id} // Pass the ID
           content={item.content}
           userName={item.userName}
-          timestamp={item.timestamp}
+          timestamp={item.timestamp} 
+          onEdit={(newContent) => handleEditPost(item.id, newContent)} // Pass the edit handler
         />
       )}
       showsVerticalScrollIndicator={false}
