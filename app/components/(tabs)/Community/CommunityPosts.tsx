@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, ScrollView } from 'react-native';
 import PostCard from './PostCard';
-import CreatePost from './CreatePost';
+import { CreatePost } from './CreatePost';
 import EcoNewsCard from './EcoNewsCard';
-import firestore from "@react-native-firebase/firestore";
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
 
 interface Post {
   id: string;
   content: string;
   userName: string;
-  userHandle: string;
-  userIcon: string;
+  timestamp: Timestamp;
 }
 
 interface EcoNewsItem {
@@ -21,29 +20,65 @@ interface EcoNewsItem {
   link: string;
 }
 
-interface CommunityPostsProps {
-  posts: Post[];
-  newPost: string;
-  setNewPost: (text: string) => void;
-  handleCreatePost: () => void;
-}
-
-const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts }) => {
+const CommunityPosts: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
   const [ecoNews, setEcoNews] = useState<EcoNewsItem[]>([]);
 
   useEffect(() => {
-    const ecoNewsCollection = firestore().collection('econews');
+    const unsubscribePosts = firestore()
+      .collection('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const fetchedPosts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[];
+        setPosts(fetchedPosts);
+      });
 
-    const unsubscribe = ecoNewsCollection.onSnapshot(snapshot => {
-      const newsItems = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as EcoNewsItem[];
-      setEcoNews(newsItems);
-    });
+    const unsubscribeEcoNews = firestore()
+      .collection('econews')
+      .onSnapshot(snapshot => {
+        const newsItems = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as EcoNewsItem[];
+        setEcoNews(newsItems);
+      });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribePosts();
+      unsubscribeEcoNews();
+    };
   }, []);
+
+  // Function to handle editing a post
+  const handleEditPost = (id: string, newContent: string) => {
+    firestore()
+      .collection('posts')
+      .doc(id)
+      .update({ content: newContent })
+      .then(() => {
+        console.log('Post updated successfully!');
+      })
+      .catch(error => {
+        console.error('Error updating post: ', error);
+      });
+  };
+
+  // Function to handle deleting a post
+  const handleDeletePost = (id: string) => {
+    firestore()
+      .collection('posts')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Post deleted successfully!');
+      })
+      .catch(error => {
+        console.error('Error deleting post: ', error);
+      });
+  };
 
   return (
     <FlatList
@@ -53,19 +88,14 @@ const CommunityPosts: React.FC<CommunityPostsProps> = ({ posts }) => {
         <PostCard
           content={item.content}
           userName={item.userName}
-          userHandle={item.userHandle}
-          userIcon={item.userIcon}
+          timestamp={item.timestamp}
         />
       )}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={
         <>
           <CreatePost />
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="mt-2"
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-2">
             {ecoNews.map((newsItem) => (
               <EcoNewsCard
                 key={newsItem.id}
