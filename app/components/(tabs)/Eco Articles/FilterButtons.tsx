@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Button, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
+import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 interface FilterButtonsProps {
   selectedFilter: string;
@@ -12,6 +13,8 @@ const StyledButton = styled(Button);
 
 const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterChange }) => {
   const filters = ['ALL', 'Food', 'Mobility', 'Electricity'];
+  const fontsLoaded = useLoadFonts(); 
+
 
   return (
       <StyledLayout className="mt-5 flex-row flex-nowrap justify-center">
@@ -23,7 +26,7 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
             appearance={selectedFilter === category ? 'filled' : 'outline'}
             status={selectedFilter === category ? 'success' : 'basic'}
           >
-            <Text category='label'>{category}</Text>
+            <Text category='label' >{category}</Text>
           </StyledButton>
         ))}
       </StyledLayout>

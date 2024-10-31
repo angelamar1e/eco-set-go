@@ -9,7 +9,7 @@ const StyledTextSmall = styled(Text);
 const StyledLayout = styled(Layout);
 
 const Calculator: React.FC = () => {
-  const { overallFootprint } = useContext(EmissionsContext); 
+  const { overallFootprint } = useContext(EmissionsContext);
 
   return (
     <StyledLayout className="flex-row items-center justify-center shadow p-2">

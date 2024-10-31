@@ -10,11 +10,10 @@ import {
   LineChart, 
   BarChart
 } from "react-native-chart-kit";
-import SummaryReport from "@/app/components/(tabs)/Progress Monitoring/summary";
-import { getUserName, getUserUid } from "../../utils/utils";
 import { styled } from "nativewind";
 import moment from "moment";
 import { stringify } from "postcss";
+import { useUserContext } from "@/contexts/UserContext";
 
 // Card component used in ProgressReport
 const Card = ({ children }: { children: ReactNode }) => {
@@ -61,19 +60,10 @@ const ProgressReport = () => {
 };
 
 const ReportWithPeriod = () => {
-    const [userUid, setUserUid] = useState<string | undefined>();
+    const {userUid} = useUserContext();
     const [dataset, setDataset] = useState<any>(null);
     const [period, setPeriod] = useState<Period>('daily'); // State to manage period (daily, weekly, monthly)
     const [category, setCategory] = useState<Category>('All');
-  
-    useEffect(() => {
-      const fetchUserUid = async () => {
-        const uid = await getUserUid();
-        setUserUid(uid);
-      };
-  
-      fetchUserUid();
-    }, []);
   
     // Fetch data based on the selected period
     useEffect(() => {

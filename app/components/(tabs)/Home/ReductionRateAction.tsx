@@ -45,7 +45,7 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
       impact = (baseEmissions * reductionRate) / passengers;
     }
 
-    handleComplete(item.id, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact));
   }
 
   return (
@@ -112,7 +112,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
       impact = (baseEmissions * reductionRate) / emissionsData['carNumOfPassengers'];
     }
     
-    handleComplete(item.id, convertKgToGrams(impact));
+    handleComplete(item.id, item.template, convertKgToGrams(impact));
   }
 
   return (
@@ -168,7 +168,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
               </StyledText>
             </StyledLayout>
             <View className="items-center">
-              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3">
+              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3" onPress={handleCompleteDetails}>
                 <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
               </TouchableOpacity>
             </View>

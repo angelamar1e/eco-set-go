@@ -10,6 +10,7 @@ import WeekOverview from "@/app/components/(tabs)/Goal Setting/WeekOverview";
 import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
 import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
+import { useLoadFonts } from "@/assets/fonts/loadFonts";
 
 const GoalSetting = () => {
     const data = [
@@ -30,7 +31,8 @@ const GoalSetting = () => {
 
     const StyledText = styled(Text);
     const StyledLayout = styled(Layout);
-    const StyledCard = styled(Card)
+    const StyledCard = styled(Card);
+    const fontsLoaded = useLoadFonts(); 
 
     return (
         <StyledLayout className="flex-1">
@@ -38,7 +40,7 @@ const GoalSetting = () => {
                 style={{
                     backgroundColor: myTheme['color-success-700']
                 }}>
-                <StyledText category="h4" className="text-white">Daily Log</StyledText>
+                <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Daily Log</StyledText>
             </StyledLayout>
 
            {/* <View className="items-center -mt-20 -bottom-5 mb-7 z-50">

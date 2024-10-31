@@ -5,8 +5,8 @@ import Preferences from '@/app/components/(tabs)/Settings/Preferences';
 import Details from '@/app/components/(tabs)/Settings/Details';
 import SettingsTab from '@/app/components/(tabs)/Settings/SettingsTab';
 import firestore from '@react-native-firebase/firestore';
-import { getUserUid } from '@/app/utils/utils';
 import { myTheme } from "@/constants/custom-theme";
+import { useUserContext } from '@/contexts/UserContext';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -15,22 +15,9 @@ const setting = () => {
   const [selectedTab, setSelectedTab] = useState<'Details' | 'Preferences'>('Details');
   const [pushNotifications, setPushNotifications] = useState(false);
   const [actionReminders, setActionReminders] = useState(false);
-  const [username, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
-  
-
-  // Function to get the username from Firestore
-  const fetchUserName = async (userUid: string) => {
-      try {
-        const userDoc = await firestore().collection('users').doc(userUid).get();
-        if (userDoc.exists) {
-          setUserName(userDoc.data()?.username);
-        }
-      } catch (error) {
-        console.error('Error fetching username: ', error);
-      }
-  };
+  const { userUid, username } = useUserContext();
   
   // Function to get the email from Firestore
   const fetchEmail = async (userUid: string) => {
@@ -59,11 +46,10 @@ const setting = () => {
   
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const uid = await getUserUid();
-      if (uid) {
-        fetchUserName(uid);
-        fetchEmail(uid);
-        fetchPassword(uid);
+      const { userUid } = useUserContext();
+      if (userUid) {
+        fetchEmail(userUid);
+        fetchPassword(userUid);
       }
     };
 

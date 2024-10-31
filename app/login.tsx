@@ -6,6 +6,7 @@ import { Layout, Text, Input, Button } from "@ui-kitten/components";
 import { Container } from "@/components/Container";
 import { TitleComponent } from "@/components/Title";
 import { goToInterface } from "./utils/utils";
+import { useUserContext } from "@/contexts/UserContext";
 import {  Ionicons } from "@expo/vector-icons";
 import { styled } from "nativewind";
 
@@ -41,8 +42,10 @@ export default function LogInScreen() {
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertVisible, setAlertVisible] = useState<boolean>(false); // State for alert visibility
+  const [alertMessage, setAlertMessage] = useState<string>(''); // State for alert message
+
+  const { role } = useUserContext();
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -70,7 +73,8 @@ export default function LogInScreen() {
     if (isEmailValid && isPasswordValid) {
       try {
         await auth().signInWithEmailAndPassword(email, password);
-        goToInterface();
+        // Navigate to the interface after successful login
+        goToInterface(role);
         clearAllInput();
       } catch (e) {
         setAlertMessage("Login Error");

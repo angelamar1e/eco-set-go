@@ -38,7 +38,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
           impact = computeImpact(baseEmissions, replacementEmissions);
         }
 
-        handleComplete(item.id, convertKgToGrams(impact));
+        handleComplete(item.id, item.template, convertKgToGrams(impact));
     }
 
   return (
@@ -62,8 +62,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
                 ? "checked"
                 : "unchecked"
             }
-            // onPress={() => getImpact()}
-            onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
+            onPress={() => getImpact()}
           />
             <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
               {item.title}
