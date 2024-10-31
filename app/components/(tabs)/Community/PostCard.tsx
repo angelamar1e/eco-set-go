@@ -21,9 +21,7 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, onEdit, onDelete }) => {
-  const [comment, setComment] = useState('');
-  const [isHearted, setIsHearted] = useState(false);
+const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, onEdit }) => {
   const [editedContent, setEditedContent] = useState(content);
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
@@ -49,24 +47,6 @@ const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, o
         <StyledText category='p1'>{content}</StyledText>
       </StyledLayout>
 
-      <StyledLayout className="flex-row items-center justify-between mt-2">
-        <TouchableOpacity onPress={() => handleHeartPress(setIsHearted, isHearted)}>
-          <Ionicons 
-            name={isHearted ? "heart" : "heart-outline"} 
-            size={20} 
-            color={isHearted ? "#34C759" : "#A9A9A9"} 
-          />
-        </TouchableOpacity>
-
-        <StyledInput
-          className="flex-1 p-2 rounded-full ml-2"
-          placeholder="Add a comment..."
-          value={comment}
-          onChangeText={setComment}
-          onSubmitEditing={() => handleCommentSubmit(setComment, comment)}
-        />
-      </StyledLayout>
-
       {/* Popup Menu */}
       {showMenu && (
         <View className="absolute right-0 top-0 mt-2 bg-white border border-gray-200 rounded shadow-lg p-2">
@@ -79,8 +59,7 @@ const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, o
               setEditModalVisible(true);
               setShowMenu(false);
             }}
-          >
-            Edit
+          > Edit
           </StyledButton>
           <StyledButton
             size='small'
@@ -144,7 +123,7 @@ const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, o
                     status='info'
                     onPress={() => {
                       setConfirmDeleteVisible(false);
-                      setShowMenu(false); // Close menu when canceling delete
+                      setShowMenu(false);
                     }}>
                     Cancel
                   </StyledButton>
@@ -152,10 +131,7 @@ const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, o
                     className='font-bold'
                     appearance='ghost'
                     status='danger'
-                    onPress={() => {
-                      confirmDeletePost(id, setConfirmDeleteVisible, setShowMenu);
-                      setShowMenu(false); // Ensure menu closes when confirming delete
-                    }}>
+                    onPress={() => confirmDeletePost(id, setConfirmDeleteVisible, setShowMenu)}>
                     Delete
                   </StyledButton>
                 </StyledLayout>
@@ -167,6 +143,5 @@ const PostCard: React.FC<PostCardProps> = ({ id, content, userName, timestamp, o
     </StyledCard>
   );
 };
-
 
 export default PostCard;
