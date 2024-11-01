@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Image } from "react-native";
+import { View, FlatList, Image, ActivityIndicator } from "react-native";
 import { Button, Snackbar } from "react-native-paper";
 import firestore from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
@@ -14,12 +14,15 @@ import BackButton from "./BackButton";
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
 
+const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
+
 const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
   const actionId = article.toString();
 
   const [userUid, setUserUid] = useState<string>();
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true); // Loading state for complete data load
   const [actionDetail, setActionDetail] = useState<EcoAction>();
   const [facts, setFacts] = useState<ArticleInfo[]>([]);
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
@@ -40,69 +43,82 @@ const EcoActionDetail = () => {
   const instructionsCollection = firestore().collection('eco_instructions');
 
   useEffect(() => {
-    const unsubscribeAction = ecoActionDoc.onSnapshot((doc) => {
-      setActionDetail({
-        id: doc.id,
-        title: doc.data()!.title,
-      } as EcoAction);
-    });
+    const fetchData = async () => {
+      // Fetching data in parallel
+      const unsubscribeAction = ecoActionDoc.onSnapshot((doc) => {
+        setActionDetail({
+          id: doc.id,
+          title: doc.data()!.title,
+        } as EcoAction);
+      });
 
-    const unsubscribeFacts = factsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      const fetchedFacts = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        content: doc.data().content,
-        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
-      })) as ArticleInfo[];
+      const unsubscribeFacts = factsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+        const fetchedFacts = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          content: doc.data().content,
+          media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
+        })) as ArticleInfo[];
 
-      setFacts(fetchedFacts);
-      loadImagesForFacts(fetchedFacts); 
-    });
+        setFacts(fetchedFacts);
+        loadImagesForFacts(fetchedFacts); // Parallel load for images
+      });
 
-    const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      const fetchedBenefits = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        content: doc.data().content,
-        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
-      })) as ArticleInfo[];
+      const unsubscribeBenefits = benefitsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+        const fetchedBenefits = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          content: doc.data().content,
+        })) as ArticleInfo[];
+        setBenefits(fetchedBenefits);
+      });
 
-      setBenefits(fetchedBenefits);
-    });
+      const unsubscribeInstructions = instructionsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
+        const fetchedInstructions = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          content: doc.data().content,
+        })) as ArticleInfo[];
+        setInstructions(fetchedInstructions);
+      });
 
-    const unsubscribeInstructions = instructionsCollection.where("action", "==", actionId).onSnapshot((snapshot) => {
-      const fetchedInstructions = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        content: doc.data().content,
-        media: doc.data().element_url ? { uri: doc.data().element_url, type: undefined } : undefined,
-      })) as ArticleInfo[];
-      setInstructions(fetchedInstructions);
-    });
-
-    return () => {
-      unsubscribeAction();
-      unsubscribeFacts();
-      unsubscribeBenefits();
-      unsubscribeInstructions();
+      setLoading(false); // Set loading to false after fetching all data
+      return () => {
+        unsubscribeAction();
+        unsubscribeFacts();
+        unsubscribeBenefits();
+        unsubscribeInstructions();
+      };
     };
+
+    fetchData();
   }, [actionId]);
 
   const loadImagesForFacts = async (facts: ArticleInfo[]) => {
-    const updatedFacts = await Promise.all(facts.map(async (fact) => {
-      if (fact.media) {
-        const url = await loadImage(fact.media.uri);
-        return { ...fact, media: { ...fact.media, uri: url } };
-      }
-      return fact;
-    }));
-    const validFactsWithImages = updatedFacts.filter(fact => fact.media?.uri !== null) as ArticleInfo[];
+    const updatedFacts = await Promise.all(
+      facts.map(async (fact) => {
+        if (fact.media?.uri) {
+          const cachedUrl = await loadImage(fact.media.uri);
+          return { ...fact, media: { ...fact.media, uri: cachedUrl as string } };
+        }
+        return fact;
+      })
+    );
+
+    const validFactsWithImages = updatedFacts.filter(
+      (fact): fact is ArticleInfo => fact.media?.uri !== null
+    );
+
     setFactsWithImages(validFactsWithImages);
   };
 
-  const loadImage = async (gsUrl: string): Promise<string | null> => {
+  const loadImage = async (gsUrl: string) => {
+    if (cache[gsUrl]) return cache[gsUrl];
+
     try {
       const ref = storage().refFromURL(gsUrl);
-      return await ref.getDownloadURL();
+      const url = await ref.getDownloadURL();
+      cache[gsUrl] = url;
+      return url;
     } catch (error) {
-      console.error("Error fetching image URL: ", error);
+      console.error("Error fetching image URL:", error);
       return null;
     }
   };
@@ -117,10 +133,10 @@ const EcoActionDetail = () => {
     showSnackbar();
   };
 
-  if (!actionDetail) {
+  if (loading || !actionDetail) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#34C759" />
       </View>
     );
   }
@@ -149,25 +165,17 @@ const EcoActionDetail = () => {
           </StyledText>
 
           <StyledLayout className="flex-row justify-between m-2">
-          <Button
-            icon="star"
-            mode="contained"
-            className="w-30 bg-lime-800 mx-1"
-          >
-            Points
-          </Button>
-          <Button
-            icon="note-plus"
-            mode="contained"
-            className="w-40 bg-lime-800 mx-1"
-            onPress={handleAddToLog}
-          >
-            Add to Daily Log
-          </Button>
+            <Button icon="star" mode="contained" className="w-30 bg-lime-800 mx-1">
+              Points
+            </Button>
+            <Button icon="note-plus" mode="contained" className="w-40 bg-lime-800 mx-1" onPress={handleAddToLog}>
+              Add to Daily Log
+            </Button>
           </StyledLayout>
         </StyledLayout>
       </StyledLayout>
 
+      {/* Facts, Benefits, Instructions Sections */}
       <StyledLayout className="p-1 m-2">
         <StyledText category="s1" className="font-bold ml-2 mb-1">Facts</StyledText>
         <FlatList
@@ -175,60 +183,46 @@ const EcoActionDetail = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
-              <StyledText category="h5" className="ml-2 mr-2">
-                🔍
-              </StyledText>
-              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
-                {item.content}
-              </StyledText>
+              <StyledText category="h5" className="ml-2 mr-2">🔍</StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">{item.content}</StyledText>
             </StyledLayout>
-
           )}
           showsVerticalScrollIndicator={false}
         />
 
-        <StyledText category="s1" className="font-bold ml-2 mb-1">Benefits </StyledText>
+        <StyledText category="s1" className="font-bold ml-2 mb-1">Benefits</StyledText>
         <FlatList
           data={benefits}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
-              <StyledText category="h5" className="ml-2 mr-2">
-                🌟
-              </StyledText>
-              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
-                {item.content}
-              </StyledText>
+              <StyledText category="h5" className="ml-2 mr-2">🌟</StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">{item.content}</StyledText>
             </StyledLayout>
           )}
           showsVerticalScrollIndicator={false}
         />
 
-        <StyledText category="s1" className="font-bold ml-2 mb-1">Instructions </StyledText>
+        <StyledText category="s1" className="font-bold ml-2 mb-1">Instructions</StyledText>
         <FlatList
           data={instructions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <StyledLayout className="flex-row flex-1 items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
-              <StyledText category="h5" className="ml-2 mr-2">
-                📝
-              </StyledText>
-              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
-                {item.content}
-              </StyledText>
+              <StyledText category="h5" className="ml-2 mr-2">📝</StyledText>
+              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">{item.content}</StyledText>
             </StyledLayout>
           )}
           showsVerticalScrollIndicator={false}
         />
-
       </StyledLayout>
 
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
-        duration={2000}
+        duration={Snackbar.DURATION_SHORT}
       >
-        Added to Daily Log
+        Added to Daily Log!
       </Snackbar>
     </StyledLayout>
   );
