@@ -1,10 +1,14 @@
-import React, { FC, useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import React, { FC, useState } from "react";
 import { QuestionContainer } from "./QuestionContainer";
 import { PresetChoices } from "./PresetChoices";
 import { TextField } from "./TextField";
 import { TemplateProps } from "@/types/QuizProps";
+import { styled } from "nativewind";
+import { Layout, Text } from "@ui-kitten/components";
+import { myTheme } from "@/constants/custom-theme";
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const InputTemplate: FC<TemplateProps> = ({
   category,
@@ -41,14 +45,14 @@ const InputTemplate: FC<TemplateProps> = ({
 
   return (
       <QuestionContainer>
-        <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
-          {category}
-        </ThemedText>
-        <ThemedText type="default" className="text-black text-[20px] mb-3">
+        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
+        {category}
+        </StyledText>
+        <StyledText category="p1" className="text-xl mb-3">
           {question}
-        </ThemedText>
+        </StyledText>
 
-        <View className="flex-row flex-wrap justify-left mb-10">
+        <StyledLayout className="flex-row flex-wrap justify-left mb-10">
           {choices ? (
             Object.entries(choices).map(([key, value]) => (
               <PresetChoices
@@ -61,17 +65,17 @@ const InputTemplate: FC<TemplateProps> = ({
           ) : (
             <Text> Loading... </Text>
           )}
-        </View>
+        </StyledLayout>
 
         {/* Input field */}
-        <View className="ml-2 mb-5">
+        <StyledLayout className="ml-2 mb-5">
           <TextField
             unit={inputLabel}
             value={inputValue}
             onChangeText={handleTextChange}
             onBlur={handleBlur}            
           />
-        </View>
+        </StyledLayout>
       </QuestionContainer>
   );
 };

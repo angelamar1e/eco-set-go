@@ -20,7 +20,7 @@ const UserProfile = () => {
     const [level, setLevel] = useState<string>("1");
 
     return (
-        <StyledLayout className="p-4">
+        <StyledLayout className="p-4 flex-1">
             <StyledLayout className=" mt-5 flex-row p-1 justify-between">
                 <StyledButton
                     onPress={() => router.push('/(tabs)/Home')}

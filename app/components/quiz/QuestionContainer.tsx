@@ -1,8 +1,9 @@
 import React from 'react';
-import { View } from 'react-native';
 import { styled } from 'nativewind';
+import { Card } from '@ui-kitten/components';
+import { myTheme } from '@/constants/custom-theme';
 
-const StyledContainer = styled(View);
+const StyledCard = styled(Card);
 
 interface QuestionContainerProps {
   children: React.ReactNode;
@@ -10,8 +11,8 @@ interface QuestionContainerProps {
 
 export const QuestionContainer: React.FC<QuestionContainerProps> = ({ children }) => {
   return (
-    <StyledContainer className="bg-gray-100 p-4 mt-4 mb-2 rounded-[25px]">
+    <StyledCard className=" p-2 mt-4 mb-2 rounded-xl" style={{ borderWidth: 2, elevation: 2, borderColor: myTheme['color-primary-700']}}>
       {children}
-    </StyledContainer>
+    </StyledCard>
   );
 };

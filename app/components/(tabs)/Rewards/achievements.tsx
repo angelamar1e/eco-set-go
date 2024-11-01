@@ -13,7 +13,7 @@ const Achievements = () => {
     return (
         <StyledLayout className="items-center">
             <StyledLayout className="items-center justify-between mt-3 relative">
-                <StyledText category="h5" className="text-center" style={{ color: headertextColor }}>Achieved</StyledText>
+                <StyledText className="text-center text-xl" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold' }}>Achieved</StyledText>
             </StyledLayout>
 
             <StyledLayout>

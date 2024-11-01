@@ -1,60 +1,115 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import { Card, Button, Input, Layout } from '@ui-kitten/components';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
-const StyledCard = styled(Card);
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
 
-interface MarketplaceCreatePostProps {
-  newPost: string; 
-  setNewPost: (text: string) => void; 
-  handleCreateMarketplacePost: (contactNumber: string, price: string) => void; 
-}
-
-const MarketplaceCreatePost: React.FC<MarketplaceCreatePostProps> = ({
-  newPost,
-  setNewPost,
-  handleCreateMarketplacePost,
-}) => {
-  const [value, setValue] = React.useState('');
-  const [contactNumber, setContactNumber] = useState('');
+export const CreateListing = (): React.ReactElement => {
+  const [description, setDescription] = useState('');
+  const [userName, setUserName] = useState<string | undefined>();
   const [price, setPrice] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (contactNumber && price) {
-      handleCreateMarketplacePost(contactNumber, price);
-      // Clear inputs after submission
-      setNewPost('');
-      setContactNumber('');
-      setPrice('');
+  const fetchUserName = async (userUid: string) => {
+    try {
+      const userDoc = await firestore().collection('users').doc(userUid).get();
+      if (userDoc.exists) {
+        setUserName(userDoc.data()?.username);
+      }
+    } catch (error) {
+      console.error("Error fetching username: ", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserUid = async () => {
+      const currentUser = auth().currentUser;
+      if (currentUser) {
+        fetchUserName(currentUser.uid);
+      }
+    };
+
+    fetchUserUid();
+  }, []);
+
+  const handleListingSubmit = async () => {
+    if (description.trim().length > 0 && price.trim().length > 0 && userName) {
+      setLoading(true);
+      try {
+        await firestore().collection('listings').add({
+          content: description,
+          userName: userName,
+          price: parseFloat(price),
+          timestamp: firestore.FieldValue.serverTimestamp(),
+        });
+        setDescription('');
+        setPrice('');
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 2000);
+      } catch (error) {
+        console.error("Error adding listing: ", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <StyledCard className="mt-10 ml-2 mr-2 rounded-lg">
-       <StyledInput
-          className="flex-1"
-          placeholder="Write a post"
-          value={value}
-          onChangeText={nextValue => setValue(nextValue)}
+    <StyledLayout className="mt-12 mb-2 ml-2 mr-2 p-3 rounded-lg border border-gray-200">
+      <StyledLayout className="items-center">
+        <StyledInput
+          className="mt-2 mb-2 flex-1 rounded-lg"
+          placeholder="Item description... 🏷️"
+          value={description}
+          onChangeText={setDescription}
           multiline={true}
-          textStyle={{ minHeight: 50 }}
         />
-      <StyledLayout className="flex-row justify-end">
-        <StyledButton 
-          className="mt-2 rounded-full"
-          status='success'
-          size='small'
+        <StyledInput
+          className="mt-2 mb-2 flex-1 rounded-lg"
+          placeholder="Price... 💰"
+          value={price}
+          keyboardType="numeric"
+          onChangeText={setPrice}
+        />
+      </StyledLayout>
+
+      <StyledLayout className="flex-row justify-between">
+        <StyledLayout className="flex-row items-center">
+          <Pressable onPress={() => console.log('Attach image')}>
+            <Ionicons size={22} name="image-outline" color="#34C759" />
+          </Pressable>
+        </StyledLayout>
+        
+        <StyledButton
+          className="ml-1 rounded-full"
+          status="success"
+          size="small"
           appearance="filled"
-          onPress={handleSubmit}
+          disabled={description.length === 0 || price.length === 0 || loading}
+          onPress={handleListingSubmit}
         >
-          Post
+          {loading ? 'Listing...' : 'List'}
         </StyledButton>
       </StyledLayout>
-    </StyledCard>
+
+      <Modal
+        visible={success}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setSuccess(false)}
+      >
+        <Card disabled={true}>
+          <Text>Listing successfully added! 🎉</Text>
+        </Card>
+      </Modal>
+    </StyledLayout>
   );
 };
 
-export default MarketplaceCreatePost;
+export default CreateListing;

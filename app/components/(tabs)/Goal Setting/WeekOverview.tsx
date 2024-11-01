@@ -21,11 +21,11 @@ const theme = useTheme();
 const headertextColor = theme['color-success-900'];
 
   return (
-    <View className="items-center -mt-14 -bottom-2 mb-3 z-50">
-      <StyledCard className='bg-white border-0' style={{ borderRadius: 100, padding: 2, width: '90%', elevation: 2}}>
+    <View className="items-center -mt-14 -bottom-3 mb-4 z-50">
+      <StyledCard className='bg-white border-0' style={{ borderRadius: 100, padding: 0, width: '90%', elevation: 2}}>
 
       <StyledLayout className="ml-2 mr-2 relative bg-white">
-        <StyledText category="h6" className="text-center mb-2" style={{ color: headertextColor }}>
+        <StyledText className="text-center mb-1 text-lg" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>
           Week Overview
         </StyledText>
 
@@ -46,20 +46,22 @@ const headertextColor = theme['color-success-900'];
                       : myTheme['color-basic-400'],
                     justifyContent: "center",
                     alignItems: "center",
-                    marginBottom: 5,
+                    marginBottom: 3,
+                    paddingTop: 4
                   }}
                 >
-                  <StyledText category="h6" style={{color: myTheme['color-basic']}}>
+                  <StyledText className='text-lg' style={{color: myTheme['color-basic'], fontFamily: 'Poppins-Medium'}}>
                     {date}
                   </StyledText>
                 </View>
 
                 {/* Day Label */}
                 <StyledText
-                  category="p2"
+                className="text-sm"
                   style={{
                     textAlign: "center",
-                    color: myTheme['color-basic-900']
+                    color: myTheme['color-basic-600'],
+                    fontFamily: 'Poppins-Medium'
                   }}
                 >
                   {weekDays[index]}

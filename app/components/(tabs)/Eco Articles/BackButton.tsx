@@ -9,11 +9,14 @@ import { styled } from 'nativewind';
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-const EcoActionHeader = () => {
+const BackButton = () => {
   const navigation = useNavigation();
   const theme = useTheme();
 
-  const navigateBack = () => navigation.goBack();
+  const navigateBack = () => {
+    console.log("Back button pressed"); // Debug log
+    navigation.goBack();
+  };
 
   return (
     <StyledView className="flex-row items-center mt-5">
@@ -24,4 +27,4 @@ const EcoActionHeader = () => {
   );
 };
 
-export default EcoActionHeader;
+export default BackButton;

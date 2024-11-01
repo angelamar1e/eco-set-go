@@ -36,7 +36,7 @@ const Milestones = () => {
         backgroundColor: myTheme['color-success-700']
         }}
       >
-        <StyledText category="h4" className='text-white'>Milestones</StyledText>
+        <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Milestones</StyledText>
       </StyledLayout>   
       
       <StyledLayout className="ml-2 mr-2 p-1 mb-5">
