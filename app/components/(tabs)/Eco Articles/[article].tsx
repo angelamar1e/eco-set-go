@@ -5,11 +5,11 @@ import firestore from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from "../../../../types/ArticleInfo";
-import { getUserUid } from "@/app/utils/utils";
 import { styled } from "nativewind";
 import { Text, Layout } from "@ui-kitten/components";
 import storage from '@react-native-firebase/storage';
 import BackButton from "./BackButton";
+import { useUserContext } from "@/contexts/UserContext";
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
@@ -28,14 +28,6 @@ const EcoActionDetail = () => {
   const [benefits, setBenefits] = useState<ArticleInfo[]>([]);
   const [instructions, setInstructions] = useState<ArticleInfo[]>([]);
   const [factsWithImages, setFactsWithImages] = useState<ArticleInfo[]>([]);
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-    };
-    fetchUserUid();
-  }, []);
 
   const ecoActionDoc = firestore().collection('eco_actions').doc(actionId);
   const factsCollection = firestore().collection('eco_facts');
