@@ -1,6 +1,11 @@
-import { ThemedText } from '@/components/ThemedText';
+import { myTheme } from '@/constants/custom-theme';
+import { Layout, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 import React, { FC } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 interface StepperProps {
   title: string;
@@ -22,28 +27,33 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
   };
 
   return (
-    <View className="flex-row items-center justify-between bg-white p-1 rounded-[10px] border border-gray-300">
-      <View>
-        <ThemedText type='defaultSemiBold' className="text-[16px] text-black mr-3">{title}</ThemedText>
+    <StyledLayout 
+      className="flex-row items-center justify-between p-2 m-1 rounded-lg"
+      style={{ borderWidth: 1, borderColor: myTheme['color-basic-400'] }}
+    >
+      <StyledLayout>
+        <StyledText category='label' className="mr-3" style={{ fontSize: 16 }}>{title}</StyledText>
         <Text className="text-[15px] text-gray-500 mt-1">{value}x</Text>
-      </View>
+      </StyledLayout>
 
-      <View className="flex-row items-center">
+      <StyledLayout className="flex-row justify-end"> 
         <Pressable 
-            onPress={decrement} 
-            className="bg-lime-800 p-1 w-[35px] rounded-l-lg border-r border-white"
-          >
-            <Text className="text-lg text-white ml-3">-</Text>
+          onPress={decrement} 
+          style={{ backgroundColor: myTheme['color-success-700'] }}
+          className="w-1/4 rounded-l-lg border-r border-white"
+        >
+          <StyledText className="text-lg text-center">-</StyledText>
         </Pressable>
 
         <Pressable 
-            onPress={increment} 
-            className="bg-lime-800 p-1 w-[35px] mr-1 rounded-r-lg border-l border-white"
-          >
-            <Text className="text-lg text-white ml-2">+</Text>
+          onPress={increment} 
+          style={{ backgroundColor: myTheme['color-success-700'] }}
+          className="w-1/4 rounded-r-lg border-l border-white"
+        >
+          <StyledText className="text-lg text-center">+</StyledText>
         </Pressable>
-      </View>
-    </View>
+      </StyledLayout>
+    </StyledLayout>
   );
 };
 

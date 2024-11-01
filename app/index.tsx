@@ -6,13 +6,23 @@ import { goToInterface } from './utils/utils';
 import { TitleComponent } from '@/components/Title';
 import { LoginButton } from '@/components/LoginButton';
 import { SignUpButton } from '@/components/SignUpButton';
+import { useUserContext } from '@/contexts/UserContext';
 
 
 export default function Index() {
+  const {role, loading, setLoading} = useUserContext();
 
- useEffect(() => {
-   goToInterface();
-   }, [router]);
+  // Effect to handle role-based navigation
+  useEffect(() => {
+    if (role){
+      setLoading(true);
+      goToInterface(role); // Redirect only if role is valid
+    }
+  },[role])
+
+  if (loading){
+    return null;
+  }
 
   return (
     <ThemedView className="flex-1 justify-center">

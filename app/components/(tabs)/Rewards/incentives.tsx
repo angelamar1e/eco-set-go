@@ -10,6 +10,7 @@ interface Incentive {
   title: string;
   content: string;
   points: number;
+  icon: string;
 }
 
 const StyledCard = styled(Card);
@@ -18,15 +19,15 @@ const StyledLayout = styled(Layout);
 
 const Incentives = () => {
   const [incentives] = useState<Incentive[]>([
-    { id: '3', title: 'Register for free', content: 'OrgName fun run for a cause', points: 7000 },
-    { id: '1', title: '5% OFF', content: 'Any single item purchase from Brand', points: 3000 },
-    { id: '2', title: 'Plant a Tree', content: 'Support OrgName environmental cause', points: 5000 },
+    { id: '3', icon:'📋', title: 'Register for free', content: 'OrgName fun run for a cause', points: 7000 },
+    { id: '1', icon:'💰', title: '5% OFF', content: 'Any single item purchase from Brand', points: 3000 },
+    { id: '2', icon:'🌱', title: 'Plant a Tree', content: 'Support OrgName environmental cause', points: 5000 },
   ]);
 
   const renderItem = ({ item }: { item: Incentive }) => (
     <StyledLayout className="flex-row mr-2 ml-2 mt-1 mb-1">
       <StyledCard
-        className="flex-1 p-1 rounded-l-2xl border-r-0 items-center justify-center"
+        className="flex-1 rounded-l-2xl border-r-0 items-center justify-center"
         style={{
           flex: 1, 
           elevation: 1,
@@ -35,9 +36,10 @@ const Incentives = () => {
           borderWidth: 2,
         }}
       >
+        <StyledText className='text-center mb-2 text-xl'>{item.icon}</StyledText>
         <StyledText
-          category="h6"
-          className="text-left text-xl"
+          className="text-center text-2sm"
+          style={{ fontFamily: 'Poppins-Medium'}}
         >
           {item.title}
         </StyledText>

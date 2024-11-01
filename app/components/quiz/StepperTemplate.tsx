@@ -1,12 +1,14 @@
 import React, { FC, useState, useEffect } from "react";
-import { View } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
 import { QuestionContainer } from "./QuestionContainer";
 import { PresetChoices } from "./PresetChoices";
 import Stepper from "./Stepper";
 import { StepperTemplateProps } from "@/types/QuizProps";
-import { Text } from "react-native-paper";
+import { styled } from "nativewind";
+import { Layout, Text } from "@ui-kitten/components";
+import { myTheme } from "@/constants/custom-theme";
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const StepperTemplate: FC<StepperTemplateProps> = ({
   category,
@@ -38,15 +40,15 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
 
   return (
       <QuestionContainer>
-        <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
+        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
           {category}
-        </ThemedText>
-        <ThemedText type="default" className="text-black text-[20px] mb-3">
-          {question}
-        </ThemedText>
+        </StyledText>
+        <StyledText category="p1" className="text-xl mb-3">
+         {question}
+        </StyledText>
 
         {/* Presets */}
-        <View className="flex-row flex-wrap justify-left mb-3">
+        <StyledLayout className="flex-row flex-wrap justify-left mb-3">
           {choices ? (
             Object.entries(choices).map(([key, value]) => (
               <PresetChoices
@@ -59,10 +61,10 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
           ) : (
             <Text> Loading... </Text>
           )}
-        </View>
+        </StyledLayout>
 
         {/* Stepper */}
-        <View className="mb-5 justify-center">
+        <StyledLayout className="mb-5 justify-center">
           {steppers ? (
             Object.entries(steppers).map(([key, value]) => (
               <Stepper
@@ -75,7 +77,7 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
           ) : (
             <Text> Loading... </Text>
           )}
-        </View>
+        </StyledLayout>
       </QuestionContainer>
   );
 };

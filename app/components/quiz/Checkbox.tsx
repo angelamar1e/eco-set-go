@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { Text, Pressable, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; // For checkbox icon
+import { Pressable, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Text, useTheme } from '@ui-kitten/components';
 
 interface CheckboxProps {
   title: string;
@@ -9,25 +10,38 @@ interface CheckboxProps {
 }
 
 const CheckboxChoices: FC<CheckboxProps> = ({ title, isChecked, onPress }) => {
-  const containerStyle = isChecked
-    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-green-500 flex-row items-center'
-    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-gray-300 flex-row items-center';
-
-  const textStyle = isChecked
-    ? 'text-green-500 text-base ml-3'
-    : 'text-black text-base ml-3';
+  const theme = useTheme();
 
   return (
-    <Pressable className={containerStyle} onPress={onPress}>
+    <Pressable
+      onPress={onPress}
+      style={{
+        marginVertical: 4,
+        marginHorizontal: 4,
+        padding: 16,
+        width: '100%',
+        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: isChecked ? theme['color-primary-500'] : theme['color-basic-400'],
+      }}
+    >
       <View>
-        {/* Checkbox icon - check box if selected, check box outline if not */}
         <MaterialIcons
           name={isChecked ? "check-box" : "check-box-outline-blank"}
           size={24}
-          color={isChecked ? "#22C55E" : "gray"}
+          color={isChecked ? theme['color-primary-500'] : theme['color-basic-600']}
         />
       </View>
-      <Text className={textStyle}>{title}</Text>
+      <Text
+        style={{
+          fontSize: 16,
+          marginLeft: 12,
+        }}
+      >
+        {title}
+      </Text>
     </Pressable>
   );
 };

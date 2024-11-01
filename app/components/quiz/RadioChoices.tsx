@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
-import { Text, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
+import { Text } from '@ui-kitten/components';
+import { myTheme } from '@/constants/custom-theme';
 
 interface ChoicesProps {
   title: string;
@@ -8,17 +10,23 @@ interface ChoicesProps {
 }
 
 export const RadioChoices: FC<ChoicesProps> = ({ title, isSelected, onPress }) => {
-  const containerStyle = isSelected
-    ? 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-green-500'
-    : 'mt-1 mb-1 ml-1 mr-1 p-4 w-[100%] bg-white rounded-lg border border-gray-300';
+  const cardStyle = {
+    marginVertical: 4,
+    marginHorizontal: 4, 
+    padding: 16, 
+    width: '100%' as const, 
+    borderColor: isSelected ? myTheme['color-primary-500'] : myTheme['color-basic-400'],
+    borderWidth: isSelected ? 2 : 1,
+    borderRadius: 8,
+  };
 
-  const textStyle = isSelected
-    ? 'text-green-500 text-base'
-    : 'text-black text-base';
+  const textStyle = {
+    fontSize: 16,
+  };
 
   return (
-    <Pressable className={containerStyle} onPress={onPress}>
-      <Text className={textStyle}>{title}</Text>
+    <Pressable onPress={onPress} style={cardStyle}> 
+      <Text style={textStyle}>{title}</Text> 
     </Pressable>
   );
 };

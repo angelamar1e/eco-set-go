@@ -1,12 +1,14 @@
 import React, { FC, useState } from "react";
-import { View } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
 import { QuestionContainer } from "./QuestionContainer";
 import { TemplateProps } from "@/types/QuizProps";
-import { Text } from "react-native-paper";
 import { PresetChoices } from "./PresetChoices";
 import CheckboxChoices from "./Checkbox";
+import { styled } from "nativewind";
+import { Layout, Text } from "@ui-kitten/components";
+import { myTheme } from "@/constants/custom-theme";
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const CheckboxTemplate: FC<TemplateProps> = ({
   category,
@@ -43,17 +45,17 @@ const CheckboxTemplate: FC<TemplateProps> = ({
 
   return (
     <QuestionContainer>
-      <ThemedText type="defaultSemiBold" className="text-lime-800 mb-3">
+      <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
         {category}
-      </ThemedText>
-      <ThemedText type="default" className="text-black text-[20px] mb-3">
+      </StyledText>
+      <StyledText category="p1" className="text-xl mb-3">
         {question}
-      </ThemedText>
-      <View className="flex-row flex-wrap justify-center mt-10 mb-3">
+      </StyledText>
+      <StyledLayout className="flex-row flex-wrap justify-center mt-10 mb-3">
         <PresetChoices title="None" isSelected={selectedAnswers.length === 0} onPress={handleReset} />
-      </View>
+      </StyledLayout>
       {/* Checkboxes */}
-      <View className="flex-row flex-wrap justify-center mt-10 mb-3">
+      <StyledLayout className="flex-row flex-wrap justify-center mt-10 mb-3">
         {choices ? (
           Object.entries(choices).map(([key, value]) => (
             <CheckboxChoices
@@ -64,9 +66,9 @@ const CheckboxTemplate: FC<TemplateProps> = ({
             />
           ))
         ) : (
-          <Text> Loading... </Text>
+          <StyledText> Loading... </StyledText>
         )}
-      </View>
+      </StyledLayout>
     </QuestionContainer>
   );
 };

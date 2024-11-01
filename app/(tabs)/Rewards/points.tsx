@@ -15,19 +15,19 @@ const EcoPoints = () => {
 
   const theme = useTheme();
     const maintextcolor = theme['color-success-700'];
-    const subtextColor1 = theme['color-basic-700']; 
+    const subtextColor1 = theme['color-basic-600']; 
     const subtextColor2 = theme['color-basic-900']; 
 
   return (
     <StyledLayout className="flex-1">
       <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
-         <StyledText category="h4" className='text-white'>Eco Rewards</StyledText>
+            <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Rewards</StyledText>
       </StyledLayout>
 
-      <View className="items-center -mt-14 -bottom-2 mb-3 z-50">
-        <StyledCard style={{ borderRadius: 100, padding: 4, width: '90%', elevation: 2}} className="bg-white border-0">
-          <StyledText category="h1" className='text-center' style={{ color: maintextcolor }}>Level 10</StyledText>
+      <View className="items-center -mt-14 -bottom-3 mb-3 z-50">
+        <StyledCard style={{ borderRadius: 100, padding: 1, width: '90%', elevation: 2}} className="bg-white border-0">
+          <StyledText className='text-center text-xl' style={{ color: maintextcolor, fontFamily: 'Poppins-Medium' }}>Level 10</StyledText>
 
           <StyledLayout className="mt-1">
             <ProgressBar
@@ -45,17 +45,17 @@ const EcoPoints = () => {
         </StyledCard>
       </View>
 
-      <StyledLayout className="flex-row p-4 mt-2 justify-between items-center">
+      <StyledLayout className="flex-row p-4 mt-2 mr-2 ml-2 justify-between items-center">
         <GoToMilestones />
         <StyledLayout className="flex-row items-center">
-          <StyledText category='c1' className="text-sm" style={{ color: subtextColor1 }}>Total</StyledText>
+          <StyledText className="text-sm mr-1" style={{ color: subtextColor1, fontFamily: 'Poppins-Regular' }}>Total</StyledText>
           <StyledLayout 
-            className="py-2 px-3 m-1 rounded-full"
+            className="py-1 px-3 rounded-full"
             style={{
               backgroundColor: myTheme['color-success-700']
             }}
           >
-            <StyledText category="label">5000 EcoPoints</StyledText>
+            <StyledText className='text-sm' style={{ fontFamily: 'Poppins-Medium'}}>5000 EcoPoints</StyledText>
           </StyledLayout>
         </StyledLayout>
       </StyledLayout>

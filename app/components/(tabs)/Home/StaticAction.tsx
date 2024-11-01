@@ -39,7 +39,7 @@ const Static: React.FC<ActionItemProps> = ({
                   ? "checked"
                   : "unchecked"
               }
-              onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
+              onPress={() => handleComplete(item.id, item.template, item.impact ? item.impact : 0)}
             />
             <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
               {item.title}

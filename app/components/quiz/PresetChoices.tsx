@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import { Text, Pressable } from 'react-native';
+import { Text, Pressable, ViewStyle } from 'react-native';
+import { useTheme } from '@ui-kitten/components';
 
 interface PresetChoicesProps {
   title: string;
@@ -8,15 +9,42 @@ interface PresetChoicesProps {
 }
 
 export const PresetChoices: FC<PresetChoicesProps> = ({ title, isSelected, onPress }) => {
-  const containerStyle = isSelected
-    ? 'mt-1 mb-1 ml-1 mr-1 p-2 pl-4 pr-4 h-10 bg-[#9CD87E] rounded-full border-2 border-lime-800 justify-center flex-initial'
-    : 'mt-1 mb-1 ml-1 mr-1 p-2 pl-4 pr-4 h-10 bg-[#9CD87E] rounded-full justify-center flex-initial';
+  const theme = useTheme();
 
-    const textStyle = 'text-lime-800 text-center';
+  const containerStyle: ViewStyle = isSelected
+    ? {
+        marginVertical: 4,
+        marginHorizontal: 4,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        height: 'auto',
+        borderRadius: 20,
+        borderWidth: 2,
+        borderColor: theme['color-primary-500'], 
+        backgroundColor: theme['color-primary-900'], 
+        justifyContent: 'center', 
+        alignItems: 'center',   
+      }
+    : {
+        marginVertical: 4,
+        marginHorizontal: 4,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        height: 'auto',
+        borderRadius: 20,
+        backgroundColor: theme['color-primary-500'], 
+        justifyContent: 'center',
+        alignItems: 'center',  
+      };
+
+  const textStyle = {
+    color: theme['color-basic-100'],
+    textAlign: 'center' as const,
+  };
 
   return (
-    <Pressable className={containerStyle} onPress={onPress}>
-      <Text className={textStyle}>{title}</Text>
+    <Pressable style={containerStyle} onPress={onPress}>
+      <Text style={textStyle}>{title}</Text>
     </Pressable>
   );
 };

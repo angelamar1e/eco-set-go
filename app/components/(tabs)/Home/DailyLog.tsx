@@ -3,7 +3,6 @@ import {  FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
-import { getUserUid } from "@/app/utils/utils";
 import StaticDone from "./StaticDone";
 import { EmissionsContext } from "@/contexts/Emissions";
 import {MealDone, Meal, MealData} from './MealAction';
@@ -12,6 +11,7 @@ import Parameterized from "./ParameterizedAction";
 import {DrivingActionDone, ReductionRate} from "./ReductionRateAction";
 import { DoneTransportAction, TransportationOptions } from "./TransportOptionsAction";
 import { Transportation } from "./TransportAction";
+import { useUserContext } from "@/contexts/UserContext";
 import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import AddActionButton from "../Goal Setting/AddActionButton";
@@ -27,30 +27,12 @@ const StyledCard = styled(Card);
 
 
 const DailyLog: FC = () => {
-const emissionsContext = useContext(EmissionsContext);
-
-  const [userUid, setUserUid] = useState<string | undefined>();
+  const { userUid } = useUserContext();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
   const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
-  const [baseMeal, setSelectedBaseMeal] = useState<MealData | undefined>();
-  const [chosenMeal, setSelectedChosenMeal] = useState<MealData | undefined>();
-  const [vehicleLessEF, setVehicleLessEF] = useState<number>(0);
-  const [vehicleHigherEF, setVehicleHigherEF] = useState<number>(0);
-
-  // Handler to update meal states from MealAction
-  const handleMealSelection = (base: MealData, chosen: MealData) => {
-    setSelectedBaseMeal(base);
-    setSelectedChosenMeal(chosen);
-  };
-
-  // Handler to update vehicle states for Transportation actions
-  const handleVehicleSelection = (lessEF: number, higherEF: number) => {
-    setVehicleLessEF(lessEF);
-    setVehicleHigherEF(higherEF);
-  };
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -61,14 +43,6 @@ const emissionsContext = useContext(EmissionsContext);
 
     setCurrentLog(currentLog[actionId]);
   }
-
-  useEffect(() => {
-    const fetchUserUid = async () => {
-      const uid = await getUserUid();
-      setUserUid(uid);
-    };
-    fetchUserUid();
-  }, []);
 
   const dailyLogDoc = firestore().collection("daily_logs").doc(userUid);
   const userLogs = firestore().collection("user_logs").doc(userUid);
@@ -142,20 +116,43 @@ const emissionsContext = useContext(EmissionsContext);
     });
   }
 
-  async function handleComplete(actionId: string, impact: number) {
+  async function handleComplete(actionId: string, template: number, impact: number, baseMeal?: MealData, chosenMeal?: MealData, vehicleHigherEF?: number, vehicleLessEF?: number) {
     const currentDate = moment().format("YYYY-MM-DD");
 
     // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
-    // Update the specific actionId within the current date without overwriting other fields
-    await userLogs.update({
-      [currentDate]: {
-        ...currentLog, // Keep the existing entries for the date
-        [actionId]: impact, // Update the specific action
-      },
-    });
-  }
+    // Define the update payload for each case
+    let updatePayload;
+
+    if (template === 0) {
+        updatePayload = {
+            impact,
+            baseMeal,
+            chosenMeal
+        };
+    } else if (template === 1 || template === 2 || template === 3) {
+        updatePayload = impact;
+    } else if (template === 4 || template === 5) {
+        updatePayload = {
+            impact,
+            vehicleLessEF,
+            vehicleHigherEF
+        };
+    }
+
+    try {
+        await userLogs.update({
+            [currentDate]: {
+                ...currentLog, // Keep existing entries for the date
+                [actionId]: updatePayload
+            }
+        });
+        console.log(`Successfully updated Firestore with actionId: ${actionId}`, updatePayload);
+    } catch (error) {
+        console.error("Error updating Firestore:", error);
+    }
+}
 
   // Conditionally render the template based on the `template` field
   const renderItem = ({ item }: { item: EcoAction }) => {
@@ -167,8 +164,6 @@ const emissionsContext = useContext(EmissionsContext);
         completedActions={completedActions}
         handleDelete={handleDelete}
         handleComplete={handleComplete}
-        setMealSelection={handleMealSelection} // Pass down the handler
-        setSelectedVehicles={handleVehicleSelection}
       />
     );
   };
@@ -183,10 +178,6 @@ const emissionsContext = useContext(EmissionsContext);
         handleDelete={handleDelete}
         handleUnmark={handleUnmark}
         handleComplete={handleComplete}
-        baseMeal={baseMeal}
-        chosenMeal={chosenMeal}
-        lessEF={vehicleLessEF}
-        higherEF={vehicleHigherEF}
       />
     );
   };

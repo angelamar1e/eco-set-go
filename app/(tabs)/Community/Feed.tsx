@@ -22,6 +22,13 @@ const Feed: React.FC = () => {
     { id: '3', content: 'Sample!', userName: 'Name', userHandle: 'username', userIcon: 'https://example.com/icon2.png' },
   ]);
 
+  // EcoNews data
+  const [ecoNews, setEcoNews] = useState([
+    { id: '1', image: 'https://example.com/image1.png', headline: 'Article1', lead: 'Article 1 Lead..', source: 'Source' },
+    { id: '2', image: 'https://example.com/image2.png', headline: 'Article2', lead: 'Article 2 Lead..', source: 'Source' },
+    { id: '3', image: 'https://example.com/image3.png', headline: 'Article3', lead: 'Article 3 Lead...', source: 'Source' },
+  ]);
+
   // State for Message Cards
   const [messages, setMessages] = useState([
     { id: '1', recipientName: 'User1', recipientHandle: 'handle1', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hi', latestMessageDate: '2024-10-16' },
@@ -92,6 +99,7 @@ const Feed: React.FC = () => {
         return (
           <CommunityPosts
             posts={posts}
+            ecoNews={ecoNews}
             newPost={newPost}
             setNewPost={setNewPost}
             handleCreatePost={handleCreatePost}
@@ -119,8 +127,8 @@ const Feed: React.FC = () => {
     <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
-         <StyledText category="h4" className='text-white'>Community</StyledText>
-        <SearchAndButtons 
+            <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Community</StyledText>
+            <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
           selectedButton={selectedButton}
           setSelectedButton={setSelectedButton}
