@@ -45,7 +45,7 @@ const InputTemplate: FC<TemplateProps> = ({
 
   return (
       <QuestionContainer>
-        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
+        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-success-700']}}>
         {category}
         </StyledText>
         <StyledText category="p1" className="text-xl mb-3">

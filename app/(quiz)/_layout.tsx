@@ -15,11 +15,11 @@ const QuizHeader = () => {
   const navigateBack = () => navigation.goBack();
   const navigateToList = () => navigation.navigate('components/quiz/ListScreen' as never);
 
-  const BackIcon = () => <Ionicons name="chevron-back" size={35} color={theme['color-primary-900']} />;
-  const ListIcon = () => <Ionicons name="list" size={35} color={theme['color-primary-900']} />;
+  const BackIcon = () => <Ionicons name="chevron-back-outline" size={25} color={theme['color-success-900']} />;
+  const ListIcon = () => <Ionicons name="list-outline" size={28} color={theme['color-success-900']} />;
 
   return (
-    <Layout level='1' style={{ borderBottomWidth: 1, borderBottomColor: myTheme["color-primary-900"], borderStyle: 'solid' }}>
+    <Layout level='1' style={{ borderBottomWidth: 2, borderBottomColor: myTheme["color-success-900"], borderStyle: 'solid' }}>
       <TopNavigation
         accessoryLeft={() => (
           <View className='flex-row items-center'>
