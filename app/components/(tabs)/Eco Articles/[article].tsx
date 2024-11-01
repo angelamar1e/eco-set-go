@@ -20,7 +20,7 @@ const EcoActionDetail = () => {
   const { article } = useLocalSearchParams();
   const actionId = article.toString();
 
-  const [userUid, setUserUid] = useState<string>();
+  const { userUid } = useUserContext();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state for complete data load
   const [actionDetail, setActionDetail] = useState<EcoAction>();
