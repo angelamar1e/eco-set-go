@@ -103,6 +103,13 @@ export default function SignUp() {
         overall_footprint: 2.27 // initially set to the national average
       });
 
+      firestore().collection('initial_footprint').doc(userUid).set({
+        food_footprint: 0,
+        transportation_footprint: 0,
+        electricity_footprint: 0,
+        overall_footprint: 2.27 // initially set to the national average
+      });
+
       firestore().collection('daily_logs').doc(userUid).set({
         action_ids: []
       })
@@ -121,13 +128,13 @@ export default function SignUp() {
     if (email && password){
       try {
           const response = await auth().createUserWithEmailAndPassword(email, password);
-          createProfile(response);
+          await createProfile(response);
           clearAllInput();
-          goToInterface(role);
       } catch (error){
           handleError(error);
       }
       finally{
+        goToInterface(role);
         setLoading(false);
       }
     }
