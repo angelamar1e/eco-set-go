@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Modal, TouchableWithoutFeedback } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Card, Text, Layout, Input, Button } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { Timestamp } from '@react-native-firebase/firestore';
 import { formatTimeAgo } from '@/app/utils/communityUtils';
+import { firebase } from '@react-native-firebase/firestore';
+
+interface Comment {
+  id: string;
+  postId: string;
+  userName: string;
+  timestamp: Timestamp;
+  content: string;
+}
 
 interface ListingCardProps {
   id: string;
@@ -24,20 +33,114 @@ const StyledButton = styled(Button);
 
 const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price, timestamp, onEdit, onDelete }) => {
   const [editedContent, setEditedContent] = useState(content);
-  const [editedPrice, setEditedPrice] = useState(price); 
+  const [editedPrice, setEditedPrice] = useState(price);
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [username, setUsername] = useState("");
+  const [uid, setUid] = useState("");
 
   useEffect(() => {
     if (editModalVisible) {
       setEditedContent(content);
-      setEditedPrice(price); 
+      setEditedPrice(price);
     }
-  }, [editModalVisible, content, price]); 
+  }, [editModalVisible, content, price]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const commentsRef = firebase.firestore().collection('comments').where('postId', '==', id);
+        const snapshot = await commentsRef.get();
+        const fetchedComments: Comment[] = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          fetchedComments.push({
+            id: doc.id,
+            postId: data.postId,
+            userName: data.userName,
+            timestamp: data.timestamp,
+            content: data.content,
+          });
+        });
+        setComments(fetchedComments);
+      } catch (error) {
+        console.error("Error fetching comments: ", error);
+      }
+    };
+
+    fetchComments();
+  }, [id]); // Fetch comments whenever the post ID changes
 
   const closeMenu = () => setShowMenu(false);
   const formattedTimestamp = formatTimeAgo(timestamp);
+
+  const fetchUserInfo = async () => {
+    const currentUser = firebase.auth().currentUser; // Get current user
+    if (currentUser) {
+      const userRef = firebase.firestore().collection('users').doc(currentUser.uid);
+      const userDoc = await userRef.get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        setUsername(userData?.username || ""); // Set username
+        setUid(currentUser.uid); // Set uid
+      } else {
+        console.warn("User document does not exist.");
+      }
+    } else {
+      console.warn("No user is currently signed in.");
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo(); // Fetch user info on mount
+  }, []);
+
+  const handleAddComment = async () => {
+    if (newComment.trim()) {
+      try {
+        if (!username || !uid) {
+          console.warn("Cannot add comment: Username or UID is not defined.");
+          return; // Early exit if user information is not available
+        }
+
+        const commentData = {
+          postId: id, // Use the ID of the post
+          userName: username, // Use username retrieved from Firestore
+          uid: uid, // Store the user's UID for reference
+          content: newComment,
+          timestamp: Timestamp.fromDate(new Date()), // Ensure the timestamp is set correctly
+        };
+
+        // Add comment to Firestore
+        await firebase.firestore().collection('comments').add(commentData);
+        setNewComment(""); // Clear the input after submission
+
+        // Re-fetch comments after adding a new comment
+        const commentsRef = firebase.firestore().collection('comments').where('postId', '==', id);
+        const snapshot = await commentsRef.get();
+        const fetchedComments: Comment[] = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          fetchedComments.push({
+            id: doc.id,
+            postId: data.postId,
+            userName: data.userName,
+            timestamp: data.timestamp,
+            content: data.content,
+          });
+        });
+        setComments(fetchedComments);
+
+      } catch (error) {
+        console.error("Error adding comment: ", error);
+      }
+    } else {
+      console.warn("Comment cannot be empty");
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={closeMenu}>
@@ -79,7 +182,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                 setEditModalVisible(true);
                 setShowMenu(false);
               }}
-            > 
+            >
               Edit
             </StyledButton>
 
@@ -91,7 +194,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               onPress={() => {
                 setConfirmDeleteVisible(true);
                 setShowMenu(false);
-              }} 
+              }}
             >
               Delete
             </StyledButton>
@@ -165,6 +268,37 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             </StyledLayout>
           </TouchableWithoutFeedback>
         </Modal>
+
+        {/* Comment Section */}
+        <StyledLayout className="mt-2">
+          <StyledText category="h6" className="font-bold">
+            Comments
+          </StyledText>
+          {comments.map(comment => (
+            <StyledLayout key={comment.id} className="mt-2 border-b border-gray-300 pb-2">
+              <StyledText category="s1" className="font-bold">
+                @{comment.userName}
+              </StyledText>
+              <StyledText category="p1">{comment.content}</StyledText>
+              <StyledText category="c1" className="text-gray-500">
+                {formatTimeAgo(comment.timestamp)}
+              </StyledText>
+            </StyledLayout>
+          ))}
+
+          {/* Add Comment Section */}
+          <StyledLayout className="flex-row mt-2">
+            <StyledInput
+              className="flex-1"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChangeText={setNewComment}
+            />
+            <StyledButton onPress={handleAddComment} appearance="filled" className="ml-2">
+              Post
+            </StyledButton>
+          </StyledLayout>
+        </StyledLayout>
       </StyledCard>
     </TouchableWithoutFeedback>
   );
