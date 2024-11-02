@@ -191,7 +191,12 @@ const GoalSetting: React.FC = () => {
     getProgressImpact();
   }, [userLogs, latestGoal]);
 
-  
+  useEffect(() => {
+    const getProgressPercentage = () => {
+    }
+
+    // getProgressPercentage();
+  }, [userLogs, latestGoal]);
 
   return (
     <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
