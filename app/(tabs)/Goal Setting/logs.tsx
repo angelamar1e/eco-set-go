@@ -11,11 +11,12 @@ import DailyLog from "@/app/components/(tabs)/Home/DailyLog";
 import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
 import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
 import { useLoadFonts } from "@/assets/fonts/loadFonts";
+import ReflectionList from "@/app/components/(tabs)/Goal Setting/ReflectionList";
 
 const GoalSetting = () => {
     const data = [
         { id: '1', component: <DailyLog /> },
-        { id: '2', component: <Reflection /> },
+        { id: '2', component: <ReflectionList /> },
     ];
 
     const goalDates = {

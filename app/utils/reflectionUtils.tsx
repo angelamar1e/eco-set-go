@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import { Alert } from 'react-native'; // Import Alert from react-native
+import { Alert } from 'react-native';
 
 // Define a type for the reflection
 interface Reflection {
@@ -10,17 +10,15 @@ interface Reflection {
 }
 
 // Fetch reflections
-export const fetchReflections = async (dateFilter?: string): Promise<Reflection[]> => {
+export const fetchReflections = async (): Promise<Reflection[]> => {
   const reflectionsRef = firestore().collection('reflections');
-  const query = dateFilter ? reflectionsRef.where('date', '==', dateFilter) : reflectionsRef;
-  const snapshot = await query.get();
+  const snapshot = await reflectionsRef.get(); // Fetch all reflections
 
-  // Ensure that the returned data includes all the required properties
   return snapshot.docs.map(doc => ({
     id: doc.id,
-    content: doc.data().content || '', // Fallback to empty string if content is undefined
-    date: doc.data().date || '', // Fallback to empty string if date is undefined
-    uid: doc.data().uid || '' // Fallback to empty string if uid is undefined
+    content: doc.data().content || '',
+    date: doc.data().date || '',
+    uid: doc.data().uid || ''
   }));
 };
 

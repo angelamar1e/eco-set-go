@@ -1,56 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from 'nativewind';
-import { Layout, Text } from '@ui-kitten/components';
-import { fetchReflections } from '@/app/utils/reflectionUtils';
+import { FlatList, ScrollView, Text } from 'react-native';
 import ReflectionCard from './Reflection';
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
 
-const StyledLayout = styled(Layout);
+interface Reflection {
+  id: string;
+  content: string;
+  date: string; // Assuming this is stored as a string
+  uid: string;
+  timestamp: Timestamp; // Ensure timestamp is included
+}
 
-const ReflectionList = () => {
-  const [reflections, setReflections] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadReflections = async () => {
-    setLoading(true);
-    try {
-      const fetchedReflections = await fetchReflections(); // Fetch all reflections
-      setReflections(fetchedReflections);
-    } catch (error) {
-      console.error('Error fetching reflections:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const ReflectionList: React.FC = () => {
+  const [reflections, setReflections] = useState<Reflection[]>([]);
 
   useEffect(() => {
-    loadReflections(); // Load reflections on mount
+    const unsubscribeReflections = firestore()
+      .collection('reflections')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const fetchedReflections = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Reflection[];
+        setReflections(fetchedReflections);
+      });
+
+    return () => {
+      unsubscribeReflections();
+    };
   }, []);
 
-  if (loading) {
-    return (
-      <StyledLayout className="flex-1 justify-center items-center">
-        <Text category="h5">Loading reflections...</Text>
-      </StyledLayout>
-    );
-  }
-
   return (
-    <StyledLayout className="flex-1">
-      {reflections.length === 0 ? (
-        <Text category="h6" className="text-center">
-          No reflections found.
-        </Text>
-      ) : (
-        reflections.map(reflection => (
-          <ReflectionCard 
-            key={reflection.id} 
-            id={reflection.id} 
-            content={reflection.content} 
-            timestamp={reflection.date} // Adjust if needed
-          />
-        ))
+    <FlatList
+      data={reflections}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <ReflectionCard
+          id={item.id}
+          content={item.content}
+          timestamp={item.timestamp}
+          uid={item.uid}
+          onEdit={(newContent) => editReflection(item.id, newContent)} // Edit handler
+          onDelete={() => deleteReflection(item.id)} // Delete handler
+        />
       )}
-    </StyledLayout>
+      showsVerticalScrollIndicator={false}
+      ListHeaderComponent={
+        <ScrollView>
+          <Text>Your Reflections</Text>
+        </ScrollView>
+      }
+    />
   );
 };
 

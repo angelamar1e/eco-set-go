@@ -9,7 +9,10 @@ import { Timestamp } from '@react-native-firebase/firestore';
 interface ReflectionCardProps {
   id: string;
   content: string;
-  timestamp: Timestamp; 
+  timestamp: Timestamp;
+  uid: string;
+  onEdit: (newContent: string) => Promise<void>; // Accept onEdit prop
+  onDelete: () => Promise<void>; // Accept onDelete prop
 }
 
 const StyledCard = styled(Card);
@@ -18,16 +21,18 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp }) => {
+const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp, onEdit, onDelete }) => {
   const [editedContent, setEditedContent] = useState(content);
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
 
   const handleEdit = async () => {
-    await editReflection(id, editedContent);
+    await onEdit(editedContent); // Use onEdit prop
     setEditModalVisible(false);
   };
+
+  const formattedDate = (timestamp instanceof Timestamp ? timestamp.toDate() : new Date()).toLocaleString();
 
   return (
     <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
@@ -39,6 +44,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp 
 
       <StyledLayout className="mt-2">
         <StyledText category='p1'>{content}</StyledText>
+        <StyledText category='s1'>{formattedDate}</StyledText>
       </StyledLayout>
 
       {/* Popup Menu */}
@@ -53,7 +59,8 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp 
               setEditModalVisible(true);
               setShowMenu(false);
             }}
-          > Edit
+          > 
+            <StyledText>Edit</StyledText>
           </StyledButton>
           <StyledButton
             size='small'
@@ -64,7 +71,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp 
               setConfirmDeleteVisible(true);
               setShowMenu(false);
             }}>
-            Delete
+            <StyledText>Delete</StyledText>
           </StyledButton>
         </View>
       )}
@@ -87,13 +94,13 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp 
                 />
                 <StyledLayout className="flex-row justify-end mt-2">
                   <StyledButton
-                    onPress={handleEdit} // Call handleEdit function
+                    onPress={handleEdit}
                     status="success"
                     appearance="filled"
                     size='small'
                     className='rounded-full'
                   >
-                    Finish Editing
+                    <StyledText>Finish Editing</StyledText>
                   </StyledButton>
                 </StyledLayout>
               </StyledLayout>
@@ -119,18 +126,17 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp 
                     appearance='ghost'
                     status='info'
                     onPress={() => setConfirmDeleteVisible(false)}>
-                    Cancel
+                    <StyledText>Cancel</StyledText>
                   </StyledButton>
                   <StyledButton
                     className='font-bold'
                     appearance='ghost'
                     status='danger'
                     onPress={async () => {
-                      await confirmDeleteReflection(id);
-                      // Optionally handle additional state updates or side effects
+                      await onDelete(); // Use onDelete prop
                       setConfirmDeleteVisible(false);
                     }}>
-                    Delete
+                    <StyledText>Delete</StyledText>
                   </StyledButton>
                 </StyledLayout>
               </StyledLayout>
