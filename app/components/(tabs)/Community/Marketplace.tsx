@@ -39,17 +39,19 @@ const MarketplacePosts: React.FC = () => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <ListingCard
-          id={item.id} // Pass the ID
-          content={item.content}
-          userName={item.userName}
-          price={item.price}
-          timestamp={item.timestamp}
-          onEdit={(newContent) => handleEditListing(item.id, newContent)} // Pass the edit handler
-          onDelete={() => handleDeleteListing(item.id)} // Pass the delete handler
+            id={item.id}
+            content={item.content}
+            userName={item.userName}
+            price={item.price}
+            timestamp={item.timestamp}
+            onEdit={async (newContent, newPrice) => {
+                await handleEditListing(item.id, newContent, newPrice);
+            }}
+            onDelete={() => handleDeleteListing(item.id)}
         />
       )}
       showsVerticalScrollIndicator={false}
-      ListHeaderComponent={<CreateListing />} // Include the CreateListing component
+      ListHeaderComponent={<CreateListing />} 
     />
   );
 };
