@@ -7,9 +7,8 @@ import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
 interface Reflection {
   id: string;
   content: string;
-  date: string; // Assuming this is stored as a string
+  date: Timestamp; // Assuming this is stored as a string
   uid: string;
-  timestamp: Timestamp; // Ensure timestamp is included
 }
 
 const ReflectionList: React.FC = () => {
@@ -18,7 +17,7 @@ const ReflectionList: React.FC = () => {
   useEffect(() => {
     const unsubscribeReflections = firestore()
       .collection('reflections')
-      .orderBy('timestamp', 'desc')
+      .orderBy('date', 'desc')
       .onSnapshot(snapshot => {
         const fetchedReflections = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -40,18 +39,13 @@ const ReflectionList: React.FC = () => {
         <ReflectionCard
           id={item.id}
           content={item.content}
-          timestamp={item.timestamp}
+          date={item.date}
           uid={item.uid}
           onEdit={(newContent) => editReflection(item.id, newContent)} // Edit handler
           onDelete={() => deleteReflection(item.id)} // Delete handler
         />
       )}
       showsVerticalScrollIndicator={false}
-      ListHeaderComponent={
-        <ScrollView>
-          <Text>Your Reflections</Text>
-        </ScrollView>
-      }
     />
   );
 };

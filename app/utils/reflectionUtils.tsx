@@ -37,6 +37,7 @@ export const editReflection = async (id: string, newContent: string): Promise<vo
   await firestore().collection('reflections').doc(id).update({ content: newContent });
 };
 
+
 // Confirm delete reflection
 export const confirmDeleteReflection = async (id: string): Promise<void> => {
   await deleteReflection(id);

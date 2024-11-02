@@ -9,7 +9,7 @@ import { Timestamp } from '@react-native-firebase/firestore';
 interface ReflectionCardProps {
   id: string;
   content: string;
-  timestamp: Timestamp;
+  date: Timestamp;
   uid: string;
   onEdit: (newContent: string) => Promise<void>; // Accept onEdit prop
   onDelete: () => Promise<void>; // Accept onDelete prop
@@ -21,7 +21,7 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp, onEdit, onDelete }) => {
+const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEdit, onDelete }) => {
   const [editedContent, setEditedContent] = useState(content);
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
@@ -32,7 +32,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, timestamp,
     setEditModalVisible(false);
   };
 
-  const formattedDate = (timestamp instanceof Timestamp ? timestamp.toDate() : new Date()).toLocaleString();
+  const formattedDate = (date instanceof Timestamp ? date.toDate() : new Date()).toLocaleString();
 
   return (
     <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
