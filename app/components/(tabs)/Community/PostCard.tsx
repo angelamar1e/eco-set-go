@@ -45,22 +45,22 @@ const PostCard: React.FC<PostCardProps> = ({
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [uid, setUid] = useState("");
 
   const formattedTimestamp = formatTimeAgo(timestamp);
 
-  // Function to retrieve user information from Firestore
   const fetchUserInfo = async () => {
-    const currentUser = firebase.auth().currentUser; // Get current user
+    const currentUser = firebase.auth().currentUser;
     if (currentUser) {
       const userRef = firebase.firestore().collection('users').doc(currentUser.uid);
       const userDoc = await userRef.get();
       if (userDoc.exists) {
         const userData = userDoc.data();
-        setUsername(userData?.username || ""); // Set username
-        setUid(currentUser.uid); // Set uid
+        setUsername(userData?.username || "");
+        setUid(currentUser.uid);
       } else {
         console.warn("User document does not exist.");
       }
@@ -70,30 +70,27 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   useEffect(() => {
-    fetchUserInfo(); // Fetch user info on mount
+    fetchUserInfo();
   }, []);
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
       try {
-        // Check if username and uid are defined
         if (!username || !uid) {
           console.warn("Cannot add comment: Username or UID is not defined.");
-          return; // Early exit if user information is not available
+          return;
         }
 
-        // Comment data structure
         const commentData = {
-          postId: id, // Use the ID of the post
-          userName: username, // Use username retrieved from Firestore
-          uid: uid, // Store the user's UID for reference
+          postId: id,
+          userName: username,
+          uid: uid,
           content: newComment,
-          timestamp: Timestamp.fromDate(new Date()), // Ensure the timestamp is set correctly
+          timestamp: Timestamp.fromDate(new Date()),
         };
 
-        // Add comment to Firestore
         await firebase.firestore().collection('comments').add(commentData);
-        setNewComment(""); // Clear the input after submission
+        setNewComment("");
       } catch (error) {
         console.error("Error adding comment: ", error);
       }
@@ -149,6 +146,44 @@ const PostCard: React.FC<PostCardProps> = ({
           </StyledButton>
         </View>
       )}
+
+      {/* Comment Button */}
+      <StyledButton onPress={() => setCommentModalVisible(true)} className="mt-2">
+        Add Comment
+      </StyledButton>
+
+      {/* Comment Modal */}
+      <Modal transparent={true} visible={commentModalVisible} animationType="slide">
+        <TouchableWithoutFeedback onPress={() => setCommentModalVisible(false)}>
+          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+            <TouchableWithoutFeedback>
+              <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
+                <StyledText category="h6" className="font-bold mb-2">Comments</StyledText>
+                {comments.length > 0 ? (
+                  comments.map((comment) => (
+                    <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
+                      <StyledText className="font-bold">@{comment.userName}</StyledText>
+                      <StyledText>{comment.content}</StyledText>
+                      <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
+                    </View>
+                  ))
+                ) : (
+                  <StyledText className="text-gray-500">No comments yet.</StyledText>
+                )}
+                <StyledInput
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  className="mt-2"
+                />
+                <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} className="mt-2">
+                  Send
+                </StyledButton>
+              </StyledLayout>
+            </TouchableWithoutFeedback>
+          </StyledLayout>
+        </TouchableWithoutFeedback>
+      </Modal>
 
       {/* Edit Modal */}
       <Modal transparent={true} visible={editModalVisible} animationType="slide">
@@ -212,35 +247,6 @@ const PostCard: React.FC<PostCardProps> = ({
           </StyledLayout>
         </TouchableWithoutFeedback>
       </Modal>
-
-      {/* Comment Section */}
-      <StyledLayout className="mt-4">
-        <StyledText category="s2">Comments:</StyledText>
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
-              <StyledText className="font-bold">@{comment.userName}</StyledText>
-              <StyledText>{comment.content}</StyledText>
-              <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
-            </View>
-          ))
-        ) : (
-          <StyledText className="text-gray-500">No comments yet.</StyledText>
-        )}
-      </StyledLayout>
-
-      {/* Add Comment Input */}
-      <StyledLayout className="mt-2">
-        <StyledInput
-          placeholder="Add a comment..."
-          value={newComment}
-          onChangeText={setNewComment}
-          className="rounded-lg"
-        />
-        <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} className="mt-2">
-          Add Comment
-        </StyledButton>
-      </StyledLayout>
     </StyledCard>
   );
 };
