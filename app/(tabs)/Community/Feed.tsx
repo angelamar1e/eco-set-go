@@ -6,8 +6,8 @@ import SearchAndButtons from '@/app/components/(tabs)/Community/SearchAndButtons
 import CommunityPosts from '@/app/components/(tabs)/Community/CommunityPosts';
 import MessageFeed from '@/app/components/(tabs)/Community/MessageFeed';
 import Marketplace from '@/app/components/(tabs)/Community/Marketplace';
-import { PostCard, MarketplacePost } from '@/types/PostCardProps';
 import { myTheme } from '@/constants/custom-theme';
+import { FlatList, View } from 'react-native';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -15,7 +15,6 @@ const StyledText = styled(Text);
 const Feed: React.FC = () => {
   const navigation = useNavigation();
 
-  // State for Message Cards
   const [messages, setMessages] = useState([
     { id: '1', recipientName: 'User1', recipientHandle: 'handle1', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hi', latestMessageDate: '2024-10-16' },
     { id: '2', recipientName: 'User2', recipientHandle: 'handle2', recipientIcon: 'https://example.com/picture.png', latestMessage: 'Hello', latestMessageDate: '2024-10-15' },
@@ -29,7 +28,6 @@ const Feed: React.FC = () => {
       case 'list':
         return <CommunityPosts />;
       case 'chat':
-        // Pass the messages prop to MessageFeed
         return <MessageFeed messages={messages} />;
       case 'cart':
         return <Marketplace />;
@@ -40,9 +38,13 @@ const Feed: React.FC = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
-        style={{ backgroundColor: myTheme['color-success-700']}}>
-        <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Community</StyledText>
+      <StyledLayout 
+        className='h-1/6 rounded-b-3xl justify-center items-center absolute top-0 left-0 right-0 z-10'
+        style={{ backgroundColor: myTheme['color-success-700'] }}
+      >
+        <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold' }}>
+          Community
+        </StyledText>
         <SearchAndButtons 
           onSearch={(query) => console.log('Searching for:', query)}
           selectedButton={selectedButton}
@@ -50,7 +52,14 @@ const Feed: React.FC = () => {
         />
       </StyledLayout>
 
-      {renderSelectedComponent()}
+      <View style={{ marginTop: '25%' }}>
+        <FlatList
+          data={[renderSelectedComponent()]} 
+          renderItem={({ item }) => item}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </StyledLayout>
   );
 };
