@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import auth from "@react-native-firebase/auth"; // Firebase Auth
 import firestore from "@react-native-firebase/firestore"; // Firebase Firestore
 import { useUserContext } from "./UserContext";
+import { UserLogs } from "@/types/UserLogs";
 
 // Create a User logs Context
 const UserLogsContext = createContext();
@@ -9,7 +10,7 @@ const UserLogsContext = createContext();
 // Create a Provider Component
 export const UserLogsProvider = ({ children }) => {
   const { userUid } = useUserContext();
-  const [userLogs, setUserLogs] = useState();
+  const [userLogs, setUserLogs] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,8 +23,10 @@ export const UserLogsProvider = ({ children }) => {
             if (doc.exists) {
               const data = doc.data();
               setUserLogs(data);
+              console.log(userLogs);
             } else {
               setUserLogs(null);
+              console.log('NO RECORD');
             }
             setLoading(false);
           }, (error) => {
@@ -40,6 +43,7 @@ export const UserLogsProvider = ({ children }) => {
     };
 
     initializeData();
+    console.log(userLogs);
   }, [userUid]);
 
   return (
@@ -50,6 +54,6 @@ export const UserLogsProvider = ({ children }) => {
 };
 
 // Create a custom hook for easier access
-export const useUserLogsContext = () => {
+export const useLogsContext = () => {
     return useContext(UserLogsContext);
 };

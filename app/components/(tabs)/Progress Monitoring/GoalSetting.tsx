@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
 import { View } from "react-native";
 import { styled } from "nativewind";
 import {
@@ -19,7 +20,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import { myTheme } from "@/constants/custom-theme";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useUserLogsContext } from "@/contexts/UserLogs";
+import { useLogsContext } from "@/contexts/UserLogs";
+import { UserLogs, Log } from "@/types/UserLogs";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -37,11 +39,21 @@ type GoalData = {
 
 const GoalSetting: React.FC = () => {
   const theme = useTheme();
+  const { userUid } = useUserContext();
+  const { userLogs } = useLogsContext();
+
   const subtextColor1 = theme["color-basic-200"];
   const headertextColor = theme["color-success-900"];
-  const { userUid } = useUserContext();
+
   const [latestGoal, setLatestGoal] = useState<GoalData | null>(null);
-  const { userLogs } = useUserLogsContext();
+  const [editGoal, setEditGoal] = useState(false);
+  const [newStartDate, setNewStartDate] = useState<Date>(new Date());
+  const [newEndDate, setNewEndDate] = useState<Date>(new Date());
+  const [newTarget, setNewTarget] = useState<number>(0);
+  const autoId = firestore().collection("_").doc().id;
+  const [isComplete, setIsComplete] = useState(false);
+  const [progressImpact, setProgressImpact] = useState(0);
+  const [progressPercentage, setProgressPercentage] = useState(0);
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -86,7 +98,6 @@ const GoalSetting: React.FC = () => {
           );
 
           setLatestGoal(closestGoal);
-          // console.log("Closest goal:", closestGoal);
         },
         (error) => {
           console.error("Error listening for goal updates:", error);
@@ -110,12 +121,6 @@ const GoalSetting: React.FC = () => {
     setEditGoal(!editGoal);
   };
 
-  const [editGoal, setEditGoal] = useState(false);
-  const [newStartDate, setNewStartDate] = useState<Date>(new Date());
-  const [newEndDate, setNewEndDate] = useState<Date>(new Date());
-  const [newTarget, setNewTarget] = useState<number>(0);
-  const new_id = firestore().collection("_").doc().id;
-
   const submitNewGoal = () => {
     let shouldMerge = false;
     if (latestGoal?.status === "Complete") {
@@ -127,7 +132,7 @@ const GoalSetting: React.FC = () => {
       .doc(userUid)
       .set(
         {
-          [new_id]: {
+          [autoId]: {
             target: newTarget,
             start_date: newStartDate,
             end_date: newEndDate,
@@ -139,9 +144,54 @@ const GoalSetting: React.FC = () => {
       );
   };
 
-  const isComplete = () => {
-    
+  const convertTimestampToString = (
+    startTimestamp: FirebaseFirestoreTypes.Timestamp,
+    endTimestamp: FirebaseFirestoreTypes.Timestamp
+  ) => {
+    let startDate = new Date(startTimestamp.seconds * 1000);
+    let endDate = new Date(endTimestamp.seconds * 1000);
+    const stringStartDate = format(startDate, "yyyy-MM-dd");
+    const stringEndDate = format(endDate, "yyyy-MM-dd");
+
+    return { stringStartDate, stringEndDate };
   };
+
+  useEffect(() => {
+    const getProgressImpact = () => {
+      console.log(userLogs);
+
+      if (!latestGoal) return;
+
+    const { stringStartDate, stringEndDate } = convertTimestampToString(
+      latestGoal.start_date,
+      latestGoal.end_date
+    );
+
+    let totalImpact = 0;
+
+    // Collect dates that fall within the specified range
+    for (const [date, actions] of Object.entries(userLogs as UserLogs)) {
+      if (date >= stringStartDate && date <= stringEndDate) {
+        // Iterate through each action for the valid date
+        for (const actionKey in actions) {
+          const logEntry = actions[actionKey];
+
+          // If logEntry has an 'impact' field, add it to totalImpact
+          if (typeof logEntry.impact === 'number') {
+            totalImpact += logEntry.impact;
+          }
+        }
+      }
+    }
+
+    setIsComplete(totalImpact >= (latestGoal.target ?? 0));
+    setProgressImpact(totalImpact);
+    };
+
+    getProgressImpact();
+  }, [userLogs, latestGoal]);
+
+  
 
   return (
     <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
@@ -204,7 +254,7 @@ const GoalSetting: React.FC = () => {
                   </StyledText>
                 </View>
                 <StyledProgressBar
-                  progress={0.5}
+                  progress={progressPercentage}
                   className="w-11/12 justify-center"
                 />
               </View>
