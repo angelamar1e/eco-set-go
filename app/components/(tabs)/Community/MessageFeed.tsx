@@ -2,15 +2,17 @@ import React from 'react';
 import { View, FlatList } from 'react-native';
 import MessageCard from './MessageCard';
 
+interface Message {
+  id: string;
+  recipientName: string;
+  recipientHandle: string;
+  recipientIcon: string;
+  latestMessage: string;
+  latestMessageDate: string;
+}
+
 interface MessageFeedProps {
-  messages: Array<{
-    id: string;
-    recipientName: string;
-    recipientHandle: string;
-    recipientIcon: string;
-    latestMessage: string;
-    latestMessageDate: string;
-  }>;
+  messages: Message[];
 }
 
 const MessageFeed: React.FC<MessageFeedProps> = ({ messages }) => {
