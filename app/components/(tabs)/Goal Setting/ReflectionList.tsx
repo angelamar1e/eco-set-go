@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, Text } from 'react-native';
+import { FlatList, ScrollView} from 'react-native';
 import ReflectionCard from './Reflection';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
+import { Layout, Text } from '@ui-kitten/components';
+import { styled } from 'nativewind';
 
 interface Reflection {
   id: string;
   content: string;
-  date: Timestamp; // Assuming this is stored as a string
+  date: Timestamp;
   uid: string;
 }
+
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
 const ReflectionList: React.FC = () => {
   const [reflections, setReflections] = useState<Reflection[]>([]);
@@ -32,7 +37,9 @@ const ReflectionList: React.FC = () => {
   }, []);
 
   return (
-    <FlatList
+    <StyledLayout>
+      <StyledText className="m-2 font-bold" category='s1'>Reflection</StyledText>
+      <FlatList
       data={reflections}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -41,12 +48,14 @@ const ReflectionList: React.FC = () => {
           content={item.content}
           date={item.date}
           uid={item.uid}
-          onEdit={(newContent) => editReflection(item.id, newContent)} // Edit handler
-          onDelete={() => deleteReflection(item.id)} // Delete handler
+          onEdit={(newContent) => editReflection(item.id, newContent)} 
+          onDelete={() => deleteReflection(item.id)} 
         />
       )}
       showsVerticalScrollIndicator={false}
     />
+    </StyledLayout>
+    
   );
 };
 

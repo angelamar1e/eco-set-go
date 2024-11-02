@@ -28,28 +28,33 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   const [editModalVisible, setEditModalVisible] = useState(false);
 
   const handleEdit = async () => {
-    await onEdit(editedContent); // Use onEdit prop
+    await onEdit(editedContent);
     setEditModalVisible(false);
   };
 
-  const formattedDate = (date instanceof Timestamp ? date.toDate() : new Date()).toLocaleString();
+  // Format date as "August 8, 2024"
+  const formattedDate = (date instanceof Timestamp ? date.toDate() : new Date()).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
-    <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
+    <StyledCard className="p-1 m-2 rounded-lg">
       <StyledLayout className="flex-row justify-between">
+        <StyledText className="font-bold" category='s1'>{formattedDate}</StyledText>
         <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
         </TouchableOpacity>
       </StyledLayout>
 
-      <StyledLayout className="mt-2">
+      <StyledLayout>
         <StyledText category='p1'>{content}</StyledText>
-        <StyledText category='s1'>{formattedDate}</StyledText>
       </StyledLayout>
 
       {/* Popup Menu */}
       {showMenu && (
-        <View className="absolute right-0 top-0 mt-2 bg-white border border-gray-200 rounded shadow-lg p-2">
+        <View className="absolute right-0 top-0 bg-white border border-gray-200 rounded shadow-lg">
           <StyledButton
             size='small'
             className='font-bold'
@@ -86,6 +91,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
           <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
             <TouchableWithoutFeedback>
               <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
+                <StyledText category='h6' className='font-bold m-2'>Edit reflection</StyledText>
                 <StyledInput
                   multiline={true}
                   value={editedContent}
@@ -119,8 +125,8 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
           <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
             <TouchableWithoutFeedback>
               <StyledLayout className="bg-white p-5 rounded-lg">
-                <StyledText>Are you sure you want to delete this reflection?</StyledText>
-                <StyledLayout className="flex-row justify-between mt-4">
+                <StyledText className='m-2 text-center'>Are you sure you want to delete this reflection?</StyledText>
+                <StyledLayout className="flex-row justify-between">
                   <StyledButton 
                     className='font-bold'
                     appearance='ghost'
