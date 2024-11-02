@@ -1,58 +1,57 @@
-import React, { useState } from 'react';
-import { FlatList, View } from 'react-native';
-import { Card, Text, Layout, Button } from '@ui-kitten/components';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'nativewind';
-import { Swipeable } from 'react-native-gesture-handler';
-import { Ionicons } from '@expo/vector-icons';
+import { Layout, Text } from '@ui-kitten/components';
+import { fetchReflections } from '@/app/utils/reflectionUtils';
+import ReflectionCard from './Reflection';
 
-interface Reflection {
-  id: string;
-  title: string;
-  content: string;
-}
+const StyledLayout = styled(Layout);
 
-const ReflectionsList = () => {
-  const [reflections, setReflections] = useState<Reflection[]>([
-    { id: '1', title: 'August 7, 2024', content: 'Today, I learned about the importance of reducing plastic waste and its impact on the environment.' },
-    { id: '2', title: 'August 8, 2024', content: 'I started using reusable bags and refused single-use plastic bags at the store.' },
-  ]);
+const ReflectionList = () => {
+  const [reflections, setReflections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const StyledCard = styled(Card);
-  const StyledText = styled(Text);
-  const StyledLayout = styled(Layout);
-
-  const handleDelete = (id: string) => {
-    setReflections((prevReflections) => 
-      prevReflections.filter((reflection) => reflection.id !== id)
-    );
+  const loadReflections = async () => {
+    setLoading(true);
+    try {
+      const fetchedReflections = await fetchReflections(); // Fetch all reflections
+      setReflections(fetchedReflections);
+    } catch (error) {
+      console.error('Error fetching reflections:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const renderItem = ({ item }: { item: Reflection }) => (
-    <Swipeable
-      renderRightActions={() => (
-        <View className="flex items-center justify-center mr-4 ml-2">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>
-      )}
-    >
-      <StyledLayout className="m-1 p-1">
-        <StyledCard className='rounded-lg'>
-          <StyledText category="h6">{item.title}</StyledText>
-          <StyledText category="p2">{item.content}</StyledText>
-        </StyledCard>
+  useEffect(() => {
+    loadReflections(); // Load reflections on mount
+  }, []);
+
+  if (loading) {
+    return (
+      <StyledLayout className="flex-1 justify-center items-center">
+        <Text category="h5">Loading reflections...</Text>
       </StyledLayout>
-    </Swipeable>
-  );
+    );
+  }
 
   return (
-    <Layout>
-      <FlatList
-        data={reflections}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </Layout>
+    <StyledLayout className="flex-1">
+      {reflections.length === 0 ? (
+        <Text category="h6" className="text-center">
+          No reflections found.
+        </Text>
+      ) : (
+        reflections.map(reflection => (
+          <ReflectionCard 
+            key={reflection.id} 
+            id={reflection.id} 
+            content={reflection.content} 
+            timestamp={reflection.date} // Adjust if needed
+          />
+        ))
+      )}
+    </StyledLayout>
   );
 };
 
-export default ReflectionsList;
+export default ReflectionList;

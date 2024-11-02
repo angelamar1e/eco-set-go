@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { styled } from "nativewind";
+import { styled } from 'nativewind';
 import { Button, Layout } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
 
 const ReflectionButton = () => {
   const [isClicked, setIsClicked] = useState(false);
+  const router = useRouter();
 
   const handlePress = () => {
     setIsClicked(!isClicked);
-    console.log('Write reflection entry pressed');
+    router.push('/components(tabs)Goal SettingCreateReflection')
   };
-
-  const iconColor = isClicked ? "white" : "#8F9BB3";
 
   return (
     <StyledLayout>
@@ -24,10 +24,11 @@ const ReflectionButton = () => {
         size='small'
         appearance={isClicked ? "filled" : "outline"}
         accessoryLeft={() => (
-          <Ionicons name="pencil" size={20} color={iconColor} />
+          <Ionicons name="pencil" size={20} color="#8F9BB3" />
         )}
         onPress={handlePress}
-      />
+      >
+      </StyledButton>
     </StyledLayout>
   );
 };
