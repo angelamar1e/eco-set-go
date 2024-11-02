@@ -31,16 +31,28 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price, timestamp, onEdit, onDelete }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ 
+  id, 
+  content, 
+  userName, 
+  price, 
+  timestamp, 
+  onEdit, 
+  onDelete,
+}) => {
   const [editedContent, setEditedContent] = useState(content);
   const [editedPrice, setEditedPrice] = useState(price);
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false); // State for comment modal
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<Comment[]>([]);
   const [username, setUsername] = useState("");
   const [uid, setUid] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]); // State for comments
+
+  const closeMenu = () => setShowMenu(false);
+  const formattedTimestamp = formatTimeAgo(timestamp);
 
   useEffect(() => {
     if (editModalVisible) {
@@ -49,43 +61,15 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
     }
   }, [editModalVisible, content, price]);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const commentsRef = firebase.firestore().collection('comments').where('postId', '==', id);
-        const snapshot = await commentsRef.get();
-        const fetchedComments: Comment[] = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          fetchedComments.push({
-            id: doc.id,
-            postId: data.postId,
-            userName: data.userName,
-            timestamp: data.timestamp,
-            content: data.content,
-          });
-        });
-        setComments(fetchedComments);
-      } catch (error) {
-        console.error("Error fetching comments: ", error);
-      }
-    };
-
-    fetchComments();
-  }, [id]); // Fetch comments whenever the post ID changes
-
-  const closeMenu = () => setShowMenu(false);
-  const formattedTimestamp = formatTimeAgo(timestamp);
-
   const fetchUserInfo = async () => {
-    const currentUser = firebase.auth().currentUser; // Get current user
+    const currentUser = firebase.auth().currentUser;
     if (currentUser) {
       const userRef = firebase.firestore().collection('users').doc(currentUser.uid);
       const userDoc = await userRef.get();
       if (userDoc.exists) {
         const userData = userDoc.data();
-        setUsername(userData?.username || ""); // Set username
-        setUid(currentUser.uid); // Set uid
+        setUsername(userData?.username || "");
+        setUid(currentUser.uid);
       } else {
         console.warn("User document does not exist.");
       }
@@ -95,45 +79,45 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
   };
 
   useEffect(() => {
-    fetchUserInfo(); // Fetch user info on mount
+    fetchUserInfo();
+    fetchComments(); // Fetch comments when component mounts
   }, []);
+
+  const fetchComments = async () => {
+    const commentsSnapshot = await firebase.firestore().collection('comments').where('postId', '==', id).get();
+    const fetchedComments = commentsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Comment[];
+    setComments(fetchedComments);
+  };
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
       try {
         if (!username || !uid) {
           console.warn("Cannot add comment: Username or UID is not defined.");
-          return; // Early exit if user information is not available
+          return;
         }
 
         const commentData = {
-          postId: id, // Use the ID of the post
-          userName: username, // Use username retrieved from Firestore
-          uid: uid, // Store the user's UID for reference
+          postId: id,
+          userName: username,
+          uid: uid,
           content: newComment,
-          timestamp: Timestamp.fromDate(new Date()), // Ensure the timestamp is set correctly
+          timestamp: Timestamp.fromDate(new Date()),
         };
 
         // Add comment to Firestore
-        await firebase.firestore().collection('comments').add(commentData);
-        setNewComment(""); // Clear the input after submission
+        const docRef = await firebase.firestore().collection('comments').add(commentData);
 
-        // Re-fetch comments after adding a new comment
-        const commentsRef = firebase.firestore().collection('comments').where('postId', '==', id);
-        const snapshot = await commentsRef.get();
-        const fetchedComments: Comment[] = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          fetchedComments.push({
-            id: doc.id,
-            postId: data.postId,
-            userName: data.userName,
-            timestamp: data.timestamp,
-            content: data.content,
-          });
-        });
-        setComments(fetchedComments);
-
+        // Update local comments state with the new comment
+        const newCommentObj = {
+          id: docRef.id, // Add the generated ID from Firestore
+          ...commentData, // Spread the existing comment data
+        };
+        setComments(prevComments => [...prevComments, newCommentObj]); // Add the new comment to the comments array
+        setNewComment(""); // Clear the input field
       } catch (error) {
         console.error("Error adding comment: ", error);
       }
@@ -200,6 +184,11 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             </StyledButton>
           </View>
         )}
+
+        {/* Comment Button */}
+      <StyledButton onPress={() => setCommentModalVisible(true)} className="mt-2">
+        Add Comment
+      </StyledButton>
 
         {/* Edit Modal */}
         <Modal transparent={true} visible={editModalVisible} animationType="slide">
@@ -269,36 +258,52 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Comment Section */}
-        <StyledLayout className="mt-2">
-          <StyledText category="h6" className="font-bold">
-            Comments
-          </StyledText>
-          {comments.map(comment => (
-            <StyledLayout key={comment.id} className="mt-2 border-b border-gray-300 pb-2">
-              <StyledText category="s1" className="font-bold">
-                @{comment.userName}
-              </StyledText>
-              <StyledText category="p1">{comment.content}</StyledText>
-              <StyledText category="c1" className="text-gray-500">
-                {formatTimeAgo(comment.timestamp)}
-              </StyledText>
-            </StyledLayout>
-          ))}
+        {/* Comment Modal */}
+        <Modal transparent={true} visible={commentModalVisible} animationType="slide">
+          <TouchableWithoutFeedback onPress={() => setCommentModalVisible(false)}>
+            <StyledLayout className="flex-1 justify-center items-center bg-black bg-opacity-30">
+              <TouchableWithoutFeedback>
+                <StyledLayout className="bg-white p-5 rounded-lg w-90%">
+                  <StyledText category="h6" className="mb-2">
+                    Comments
+                  </StyledText>
 
-          {/* Add Comment Section */}
-          <StyledLayout className="flex-row mt-2">
-            <StyledInput
-              className="flex-1"
-              placeholder="Add a comment..."
-              value={newComment}
-              onChangeText={setNewComment}
-            />
-            <StyledButton onPress={handleAddComment} appearance="filled" className="ml-2">
-              Post
-            </StyledButton>
-          </StyledLayout>
-        </StyledLayout>
+                  {/* Comments List */}
+                  {comments.length > 0 ? (
+                    comments.map(comment => (
+                      <StyledLayout key={comment.id} className="p-2 border-b border-gray-300">
+                        <StyledText category="s1" className="font-bold">
+                          @{comment.userName}
+                        </StyledText>
+                        <StyledText category="p1">{comment.content}</StyledText>
+                        <StyledText category="c1" className="text-gray-500">
+                          {formatTimeAgo(comment.timestamp)}
+                        </StyledText>
+                      </StyledLayout>
+                    ))
+                  ) : (
+                    <StyledText category="p1" className="text-gray-500">No comments yet.</StyledText>
+                  )}
+
+                  {/* New Comment Input */}
+                  <StyledInput
+                    className="mt-2"
+                    placeholder="Add a comment..."
+                    value={newComment}
+                    onChangeText={setNewComment}
+                  />
+                  <StyledButton
+                    className="mt-2"
+                    onPress={handleAddComment}
+                    status="success"
+                  >
+                    Submit
+                  </StyledButton>
+                </StyledLayout>
+              </TouchableWithoutFeedback>
+            </StyledLayout>
+          </TouchableWithoutFeedback>
+        </Modal>
       </StyledCard>
     </TouchableWithoutFeedback>
   );
