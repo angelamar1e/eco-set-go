@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from 'nativewind';
-import { Button, Layout, Input } from '@ui-kitten/components';
+import { Button, Layout, Input, Text } from '@ui-kitten/components';
 import { Modal, TouchableWithoutFeedback } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,6 +10,7 @@ import { useUserContext } from '@/contexts/UserContext';
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
+const StyledText = styled(Text);
 
 const ReflectionButton = () => {
   const [isClicked, setIsClicked] = useState(false);
@@ -90,7 +91,16 @@ const ReflectionButton = () => {
                     }}
                   />
                 )}
-                <StyledLayout className="flex-row justify-end mt-2">
+                <StyledLayout className="flex-row justify-between mt-2">
+                <StyledButton
+                    onPress={() => setModalVisible(false)}
+                    appearance="filled"
+                    status="info"
+                    size='small'
+                    className='m-1 rounded-full'
+                  >
+                    <StyledText>Cancel</StyledText>
+                  </StyledButton>
                   <StyledButton
                     className='m-1 rounded-full'
                     status="success"
