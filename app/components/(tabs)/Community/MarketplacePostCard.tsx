@@ -45,11 +45,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [commentModalVisible, setCommentModalVisible] = useState(false); // State for comment modal
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [username, setUsername] = useState("");
   const [uid, setUid] = useState("");
-  const [comments, setComments] = useState<Comment[]>([]); // State for comments
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null); // State for the comment to delete
+  const [confirmCommentDeleteVisible, setConfirmCommentDeleteVisible] = useState(false); // State for comment delete confirmation
 
   const closeMenu = () => setShowMenu(false);
   const formattedTimestamp = formatTimeAgo(timestamp);
@@ -80,7 +82,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
   useEffect(() => {
     fetchUserInfo();
-    fetchComments(); // Fetch comments when component mounts
+    fetchComments(); 
   }, []);
 
   const fetchComments = async () => {
@@ -108,21 +110,29 @@ const ListingCard: React.FC<ListingCardProps> = ({
           timestamp: Timestamp.fromDate(new Date()),
         };
 
-        // Add comment to Firestore
         const docRef = await firebase.firestore().collection('comments').add(commentData);
-
-        // Update local comments state with the new comment
         const newCommentObj = {
-          id: docRef.id, // Add the generated ID from Firestore
-          ...commentData, // Spread the existing comment data
+          id: docRef.id,
+          ...commentData,
         };
-        setComments(prevComments => [...prevComments, newCommentObj]); // Add the new comment to the comments array
-        setNewComment(""); // Clear the input field
+        setComments(prevComments => [...prevComments, newCommentObj]);
+        setNewComment("");
       } catch (error) {
         console.error("Error adding comment: ", error);
       }
     } else {
       console.warn("Comment cannot be empty");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await firebase.firestore().collection('comments').doc(commentId).delete();
+      setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
+      setCommentToDelete(null);
+      setConfirmCommentDeleteVisible(false); // Close comment delete confirmation
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
     }
   };
 
@@ -180,22 +190,27 @@ const ListingCard: React.FC<ListingCardProps> = ({
                 setShowMenu(false);
               }}
             >
-              Delete
+              Delete Listing
             </StyledButton>
           </View>
         )}
 
         {/* Comment Button */}
-      <StyledButton onPress={() => setCommentModalVisible(true)} className="mt-2">
-        Add Comment
-      </StyledButton>
+        <StyledButton 
+          appearance='ghost'
+          status='basic'
+          size='small'
+          onPress={() => setCommentModalVisible(true)} 
+          className="mt-2 items-center rounded-full flex-row">
+          <StyledText>Add a comment</StyledText>
+        </StyledButton>
 
         {/* Edit Modal */}
         <Modal transparent={true} visible={editModalVisible} animationType="slide">
           <TouchableWithoutFeedback onPress={() => setEditModalVisible(false)}>
             <StyledLayout className="flex-1 justify-center items-center bg-black bg-opacity-30">
               <TouchableWithoutFeedback>
-                <StyledLayout className="bg-white p-5 m-2 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
+                <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
                   <StyledText category="h6" className="mb-2">
                     Edit Listing
                   </StyledText>
@@ -216,7 +231,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   <StyledLayout className="flex-row justify-end mt-2">
                     <StyledButton
                       onPress={async () => {
-                        await onEdit(editedContent, editedPrice); // Pass both content and price
+                        await onEdit(editedContent, editedPrice);
                         setEditModalVisible(false);
                       }}
                       status="success"
@@ -233,7 +248,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Listing Confirmation Modal */}
         <Modal transparent={true} visible={confirmDeleteVisible} animationType="slide">
           <TouchableWithoutFeedback onPress={() => setConfirmDeleteVisible(false)}>
             <StyledLayout className="flex-1 justify-center items-center bg-black bg-opacity-30">
@@ -262,48 +277,88 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <Modal transparent={true} visible={commentModalVisible} animationType="slide">
           <TouchableWithoutFeedback onPress={() => setCommentModalVisible(false)}>
             <StyledLayout className="flex-1 justify-center items-center bg-black bg-opacity-30">
-              <TouchableWithoutFeedback>
-                <StyledLayout className="bg-white p-5 rounded-lg w-90%">
+              <TouchableWithoutFeedback> 
+                <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '95%', maxWidth: 600 }}>
                   <StyledText category="h6" className="mb-2">
                     Comments
                   </StyledText>
 
                   {/* Comments List */}
                   {comments.length > 0 ? (
-                    comments.map(comment => (
-                      <StyledLayout key={comment.id} className="p-2 border-b border-gray-300">
-                        <StyledText category="s1" className="font-bold">
-                          @{comment.userName}
-                        </StyledText>
-                        <StyledText category="p1">{comment.content}</StyledText>
-                        <StyledText category="c1" className="text-gray-500">
-                          {formatTimeAgo(comment.timestamp)}
-                        </StyledText>
-                      </StyledLayout>
-                    ))
+                    comments
+                      .slice()
+                      .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis())
+                      .map((comment) => (
+                        <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
+                          <StyledText className="font-bold">@{comment.userName}</StyledText>
+                          <StyledText>{comment.content}</StyledText>
+                          <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
+                          <TouchableOpacity onPress={() => {
+                            setCommentToDelete(comment);
+                            setConfirmCommentDeleteVisible(true);
+                          }}>
+                            <StyledText className="text-red-500 text-xs text-right">Delete</StyledText>
+                          </TouchableOpacity>
+                        </View>
+                      ))
                   ) : (
-                    <StyledText category="p1" className="text-gray-500">No comments yet.</StyledText>
+                    <StyledText className="text-gray-500">No comments yet.</StyledText>
                   )}
 
                   {/* New Comment Input */}
                   <StyledInput
-                    className="mt-2"
                     placeholder="Add a comment..."
                     value={newComment}
                     onChangeText={setNewComment}
+                    className="rounded-lg m-2"
                   />
-                  <StyledButton
-                    className="mt-2"
-                    onPress={handleAddComment}
-                    status="success"
-                  >
-                    Submit
-                  </StyledButton>
+                  <StyledLayout className="flex-row justify-end">
+                    <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} 
+                      className="m-1 rounded-full justify-end"
+                      status="success"
+                      size="small"
+                      appearance="filled">
+                      Send
+                    </StyledButton>
+                  </StyledLayout>
                 </StyledLayout>
               </TouchableWithoutFeedback>
             </StyledLayout>
           </TouchableWithoutFeedback>
         </Modal>
+
+        {/* Comment Deletion Confirmation Modal */}
+        <Modal transparent={true} visible={confirmCommentDeleteVisible} animationType="slide">
+          <TouchableWithoutFeedback onPress={() => setConfirmCommentDeleteVisible(false)}>
+            <StyledLayout className="flex-1 justify-center items-center bg-black bg-opacity-30">
+              <TouchableWithoutFeedback>
+                <StyledLayout className="bg-white p-5 rounded-lg">
+                  <StyledText>Are you sure you want to delete this comment?</StyledText>
+                  <StyledLayout className="flex-row justify-between mt-4">
+                    <StyledButton
+                      appearance="ghost"
+                      status="info"
+                      onPress={() => setConfirmCommentDeleteVisible(false)}
+                    >
+                      Cancel
+                    </StyledButton>
+                    <StyledButton 
+                      appearance="ghost" 
+                      status="danger" 
+                      onPress={() => {
+                        if (commentToDelete) {
+                          handleDeleteComment(commentToDelete.id);
+                        }
+                      }}>
+                      Delete
+                    </StyledButton>
+                  </StyledLayout>
+                </StyledLayout>
+              </TouchableWithoutFeedback>
+            </StyledLayout>
+          </TouchableWithoutFeedback>
+        </Modal>
+
       </StyledCard>
     </TouchableWithoutFeedback>
   );
