@@ -33,6 +33,7 @@ export default function RootLayout() {
             <Stack.Screen name="components/(tabs)/Settings/updatepassword" options={{headerShown: false}}/>
             <Stack.Screen name="Profile" options={{ headerShown: false }} />
             <Stack.Screen name="components/(tabs)/Eco Articles/[article]" options={{headerShown: false}}/>
+            <Stack.Screen name="components/(tabs)/Eco Articles/Introduction" options={{headerShown: false}}/>
           </Stack>
         </GestureHandlerRootView>
       </ApplicationProvider>
