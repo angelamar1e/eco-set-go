@@ -10,6 +10,7 @@ export const EmissionsDataContext = createContext();
 export const EmissionsDataProvider = ({ children }) => {
   const {userUid} = useUserContext();
   const [emissionsData, setEmissionsData] = useState({});
+  const [initialData, setInitialData] = useState({});
   const [foodEmissions, setFoodEmissions] = useState(0);
   const [transportationEmissions, setTransportationEmissions] = useState(0);
   const [electricityEmissions, setElectricityEmissions] = useState(0);
@@ -18,7 +19,7 @@ export const EmissionsDataProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const initializeData = async () => {
+    const initializeEmissionsData = async () => {
       try {
         const unsubscribe = firestore()
           .collection('emissions_data')
@@ -44,7 +45,34 @@ export const EmissionsDataProvider = ({ children }) => {
       }
     };
 
-    initializeData();
+    const initializeInitialData = async () => {
+      try {
+        const unsubscribe = firestore()
+          .collection('initial_footprint')
+          .doc(userUid)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              setInitialData(data);
+            } else {
+              setInitialData(null);
+            }
+            setLoading(false);
+          }, (error) => {
+            setError(error);
+            setLoading(false);
+          });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    initializeEmissionsData();
+    initializeInitialData();
   }, [userUid]);
 
   // Update emissions totals whenever emissionsData changes

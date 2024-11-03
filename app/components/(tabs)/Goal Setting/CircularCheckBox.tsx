@@ -17,13 +17,13 @@ const CircularCheckbox: React.FC<CircularCheckboxProps> = ({ status, isChecked, 
   return (
     <TouchableOpacity onPress={onPress} className="items-center justify-center p-2">
       <View
-        className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
+        className="h-5 w-5 rounded-full border-2 flex items-center justify-center"
         style={{
           backgroundColor: checked ? theme['color-primary-default'] : 'transparent',
           borderColor: checked ? theme['color-primary-default'] : theme['color-basic-300'],
         }}
       >
-        {checked && <Ionicons name="checkmark" size={16} color={iconColor || "white"} />}
+        {checked && <Ionicons name="checkmark" color={iconColor || "white"} />}
       </View>
     </TouchableOpacity>
   );

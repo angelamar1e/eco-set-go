@@ -24,10 +24,34 @@ export function convertKgToTons(inKg: number) {
 }
 
 export function convertGramsToKg(inGrams: number) {
-  // metric tons
-  let inKg = inGrams / 1000;
+  return inGrams / 1000; // Return the value in kilograms
+}
 
-  return inKg;
+export function convertGramsToTons(inGrams: number) {
+  return inGrams / 1000000; // Return the value in tons
+}
+
+export function convertTonsToGrams(inTons: number) {
+  return inTons * 1000000; // Return the value in tons
+}
+
+export function formatNumber(value: number) {
+  // Check if the value is a whole number or has no effective decimal part
+  if (Number.isInteger(value) || value.toFixed(2) === value.toString()) {
+    return value.toFixed(0); // No decimals for whole numbers
+  } else {
+    return value.toFixed(2); // Two decimals for non-whole numbers
+  }
+}
+
+// Function to convert grams to kg or display grams
+export function conditionalConvertGramsToKg(inGrams: number) {
+  // return as string to label as grams or kg
+  if (inGrams >= 1000) {
+    return formatNumber(inGrams / 1000) + " kg";
+  } else {
+    return formatNumber(inGrams) + " g"; // Return the value in grams
+  }
 }
 
 export function computeImpact(higherEF: number, lessEF: number) {

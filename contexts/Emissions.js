@@ -111,7 +111,7 @@ export const EmissionsProvider = ({ children }) => {
 
   useEffect(() => {
     initializeData();
-  }, []);
+  }, [userUid]);
 
 // Calculate total emissions after all individual emissions data has been initialized
 useEffect(() => {
@@ -745,7 +745,7 @@ useEffect(() => {
           await firestore()
             .collection("current_footprint")
             .doc(userUid)
-            .set({ overall_footprint: newFootprint }, { merge: true });
+            .set({ initial_footprint: newFootprint }, { merge: true });
         } catch (error) {
           console.error("Error updating footprint:", error);
         }
@@ -754,6 +754,7 @@ useEffect(() => {
 
     updateOverallFootprint();
   }, [
+    userUid,
     carEmissions,
     airplaneTravelEmissions,
     twoWheelersEmissions,
