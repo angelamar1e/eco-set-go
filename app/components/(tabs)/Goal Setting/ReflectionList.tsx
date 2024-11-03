@@ -33,7 +33,7 @@ const ReflectionList: React.FC = () => {
           id: doc.id,
           ...doc.data(),
         })) as Reflection[];
-        
+
         setReflections(fetchedReflections);
       });
 
@@ -43,25 +43,23 @@ const ReflectionList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    applyDateFilter(reflections); // Pass reflections as argument
+    applyDateFilter(reflections);
   }, [startDate, endDate, filterActive, reflections]);  
 
   const applyDateFilter = (fetchedReflections: Reflection[]) => {
     if (filterActive && startDate && endDate) {
       const filtered = fetchedReflections.filter(reflection => {
-        // Ensure reflection.date is defined and has a toDate method (Timestamp object)
         if (reflection.date && typeof reflection.date.toDate === 'function') {
           const reflectionDate = reflection.date.toDate();
           return reflectionDate >= startDate && reflectionDate <= endDate;
         }
-        return false; // Skip if reflection.date is undefined or not a Timestamp
+        return false; 
       });
       setFilteredReflections(filtered);
     } else {
-      setFilteredReflections(fetchedReflections); // Show all if not filtering
+      setFilteredReflections(fetchedReflections); 
     }
   };
-  
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setStartDate(start);
@@ -77,8 +75,8 @@ const ReflectionList: React.FC = () => {
   };
 
   return (
-    <StyledLayout>
-      <StyledLayout className='flex-row justify-between'>
+    <StyledLayout style={{ position: 'relative' }}>
+      <StyledLayout className='flex-row justify-between' style={{ zIndex: 1 }}>
         <StyledText className="m-2 font-bold" category='s1'>Reflection</StyledText>
         <FilterDate onToggle={handleToggleFilter} onDateChange={handleDateChange} />
       </StyledLayout>
@@ -97,6 +95,7 @@ const ReflectionList: React.FC = () => {
           />
         )}
         showsVerticalScrollIndicator={false}
+        style={{ zIndex: 0 }} // Ensure the FlatList has a lower zIndex
       />
     </StyledLayout>
   );

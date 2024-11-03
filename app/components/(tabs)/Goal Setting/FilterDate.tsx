@@ -1,34 +1,30 @@
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
-import { Text } from '@ui-kitten/components';
-import Ionicons from 'react-native-vector-icons/Ionicons'; 
-import DateTimePicker from '@react-native-community/datetimepicker'; 
+import { Text, Layout, Button } from '@ui-kitten/components';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { myTheme } from '@/constants/custom-theme';
 
 const StyledButton = styled(TouchableOpacity);
-const StyledView = styled(View);
 const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 
 interface FilterDateProps {
-  onToggle: (isClicked: boolean) => void; 
-  onDateChange: (startDate: Date | null, endDate: Date | null) => void; 
+  onToggle: (isClicked: boolean) => void;
+  onDateChange: (startDate: Date | null, endDate: Date | null) => void;
 }
 
 const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState<'start' | 'end' | null>(null); // Controls both pickers
+  const [showDatePicker, setShowDatePicker] = useState<'start' | 'end' | null>(null);
 
   const handlePress = () => {
     const newState = !isClicked;
     setIsClicked(newState);
-    onToggle(newState);
-    if (!newState) {
-      // Reset dates and hide date picker when toggled off
-      setShowDatePicker(null);
-    }
+    //onToggle(newState);
   };
 
   const handleDateChange = (event: any, selectedDate: Date | undefined, isStart: boolean) => {
@@ -41,12 +37,17 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
         onDateChange(startDate, selectedDate);
       }
     }
-    // Hide the picker after date selection
     setShowDatePicker(null);
   };
 
+  const resetFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    onDateChange(null, null); // Notify parent component to reset dates
+  };
+
   return (
-    <StyledView>
+    <StyledLayout style={{ position: 'relative', zIndex: 2 }}>
       <StyledButton
         onPress={handlePress}
         className="flex-row items-center border rounded-full p-1 px-3 py-1 m-1"
@@ -56,9 +57,9 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
         }}
       >
         <Ionicons name="calendar" size={18} color="#8F9BB3" />
-        <Text category="label" style={{ color: myTheme['color-basic-600'], marginLeft: 5, marginRight: 5 }}>
+        <StyledText category="label" style={{ color: myTheme['color-basic-600'], marginLeft: 5, marginRight: 5 }}>
           Filter date
-        </Text>
+        </StyledText>
         {isClicked ? (
           <Ionicons name="chevron-up" size={13} color="#8F9BB3" />
         ) : (
@@ -67,17 +68,43 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
       </StyledButton>
 
       {isClicked && (
-        <StyledView className="p-2 bg-white rounded-lg">
-          <Text category="s1">Start Date:</Text>
+        <StyledLayout
+          className="border rounded-lg p-1 px-3 py-1 m-1"
+          style={{
+            borderColor: myTheme['color-basic-600'],
+            backgroundColor: myTheme['color-basic-transparent-100'],
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            zIndex: 10,
+          }}
+        >
+          <StyledText category="p2" className='text-left font-bold' style={{ color: myTheme['color-basic-600'] }}>
+            Start Date:
+          </StyledText>
           <StyledButton onPress={() => setShowDatePicker('start')}>
-            <Text>{startDate ? startDate.toLocaleDateString() : "Select Start Date"}</Text>
+            <StyledText category="p2" className='text-left font-bold'>
+              {startDate ? startDate.toLocaleDateString() : "Select Start Date"}
+            </StyledText>
           </StyledButton>
 
-          <Text category="s1">End Date:</Text>
+          <StyledText category="p2" className='text-left font-bold' style={{ color: myTheme['color-basic-600'] }}>
+            End Date:
+          </StyledText>
           <StyledButton onPress={() => setShowDatePicker('end')}>
-            <Text>{endDate ? endDate.toLocaleDateString() : "Select End Date"}</Text>
+            <StyledText category="p2" className='text-left font-bold'>
+              {endDate ? endDate.toLocaleDateString() : "Select End Date"}
+            </StyledText>
           </StyledButton>
-        </StyledView>
+
+          {/* Reset Button */}
+          <StyledButton onPress={resetFilters} style={{ marginTop: 10 }}>
+            <StyledText category="label" style={{ color: '#8B0000' }}>
+              Reset Filter
+            </StyledText>
+          </StyledButton>
+        </StyledLayout>
       )}
 
       {showDatePicker && (
@@ -86,12 +113,12 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
           mode="date"
           display="default"
           onChange={(event, selectedDate) => {
-            setShowDatePicker(Platform.OS === 'ios' ? showDatePicker : null); // Hides picker on selection
+            setShowDatePicker(Platform.OS === 'ios' ? showDatePicker : null);
             handleDateChange(event, selectedDate, showDatePicker === 'start');
           }}
         />
       )}
-    </StyledView>
+    </StyledLayout>
   );
 };
 
