@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react"; // Import necessary hooks
+import React, { createContext, useContext, useEffect, useState } from "react"; // Import necessary hooks
 import firestore from '@react-native-firebase/firestore'; // Ensure Firestore is imported
 
 export const EcoActionsContext = createContext();
@@ -39,3 +39,7 @@ export const EcoActionsProvider = ({ children }) => {
         </EcoActionsContext.Provider>
     );
 };
+
+export function useActionsContext() {
+    return useContext(EcoActionsContext);
+}
