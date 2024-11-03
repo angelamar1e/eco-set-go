@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { conditionalConvertGramsToKg } from '../../../utils/EstimationUtils';
 import CongratulationsModal from "../Goal Setting/CongratulationsModal";
 import { router } from "expo-router";
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -40,34 +41,40 @@ const GoalSetting: React.FC = () => {
     }
   }, [progressPercentage])
   
+  const headertextColor = myTheme['color-success-900'];
+
   return (
     <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
-      <StyledCard className="bg-white border-0" style={{ borderRadius: 20, padding: 0, width: "90%", elevation: 2 }}>
-        <StyledLayout className="ml-2 mr-2 relative bg-white">
-          <View className="flex-row justify-between">
-            <StyledText className="mb-1 text-lg">Your Goal</StyledText>
+      <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
+
+          <View className="flex-row items-center justify-between mb-4">
+            <StyledText className="mb-1 text-xl p-2" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>Your Goal 🎯</StyledText>
             <TouchableOpacity
-              className="bg-lime-400 h-8 w-8 items-center justify-center rounded-3xl"
+              className="items-center justify-center rounded-full p-2"
+              style={{ backgroundColor: myTheme['color-basic-transparent-100'],
+                borderColor: myTheme['color-basic-600'], 
+                borderWidth: 1
+              }}
               onPress={toggleEdit}
             >
-              <Ionicons name="pencil" size={18} color="white" />
+              <Ionicons name="pencil-outline" size={18} color="#8F9BB3" />
             </TouchableOpacity>
           </View>
 
           {latestGoal && !editGoal ? (
             <>
               <View>
-                <View className="mb-6 justify-center">
-                  <StyledText className="text-gray-600">🟢 Started on {format(latestGoal.start_date.toDate(), "PP")}</StyledText>
-                  <StyledText className="text-gray-600">🟠 {Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} day/s left</StyledText>
-                  <StyledText className="text-gray-600">🔴 To be completed by {format(latestGoal.end_date.toDate(), "PP")}</StyledText>
-                </View>
                 <View className="items-center">
-                  <StyledProgressBar progress={progressPercentage} className="w-11/12 rounded-3xl h-3" />
+                  <StyledProgressBar progress={progressPercentage} className="w-full rounded-3xl h-3 mb-1" />
                 </View>
                 <View className="flex-row justify-between">
-                  <StyledText className="text-center text-gray-600">{conditionalConvertGramsToKg(progressImpact)}</StyledText>
-                  <StyledText className="text-center text-gray-600">{conditionalConvertGramsToKg(latestGoal.target)}</StyledText>
+                  <StyledText className="text-sm" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-600']}}>{conditionalConvertGramsToKg(progressImpact)}</StyledText>
+                  <StyledText className="text-sm" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-600']}}>{conditionalConvertGramsToKg(latestGoal.target)}</StyledText>
+                </View>
+                <View className="flex-row items-center justify-between mt-3">
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟢 Started on {format(latestGoal.start_date.toDate(), "PP")}</StyledText>
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟠 To be completed by {format(latestGoal.end_date.toDate(), "PP")}</StyledText>
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🔴 {Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} day/s left</StyledText>
                 </View>
               </View>
             </>
@@ -90,15 +97,16 @@ const GoalSetting: React.FC = () => {
               </View>
               <View className="flex-row w-full justify-end">
               <TouchableOpacity
-                className="mt-3"
+                className="mt-3 border rounded-full p-2 px-4"
+                style={{ borderColor:  myTheme['color-success-700'], backgroundColor: myTheme['color-success-700'] }}
                 onPress={submitNewGoal}
+                
               >
-                <StyledText className="font-bold">→ Submit</StyledText>
+                <StyledText className="" style={{ color: 'white'}}>Submit</StyledText>
               </TouchableOpacity>
               </View>
             </View>
           )}
-        </StyledLayout>
       </StyledCard>
     </View>
   );

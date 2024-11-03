@@ -6,7 +6,7 @@ import { styled } from 'nativewind';
 import { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
 
 const StyledLayout = styled(Layout);
@@ -101,7 +101,7 @@ const QuizEnd = () => {
                             className=""
                             style={{
                                 fontFamily: 'Poppins-Bold',
-                                fontSize: 90,
+                                fontSize: 100,
                                 textAlign: 'center',
                                 top: 20,
                                 color: myTheme['color-success-700']
@@ -178,7 +178,7 @@ const QuizEnd = () => {
                     </Text>
                     
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -186,7 +186,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                    {highestEmissions.food.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                    {highestEmissions.food.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.food.source || 'Unknown'} 
@@ -204,7 +204,7 @@ const QuizEnd = () => {
                     </Text>
 
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -212,7 +212,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.transportation.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                {highestEmissions.transportation.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.transportation.source || 'Unknown'} 
@@ -229,7 +229,7 @@ const QuizEnd = () => {
                     </Text>
 
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -237,7 +237,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.electricity.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                {highestEmissions.electricity.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.electricity.source || 'Unknown'} 
@@ -253,16 +253,16 @@ const QuizEnd = () => {
                     left: 0,
                     right: 0,
                     padding: 5,
-                    paddingHorizontal: 15
+                    paddingHorizontal: 30,
+                    alignItems: 'flex-end'
                 }}>
-                    <Button
+                    <TouchableOpacity
                         onPress={() => router.push('/(tabs)/Home')}
-                        style={{ borderRadius: 15, borderColor: 'green',}} 
-                        status="primary" 
-                        appearance='ghost'
                     >
-                        Take action
-                    </Button>
+                    <Text style={{fontFamily:'Poppins-SemiBold', fontSize: 23, alignItems: 'center', color: myTheme['color-success-900']}}>Take action 
+                        <Text style={{color: myTheme['color-success-700'], fontSize: 28}}> →</Text>
+                    </Text>
+                    </TouchableOpacity>
                 </StyledLayout>
             </StyledLayout>
         </ScrollView>
