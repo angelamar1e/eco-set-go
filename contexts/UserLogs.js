@@ -58,83 +58,102 @@ export const UserLogsProvider = ({ children }) => {
     return () => unsubscribe();
   }, [userUid]);
 
-  // Calculate total impact and prepare chart data
-  useEffect(() => {
-    let totalImpact = 0;
-    let foodImpact = 0;
-    let transportImpact = 0;
-    let electricityImpact = 0;
-    
-    const daily = {};
-    const weekly = {};
-    const monthly = {};
-    
-    // Initialize stacked data array
-    const stackedData = [];
+// Helper function to check if userLogs is effectively empty
+const isUserLogsEmpty = (logs) => {
+  return Object.values(logs).every(actions =>
+    Object.values(actions).every(action => !action.impact || action.impact === 0)
+  );
+};
 
-    if (userLogs && Object.keys(userLogs).length > 0) {
-      Object.entries(userLogs).forEach(([date, actions]) => {
-        const logDate = new Date(date);
-        const dayString = logDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-        const monthString = logDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-        const weekString = getWeekString(logDate);
+// Calculate total impact and prepare chart data
+useEffect(() => {
+  let totalImpact = 0;
+  let foodImpact = 0;
+  let transportImpact = 0;
+  let electricityImpact = 0;
+  
+  const daily = {};
+  const weekly = {};
+  const monthly = {};
+  
+  // Initialize stacked data array
+  const stackedData = [];
 
-        if (!daily[dayString]) daily[dayString] = { Food: 0, Transportation: 0, Electricity: 0 };
-        if (!weekly[weekString]) weekly[weekString] = { Food: 0, Transportation: 0, Electricity: 0 };
-        if (!monthly[monthString]) monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
+  // Check if userLogs has entries with data
+  if (userLogs && Object.keys(userLogs).length > 0 && !isUserLogsEmpty(userLogs)) {
+    Object.entries(userLogs).forEach(([date, actions]) => {
+      const logDate = new Date(date);
+      const dayString = logDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const monthString = logDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+      const weekString = getWeekString(logDate);
 
-        Object.entries(actions).forEach(([id, action]) => {
-          const category = getCategoryFromId(id); // Define this function based on your action structure
-          if (category && typeof action.impact === 'number') {
-            totalImpact += action.impact;
-            daily[dayString][category] += action.impact;
-            weekly[weekString][category] += action.impact;
-            monthly[monthString][category] += action.impact;
-          }
-          if (category === 'Food'){
-            foodImpact += action.impact
-          }
-          if (category === 'Transportation'){
-            transportImpact += action.impact
-          }
-          if (category === 'Electricity'){
-            electricityImpact += action.impact
-          }
-        });
+      if (!daily[dayString]) daily[dayString] = { Food: 0, Transportation: 0, Electricity: 0 };
+      if (!weekly[weekString]) weekly[weekString] = { Food: 0, Transportation: 0, Electricity: 0 };
+      if (!monthly[monthString]) monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
+
+      Object.entries(actions).forEach(([id, action]) => {
+        const category = getCategoryFromId(id); // Define this function based on your action structure
+        if (category && typeof action.impact === 'number') {
+          totalImpact += action.impact;
+          daily[dayString][category] += action.impact;
+          weekly[weekString][category] += action.impact;
+          monthly[monthString][category] += action.impact;
+        }
+        if (category === 'Food') {
+          foodImpact += action.impact;
+        }
+        if (category === 'Transportation') {
+          transportImpact += action.impact;
+        }
+        if (category === 'Electricity') {
+          electricityImpact += action.impact;
+        }
       });
+    });
 
-      // Convert impacts based on selected period for stacked chart data
-      const selectedImpacts = selectedPeriod === "Daily" ? daily : selectedPeriod === "Weekly" ? weekly : selectedPeriod === "Monthly" ? monthly : daily;
+    // Convert impacts based on selected period for stacked chart data
+    const selectedImpacts = selectedPeriod === "Daily" ? daily : selectedPeriod === "Weekly" ? weekly : selectedPeriod === "Monthly" ? monthly : daily;
 
-      Object.entries(selectedImpacts).forEach(([label, impacts]) => {
-        stackedData.push([impacts.Food, impacts.Transportation, impacts.Electricity]);
-      });
+    Object.entries(selectedImpacts).forEach(([label, impacts]) => {
+      stackedData.push([impacts.Food, impacts.Transportation, impacts.Electricity]);
+    });
 
-      // Update chart data
-      setStackedChartData(prevData => ({
-        ...prevData,
-        labels: Object.keys(selectedImpacts),
-        data: stackedData,
-      }));
-    }
+    // Update chart data only if userLogs has meaningful entries
+    setStackedChartData(prevData => ({
+      ...prevData,
+      labels: Object.keys(selectedImpacts),
+      data: stackedData,
+    }));
+  } else {
+    // If userLogs is empty or has no meaningful data, clear stackedChartData
+    setStackedChartData({
+      labels: [],
+      legend: ["Food", "Transportation", "Electricity"],
+      data: [],
+      barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
+    });
+  }
 
-    setTotalImpact(convertGramsToTons(totalImpact));
-    setFoodImpact(convertGramsToTons(foodImpact));
-    setTransportationImpact(convertGramsToTons(transportImpact));
-    setElectricityImpact(convertGramsToTons(electricityImpact));
-    setCurrentFootprint(totalEmissions - convertGramsToTons(totalImpact));
-    setDailyImpact(daily);
-    setWeeklyImpact(weekly);
-    setMonthlyImpact(monthly);
+  setTotalImpact(convertGramsToTons(totalImpact));
+  setFoodImpact(convertGramsToTons(foodImpact));
+  setTransportationImpact(convertGramsToTons(transportImpact));
+  setElectricityImpact(convertGramsToTons(electricityImpact));
+  setDailyImpact(daily);
+  setWeeklyImpact(weekly);
+  setMonthlyImpact(monthly);
 
   }, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
 
   useEffect(() => {
-    if (totalEmissions && totalImpact || totalEmissions && totalImpact === 0) {
+    if (totalEmissions) { 
       const footprint = totalEmissions - totalImpact;
       const food = foodEmissions - foodImpact;
       const transpo = transportationEmissions - transportationImpact;
       const elec = electricityEmissions - electricityImpact;
+
+      console.log(totalImpact, foodImpact);
+
+      console.log(totalImpact, foodImpact);
 
       setCurrentFootprint(footprint ?? totalEmissions);
 
@@ -146,6 +165,7 @@ export const UserLogsProvider = ({ children }) => {
       }, {merge: true});
     }
   }, [userUid, totalEmissions, totalImpact, userLogs])
+
 
   // Get week string for weekly impacts
   const getWeekString = (date) => {

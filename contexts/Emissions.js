@@ -743,7 +743,7 @@ useEffect(() => {
 
         try {
           await firestore()
-            .collection("current_footprint")
+            .collection("initial_footprint")
             .doc(userUid)
             .set({ initial_footprint: newFootprint }, { merge: true });
         } catch (error) {

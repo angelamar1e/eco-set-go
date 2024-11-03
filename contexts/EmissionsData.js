@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
-import { getUserUid } from '@/app/utils/utils';
 import { useUserContext } from './UserContext';
 
 // Create the context
@@ -8,7 +7,7 @@ export const EmissionsDataContext = createContext();
 
 // Provider component
 export const EmissionsDataProvider = ({ children }) => {
-  const {userUid} = useUserContext();
+  const { userUid } = useUserContext();
   const [emissionsData, setEmissionsData] = useState({});
   const [initialData, setInitialData] = useState({});
   const [foodEmissions, setFoodEmissions] = useState(0);
@@ -19,63 +18,39 @@ export const EmissionsDataProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const initializeEmissionsData = async () => {
-      try {
-        const unsubscribe = firestore()
-          .collection('emissions_data')
-          .doc(userUid)
-          .onSnapshot((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              setEmissionsData(data);
-            } else {
-              setEmissionsData(null);
-            }
-            setLoading(false);
-          }, (error) => {
-            setError(error);
-            setLoading(false);
-          });
+    if (!userUid) {
+      console.warn("User UID is not available. Cannot fetch emissions data.");
+      return;
+    }
 
-        // Cleanup subscription on unmount
-        return () => unsubscribe();
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
+    console.log("User UID:", userUid);
+
+    const unsubscribeEmissionsData = firestore()
+      .collection('emissions_data')
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setEmissionsData(data);
+          } else {
+            console.log("Emissions data document not found for user:", userUid);
+            setEmissionsData(null);
+          }
+        },
+        (err) => {
+          console.error("Error fetching emissions data:", err);
+          setError(err);
+        }
+      );
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      unsubscribeEmissionsData();
     };
-
-    const initializeInitialData = async () => {
-      try {
-        const unsubscribe = firestore()
-          .collection('initial_footprint')
-          .doc(userUid)
-          .onSnapshot((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              setInitialData(data);
-            } else {
-              setInitialData(null);
-            }
-            setLoading(false);
-          }, (error) => {
-            setError(error);
-            setLoading(false);
-          });
-
-        // Cleanup subscription on unmount
-        return () => unsubscribe();
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-
-    initializeEmissionsData();
-    initializeInitialData();
   }, [userUid]);
 
-  // Update emissions totals whenever emissionsData changes
+  // Calculate total emissions based on emissions data
   useEffect(() => {
     if (emissionsData) {
       const foodTotal = totalFoodFootprint(emissionsData);
@@ -87,19 +62,26 @@ export const EmissionsDataProvider = ({ children }) => {
       setTransportationEmissions(transportationTotal);
       setElectricityEmissions(electricityTotal);
       setTotalEmissions(overallTotal);
+
+      console.log("Emissions Data:", emissionsData);
+      console.log("Total Emissions Calculated:", overallTotal);
+    } else {
+      console.warn("No emissions data available to calculate totals.");
     }
   }, [emissionsData]);
 
   return (
-    <EmissionsDataContext.Provider value={{
-      emissionsData,
-      foodEmissions,
-      transportationEmissions,
-      electricityEmissions,
-      totalEmissions,
-      loading,
-      error
-    }}>
+    <EmissionsDataContext.Provider
+      value={{
+        emissionsData,
+        foodEmissions,
+        transportationEmissions,
+        electricityEmissions,
+        totalEmissions,
+        loading,
+        error,
+      }}
+    >
       {children}
     </EmissionsDataContext.Provider>
   );

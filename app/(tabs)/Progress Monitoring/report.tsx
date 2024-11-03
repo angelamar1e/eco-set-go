@@ -38,13 +38,15 @@ const ProgressReport = () => {
     stackedChartData,
     handlePeriodChange
   } = useLogsContext();
-  const {totalEmissions} = useContext(EmissionsDataContext);
+  const { totalEmissions } = useContext(EmissionsDataContext);
 
-  // Create a reportData object
-  const reportData: ReportData = {
-    Daily: dailyImpact,
-    Weekly: weeklyImpact,
-    Monthly: monthlyImpact,
+  // Helper function to validate stackedChartData
+  const isStackedChartDataValid = () => {
+    return (
+      stackedChartData &&
+      stackedChartData.labels?.length > 0 &&
+      stackedChartData.data?.every((dataset: any) => dataset.length > 0)
+    );
   };
 
   const chartColors = {

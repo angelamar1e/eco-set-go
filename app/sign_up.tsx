@@ -102,6 +102,8 @@ export default function SignUp() {
         overall_footprint: 0
       });
 
+      
+
       firestore().collection('initial_footprint').doc(userUid).set({
         food_footprint: 0,
         transportation_footprint: 0,
@@ -110,11 +112,14 @@ export default function SignUp() {
       });
 
       firestore().collection('daily_logs').doc(userUid).set({
-        action_ids: []
       })
 
       firestore().collection('user_logs').doc(userUid).set({
       })
+
+      firestore().collection('goals').doc(userUid).set({
+      });
+
     }
     catch(error){
       console.error(error);
