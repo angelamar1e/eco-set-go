@@ -64,7 +64,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
             }
             onPress={() => getImpact()}
           />
-            <StyledText category="p1" numberOfLines={2} style={{width: "85%",}} className="ml-1 mb-2 text-base">
+            <StyledText category="p1" numberOfLines={2} style={{width: "85%",}} className="text-base w-10/12 leading-6">
               {item.title}
             </StyledText>
         </View>

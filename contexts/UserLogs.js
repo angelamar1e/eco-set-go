@@ -164,8 +164,7 @@ useEffect(() => {
         transportation_footprint: transpo ?? electricityEmissions          
       }, {merge: true});
     }
-  }, [userUid, totalEmissions, totalImpact, userLogs])
-  }, [userUid, totalEmissions, totalImpact, userLogs])
+  }, [userUid, totalEmissions, totalImpact, userLogs]);
 
   // Get week string for weekly impacts
   const getWeekString = (date) => {

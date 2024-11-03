@@ -4,7 +4,14 @@ import { View, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
-import { Card, Input, Layout, Select, SelectItem, Text } from "@ui-kitten/components";
+import {
+  Card,
+  Input,
+  Layout,
+  Select,
+  SelectItem,
+  Text,
+} from "@ui-kitten/components";
 import { styled } from "nativewind";
 import { ThemedText } from "@/components/ThemedText";
 import { EmissionsContext } from "@/contexts/Emissions";
@@ -16,7 +23,10 @@ import {
 import { EcoAction } from "@/types/EcoAction";
 import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
-import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils';
+import {
+  convertGramsToKg,
+  getCarEFPerKm,
+} from "../../../utils/EstimationUtils";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { Ionicons } from "@expo/vector-icons";
 import { myTheme } from "@/constants/custom-theme";
@@ -31,13 +41,12 @@ const StyledSelectItem = styled(SelectItem);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 
-function isBicycle(title: string){
-    if (title.startsWith("Use a bicycle")){
-        return true;
-    }
-    else{
-        return false;
-    }
+function isBicycle(title: string) {
+  if (title.startsWith("Use a bicycle")) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export const TransportationOptions: React.FC<ActionItemProps> = ({
@@ -45,7 +54,6 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
-  
   const { emissionsData } = useContext(EmissionsDataContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -55,14 +63,21 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
 
   const toggleDropdown = () => setExpanded(!expanded);
 
-  function assignEmissionFactors(emissionsData: any, EFPerKm: number, item: EcoAction) {
+  function assignEmissionFactors(
+    emissionsData: any,
+    EFPerKm: number,
+    item: EcoAction
+  ) {
     // Resolve values with nullish coalescing
     const EFPerKmValue = emissionsData[EFPerKm] ?? EFPerKm;
-    const baseEmissionValue = emissionsData[item.baseEmission] ?? item.baseEmission;
+    const baseEmissionValue =
+      emissionsData[item.baseEmission] ?? item.baseEmission;
 
     // Compare and assign to higherEF and lessEF
-    const higherEF = EFPerKmValue > baseEmissionValue ? EFPerKmValue : baseEmissionValue;
-    const lessEF = EFPerKmValue > baseEmissionValue ? baseEmissionValue : EFPerKmValue;
+    const higherEF =
+      EFPerKmValue > baseEmissionValue ? EFPerKmValue : baseEmissionValue;
+    const lessEF =
+      EFPerKmValue > baseEmissionValue ? baseEmissionValue : EFPerKmValue;
 
     setVehicleHigherEF(higherEF);
     setVehicleLessEF(lessEF);
@@ -73,60 +88,76 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
   }
 
   useEffect(() => {
-    if (vehicleHigherEF || 0  && vehicleLessEF || 0) {
+    if (vehicleHigherEF || (0 && vehicleLessEF) || 0) {
       const higherEmissions = vehicleHigherEF! * kmTravelled;
       const lessEmissions = vehicleLessEF! * kmTravelled;
 
       let impact = 0;
 
-      if (isBicycle(item.title)){
-          impact = higherEmissions;
+      if (isBicycle(item.title)) {
+        impact = higherEmissions;
+      } else {
+        impact = computeImpact(higherEmissions, lessEmissions);
       }
-      else{
-          impact = computeImpact(higherEmissions, lessEmissions);
-      }
-      
-      handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
+
+      handleComplete(
+        item.id,
+        item.template,
+        convertKgToGrams(impact),
+        {} as MealData,
+        {} as MealData,
+        vehicleHigherEF,
+        vehicleLessEF
+      );
     }
   }, [vehicleHigherEF, vehicleLessEF]);
-  
+
   return (
     <Swipeable
       renderRightActions={() => (
         <View className="flex items-center justify-center ml-2 mr-4">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>        
+          <Ionicons
+            name="trash"
+            size={20}
+            color="red"
+            onPress={() => handleDelete(item.id)}
+          />
+        </View>
       )}
     >
-       <StyledLayout className="pt-1 m-1"
-          style={{
-            borderBottomWidth: 1, 
-            borderBottomColor: myTheme['color-basic-500']
-          }} 
+      <StyledLayout
+        className="pt-1 m-1"
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: myTheme["color-basic-500"],
+        }}
+      >
+        <StyledSelect
+          className="w-full rounded-lg mb-2"
+          placeholder={() => (
+            <StyledText
+              numberOfLines={2}
+              style={{ fontSize: 14, width: "85%" }}
+            >
+              {item.title}
+            </StyledText>
+          )}
         >
-          <StyledSelect
-            className="w-full rounded-lg mb-2"
-            placeholder={() => (
-              <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%" }}>
-                {item.title}
-              </StyledText>
-            )}
-          >
           {item.options ? (
-              Object.entries(item.options).map(([key, value]) => (
-                <StyledSelectItem
-                  key={key}
-                  title={key}
-                  onPress={() => {
-                    getImpact(value);
-                    setExpanded(false); // Collapse the dropdown after selection
-                  }}
-                />
-              ))
-            ) : (
-              <></>
-            )}
-          </StyledSelect>
+            Object.entries(item.options).map(([key, value]) => (
+              <StyledSelectItem
+                key={key}
+                title={key}
+                onPress={() => {
+                  getImpact(value);
+                  setExpanded(false); // Collapse the dropdown after selection
+                }}
+              />
+            ))
+          ) : (
+            <></>
+          )}
+        </StyledSelect>
       </StyledLayout>
     </Swipeable>
   );
@@ -138,7 +169,7 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
   completedActions,
   handleUnmark,
 }) => {
-  const {userUid, loading} = useUserContext();
+  const { userUid, loading } = useUserContext();
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [vehicleLessEF, setVehicleLessEF] = useState();
@@ -156,9 +187,10 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
     const getVehicleData = async () => {
       try {
         const currentDate = moment().format("YYYY-MM-DD");
-        const currentLog = (
-          await firestore().collection("user_logs").doc(userUid).get()
-        ).data()?.[currentDate] || {};
+        const currentLog =
+          (
+            await firestore().collection("user_logs").doc(userUid).get()
+          ).data()?.[currentDate] || {};
 
         setVehicleLessEF(currentLog[item.id]?.vehicleLessEF || null);
         setVehicleHigherEF(currentLog[item.id]?.vehicleHigherEF || null);
@@ -171,19 +203,28 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
   }, [userUid, loading]);
 
   const handleCompleteDetails = () => {
-    const kmTravelled = inputValue ? parseFloat(inputValue) : item.defaultKmTravelled!;
+    const kmTravelled = inputValue
+      ? parseFloat(inputValue)
+      : item.defaultKmTravelled!;
 
     const higherEmissions = vehicleHigherEF! * kmTravelled;
     const lessEmissions = vehicleLessEF! * kmTravelled;
 
-    if (isBicycle(item.title)){
-        impact = higherEmissions;
-    }
-    else{
-        impact = computeImpact(higherEmissions, lessEmissions);
+    if (isBicycle(item.title)) {
+      impact = higherEmissions;
+    } else {
+      impact = computeImpact(higherEmissions, lessEmissions);
     }
 
-    handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
+    handleComplete(
+      item.id,
+      item.template,
+      convertKgToGrams(impact),
+      {} as MealData,
+      {} as MealData,
+      vehicleHigherEF,
+      vehicleLessEF
+    );
 
     setInputValue("");
     setShowInput(false);
@@ -191,63 +232,73 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
 
   return (
     <View>
-      <StyledLayout 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} 
-          className="pt-1 m-1"
+      <StyledLayout className="pt-1 m-1">
+        <View
+          className="border border-gray-300 rounded-lg"
+          style={{ justifyContent: "center" }}
         >
-        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
-          <View className="flex-row items-center justify-start bottom-1">
-              <CircularCheckbox
+          <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
+            <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
                   : "unchecked"
-                }
-                onPress={() => handleUnmark(item.id)}
-              />
-              <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
-                {item.title}
-              </StyledText>
+              }
+              onPress={() => handleUnmark(item.id)}
+            />
+            <StyledText className="text-base w-10/12 leading-6">
+              {item.title}
+            </StyledText>
           </View>
-        </StyledCard>
-        
-        <TouchableOpacity onPress={handleMoreDetails}>
-          <StyledText category="s1" 
-            className="ml-4 m-1"
-            style={{ 
-              color: myTheme['color-info-500']}}
+
+          <TouchableOpacity onPress={handleMoreDetails}>
+            <StyledText
+              category="s1"
+              className="ml-12 mt-2 mb-2"
+              style={{
+                color: myTheme["color-info-500"],
+              }}
             >
               Enter more details
-          </StyledText>
-        </TouchableOpacity>
+            </StyledText>
+          </TouchableOpacity>
 
-        {showInput && (
-          <View>
-            <StyledLayout className="rounded-xl mb-3 ml-1 flex-row items-center">
-              <StyledText className="mr-2">
-                Input distance travelled
-              </StyledText>
-              <Input
-                style={{width: "30%"}}
-                placeholder=""
-                keyboardType="numeric"
-                value={inputValue}
-                onChangeText={setInputValue}
-              />
-              <StyledText category='label' className="ml-2 mr-8 text-sm">
-                km
-              </StyledText>
-            </StyledLayout>
-            <View className="items-center">
-              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3" onPress={handleCompleteDetails}>
-                <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
-              </TouchableOpacity>
+          {showInput && (
+            <View>
+              <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end">
+                <StyledText className="mr-2">
+                  Input distance travelled
+                </StyledText>
+                <Input
+                  style={{ width: "30%" }}
+                  placeholder=""
+                  keyboardType="numeric"
+                  value={inputValue}
+                  onChangeText={setInputValue}
+                />
+                <StyledText category="label" className="ml-2 mr-8 text-sm">
+                  km
+                </StyledText>
+              </StyledLayout>
+              <View className="items-center">
+                <TouchableOpacity
+                  className="rounded-lg items-end w-full mr-2 p-2 px-3 mb-3"
+                  onPress={handleCompleteDetails}
+                >
+                  <StyledText
+                    category="p1"
+                    className="text-white font-bold text-sm"
+                    style={{
+                      color: myTheme["color-info-500"],
+                    }}
+                  >
+                    → Submit
+                  </StyledText>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
           )}
+        </View>
       </StyledLayout>
     </View>
   );

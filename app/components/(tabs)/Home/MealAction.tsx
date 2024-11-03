@@ -248,7 +248,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
       <StyledLayout
         className="pt-1 m-1"
       >
-        <View className="border rounded-lg">
+        <View className="border border-gray-300 rounded-lg">
           <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
             <CircularCheckbox
               status={
@@ -288,7 +288,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
                 {" "}eaten{" "}
               </StyledText>
               <Input
-                className="w-8"
+                style={{ width: "30%" }}
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
@@ -300,14 +300,17 @@ export const MealDone: React.FC<DoneItemProps> = ({
             </StyledLayout>
             <View className="items-center">
               <TouchableOpacity
-                className="bg-blue-500 rounded-lg items-center w-1/3 p-2 px-3 mb-3"
+                className=" rounded-lg items-end w-full mr-2 p-2 px-3 mb-3"
                 onPress={handleCompleteDetails}
               >
                 <StyledText
                   category="p1"
-                  className="text-white text-sm text-center"
+                  className="text-white font-bold text-sm"
+                  style={{
+                    color: myTheme["color-info-500"],
+                  }}
                 >
-                  Submit
+                  → Submit
                 </StyledText>
               </TouchableOpacity>
             </View>
