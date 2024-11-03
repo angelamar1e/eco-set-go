@@ -25,15 +25,10 @@ export const UserProvider = ({ children }) => {
             if (userDoc.exists) {
                 const { username, role } = userDoc.data(); // Destructure username and role from the fetched document
 
-                // Fetch overall footprint from current_footprint collection
-                const footprintDoc = await firestore().collection('current_footprint').doc(uid).get();
-                const footprint = footprintDoc.exists ? footprintDoc.data().overall_footprint : null;
-
                 // Set individual user details states
                 setUserUID(uid);
                 setUsername(username || ''); // Fallback to an empty string if undefined
                 setRole(role || ''); // Fallback to an empty string if undefined
-                setOverallFootprint(footprint); // Store overall footprint
             } else {
                 console.log("User document does not exist");
                 resetUserDetails(uid);
@@ -70,6 +65,23 @@ export const UserProvider = ({ children }) => {
         // Cleanup the subscription on unmount
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (userUid) {
+            // Setting up the snapshot listener
+            const unsubscribe = firestore()
+                .collection('current_footprint')
+                .doc(userUid)
+                .onSnapshot((doc) => {
+                    const footprint = doc.data()?.overall_footprint; // Use optional chaining for safety
+                    setOverallFootprint(footprint);
+                });
+            
+            // Cleanup the listener on unmount or userUid change
+            return () => unsubscribe();
+        }
+    }, [userUid]);
+    
 
     return (
         <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading, setLoading }}>
