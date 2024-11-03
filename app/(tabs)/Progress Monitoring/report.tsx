@@ -1,7 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Stack } from "expo-router";
-import Chart from "chart.js/auto";
 import { Line } from "react-native-svg";
 import React, { ReactNode, useState, useEffect } from "react";
 import { ScrollView, View, Dimensions, TouchableOpacity } from "react-native";
@@ -13,7 +12,15 @@ import { styled } from "nativewind";
 import moment from "moment";
 import { stringify } from "postcss";
 import { useUserContext } from "@/contexts/UserContext";
-import { Text, Layout, Card, useTheme, IndexPath, Select, SelectItem } from "@ui-kitten/components";
+import {
+  Text,
+  Layout,
+  Card,
+  useTheme,
+  IndexPath,
+  Select,
+  SelectItem,
+} from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import Logs from "../Goal Setting/logs";
 import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
@@ -31,26 +38,32 @@ type Category = "All" | "Food" | "Transportation" | "Electricity";
 // ProgressReport component
 const ProgressReport = () => {
   const theme = useTheme();
-  const [period, setPeriod] = useState<Period>('Daily');
-  const [category, setCategory] = useState<Category>('All');
-  const { dailyImpact, weeklyImpact, monthlyImpact, selectedCategory, handleCategoryChange } = useLogsContext();
+  const [period, setPeriod] = useState<Period>("Daily");
+  const [category, setCategory] = useState<Category>("All");
+  const {
+    dailyImpact,
+    weeklyImpact,
+    monthlyImpact,
+    selectedCategory,
+    handleCategoryChange,
+  } = useLogsContext();
 
-  const periodOptions: Period[] = ['Daily', 'Weekly', 'Monthly'];
-  const categoryOptions: Category[] = ['Food', 'Transportation', 'Electricity'];
+  const periodOptions: Period[] = ["Daily", "Weekly", "Monthly"];
+  const categoryOptions: Category[] = ["Food", "Transportation", "Electricity"];
   const [expanded, setExpanded] = useState(false);
 
   const toggleDropdown = () => setExpanded(!expanded);
 
   // Update report based on the selected period
-  let report: Record<string, number>; 
+  let report: Record<string, number>;
   switch (period) {
-    case 'Monthly':
+    case "Monthly":
       report = monthlyImpact;
       break;
-    case 'Weekly':
+    case "Weekly":
       report = weeklyImpact;
       break;
-    case 'Daily':
+    case "Daily":
       report = dailyImpact;
       break;
     default:
@@ -65,46 +78,59 @@ const ProgressReport = () => {
     };
 
     const chartConfig = {
-      backgroundColor: '#ffffff',
-      backgroundGradientFrom: '#f4f5f2',
-      backgroundGradientTo: '#f4f5f2',
+      backgroundColor: "#ffffff",
+      backgroundGradientFrom: "#f4f5f2",
+      backgroundGradientTo: "#f4f5f2",
       color: (opacity = 1) => `rgba(61, 201, 97, ${opacity})`,
       labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      propsForVerticalLabels: { fontSize: 10, color: '#3DC961'},
-      animation: { duration: 500, easing: { type: 'linear', duration: 500 } },
-      propsForTooltips: { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 8, borderColor: '#3DC961', borderWidth: 1 },
+      propsForVerticalLabels: { fontSize: 10, color: "#3DC961" },
+      animation: { duration: 500, easing: { type: "linear", duration: 500 } },
+      propsForTooltips: {
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRadius: 8,
+        borderColor: "#3DC961",
+        borderWidth: 1,
+      },
     };
 
     return (
       <View className="items-center">
-      <View className="rounded-3xl bg-gray-100 w-11/12 h-3/5">
-        <Text style={{ textAlign: 'center', fontSize: 18, marginVertical: 8 }}>Impact (Tons)</Text>
-        <LineChart
-          data={data}
-          width={Dimensions.get('window').width - 60}
-          height={200}
-          withHorizontalLabels={false}
-          chartConfig={chartConfig}
-          bezier
-          fromZero
-          style={{backgroundColor:'#fffff', borderRadius: 16, paddingRight: 50,}}
-          renderDotContent={({ x, y, index }) => (
-            <Text
-              key={index}
-              style={{
-                position: 'absolute',
-                top: y - 20, // Position the text above the dot
-                left: x - 10,
-                color: '#3DC961',
-                fontSize: 12,
-                fontWeight: 'bold',
-              }}
-            >
-              {data.datasets[0].data[index].toFixed(0) + "g"}
-            </Text>
-          )}
-        />
-      </View>
+        <View className="rounded-3xl bg-gray-100 w-11/12 h-3/5">
+          <Text
+            style={{ textAlign: "center", fontSize: 12, marginVertical: 8 }}
+          >
+           Your Impact
+          </Text>
+          <LineChart
+            data={data}
+            width={Dimensions.get("window").width - 60}
+            height={200}
+            withHorizontalLabels={false}
+            chartConfig={chartConfig}
+            bezier
+            fromZero
+            style={{
+              backgroundColor: "#fffff",
+              borderRadius: 16,
+              paddingRight: 50,
+            }}
+            renderDotContent={({ x, y, index }) => (
+              <Text
+                key={index}
+                style={{
+                  position: "absolute",
+                  top: y - 20, // Position the text above the dot
+                  left: x - 10,
+                  color: "#3DC961",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                }}
+              >
+                {data.datasets[0].data[index].toFixed(0) + "g"}
+              </Text>
+            )}
+          />
+        </View>
       </View>
     );
   };
@@ -115,7 +141,10 @@ const ProgressReport = () => {
         className="h-1/6 rounded-b-2xl justify-center items-center relative"
         style={{ backgroundColor: myTheme["color-success-700"] }}
       >
-        <StyledText className="text-white text-3xl" style={{ fontFamily: "Poppins-SemiBold" }}>
+        <StyledText
+          className="text-white text-3xl"
+          style={{ fontFamily: "Poppins-SemiBold" }}
+        >
           Progress
         </StyledText>
       </StyledLayout>
@@ -123,13 +152,16 @@ const ProgressReport = () => {
       <StyledLayout className="flex-1 px-2">
         <GoalSetting />
 
-{/* Period Selection */}
-<Select
+        <Select
         value={period}
         style={{ marginBottom: 10 }}
+        onSelect={(index) => {
+          const selectedIndex = Array.isArray(index) ? index[0] : index; // Handle single or array
+          setPeriod(periodOptions[selectedIndex.row]); // Access the row property
+        }}
       >
         {periodOptions.map((option) => (
-          <SelectItem key={option} title={option} onPress={() => setPeriod(option)}/>
+          <SelectItem key={option} title={option} />
         ))}
       </Select>
 
@@ -137,9 +169,14 @@ const ProgressReport = () => {
       <Select
         value={selectedCategory}
         style={{ marginBottom: 10 }}
+        onSelect={(index) => {
+          const selectedIndex = Array.isArray(index) ? index[0] : index; // Handle single or array
+          const category = categoryOptions[selectedIndex.row]; // Access the row property
+          handleCategoryChange(category);
+        }}
       >
         {categoryOptions.map((option) => (
-          <SelectItem key={option} title={option} onPress={() => {handleCategoryChange(option); setExpanded(false);}}/> 
+          <SelectItem key={option} title={option} />
         ))}
       </Select>
 
