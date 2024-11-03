@@ -9,6 +9,7 @@ import { myTheme } from "@/constants/custom-theme";
 import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
 import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { set } from "@react-native-firebase/database";
 
 // Define types for report data
 type ReportData = {
@@ -32,6 +33,7 @@ const DataCard = ({ className = "", style = "", ...props }) => {
 const ProgressReport = () => {
   const [period, setPeriod] = useState<"Daily" | "Weekly" | "Monthly">("Daily");
   const {
+    currentFootprint,
     dailyImpact,
     weeklyImpact,
     monthlyImpact,
@@ -114,11 +116,18 @@ const ProgressReport = () => {
         {/* <View className="h-full w-full justify-between border flex-row content-start"> */}
         <DataCard>
           <Text>Total Impact</Text>
-          <Text>{conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}</Text>
+          <Text>{conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))} of CO₂e</Text>
         </DataCard>
         <DataCard>
           <Text>Initial Emissions</Text>
-          <Text>{(totalEmissions).toFixed(2)} tons</Text>
+          <Text>{(totalEmissions).toFixed(2)} tons of CO₂e</Text>
+          <Text></Text>
+          <Text>
+            Current Emissions
+          </Text>
+          <Text>
+            {(currentFootprint).toFixed(2)} tons of CO₂e
+          </Text>
         </DataCard>
         </View>
         {/* </View> */}
@@ -127,7 +136,10 @@ const ProgressReport = () => {
           style={{ marginBottom: 10 }}
         >
           {["Daily", "Weekly", "Monthly"].map(option => (
-            <SelectItem key={option} title={option} onPress={() => handlePeriodChange(option)}/>
+            <SelectItem key={option} title={option} onPress={() => {
+              handlePeriodChange(option);
+              setPeriod(option as "Daily" | "Weekly" | "Monthly")
+            }}/>
           ))}
         </Select>
 

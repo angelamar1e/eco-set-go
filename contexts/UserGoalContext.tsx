@@ -1,4 +1,3 @@
-// UserGoalContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
@@ -71,8 +70,8 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
     return () => {
       unsubscribe();
-    } 
-    }, [userUid]);
+    }
+  }, [userUid]);
 
   const toggleEdit = () => setEditGoal(!editGoal);
 
@@ -80,7 +79,6 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     let totalImpact = 0;
     if (latestGoal && userLogs) {
       const { stringStartDate, stringEndDate } = convertTimestampToString(latestGoal.start_date, latestGoal.end_date);
-      console.log("DATES", stringStartDate, stringEndDate);
       const startDate = latestGoal.start_date.toDate();
       const endDate = latestGoal.end_date.toDate();
       Object.entries(userLogs as UserLogs).forEach(([date, actions]) => {
@@ -94,18 +92,19 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       });
     }
     setProgressImpact(totalImpact);
+    setIsComplete(totalImpact >= (latestGoal?.target || 0)); // Update isComplete based on latest progressImpact
   };
 
   useEffect(() => {
-    setIsComplete(progressImpact >= latestGoal?.target!)
-  }, [latestGoal, progressImpact]);
+    calculateProgressImpact();
+  }, [userLogs, latestGoal]);
 
   const convertTimestampToString = (
     startTimestamp: FirebaseFirestoreTypes.Timestamp,
     endTimestamp: FirebaseFirestoreTypes.Timestamp
   ) => {
-    let startDate = new Date(startTimestamp.seconds * 1000);
-    let endDate = new Date(endTimestamp.seconds * 1000);
+    const startDate = new Date(startTimestamp.seconds * 1000);
+    const endDate = new Date(endTimestamp.seconds * 1000);
     const stringStartDate = format(startDate, "yyyy-MM-dd");
     const stringEndDate = format(endDate, "yyyy-MM-dd");
 
@@ -118,42 +117,35 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
-    calculateProgressImpact();
-    console.log("PROGRESS IMPACT", progressImpact)
-  }, [userLogs, latestGoal]);
-
-  useEffect(() => {
     calculateProgressPercentage();
-    console.log("PERCENT IMPACT", progressPercentage)
-  }, [progressImpact, latestGoal, userLogs]);
+  }, [progressImpact, latestGoal]);
 
   useEffect(() => {
-    const getStatus = () => {
-      let status = latestGoal?.status || "";
-  
-      // Only mark goal as "Completed" if it's fully complete
-      if (isComplete) {
-        status = "Completed";
-      }
-  
-      // Update Firestore if status has changed
-      if (status && status !== latestGoal?.status) {
-        goalsDoc.set(
-          {
-            [latestGoal?.id!]: {
-              ...latestGoal,
-              status: status,
+    const updateGoalStatus = async () => {
+      const currentStatus = isComplete ? "Completed" : "Ongoing";
+
+      if (latestGoal && currentStatus !== latestGoal.status) {
+        try {
+          await goalsDoc.set(
+            {
+              [latestGoal.id]: {
+                ...latestGoal,
+                status: currentStatus,
+              },
             },
-          },
-          { merge: true }
-        );
+            { merge: true }
+          );
+          console.log(`Goal status updated to: ${currentStatus}`);
+        } catch (error) {
+          console.error("Error updating goal status:", error);
+        }
       }
     };
-  
+
     if (latestGoal) {
-      getStatus();
+      updateGoalStatus();
     }
-  }, [isComplete, latestGoal, userLogs]);
+  }, [isComplete, latestGoal]);
 
   const submitNewGoal = () => {
     if (latestGoal?.status === "Completed" || !latestGoal) {
@@ -190,7 +182,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     toggleEdit();
   };
-  
+
   return (
     <UserGoalContext.Provider
       value={{

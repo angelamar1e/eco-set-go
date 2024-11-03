@@ -13,7 +13,7 @@ export const UserLogsProvider = ({ children }) => {
   const { userUid } = useUserContext();
   const currentFootprintDoc = firestore().collection('current_footprint').doc(userUid);
   const [userLogs, setUserLogs] = useState({});
-  const { totalEmissions } = useContext(EmissionsDataContext);
+  const { totalEmissions, foodEmissions, transportationEmissions, electricityEmissions } = useContext(EmissionsDataContext);
   const [totalImpact, setTotalImpact] = useState(0);
   const [currentFootprint, setCurrentFootprint] = useState(0);
   const { foodEcoActions, transportationEcoActions, electricityEcoActions } = useActionsContext();
@@ -23,6 +23,11 @@ export const UserLogsProvider = ({ children }) => {
   const [dailyImpact, setDailyImpact] = useState({});
   const [weeklyImpact, setWeeklyImpact] = useState({});
   const [monthlyImpact, setMonthlyImpact] = useState({});
+
+    // Aggregated category states
+    const [foodImpact, setFoodImpact] = useState(0);
+    const [transportationImpact, setTransportationImpact] = useState(0);
+    const [electricityImpact, setElectricityImpact] = useState(0);
   
   // State for selected time period
   const [selectedPeriod, setSelectedPeriod] = useState("Daily"); // can be "daily", "weekly", or "monthly"
@@ -56,6 +61,9 @@ export const UserLogsProvider = ({ children }) => {
   // Calculate total impact and prepare chart data
   useEffect(() => {
     let totalImpact = 0;
+    let foodImpact = 0;
+    let transportImpact = 0;
+    let electricityImpact = 0;
     
     const daily = {};
     const weekly = {};
@@ -83,6 +91,15 @@ export const UserLogsProvider = ({ children }) => {
             weekly[weekString][category] += action.impact;
             monthly[monthString][category] += action.impact;
           }
+          if (category === 'Food'){
+            foodImpact += action.impact
+          }
+          if (category === 'Transportation'){
+            transportImpact += action.impact
+          }
+          if (category === 'Electricity'){
+            electricityImpact += action.impact
+          }
         });
       });
 
@@ -102,12 +119,33 @@ export const UserLogsProvider = ({ children }) => {
     }
 
     setTotalImpact(convertGramsToTons(totalImpact));
+    setFoodImpact(convertGramsToTons(foodImpact));
+    setTransportationImpact(convertGramsToTons(transportImpact));
+    setElectricityImpact(convertGramsToTons(electricityImpact));
     setCurrentFootprint(totalEmissions - convertGramsToTons(totalImpact));
     setDailyImpact(daily);
     setWeeklyImpact(weekly);
     setMonthlyImpact(monthly);
 
   }, [userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
+
+  useEffect(() => {
+    if (totalEmissions, totalImpact) {
+      const footprint = totalEmissions - totalImpact;
+      const food = foodEmissions - foodImpact;
+      const transpo = transportationEmissions - transportationImpact;
+      const elec = electricityEmissions - electricityImpact;
+
+      setCurrentFootprint(footprint);
+
+      firestore().collection('current_footprint').doc(userUid).set({
+        overall_footprint: footprint,
+        food_footprint: food,
+        electricity_footprint: elec,
+        transportation_footprint: transpo
+      }, {merge: true});
+    }
+  }, [totalEmissions, totalImpact, userLogs])
 
   // Get week string for weekly impacts
   const getWeekString = (date) => {
