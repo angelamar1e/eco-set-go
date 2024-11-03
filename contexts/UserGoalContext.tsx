@@ -106,7 +106,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     calculateProgressPercentage();
-  }, [progressImpact]);
+  }, [progressImpact, latestGoal, userLogs]);
 
   useEffect(() => {
     const getStatus = () => {

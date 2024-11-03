@@ -5,7 +5,7 @@ import Chart from "chart.js/auto";
 import { Line } from "react-native-svg";
 import React, { ReactNode, useState, useEffect } from "react";
 import { ScrollView, View, Dimensions, TouchableOpacity } from "react-native";
-import { ProgressBar } from "react-native-paper";
+import { ProgressBar, shadow } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firestore from "@react-native-firebase/firestore";
 import { LineChart, BarChart } from "react-native-chart-kit";
@@ -13,7 +13,7 @@ import { styled } from "nativewind";
 import moment from "moment";
 import { stringify } from "postcss";
 import { useUserContext } from "@/contexts/UserContext";
-import { Text, Layout, Card, useTheme } from "@ui-kitten/components";
+import { Text, Layout, Card, useTheme, IndexPath, Select, SelectItem } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import Logs from "../Goal Setting/logs";
 import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
@@ -33,7 +33,13 @@ const ProgressReport = () => {
   const theme = useTheme();
   const [period, setPeriod] = useState<Period>('Daily');
   const [category, setCategory] = useState<Category>('All');
-  const { dailyImpact, weeklyImpact, monthlyImpact, handleCategoryChange } = useLogsContext();
+  const { dailyImpact, weeklyImpact, monthlyImpact, selectedCategory, handleCategoryChange } = useLogsContext();
+
+  const periodOptions: Period[] = ['Daily', 'Weekly', 'Monthly'];
+  const categoryOptions: Category[] = ['Food', 'Transportation', 'Electricity'];
+  const [expanded, setExpanded] = useState(false);
+
+  const toggleDropdown = () => setExpanded(!expanded);
 
   // Update report based on the selected period
   let report: Record<string, number>; 
@@ -60,34 +66,45 @@ const ProgressReport = () => {
 
     const chartConfig = {
       backgroundColor: '#ffffff',
-      backgroundGradientFrom: '#e6f5e1',
-      backgroundGradientTo: '#c7e9c0',
-      decimalPlaces: 0,
+      backgroundGradientFrom: '#f4f5f2',
+      backgroundGradientTo: '#f4f5f2',
       color: (opacity = 1) => `rgba(61, 201, 97, ${opacity})`,
       labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      style: { borderRadius: 16, marginVertical: 8, paddingRight: 16 },
-      propsForLabels: { fontSize: 14, fontWeight: 'bold' },
-      propsForHorizontalLabels: { fontSize: 12, color: '#3DC961' },
-      propsForVerticalLabels: { fontSize: 12, color: '#3DC961' },
-      propsForBackgroundLines: { stroke: '#e0e0e0' },
+      propsForVerticalLabels: { fontSize: 10, color: '#3DC961'},
       animation: { duration: 500, easing: { type: 'linear', duration: 500 } },
       propsForTooltips: { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 8, borderColor: '#3DC961', borderWidth: 1 },
-      propsForBackgroundArea: { fill: 'rgba(61, 201, 97, 0.2)', stroke: 'rgba(61, 201, 97, 0.1)' },
     };
 
     return (
       <View className="items-center">
+      <View className="rounded-3xl bg-gray-100 w-11/12 h-3/5">
         <Text style={{ textAlign: 'center', fontSize: 18, marginVertical: 8 }}>Impact (Tons)</Text>
         <LineChart
           data={data}
-          width={Dimensions.get('window').width - 80}
-          height={220}
-          yAxisInterval={100}
-          yAxisSuffix="g"
+          width={Dimensions.get('window').width - 60}
+          height={200}
+          withHorizontalLabels={false}
           chartConfig={chartConfig}
-          style={{ marginVertical: 8, borderRadius: 16 }}
           bezier
+          fromZero
+          style={{backgroundColor:'#fffff', borderRadius: 16, paddingRight: 50,}}
+          renderDotContent={({ x, y, index }) => (
+            <Text
+              key={index}
+              style={{
+                position: 'absolute',
+                top: y - 20, // Position the text above the dot
+                left: x - 10,
+                color: '#3DC961',
+                fontSize: 12,
+                fontWeight: 'bold',
+              }}
+            >
+              {data.datasets[0].data[index].toFixed(0) + "g"}
+            </Text>
+          )}
         />
+      </View>
       </View>
     );
   };
@@ -106,27 +123,25 @@ const ProgressReport = () => {
       <StyledLayout className="flex-1 px-2">
         <GoalSetting />
 
-        {/* Period Selection */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
-          {['Daily', 'Weekly', 'Monthly'].map((p) => (
-            <TouchableOpacity key={p} onPress={() => setPeriod(p as Period)}>
-              <Text style={{ color: period === p ? theme['color-primary-500'] : theme['text-hint-color'], fontWeight: 'bold' }}>
-                {p}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+{/* Period Selection */}
+<Select
+        value={period}
+        style={{ marginBottom: 10 }}
+      >
+        {periodOptions.map((option) => (
+          <SelectItem key={option} title={option} onPress={() => setPeriod(option)}/>
+        ))}
+      </Select>
 
-        {/* Category Selection */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 }}>
-          {['Food', 'Transportation', 'Electricity'].map((c) => (
-            <TouchableOpacity key={c} onPress={() => handleCategoryChange(c as Category)}>
-              <Text style={{ color: category === c ? theme['color-primary-500'] : theme['text-hint-color'], fontWeight: 'bold' }}>
-                {c}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      {/* Category Selection */}
+      <Select
+        value={selectedCategory}
+        style={{ marginBottom: 10 }}
+      >
+        {categoryOptions.map((option) => (
+          <SelectItem key={option} title={option} onPress={() => {handleCategoryChange(option); setExpanded(false);}}/> 
+        ))}
+      </Select>
 
         {renderGraph()}
       </StyledLayout>

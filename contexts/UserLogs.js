@@ -94,13 +94,13 @@ export const UserLogsProvider = React.FC = ({ children }) => {
 
       let ecoActions;
       switch (selectedCategory) {
-          case 'electricity':
+          case 'Electricity':
               ecoActions = electricityEcoActions;
               break;
-          case 'transportation':
+          case 'Transportation':
               ecoActions = transportationEcoActions;
               break;
-          case 'food':
+          case 'Food':
           default:
               ecoActions = foodEcoActions;
               break;
@@ -131,7 +131,7 @@ export const UserLogsProvider = React.FC = ({ children }) => {
           const startOfWeek = getStartOfWeek(logDate);
           const endOfWeek = new Date(startOfWeek);
           endOfWeek.setDate(startOfWeek.getDate() + 6);
-          const weekRange = `${startOfWeek.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`
+          const weekRange = `${startOfWeek.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${endOfWeek.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`
           weeklyImpact[weekRange] = (weeklyImpact[weekRange] || 0) + logImpact;
 
           // Format monthly impact key as "Month Year"
@@ -159,7 +159,7 @@ const getStartOfWeek = (date) => {
 };
 
   return (
-    <UserLogsContext.Provider value={{ userLogs, loading, totalImpact, currentFootprint, dailyImpact, weeklyImpact, monthlyImpact, handleCategoryChange }}>
+    <UserLogsContext.Provider value={{ userLogs, loading, totalImpact, currentFootprint, dailyImpact, weeklyImpact, monthlyImpact, selectedCategory, handleCategoryChange }}>
         {children}
     </UserLogsContext.Provider>
 );
