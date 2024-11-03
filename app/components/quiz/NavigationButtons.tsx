@@ -14,7 +14,7 @@ export const NavigationButtons: FC<NavigationButtonProps> = ({ title, onPress })
     <Button
       style={{
         borderColor: myTheme['color-success-700'],        
-        borderRadius: 24,
+        borderRadius: 15,
         width: '45%',
         marginHorizontal: 8,
       }}

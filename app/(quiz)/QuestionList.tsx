@@ -56,9 +56,8 @@ const QuestionList = () => {
       style={{ 
         marginBottom: 10, 
         borderRadius: 15, 
-        elevation: 2, 
-        borderWidth: 1, 
-        borderColor: myTheme['color-success-500'], 
+        borderWidth: 2, 
+        borderColor: myTheme['color-success-700'], 
         backgroundColor: myTheme['color-success-900'],
         justifyContent: 'flex-start'
       }}

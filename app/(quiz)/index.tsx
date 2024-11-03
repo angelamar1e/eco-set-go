@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Image } from "react-native";
+import { View, Image, TouchableOpacity } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
 import { EmissionsContext } from "@/contexts/Emissions";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
-import { Text } from "react-native-paper";
 import { QuestionData } from "@/types/QuestionData";
 import InputTemplate from "../components/quiz/InputTemplate";
 import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
@@ -11,10 +10,10 @@ import StepperTemplate from "../components/quiz/StepperTemplate";
 import RadioTemplate from "../components/quiz/RadioTemplate";
 import { router } from "expo-router";
 import { styled } from "nativewind";
-import { Layout } from "@ui-kitten/components";
+import { Layout, Text } from "@ui-kitten/components";
 import storage from '@react-native-firebase/storage';
 import { myTheme } from "@/constants/custom-theme";
-import { Ionicons } from "@expo/vector-icons";
+import TipsModal from "../components/quiz/tips";
 
 const StyledLayout = styled(Layout);
 
@@ -24,8 +23,8 @@ const QuizIndex = () => {
   const [questionData, setQuestionData] = useState<QuestionData>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState<any>(null); 
+  const [isModalVisible, setModalVisible] = useState(false);
   const templates = [InputTemplate, RadioTemplate, CheckboxTemplate, StepperTemplate];
-
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -177,56 +176,58 @@ const QuizIndex = () => {
     ? templates[questionData.template]
     : templates[0];
 
-    return (
-      <StyledLayout className="flex-1">
-        {questionData ? (
-          <>
-          {/* Conditionally render the image if imageUrl exists */}
+  return (
+    <StyledLayout className="flex-1">
+      {questionData ? (
+        <>
           {questionData.image && (
-              <StyledLayout className="bg-white pt-3"
-                style={{ 
-                  borderColor: 'white', 
-                  borderWidth: 1, 
-                  borderRadius: 40,
-                  borderTopEndRadius: 0,
-                  borderTopStartRadius: 0,
-                  bottom: 7,
-                  width: '100%'
-                }}
-              >
+            <StyledLayout className="bg-white pt-3"
+              style={{
+                borderColor: 'white',
+                borderWidth: 1,
+                borderRadius: 40,
+                borderTopEndRadius: 0,
+                borderTopStartRadius: 0,
+                bottom: 7,
+                width: '100%'
+              }}
+            >
               <Image
                 source={{ uri: questionData.image }}
                 style={{
-                  width: '70%', 
-                  aspectRatio: 15 / 5, 
-                  resizeMode: 'contain', 
+                  width: '70%',
+                  aspectRatio: 15 / 5,
+                  resizeMode: 'contain',
                   alignSelf: 'center',
                 }}
               />
-              </StyledLayout>
-            )}
-            <StyledLayout className="pl-4 pr-4">
-              <CurrentComponent
-                key={questionData.variable}
-                question={questionData.question}
-                choices={questionData.choices}
-                defaultValue={emissionsContext[questionData.variable]}
-                category={questionData.category}
-                inputLabel={questionData.input_label}
-                onAnswer={handleAnswer}
-                steppers={questionData.steppers}
-              />
             </StyledLayout>
-            <StyledLayout style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: 16,
-              borderTopWidth: 2,
-              borderTopColor: myTheme["color-success-900"],
-              }}
-            >
+          )}
+          <StyledLayout className="pl-4 pr-4">
+            <CurrentComponent
+              key={questionData.variable}
+              question={questionData.question}
+              choices={questionData.choices}
+              defaultValue={emissionsContext[questionData.variable]}
+              category={questionData.category}
+              inputLabel={questionData.input_label}
+              onAnswer={handleAnswer}
+              steppers={questionData.steppers}
+              isModalVisible={isModalVisible}
+              setModalVisible={setModalVisible}
+              tips={Array.isArray(questionData.tips) ? questionData.tips : (questionData.tips ? [questionData.tips] : [])}
+            />            
+          </StyledLayout>
+          <StyledLayout style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: 16,
+            borderTopWidth: 2,
+            borderTopColor: myTheme["color-success-900"],
+          }}
+          >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <NavigationButtons
                 title="Back"
@@ -238,14 +239,20 @@ const QuizIndex = () => {
               />
             </View>
           </StyledLayout>
+
+          <TipsModal
+            visible={isModalVisible}
+            onClose={() => setModalVisible(false)}
+            tips={questionData.tips || []}
+          />
           </>
         ) : (
-          <View>
-            <Text>Loading...</Text>
-          </View>
+          <StyledLayout>
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 20, padding: 20, }}>Loading...</Text>
+          </StyledLayout>
         )}
-      </StyledLayout>
-    );
-  };
-  
-  export default QuizIndex;
+    </StyledLayout>
+  );
+};
+
+export default QuizIndex;

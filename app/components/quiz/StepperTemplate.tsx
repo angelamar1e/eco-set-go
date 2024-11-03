@@ -6,6 +6,9 @@ import { StepperTemplateProps } from "@/types/QuizProps";
 import { styled } from "nativewind";
 import { Layout, Text } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import TipsModal from "./tips";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -17,6 +20,9 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
   defaultValue,
   steppers,
   onAnswer,
+  isModalVisible,
+  setModalVisible,
+  tips,
 }) => {
   // State to manage the selected answer
   const [answer, setAnswer] = useState<any>(defaultValue);
@@ -40,11 +46,16 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
 
   return (
       <QuestionContainer>
-        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
+        <StyledText className="text-sm mb-3" style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-Medium' }}>
           {category}
         </StyledText>
-        <StyledText category="p1" className="text-xl mb-3">
-         {question}
+
+        <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
+          {question} {tips && (
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
+          </TouchableOpacity>
+          )}
         </StyledText>
 
         {/* Presets */}
@@ -78,6 +89,14 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
             <Text> Loading... </Text>
           )}
         </StyledLayout>
+
+        {tips && tips.length > 0 && (
+          <TipsModal
+            visible={isModalVisible}
+            onClose={() => setModalVisible(false)}
+            tips={tips}
+          />
+        )}
       </QuestionContainer>
   );
 };

@@ -48,7 +48,7 @@ const Quiz = () => (
       <Stack.Screen
         name="QuizEnd"
         options={{
-          headerShown: true,
+          headerShown: false,
           header: () => <QuizHeader />,
         }}
       />

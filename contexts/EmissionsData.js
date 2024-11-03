@@ -91,3 +91,60 @@ export function totalTransportationFootprint(emissionsData) {
 export function totalElectricityFootprint(emissionsData) {
   return emissionsData['electricityEmissions'] || 0;
 }
+
+// Function to get the highest emissions per category and their sources
+export function getHighestEmissions(emissionsData) {
+  const categories = {
+    food: [
+      { field: "breakfastEmissions", label: "Breakfast 🍴" },
+      { field: "coldDrinksEmissions", label: "Cold Drinks 🍹" },
+      { field: "hotDrinksEmissions", label: "Hot Drinks ☕" },
+      { field: "mealEmissions", label: "Meals 🍽️" },
+      { field: "bottledWaterEmissions", label: "Bottled Water 💧" },
+      { field: "beefMealEF", label: "Beef Meal 🥩" },
+      { field: "chickenMealEF", label: "Chicken Meal 🍗" },
+      { field: "fishMealEF", label: "Fish Meal 🐟" },
+      { field: "porkMealEF", label: "Pork Meal 🥓" },
+      { field: "veganMealEF", label: "Vegan Meal 🥦" },
+      { field: "vegetarianMealEF", label: "Vegetarian Meal 🥦" },
+      { field: "simpleBreakfastEF", label: "Simple Breakfast 🍳" },
+      { field: "traditionalBreakfastEF", label: "Traditional Breakfast 🍳" },
+      { field: "cerealsBreakfastEF", label: "Cereals Breakfast 🥣" },
+      { field: "fruitsBreakfastEF", label: "Fruits Breakfast 🍎" },
+      { field: "breadBreakfastEF", label: "Bread Breakfast 🍞" },
+      { field: "coffeeEmissions", label: "Coffee ☕" },
+      { field: "alcoholFrequency", label: "Alcohol Frequency 🍻" },
+    ],
+    transportation: [
+      { field: "carEmissions", label: "Car 🚘" },
+      { field: "airTravelEmissions", label: "Air Travel ✈️" },
+      { field: "efficientTravelEmissions", label: "Efficient Travel 🚲" },
+      { field: "publicTransportEmissions", label: "Public Transport 🚌" },
+      { field: "trainEmissions", label: "Train 🚆" },
+      { field: "twoWheelersEmissions", label: "Two Wheelers 🛵" },
+    ],
+    electricity: [
+      { field: "electricityEmissions", label: "Electricity ⚡" },
+    ],
+  };
+
+  const highestEmissions = {
+    food: { value: 0, source: '', percentage: 0 },
+    transportation: { value: 0, source: '', percentage: 0 }, 
+    electricity: { value: 0, source: '', percentage: 0 }, 
+};
+
+
+  // Calculate highest emissions in each category
+  for (const [category, fields] of Object.entries(categories)) {
+    fields.forEach(({ field, label }) => {
+      const value = emissionsData[field] || 0; // Default to 0 if the field doesn't exist
+      if (value > highestEmissions[category].value) {
+        highestEmissions[category].value = value;
+        highestEmissions[category].source = label; 
+      }
+    });
+  }
+
+  return highestEmissions;
+}

@@ -7,4 +7,5 @@ export interface QuestionData {
     template: number;
     steppers?: Map<string,number>;
     image?: string;
+    tips?: string;
 }
