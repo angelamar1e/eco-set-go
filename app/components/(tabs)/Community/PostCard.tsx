@@ -5,7 +5,7 @@ import { Card, Text, Layout, Input, Button } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { Timestamp } from '@react-native-firebase/firestore';
 import { firebase } from '@react-native-firebase/firestore';
-import { formatTimeAgo, handleEditSubmit, confirmDeletePost, handleDeletePress } from '@/app/utils/communityUtils';
+import { formatTimeAgo, handleEditSubmit, confirmDeletePost } from '@/app/utils/communityUtils';
 
 interface Comment {
   id: string;
@@ -46,9 +46,11 @@ const PostCard: React.FC<PostCardProps> = ({
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentModalVisible, setCommentModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null); // State for comment to delete
+  const [confirmCommentDeleteVisible, setConfirmCommentDeleteVisible] = useState(false); // State for comment delete confirmation
   const [username, setUsername] = useState("");
   const [uid, setUid] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const formattedTimestamp = formatTimeAgo(timestamp);
 
@@ -99,6 +101,16 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await firebase.firestore().collection('comments').doc(commentId).delete();
+      setCommentToDelete(null);
+      setConfirmCommentDeleteVisible(false); // Close comment delete confirmation
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
+    }
+  };
+
   return (
     <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
       <StyledLayout className="flex-row justify-between">
@@ -140,7 +152,10 @@ const PostCard: React.FC<PostCardProps> = ({
             className="font-bold"
             appearance="ghost"
             status="danger"
-            onPress={() => handleDeletePress(setConfirmDeleteVisible, setShowMenu)}
+            onPress={() => {
+              setConfirmDeleteVisible(true);
+              setShowMenu(false);
+            }}
           >
             Delete
           </StyledButton>
@@ -148,8 +163,13 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       {/* Comment Button */}
-      <StyledButton onPress={() => setCommentModalVisible(true)} className="mt-2">
-        Add Comment
+      <StyledButton 
+        appearance='ghost'
+        status='basic'
+        size='small'
+        onPress={() => setCommentModalVisible(true)} 
+        className="mt-2 items-center rounded-full flex-row">
+        <StyledText>Add a comment</StyledText>
       </StyledButton>
 
       {/* Comment Modal */}
@@ -160,13 +180,25 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
                 <StyledText category="h6" className="font-bold mb-2">Comments</StyledText>
                 {comments.length > 0 ? (
-                  comments.map((comment) => (
-                    <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
-                      <StyledText className="font-bold">@{comment.userName}</StyledText>
-                      <StyledText>{comment.content}</StyledText>
-                      <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
-                    </View>
-                  ))
+                  comments
+                    .slice() 
+                    .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis()) // Sort comments by timestamp
+                    .map((comment) => (
+                      <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
+                        <StyledText className="font-bold">@{comment.userName}</StyledText>
+                        <StyledText>{comment.content}</StyledText>
+                        <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
+                        <TouchableOpacity onPress={() => {
+                          setCommentToDelete(comment);
+                          setConfirmCommentDeleteVisible(true);
+                        }}>
+                          <StyledLayout className='flex-row justify-end'>
+                          <StyledText className="text-red-500 text-xs">Delete</StyledText>
+                          </StyledLayout>
+                          
+                        </TouchableOpacity>
+                      </View>
+                    ))
                 ) : (
                   <StyledText className="text-gray-500">No comments yet.</StyledText>
                 )}
@@ -174,11 +206,17 @@ const PostCard: React.FC<PostCardProps> = ({
                   placeholder="Add a comment..."
                   value={newComment}
                   onChangeText={setNewComment}
-                  className="mt-2"
+                  className="rounded-lg m-2"
                 />
-                <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} className="mt-2">
-                  Send
-                </StyledButton>
+                <StyledLayout className="flex-row justify-end">
+                  <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} 
+                    className="m-1 rounded-full justify-end"
+                    status="success"
+                    size="small"
+                    appearance="filled">
+                    Send
+                  </StyledButton>
+                </StyledLayout>
               </StyledLayout>
             </TouchableWithoutFeedback>
           </StyledLayout>
@@ -191,13 +229,23 @@ const PostCard: React.FC<PostCardProps> = ({
           <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
             <TouchableWithoutFeedback>
               <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
+                <StyledText category='s1' className='font-bold m-2'>Edit post</StyledText>
                 <StyledInput
                   multiline={true}
                   value={editedContent}
                   onChangeText={setEditedContent}
                   className="rounded-lg"
                 />
-                <StyledLayout className="flex-row justify-end mt-2">
+                <StyledLayout className="flex-row justify-between mt-4">
+                  <StyledButton
+                    onPress={() => setEditModalVisible(false)}
+                    appearance="filled"
+                    status="info"
+                    size='small'
+                    className='rounded-full'
+                  >
+                    <StyledText>Cancel</StyledText>
+                  </StyledButton>
                   <StyledButton
                     onPress={() => handleEditSubmit(onEdit, editedContent, setEditModalVisible, setLoading)}
                     status="success"
@@ -214,18 +262,20 @@ const PostCard: React.FC<PostCardProps> = ({
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Confirmation Modal */}
+      {/* Post Deletion Confirmation Modal */}
       <Modal transparent={true} visible={confirmDeleteVisible} animationType="slide">
         <TouchableWithoutFeedback onPress={() => setConfirmDeleteVisible(false)}>
           <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
             <TouchableWithoutFeedback>
               <StyledLayout className="bg-white p-5 rounded-lg">
-                <StyledText>Are you sure you want to delete this post?</StyledText>
-                <StyledLayout className="flex-row justify-between mt-4">
+                <StyledText category='s1' className='font-bold m-2 text-center'>Delete post</StyledText>
+                <StyledText className='m-2 text-center'>Are you sure you want to delete this post?</StyledText>
+                <StyledLayout className="flex-row justify-between m-2">
                   <StyledButton
-                    className="font-bold"
-                    appearance="ghost"
+                    className="font-bold rounded-full"
+                    appearance="filled"
                     status="info"
+                    size='small'
                     onPress={() => {
                       setConfirmDeleteVisible(false);
                       setShowMenu(false);
@@ -234,10 +284,51 @@ const PostCard: React.FC<PostCardProps> = ({
                     Cancel
                   </StyledButton>
                   <StyledButton
-                    className="font-bold"
-                    appearance="ghost"
+                    className="font-bold rounded-full"
+                    appearance="filled"
                     status="danger"
+                    size='small'
                     onPress={() => confirmDeletePost(id, setConfirmDeleteVisible, setShowMenu)}
+                  >
+                    Delete
+                  </StyledButton>
+                </StyledLayout>
+              </StyledLayout>
+            </TouchableWithoutFeedback>
+          </StyledLayout>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      {/* Comment Deletion Confirmation Modal */}
+      <Modal transparent={true} visible={confirmCommentDeleteVisible} animationType="slide">
+        <TouchableWithoutFeedback onPress={() => setConfirmCommentDeleteVisible(false)}>
+          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+            <TouchableWithoutFeedback>
+              <StyledLayout className="bg-white p-5 rounded-lg">
+                <StyledText category='s1' className='font-bold m-2 text-center'>Delete comment</StyledText>
+                <StyledText className='m-2 text-center'>Are you sure you want to delete this comment?</StyledText>
+                <StyledLayout className="flex-row justify-between m-2">
+                  <StyledButton
+                    className="font-bold rounded-full"
+                    appearance="filled"
+                    status="info"
+                    size='small'
+                    onPress={() => {
+                      setConfirmCommentDeleteVisible(false);
+                    }}
+                  >
+                    Cancel
+                  </StyledButton>
+                  <StyledButton
+                    className="font-bold rounded-full"
+                    appearance="filled"
+                    status="danger"
+                    size='small'
+                    onPress={() => {
+                      if (commentToDelete) {
+                        handleDeleteComment(commentToDelete.id);
+                      }
+                    }}
                   >
                     Delete
                   </StyledButton>
