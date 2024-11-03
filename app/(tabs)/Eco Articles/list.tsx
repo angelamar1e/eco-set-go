@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { router } from 'expo-router';
 import { EcoAction } from '../../../types/EcoAction';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,25 +19,32 @@ const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
 
-  useEffect(() => {
-    const fetchEcoActions = async () => {
-      const ecoActionsCollection = await firestore().collection('eco_actions').get();
+  const fetchEcoActions = async (category: string) => {
+    try {
+      let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
+
+      // Apply category filter if it's not "ALL"
+      if (category !== 'ALL') {
+        query = query.where('category', '==', category);
+      }
+
+      const ecoActionsCollection = await query.get();
       const data = ecoActionsCollection.docs.map((doc) => ({
         id: doc.id,
         title: doc.data().title,
+        category: doc.data().category, // Ensure this field is included
       })) as EcoAction[];
 
       setEcoActions(data);
-    };
+    } catch (error) {
+      console.error("Error fetching eco actions: ", error);
+    }
+  };
 
-    fetchEcoActions();
-  }, []);
-
-  // Filter actions based on selected category
-  const filteredActions = ecoActions.filter((item) => {
-    if (filter === 'ALL') return true;
-    return item.title.toLowerCase().includes(filter.toLowerCase());
-  });
+  // Fetch eco actions whenever the filter changes
+  useEffect(() => {
+    fetchEcoActions(filter);
+  }, [filter]);
 
   const renderItem = ({ item }: { item: EcoAction }) => (
     <StyledCard
@@ -52,30 +59,33 @@ const EcoActionsList = () => {
 
   return (
     <StyledLayout className='flex-1'>
-        <StyledLayout className="flex-1">
+      <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
-          style={{ backgroundColor: myTheme['color-success-700']}}>
-          <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Articles</StyledText>
+          style={{ backgroundColor: myTheme['color-success-700']}}
+        >
+          <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>
+            Eco Articles
+          </StyledText>
         </StyledLayout>
 
-          <StyledLayout className="ml-2 mr-2">
-            <SearchBar onSearch={(query: string) => console.log('Searching for:', query)} />
-          </StyledLayout>
+        <StyledLayout className="ml-2 mr-2">
+          <SearchBar onSearch={(query: string) => console.log('Searching for:', query)} />
+        </StyledLayout>
 
-          <StyledLayout className="ml-2 mt-4 mr-2">
-            <FilterButtons 
-              selectedFilter={filter} 
-              onFilterChange={setFilter} 
-            />
-          </StyledLayout>
-
-          <FlatList
-            className="mt-2"
-            data={filteredActions}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+        <StyledLayout className="ml-2 mt-4 mr-2">
+          <FilterButtons 
+            selectedFilter={filter} 
+            onFilterChange={setFilter} 
           />
         </StyledLayout>
+
+        <FlatList
+          className="mt-2"
+          data={ecoActions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </StyledLayout>
     </StyledLayout>
   );
 };
