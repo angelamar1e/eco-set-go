@@ -20,7 +20,7 @@ export const TextField: FC<TextFieldProps> = ({ unit, value, onChangeText, onBlu
         style={{ borderRadius: 10, width: '60%', marginRight: 10 }} 
         textStyle={{ minHeight: 40 }}
       />
-      <Text>{unit}</Text>
+      <Text style={{ fontFamily: 'Poppins-Regular'}}>{unit}</Text>
     </View>
   );
 };

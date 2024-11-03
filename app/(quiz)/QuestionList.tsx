@@ -56,16 +56,15 @@ const QuestionList = () => {
       style={{ 
         marginBottom: 10, 
         borderRadius: 15, 
-        elevation: 2, 
-        borderWidth: 1, 
-        borderColor: myTheme['color-primary-500'], 
-        backgroundColor: myTheme['color-primary-900'],
+        borderWidth: 2, 
+        borderColor: myTheme['color-success-700'], 
+        backgroundColor: myTheme['color-success-900'],
         justifyContent: 'flex-start'
       }}
     >
       <StyledText 
         category='h6' 
-        style={{ color: myTheme['color-primary-900'], textAlign: 'left', fontWeight: 'bold' }}>
+        style={{ color: myTheme['color-success-900'], textAlign: 'left', fontWeight: 'bold' }}>
         {item.question}
       </StyledText>
     </StyledButton>
