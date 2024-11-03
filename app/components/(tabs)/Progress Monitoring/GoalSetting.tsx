@@ -1,5 +1,5 @@
 // GoalSetting.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { styled } from "nativewind";
 import { Text, Layout, Card, Datepicker, Input, ProgressBar } from "@ui-kitten/components";
@@ -8,6 +8,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useUserGoalContext } from "@/contexts/UserGoalContext";
 import { format } from "date-fns";
 import { conditionalConvertGramsToKg } from '../../../utils/EstimationUtils';
+import CongratulationsModal from "../Goal Setting/CongratulationsModal";
+import { router } from "expo-router";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -30,6 +32,13 @@ const GoalSetting: React.FC = () => {
     setNewEndDate,
     setNewTarget,
   } = useUserGoalContext();
+
+  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    if (progressPercentage >= 1){
+      setModalVisible(true);
+    }
+  }, [progressPercentage])
   
   return (
     <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">

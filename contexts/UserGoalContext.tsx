@@ -5,6 +5,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useLogsContext } from "@/contexts/UserLogs";
 import { Alert } from "react-native";
 import { UserLogs } from "@/types/UserLogs";
+import { format } from "date-fns";
 
 export type GoalData = {
   id: string;
@@ -78,11 +79,12 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const calculateProgressImpact = () => {
     let totalImpact = 0;
     if (latestGoal && userLogs) {
+      const { stringStartDate, stringEndDate } = convertTimestampToString(latestGoal.start_date, latestGoal.end_date);
+      console.log("DATES", stringStartDate, stringEndDate);
       const startDate = latestGoal.start_date.toDate();
       const endDate = latestGoal.end_date.toDate();
       Object.entries(userLogs as UserLogs).forEach(([date, actions]) => {
-        const logDate = new Date(date);
-        if (logDate >= startDate && logDate <= endDate) {
+        if (date >= stringStartDate && date <= stringEndDate) {
           for (const logEntry of Object.values(actions)) {
             if (typeof logEntry.impact === "number") {
               totalImpact += logEntry.impact;
@@ -92,7 +94,22 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       });
     }
     setProgressImpact(totalImpact);
-    setIsComplete(totalImpact >= (latestGoal?.target || 0));
+  };
+
+  useEffect(() => {
+    setIsComplete(progressImpact >= latestGoal?.target!)
+  }, [latestGoal, progressImpact]);
+
+  const convertTimestampToString = (
+    startTimestamp: FirebaseFirestoreTypes.Timestamp,
+    endTimestamp: FirebaseFirestoreTypes.Timestamp
+  ) => {
+    let startDate = new Date(startTimestamp.seconds * 1000);
+    let endDate = new Date(endTimestamp.seconds * 1000);
+    const stringStartDate = format(startDate, "yyyy-MM-dd");
+    const stringEndDate = format(endDate, "yyyy-MM-dd");
+
+    return { stringStartDate, stringEndDate };
   };
 
   const calculateProgressPercentage = () => {
@@ -102,10 +119,12 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     calculateProgressImpact();
+    console.log("PROGRESS IMPACT", progressImpact)
   }, [userLogs, latestGoal]);
 
   useEffect(() => {
     calculateProgressPercentage();
+    console.log("PERCENT IMPACT", progressPercentage)
   }, [progressImpact, latestGoal, userLogs]);
 
   useEffect(() => {
@@ -113,7 +132,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       let status = latestGoal?.status || "";
   
       // Only mark goal as "Completed" if it's fully complete
-      if (isComplete && status !== "Completed") {
+      if (isComplete) {
         status = "Completed";
       }
   
@@ -134,7 +153,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (latestGoal) {
       getStatus();
     }
-  }, [isComplete, latestGoal]);
+  }, [isComplete, latestGoal, userLogs]);
 
   const submitNewGoal = () => {
     if (latestGoal?.status === "Completed" || !latestGoal) {
@@ -171,7 +190,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     toggleEdit();
   };
-
+  
   return (
     <UserGoalContext.Provider
       value={{

@@ -1,137 +1,96 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Stack } from "expo-router";
-import { Line } from "react-native-svg";
-import React, { ReactNode, useState, useEffect } from "react";
-import { ScrollView, View, Dimensions, TouchableOpacity } from "react-native";
-import { ProgressBar, shadow } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import firestore from "@react-native-firebase/firestore";
-import { LineChart, BarChart } from "react-native-chart-kit";
+import React, { useContext, useState } from "react";
+import { View, Dimensions } from "react-native";
+import { BarChart, StackedBarChart } from "react-native-chart-kit";
 import { styled } from "nativewind";
-import moment from "moment";
-import { stringify } from "postcss";
-import { useUserContext } from "@/contexts/UserContext";
-import {
-  Text,
-  Layout,
-  Card,
-  useTheme,
-  IndexPath,
-  Select,
-  SelectItem,
-} from "@ui-kitten/components";
-import { myTheme } from "@/constants/custom-theme";
-import Logs from "../Goal Setting/logs";
-import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
+// import Card from "react-native-paper";
+import { Text, Layout, Select, SelectItem, Card } from "@ui-kitten/components";
 import { useLogsContext } from "@/contexts/UserLogs";
+import { myTheme } from "@/constants/custom-theme";
+import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
+import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
+import { EmissionsDataContext } from "@/contexts/EmissionsData";
+
+// Define types for report data
+type ReportData = {
+  Daily: Record<string, { Food: number; Transportation: number; Electricity: number }>;
+  Weekly: Record<string, { Food: number; Transportation: number; Electricity: number }>;
+  Monthly: Record<string, { Food: number; Transportation: number; Electricity: number }>;
+};
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
-const StyledView = styled(View);
 
-// Periods: daily, weekly, monthly
-type Period = "Daily" | "Weekly" | "Monthly";
-type Category = "All" | "Food" | "Transportation" | "Electricity";
+const DataCard = ({ className = "", style = "", ...props }) => {
+  return (
+    <View className="h-full w-5/12 p-3 flex mx-2 rounded-3xl border" {...props}>
+    </View>
+  )
+}
 
 // ProgressReport component
 const ProgressReport = () => {
-  const theme = useTheme();
-  const [period, setPeriod] = useState<Period>("Daily");
-  const [category, setCategory] = useState<Category>("All");
+  const [period, setPeriod] = useState<"Daily" | "Weekly" | "Monthly">("Daily");
   const {
     dailyImpact,
     weeklyImpact,
     monthlyImpact,
-    selectedCategory,
-    handleCategoryChange,
+    totalImpact,
+    stackedChartData,
+    handlePeriodChange
   } = useLogsContext();
+  const {totalEmissions} = useContext(EmissionsDataContext);
 
-  const periodOptions: Period[] = ["Daily", "Weekly", "Monthly"];
-  const categoryOptions: Category[] = ["Food", "Transportation", "Electricity"];
-  const [expanded, setExpanded] = useState(false);
+  // Create a reportData object
+  const reportData: ReportData = {
+    Daily: dailyImpact,
+    Weekly: weeklyImpact,
+    Monthly: monthlyImpact,
+  };
 
-  const toggleDropdown = () => setExpanded(!expanded);
+  // Render Stacked Bar Chart
+  const renderStackedBarChart = () => {
+    const currentReport = reportData[period];
 
-  // Update report based on the selected period
-  let report: Record<string, number>;
-  switch (period) {
-    case "Monthly":
-      report = monthlyImpact;
-      break;
-    case "Weekly":
-      report = weeklyImpact;
-      break;
-    case "Daily":
-      report = dailyImpact;
-      break;
-    default:
-      report = dailyImpact;
-      break;
-  }
-
-  const renderGraph = () => {
-    const data = {
-      labels: Object.keys(report),
-      datasets: [{ data: Object.values(report).map(Number) }],
-    };
+    // Prepare data for each category (Food, Transportation, Electricity)
+    const labels = Object.keys(currentReport);
+    const foodData = labels.map(label => currentReport[label]?.Food || 0);
+    const transportData = labels.map(label => currentReport[label]?.Transportation || 0);
+    const electricityData = labels.map(label => currentReport[label]?.Electricity || 0);
 
     const chartConfig = {
       backgroundColor: "#ffffff",
       backgroundGradientFrom: "#f4f5f2",
       backgroundGradientTo: "#f4f5f2",
-      color: (opacity = 1) => `rgba(61, 201, 97, ${opacity})`,
+      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
       labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      propsForVerticalLabels: { fontSize: 10, color: "#3DC961" },
-      animation: { duration: 500, easing: { type: "linear", duration: 500 } },
-      propsForTooltips: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        borderRadius: 8,
-        borderColor: "#3DC961",
-        borderWidth: 1,
-      },
+      barPercentage: 0.5,
+      decimalPlaces: 0, // Optional
     };
 
     return (
-      <View className="items-center">
-        <View className="rounded-3xl bg-gray-100 w-11/12 h-3/5">
-          <Text
-            style={{ textAlign: "center", fontSize: 12, marginVertical: 8 }}
-          >
-           Your Impact
-          </Text>
-          <LineChart
-            data={data}
-            width={Dimensions.get("window").width - 60}
-            height={200}
-            withHorizontalLabels={false}
-            chartConfig={chartConfig}
-            bezier
-            fromZero
-            style={{
-              backgroundColor: "#fffff",
-              borderRadius: 16,
-              paddingRight: 50,
-            }}
-            renderDotContent={({ x, y, index }) => (
-              <Text
-                key={index}
-                style={{
-                  position: "absolute",
-                  top: y - 20, // Position the text above the dot
-                  left: x - 10,
-                  color: "#3DC961",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                }}
-              >
-                {data.datasets[0].data[index].toFixed(0) + "g"}
-              </Text>
-            )}
-          />
+      <>
+      <View className="">
+        <View className="rounded-3xl  border">
+          
         </View>
       </View>
+      <View className="items-center">
+      <View className="items-center rounded-3xl  bg-gray-100 w-11/12">
+        <StackedBarChart
+          data={stackedChartData}
+          width={Dimensions.get("window").width - 60}
+          height={220}
+          chartConfig={chartConfig}
+          style={{ borderRadius: 16 }}
+          fromZero
+          hideLegend
+          withHorizontalLabels={false}
+
+        />
+      </View>
+      </View>
+      </>
     );
   };
 
@@ -150,37 +109,29 @@ const ProgressReport = () => {
       </StyledLayout>
 
       <StyledLayout className="flex-1 px-2">
-        <GoalSetting />
-
+        <GoalSetting/>
+        <View className="flex-row h-1/6 justify-center border">
+        {/* <View className="h-full w-full justify-between border flex-row content-start"> */}
+        <DataCard>
+          <Text>Total Impact</Text>
+          <Text>{conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}</Text>
+        </DataCard>
+        <DataCard>
+          <Text>Initial Emissions</Text>
+          <Text>{(totalEmissions).toFixed(2)} tons</Text>
+        </DataCard>
+        </View>
+        {/* </View> */}
         <Select
-        value={period}
-        style={{ marginBottom: 10 }}
-        onSelect={(index) => {
-          const selectedIndex = Array.isArray(index) ? index[0] : index; // Handle single or array
-          setPeriod(periodOptions[selectedIndex.row]); // Access the row property
-        }}
-      >
-        {periodOptions.map((option) => (
-          <SelectItem key={option} title={option} />
-        ))}
-      </Select>
+          value={period}
+          style={{ marginBottom: 10 }}
+        >
+          {["Daily", "Weekly", "Monthly"].map(option => (
+            <SelectItem key={option} title={option} onPress={() => handlePeriodChange(option)}/>
+          ))}
+        </Select>
 
-      {/* Category Selection */}
-      <Select
-        value={selectedCategory}
-        style={{ marginBottom: 10 }}
-        onSelect={(index) => {
-          const selectedIndex = Array.isArray(index) ? index[0] : index; // Handle single or array
-          const category = categoryOptions[selectedIndex.row]; // Access the row property
-          handleCategoryChange(category);
-        }}
-      >
-        {categoryOptions.map((option) => (
-          <SelectItem key={option} title={option} />
-        ))}
-      </Select>
-
-        {renderGraph()}
+        {renderStackedBarChart()}
       </StyledLayout>
     </StyledLayout>
   );
