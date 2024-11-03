@@ -37,7 +37,7 @@ export default function Index() {
         <SignUpButton
           title="Sign Up"
           onPress={() => router.push('/sign_up')}
-          variant="primary"
+          // variant="primary"
         />
       </View> 
     </ThemedView>

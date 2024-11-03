@@ -18,6 +18,7 @@ import { useUserGoalContext } from "@/contexts/UserGoalContext";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { useLogsContext } from "@/contexts/UserLogs";
 import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
+import { ActivityIndicator } from "react-native-paper";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -36,7 +37,6 @@ const Box = ({ className = "", style = "", ...props }) => (
 export default function LandingPage() {
   const router = useRouter();
   const { username, overallFootprint } = useUserContext();
-  const [impactValue, setImpactValue] = useState<number>(0);
   const fontsLoaded = useLoadFonts(); 
 
   useEffect(() => {
@@ -52,11 +52,17 @@ export default function LandingPage() {
   const {progressPercentage} = useUserGoalContext();
   const {totalImpact, currentFootprint} = useLogsContext();
   const {totalEmissions} = useContext(EmissionsDataContext);
+  const [loading, setLoading] = useState(true);
 
   let percentage = (progressPercentage * 100);
   let difference = conditionalConvertGramsToKg(convertTonsToGrams(totalEmissions - currentFootprint));
 
-  console.log(totalEmissions, totalImpact);
+    // Check if all required data is loaded
+    useEffect(() => {
+      if (fontsLoaded) {
+        setLoading(false);
+      }
+    }, [fontsLoaded, username, currentFootprint, totalEmissions]);
 
   const data = [
     {
@@ -130,6 +136,15 @@ export default function LandingPage() {
 
   if (!fontsLoaded) {
     return <View />; // Or a loading spinner
+  }
+
+  // Render loading indicator if data is still being loaded
+  if (loading) {
+    return (
+      <StyledLayout className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+      </StyledLayout>
+    );
   }
 
   return (

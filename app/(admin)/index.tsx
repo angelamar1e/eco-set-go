@@ -21,6 +21,7 @@ const AdminHome = () => {
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <Text className='text-4xl mt-2'>Welcome, admin!</Text>
+      
       <LogOutButton/>
     </View>
   );

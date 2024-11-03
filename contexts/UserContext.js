@@ -9,10 +9,10 @@ const UserContext = createContext();
 
 // Create a Provider Component
 export const UserProvider = ({ children }) => {
-    const [userUid, setUserUID] = useState(null);
+    const [userUid, setUserUID] = useState();
     const [username, setUsername] = useState('');
     const [role, setRole] = useState('');
-    const [overallFootprint, setOverallFootprint] = useState(null);
+    const [overallFootprint, setOverallFootprint] = useState(0);
     const [loading, setLoading] = useState(true);
 
     // Function to fetch user details
@@ -43,8 +43,8 @@ export const UserProvider = ({ children }) => {
     };
 
     // Function to reset user details
-    const resetUserDetails = (uid) => {
-        setUserUID(uid);
+    const resetUserDetails = () => {
+        setUserUID(null);
         setUsername('');
         setRole('');
         setOverallFootprint(null);
@@ -57,14 +57,14 @@ export const UserProvider = ({ children }) => {
                 goToInterface(role);
             } else {
                 // Reset user details when user signs out
-                resetUserDetails(null);
+                resetUserDetails();
                 setLoading(false);
             }
         });
 
         // Cleanup the subscription on unmount
         return () => unsubscribe();
-    }, []);
+    },[]);
 
     useEffect(() => {
         if (userUid) {

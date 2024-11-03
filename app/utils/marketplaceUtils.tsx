@@ -18,9 +18,12 @@ export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined) =>
 };
 
 // Function to handle editing a listing
-export const handleEditListing = async (listingId: string, newContent: string) => {
+export const handleEditListing = async (listingId: string, newContent: string, newPrice: string) => {
     try {
-        await firestore().collection('listings').doc(listingId).update({ content: newContent });
+        await firestore().collection('listings').doc(listingId).update({ 
+            content: newContent,
+            price: newPrice // Update price along with content
+        });
         console.log('Listing updated successfully!');
     } catch (error) {
         console.error('Error updating listing:', error);
@@ -37,19 +40,20 @@ export const handleDeleteListing = async (listingId: string) => {
     }
 };
 
-// Function to handle the submission of edited content
+// Function to handle the submission of edited content and price
 export const handleEditSubmit = async (
-    onEdit: (newContent: string) => Promise<void>, 
-    editedContent: string, 
+    onEdit: (newContent: string, newPrice: string) => Promise<void>, // Updated to accept newPrice
+    editedContent: string,
+    editedPrice: string, // Added parameter for edited price
     setEditModalVisible: React.Dispatch<React.SetStateAction<boolean>>, 
     setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
     setLoading(true);
     try {
-        await onEdit(editedContent);
+        await onEdit(editedContent, editedPrice); // Pass both content and price to onEdit
         setEditModalVisible(false); // Close modal after editing
     } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Could not edit the post. Please try again later.';
+        const errorMessage = error instanceof Error ? error.message : 'Could not edit the listing. Please try again later.';
         console.error(errorMessage);
     } finally {
         setLoading(false);

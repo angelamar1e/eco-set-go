@@ -20,8 +20,8 @@ export const PresetChoices: FC<PresetChoicesProps> = ({ title, isSelected, onPre
         height: 'auto',
         borderRadius: 20,
         borderWidth: 2,
-        borderColor: theme['color-primary-500'], 
-        backgroundColor: theme['color-primary-900'], 
+        borderColor: theme['color-success-700'], 
+        backgroundColor: theme['color-success-900'], 
         justifyContent: 'center', 
         alignItems: 'center',   
       }
@@ -32,7 +32,7 @@ export const PresetChoices: FC<PresetChoicesProps> = ({ title, isSelected, onPre
         paddingHorizontal: 10,
         height: 'auto',
         borderRadius: 20,
-        backgroundColor: theme['color-primary-500'], 
+        backgroundColor: theme['color-success-700'], 
         justifyContent: 'center',
         alignItems: 'center',  
       };

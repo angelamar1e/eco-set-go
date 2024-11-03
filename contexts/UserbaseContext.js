@@ -1,23 +1,47 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import { goToInterface } from '@/app/utils/utils';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import firestore from "@react-native-firebase/firestore";
 
-// Create a User Context
+// Create User Logs Context
 const UserbaseContext = createContext();
 
+// Create Provider Component
 export const UserbaseProvider = ({ children }) => {
 
-    
+    const [userCount, setUserCount] = useState(0);
 
-    return (
-        <UserbaseContext.Provider value={{ userUid, username, role, overallFootprint, loading }}>
-            {children}
-        </UserbaseContext.Provider>
-    );
-}
+    async function getUserCount() {
+        try {
+          const usersCollection = firestore().collection('users');
+          const countSnapshot = await usersCollection.count().get();
+          const userCount = countSnapshot.data().count;
+      
+          console.log('Total User Count:', userCount);
+          return userCount;
+        } catch (error) {
+          console.error('Error fetching user count:', error);
+        }
+    }
 
-// Custom hook for accessing UserContext
-export const useUserbaseContext = () => {
-    return useContext(UserbaseContext);
+  return (
+    <UserbaseContext.Provider
+      value={{
+        userLogs,
+        loading,
+        totalImpact,
+        currentFootprint,
+        dailyImpact,
+        weeklyImpact,
+        monthlyImpact,
+        stackedChartData,
+        handlePeriodChange, // Expose the handler to components that need it
+      }}
+    >
+      {children}
+    </UserbaseContext.Provider>
+  );
+};
+
+// Create a custom hook for easier access
+export const useLogsContext = () => {
+  return useContext(UserbaseContext);
 };
