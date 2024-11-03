@@ -23,8 +23,8 @@ const EcoActionsList = () => {
     try {
       let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
 
-      // Apply category filter if it's not "ALL"
-      if (category !== 'ALL') {
+      // Apply category filter if it's not "ALL" and not "Getting Started"
+      if (category !== 'ALL' && category !== 'Getting Started') {
         query = query.where('category', '==', category);
       }
 
@@ -32,7 +32,7 @@ const EcoActionsList = () => {
       const data = ecoActionsCollection.docs.map((doc) => ({
         id: doc.id,
         title: doc.data().title,
-        category: doc.data().category, // Ensure this field is included
+        category: doc.data().category,
       })) as EcoAction[];
 
       setEcoActions(data);
@@ -53,6 +53,24 @@ const EcoActionsList = () => {
     >
       <Text category='s1'>{item.title}</Text>
     </StyledCard>
+  );
+
+  const renderGettingStartedItems = () => (
+    <>
+      <StyledCard
+        onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
+        className='m-2 h-[150px] bg-transparent justify-end'
+      >
+        <Text category='s1'>Introduction</Text>
+      </StyledCard>
+
+      <StyledCard
+        onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
+        className='m-2 h-[150px] bg-transparent justify-end'
+      >
+        <Text category='s1'>Goal Setting</Text>
+      </StyledCard>
+    </>
   );
 
   const fontsLoaded = useLoadFonts(); 
@@ -79,12 +97,18 @@ const EcoActionsList = () => {
           />
         </StyledLayout>
 
-        <FlatList
-          className="mt-2"
-          data={ecoActions}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        {filter === 'Getting Started' ? (
+          <StyledLayout className="mt-2">
+            {renderGettingStartedItems()}
+          </StyledLayout>
+        ) : (
+          <FlatList
+            className="mt-2"
+            data={ecoActions}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </StyledLayout>
     </StyledLayout>
   );
