@@ -1,22 +1,13 @@
 import React, { useContext, useState } from "react";
 import { View, Dimensions } from "react-native";
-import { BarChart, StackedBarChart } from "react-native-chart-kit";
+import { StackedBarChart } from "react-native-chart-kit";
 import { styled } from "nativewind";
-// import Card from "react-native-paper";
 import { Text, Layout, Select, SelectItem, Card } from "@ui-kitten/components";
 import { useLogsContext } from "@/contexts/UserLogs";
 import { myTheme } from "@/constants/custom-theme";
 import GoalSetting from "@/app/components/(tabs)/Progress Monitoring/GoalSetting";
 import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
-import { set } from "@react-native-firebase/database";
-
-// Define types for report data
-type ReportData = {
-  Daily: Record<string, { Food: number; Transportation: number; Electricity: number }>;
-  Weekly: Record<string, { Food: number; Transportation: number; Electricity: number }>;
-  Monthly: Record<string, { Food: number; Transportation: number; Electricity: number }>;
-};
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -41,24 +32,22 @@ const ProgressReport = () => {
     stackedChartData,
     handlePeriodChange
   } = useLogsContext();
-  const {totalEmissions} = useContext(EmissionsDataContext);
+  const { totalEmissions } = useContext(EmissionsDataContext);
 
-  // Create a reportData object
-  const reportData: ReportData = {
-    Daily: dailyImpact,
-    Weekly: weeklyImpact,
-    Monthly: monthlyImpact,
+  // Helper function to validate stackedChartData
+  const isStackedChartDataValid = () => {
+    return (
+      stackedChartData &&
+      stackedChartData.labels?.length > 0 &&
+      stackedChartData.data?.every((dataset: any) => dataset.length > 0)
+    );
   };
 
-  // Render Stacked Bar Chart
+  // Render Stacked Bar Chart only if data is valid
   const renderStackedBarChart = () => {
-    const currentReport = reportData[period];
-
-    // Prepare data for each category (Food, Transportation, Electricity)
-    const labels = Object.keys(currentReport);
-    const foodData = labels.map(label => currentReport[label]?.Food || 0);
-    const transportData = labels.map(label => currentReport[label]?.Transportation || 0);
-    const electricityData = labels.map(label => currentReport[label]?.Electricity || 0);
+    if (!isStackedChartDataValid()) {
+      return <StyledText className="text-center mt-4">No data available for the selected period.</StyledText>;
+    }
 
     const chartConfig = {
       backgroundColor: "#ffffff",
@@ -67,32 +56,24 @@ const ProgressReport = () => {
       color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
       labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
       barPercentage: 0.5,
-      decimalPlaces: 0, // Optional
+      decimalPlaces: 0,
     };
 
     return (
-      <>
-      <View className="">
-        <View className="rounded-3xl  border">
-          
+      <View className="items-center">
+        <View className="items-center rounded-3xl bg-gray-100 w-11/12">
+          <StackedBarChart
+            data={stackedChartData}
+            width={Dimensions.get("window").width - 60}
+            height={220}
+            chartConfig={chartConfig}
+            style={{ borderRadius: 16 }}
+            fromZero
+            hideLegend
+            withHorizontalLabels={false}
+          />
         </View>
       </View>
-      <View className="items-center">
-      <View className="items-center rounded-3xl  bg-gray-100 w-11/12">
-        <StackedBarChart
-          data={stackedChartData}
-          width={Dimensions.get("window").width - 60}
-          height={220}
-          chartConfig={chartConfig}
-          style={{ borderRadius: 16 }}
-          fromZero
-          hideLegend
-          withHorizontalLabels={false}
-
-        />
-      </View>
-      </View>
-      </>
     );
   };
 
@@ -113,24 +94,17 @@ const ProgressReport = () => {
       <StyledLayout className="flex-1 px-2">
         <GoalSetting/>
         <View className="flex-row h-1/6 justify-center border">
-        {/* <View className="h-full w-full justify-between border flex-row content-start"> */}
-        <DataCard>
-          <Text>Total Impact</Text>
-          <Text>{conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))} of CO₂e</Text>
-        </DataCard>
-        <DataCard>
-          <Text>Initial Emissions</Text>
-          <Text>{(totalEmissions).toFixed(2)} tons of CO₂e</Text>
-          <Text></Text>
-          <Text>
-            Current Emissions
-          </Text>
-          <Text>
-            {(currentFootprint).toFixed(2)} tons of CO₂e
-          </Text>
-        </DataCard>
+          <DataCard>
+            <Text>Total Impact</Text>
+            <Text>{conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))} of CO₂e</Text>
+          </DataCard>
+          <DataCard>
+            <Text>Initial Emissions</Text>
+            <Text>{(totalEmissions).toFixed(2)} tons of CO₂e</Text>
+            <Text>Current Emissions</Text>
+            <Text>{(currentFootprint).toFixed(2)} tons of CO₂e</Text>
+          </DataCard>
         </View>
-        {/* </View> */}
         <Select
           value={period}
           style={{ marginBottom: 10 }}
@@ -138,7 +112,7 @@ const ProgressReport = () => {
           {["Daily", "Weekly", "Monthly"].map(option => (
             <SelectItem key={option} title={option} onPress={() => {
               handlePeriodChange(option);
-              setPeriod(option as "Daily" | "Weekly" | "Monthly")
+              setPeriod(option as "Daily" | "Weekly" | "Monthly");
             }}/>
           ))}
         </Select>

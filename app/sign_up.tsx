@@ -100,23 +100,27 @@ export default function SignUp() {
         food_footprint: 0,
         transportation_footprint: 0,
         electricity_footprint: 0,
-        overall_footprint: 2.27 // initially set to the national average
+        overall_footprint: 0 // initially set to the national average
       });
+
+      
 
       firestore().collection('initial_footprint').doc(userUid).set({
         food_footprint: 0,
         transportation_footprint: 0,
         electricity_footprint: 0,
-        overall_footprint: 2.27 // initially set to the national average
+        overall_footprint: 0 // initially set to the national average
       });
 
       firestore().collection('daily_logs').doc(userUid).set({
-        action_ids: []
       })
 
       firestore().collection('user_logs').doc(userUid).set({
-        [current_date]: []
       })
+
+      firestore().collection('goals').doc(userUid).set({
+      });
+
     }
     catch(error){
       console.error(error);
@@ -211,7 +215,9 @@ export default function SignUp() {
           />
         </StyledLayout>
 
-        <SignUpButton title="Sign up" onPress={handleSignUp} />
+        <Button style={{ marginVertical: 12, borderRadius: 12, }} onPress={handleSignUp}>
+          Log In
+        </Button>
 
         <StyledLayout className="flex-row items-center justify-center">
           <ThemedText>Already have an account?</ThemedText>

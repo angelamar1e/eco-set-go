@@ -111,7 +111,7 @@ export const EmissionsProvider = ({ children }) => {
 
   useEffect(() => {
     initializeData();
-  }, []);
+  }, [userUid]);
 
 // Calculate total emissions after all individual emissions data has been initialized
 useEffect(() => {
@@ -743,7 +743,7 @@ useEffect(() => {
 
         try {
           await firestore()
-            .collection("current_footprint")
+            .collection("initial_footprint")
             .doc(userUid)
             .set({ overall_footprint: newFootprint }, { merge: true });
         } catch (error) {
