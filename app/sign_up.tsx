@@ -44,11 +44,10 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
-  const {userUid, role} = useUserContext();
+  const {userUid, loading} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -100,14 +99,14 @@ export default function SignUp() {
         food_footprint: 0,
         transportation_footprint: 0,
         electricity_footprint: 0,
-        overall_footprint: 2.27 // initially set to the national average
+        overall_footprint: 0
       });
 
       firestore().collection('initial_footprint').doc(userUid).set({
         food_footprint: 0,
         transportation_footprint: 0,
         electricity_footprint: 0,
-        overall_footprint: 2.27 // initially set to the national average
+        overall_footprint: 0
       });
 
       firestore().collection('daily_logs').doc(userUid).set({
@@ -115,7 +114,6 @@ export default function SignUp() {
       })
 
       firestore().collection('user_logs').doc(userUid).set({
-        [current_date]: []
       })
     }
     catch(error){
@@ -124,7 +122,6 @@ export default function SignUp() {
   }
 
   const handleSignUp = async () => {
-    setLoading(true);
     if (email && password){
       try {
           const response = await auth().createUserWithEmailAndPassword(email, password);
@@ -134,11 +131,13 @@ export default function SignUp() {
           handleError(error);
       }
       finally{
-        goToInterface(role);
-        setLoading(false);
       }
     }
   };
+
+  if (!loading){
+    goToInterface("user");
+  }
 
   const handleError = (error: any) => {
     let message = 'An error occurred. Please try again.';
@@ -211,8 +210,9 @@ export default function SignUp() {
           />
         </StyledLayout>
 
-        <SignUpButton title="Sign up" onPress={handleSignUp} />
-
+        <Button style={{ marginVertical: 12, borderRadius: 12, }} onPress={handleSignUp}>
+          Sign Up
+        </Button>
         <StyledLayout className="flex-row items-center justify-center">
           <ThemedText>Already have an account?</ThemedText>
           <Button appearance="ghost" 

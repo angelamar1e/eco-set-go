@@ -97,7 +97,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     calculateProgressImpact();
-  }, [userLogs, latestGoal]);
+  }, [userUid, userLogs, latestGoal]);
 
   const convertTimestampToString = (
     startTimestamp: FirebaseFirestoreTypes.Timestamp,
@@ -145,7 +145,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (latestGoal) {
       updateGoalStatus();
     }
-  }, [isComplete, latestGoal]);
+  }, [userUid, isComplete, latestGoal]);
 
   const submitNewGoal = () => {
     if (latestGoal?.status === "Completed" || !latestGoal) {

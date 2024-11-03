@@ -127,25 +127,25 @@ export const UserLogsProvider = ({ children }) => {
     setWeeklyImpact(weekly);
     setMonthlyImpact(monthly);
 
-  }, [userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
+  }, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
 
   useEffect(() => {
-    if (totalEmissions, totalImpact) {
+    if (totalEmissions && totalImpact || totalEmissions && totalImpact === 0) {
       const footprint = totalEmissions - totalImpact;
       const food = foodEmissions - foodImpact;
       const transpo = transportationEmissions - transportationImpact;
       const elec = electricityEmissions - electricityImpact;
 
-      setCurrentFootprint(footprint);
+      setCurrentFootprint(footprint ?? totalEmissions);
 
       firestore().collection('current_footprint').doc(userUid).set({
-        overall_footprint: footprint,
-        food_footprint: food,
-        electricity_footprint: elec,
-        transportation_footprint: transpo
+        overall_footprint: footprint ?? totalEmissions,
+        food_footprint: food ?? foodEmissions,
+        electricity_footprint: elec ?? transportationEmissions,
+        transportation_footprint: transpo ?? electricityEmissions          
       }, {merge: true});
     }
-  }, [totalEmissions, totalImpact, userLogs])
+  }, [userUid, totalEmissions, totalImpact, userLogs])
 
   // Get week string for weekly impacts
   const getWeekString = (date) => {

@@ -52,14 +52,6 @@ const ProgressReport = () => {
 
   // Render Stacked Bar Chart
   const renderStackedBarChart = () => {
-    const currentReport = reportData[period];
-
-    // Prepare data for each category (Food, Transportation, Electricity)
-    const labels = Object.keys(currentReport);
-    const foodData = labels.map(label => currentReport[label]?.Food || 0);
-    const transportData = labels.map(label => currentReport[label]?.Transportation || 0);
-    const electricityData = labels.map(label => currentReport[label]?.Electricity || 0);
-
     const chartConfig = {
       backgroundColor: "#ffffff",
       backgroundGradientFrom: "#f4f5f2",
