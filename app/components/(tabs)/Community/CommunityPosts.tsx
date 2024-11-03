@@ -4,13 +4,14 @@ import PostCard from './PostCard';
 import { CreatePost } from './CreatePost';
 import EcoNewsCard from './EcoNewsCard';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import { handleEditPost, handleDeletePost } from '@/app/utils/communityUtils'; // Import the utility functions
+import { handleEditPost, handleDeletePost } from '@/app/utils/communityUtils';
 
 interface Post {
   id: string;
   content: string;
   userName: string;
   timestamp: Timestamp;
+  
 }
 
 interface EcoNewsItem {
@@ -21,9 +22,18 @@ interface EcoNewsItem {
   link: string;
 }
 
+interface Comment {
+  id: string;
+  postId: string;
+  userName: string;
+  timestamp: Timestamp;
+  content: string;
+}
+
 const CommunityPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [ecoNews, setEcoNews] = useState<EcoNewsItem[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     const unsubscribePosts = firestore()
@@ -47,9 +57,20 @@ const CommunityPosts: React.FC = () => {
         setEcoNews(newsItems);
       });
 
+    const unsubscribeComments = firestore()
+      .collection('comments')
+      .onSnapshot(snapshot => {
+        const fetchedComments = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Comment[];
+        setComments(fetchedComments);
+      });
+
     return () => {
       unsubscribePosts();
       unsubscribeEcoNews();
+      unsubscribeComments();
     };
   }, []);
 
@@ -59,12 +80,13 @@ const CommunityPosts: React.FC = () => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <PostCard
-          id={item.id} // Pass the ID
+          id={item.id}
           content={item.content}
           userName={item.userName}
-          timestamp={item.timestamp} 
-          onEdit={(newContent) => handleEditPost(item.id, newContent)} // Pass the edit handler
-          onDelete={() => handleDeletePost(item.id)} // Pass the delete handler
+          timestamp={item.timestamp}
+          onEdit={(newContent) => handleEditPost(item.id, newContent)}
+          onDelete={() => handleDeletePost(item.id)}
+          comments={comments.filter(comment => comment.postId === item.id)} // Filter comments by postId
         />
       )}
       showsVerticalScrollIndicator={false}
@@ -72,7 +94,7 @@ const CommunityPosts: React.FC = () => {
         <>
           <CreatePost />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-2">
-            {ecoNews.length > 0 ? ( // Check if ecoNews has items
+            {ecoNews.length > 0 ? (
               ecoNews.map((newsItem) => (
                 <EcoNewsCard
                   key={newsItem.id}
@@ -83,7 +105,7 @@ const CommunityPosts: React.FC = () => {
                 />
               ))
             ) : (
-              <Text>No eco news available.</Text> // Optional: Display a message if no news is available
+              <Text>No eco news available.</Text>
             )}
           </ScrollView>
         </>

@@ -5,6 +5,9 @@ import { TemplateProps } from "@/types/QuizProps";
 import { styled } from "nativewind";
 import { Layout, Text } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
+import TipsModal from "./tips";
+import { TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -14,7 +17,10 @@ const RadioTemplate: FC<TemplateProps> = ({
   question,
   choices,
   defaultValue,
-  onAnswer
+  onAnswer,
+  isModalVisible,
+  setModalVisible,
+  tips,
 }) => {
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
   const [answerText, setAnswerText] = useState<string>("");
@@ -27,12 +33,20 @@ const RadioTemplate: FC<TemplateProps> = ({
 
   return (
       <QuestionContainer>
-        <StyledText category="label" className="mb-3 text-sm" style={{ color: myTheme['color-primary-600']}}>
+        <StyledText className="text-sm mb-3" style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-Medium' }}>
           {category}
         </StyledText>
-        <StyledText category="p1" className="text-xl mb-3">
-          {question}
-        </StyledText>
+
+        <View className="flex-row justify-between">
+          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
+            {question} 
+          </StyledText>
+          {tips && tips.length > 0 && (
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* Radio Choices */}
         <StyledLayout className="flex-wrap flex-row justify-center mt-10 mb-3">
@@ -49,6 +63,14 @@ const RadioTemplate: FC<TemplateProps> = ({
             <Text> Loading... </Text>
           )}
         </StyledLayout>
+        
+        {tips && tips.length > 0 && (
+          <TipsModal
+            visible={isModalVisible}
+            onClose={() => setModalVisible(false)}
+            tips={tips}
+          />
+        )}
       </QuestionContainer>
   );
 };

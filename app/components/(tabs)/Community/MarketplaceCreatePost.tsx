@@ -29,18 +29,14 @@ export const CreateListing = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    const fetchUserUid = async () => {
-      const currentUser = auth().currentUser;
-      if (currentUser) {
-        fetchUserName(currentUser.uid);
-      }
-    };
-
-    fetchUserUid();
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      fetchUserName(currentUser.uid);
+    }
   }, []);
 
   const handleListingSubmit = async () => {
-    if (description.trim().length > 0 && price.trim().length > 0 && userName) {
+    if (description && price && userName) {
       setLoading(true);
       try {
         await firestore().collection('listings').add({
@@ -62,37 +58,31 @@ export const CreateListing = (): React.ReactElement => {
   };
 
   return (
-    <StyledLayout className="mt-12 mb-2 ml-2 mr-2 p-3 rounded-lg border border-gray-200">
-      <StyledLayout className="items-center">
-        <StyledInput
-          className="mt-2 mb-2 flex-1 rounded-lg"
-          placeholder="Item description... 🏷️"
-          value={description}
-          onChangeText={setDescription}
-          multiline={true}
-        />
-        <StyledInput
-          className="mt-2 mb-2 flex-1 rounded-lg"
-          placeholder="Price... 💰"
-          value={price}
-          keyboardType="numeric"
-          onChangeText={setPrice}
-        />
-      </StyledLayout>
-
+    <StyledLayout className="h-100 mt-10 mb-2 ml-2 mr-2 p-3 rounded-lg border border-gray-200">
+      <StyledInput
+        className="mt-2 mb-2 rounded-lg"
+        placeholder="Item description... 🏷️"
+        value={description}
+        onChangeText={setDescription}
+        multiline={true}
+      />
+      <StyledInput
+        className="mt-2 mb-2 rounded-lg"
+        placeholder="Price... 💰"
+        value={price}
+        keyboardType="numeric"
+        onChangeText={setPrice}
+      />
       <StyledLayout className="flex-row justify-between">
-        <StyledLayout className="flex-row items-center">
-          <Pressable onPress={() => console.log('Attach image')}>
-            <Ionicons size={22} name="image-outline" color="#34C759" />
-          </Pressable>
-        </StyledLayout>
-        
+        <Pressable onPress={() => console.log('Attach image')}>
+          <Ionicons size={22} name="image-outline" color="#34C759" />
+        </Pressable>
         <StyledButton
           className="ml-1 rounded-full"
           status="success"
           size="small"
           appearance="filled"
-          disabled={description.length === 0 || price.length === 0 || loading}
+          disabled={!description || !price || loading}
           onPress={handleListingSubmit}
         >
           {loading ? 'Listing...' : 'List'}

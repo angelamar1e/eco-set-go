@@ -1,58 +1,104 @@
-import React, { useState } from 'react';
-import { FlatList, View } from 'react-native';
-import { Card, Text, Layout, Button } from '@ui-kitten/components';
+import React, { useEffect, useState } from 'react';
+import { FlatList } from 'react-native';
+import ReflectionCard from './Reflection';
+import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
+import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import { Swipeable } from 'react-native-gesture-handler';
-import { Ionicons } from '@expo/vector-icons';
+import FilterDate from './FilterDate';
 
 interface Reflection {
   id: string;
-  title: string;
   content: string;
+  date: Timestamp;
+  uid: string;
 }
 
-const ReflectionsList = () => {
-  const [reflections, setReflections] = useState<Reflection[]>([
-    { id: '1', title: 'August 7, 2024', content: 'Today, I learned about the importance of reducing plastic waste and its impact on the environment.' },
-    { id: '2', title: 'August 8, 2024', content: 'I started using reusable bags and refused single-use plastic bags at the store.' },
-  ]);
+const StyledLayout = styled(Layout);
+const StyledText = styled(Text);
 
-  const StyledCard = styled(Card);
-  const StyledText = styled(Text);
-  const StyledLayout = styled(Layout);
+const ReflectionList: React.FC = () => {
+  const [reflections, setReflections] = useState<Reflection[]>([]);
+  const [filteredReflections, setFilteredReflections] = useState<Reflection[]>([]);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [filterActive, setFilterActive] = useState(false);
 
-  const handleDelete = (id: string) => {
-    setReflections((prevReflections) => 
-      prevReflections.filter((reflection) => reflection.id !== id)
-    );
+  useEffect(() => {
+    const unsubscribeReflections = firestore()
+      .collection('reflections')
+      .orderBy('date', 'desc')
+      .onSnapshot(snapshot => {
+        const fetchedReflections = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Reflection[];
+
+        setReflections(fetchedReflections);
+      });
+
+    return () => {
+      unsubscribeReflections();
+    };
+  }, []);
+
+  useEffect(() => {
+    applyDateFilter(reflections);
+  }, [startDate, endDate, filterActive, reflections]);  
+
+  const applyDateFilter = (fetchedReflections: Reflection[]) => {
+    if (filterActive && startDate && endDate) {
+      const filtered = fetchedReflections.filter(reflection => {
+        if (reflection.date && typeof reflection.date.toDate === 'function') {
+          const reflectionDate = reflection.date.toDate();
+          return reflectionDate >= startDate && reflectionDate <= endDate;
+        }
+        return false; 
+      });
+      setFilteredReflections(filtered);
+    } else {
+      setFilteredReflections(fetchedReflections); 
+    }
   };
 
-  const renderItem = ({ item }: { item: Reflection }) => (
-    <Swipeable
-      renderRightActions={() => (
-        <View className="flex items-center justify-center mr-4 ml-2">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>
-      )}
-    >
-      <StyledLayout className="m-1 p-1">
-        <StyledCard className='rounded-lg'>
-          <StyledText category="h6">{item.title}</StyledText>
-          <StyledText category="p2">{item.content}</StyledText>
-        </StyledCard>
-      </StyledLayout>
-    </Swipeable>
-  );
+  const handleDateChange = (start: Date | null, end: Date | null) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  const handleToggleFilter = (isClicked: boolean) => {
+    setFilterActive(isClicked);
+    if (!isClicked) {
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
 
   return (
-    <Layout>
+    <StyledLayout style={{ position: 'relative' }}>
+      <StyledLayout className='flex-row justify-between' style={{ zIndex: 1 }}>
+        <StyledText className="m-2 font-bold" category='s1'>Reflection</StyledText>
+        <FilterDate onToggle={handleToggleFilter} onDateChange={handleDateChange} />
+      </StyledLayout>
+      
       <FlatList
-        data={reflections}
-        renderItem={renderItem}
+        data={filteredReflections}
         keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ReflectionCard
+            id={item.id}
+            content={item.content}
+            date={item.date}
+            uid={item.uid}
+            onEdit={(newContent) => editReflection(item.id, newContent)}
+            onDelete={() => deleteReflection(item.id)}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+        style={{ zIndex: 0 }} // Ensure the FlatList has a lower zIndex
       />
-    </Layout>
+    </StyledLayout>
   );
 };
 
-export default ReflectionsList;
+export default ReflectionList;
