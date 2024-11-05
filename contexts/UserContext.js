@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth'; // Firebase Auth
 import firestore from '@react-native-firebase/firestore'; // Firebase Firestore
 import { router } from 'expo-router';
 import { goToInterface } from '@/app/utils/utils';
+import moment from 'moment';
 
 // Create a User Context
 const UserContext = createContext();
@@ -14,6 +15,7 @@ export const UserProvider = ({ children }) => {
     const [role, setRole] = useState('');
     const [overallFootprint, setOverallFootprint] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [joinDate, setJoinDate] = useState('');
 
     // Function to fetch user details
     const fetchUserDetails = async (uid) => {
@@ -21,25 +23,33 @@ export const UserProvider = ({ children }) => {
         try {
             // Fetch user document from Firestore once
             const userDoc = await firestore().collection('users').doc(uid).get();
-
+    
             if (userDoc.exists) {
-                const { username, role } = userDoc.data(); // Destructure username and role from the fetched document
-
+                const { username, role, created_at } = userDoc.data();
+                
                 // Set individual user details states
                 setUserUID(uid);
                 setUsername(username || ''); // Fallback to an empty string if undefined
                 setRole(role || ''); // Fallback to an empty string if undefined
+                
+                if (created_at) {
+                    const parsedDate = moment(created_at, "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ").format("YYYY-MM-DD");
+                    setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
+                } else {
+                    setJoinDate('');
+                }
             } else {
                 console.log("User document does not exist");
-                resetUserDetails(uid);
+                resetUserDetails();
             }
         } catch (error) {
             console.error("Error fetching user details:", error);
             // Optionally reset to defaults on error
-            resetUserDetails(null);
+            resetUserDetails();
         } finally {
             setLoading(false); // Set loading to false after the operation
         }
+        
     };
 
     // Function to reset user details
@@ -84,7 +94,7 @@ export const UserProvider = ({ children }) => {
     
 
     return (
-        <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading, setLoading }}>
+        <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading, setLoading, joinDate }}>
             {children}
         </UserContext.Provider>
     );
