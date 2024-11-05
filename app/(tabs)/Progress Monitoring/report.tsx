@@ -53,12 +53,16 @@ const ProgressReport = () => {
     light: {
       background: "#f4f5f2",
       text: "#000000",
-      bars: ["#00A3E0", "#FF7A9B", "#FFD700"],
+      //bars: ["#00A3E0", "#FF7A9B", "#FFD700"],
+      //bars: ["#F5ED18", "#62A9FF", "#FF7A6B"],
+      bars: ["#80D680", "#218838", "#185724"]
     },
     dark: {
       background: "#f4f5f2",
       text: "#ffffff",
-      bars: ["#0096D6", "#FF6A85", "#FFC300"],
+      //bars: ["#0096D6", "#FF6A85", "#FFC300"],
+      //bars: ["#F2EE18", "#4294FF", "#FF796B"],
+      bars: ["#73F29C", "#13B879", "#05665E"]
     },
   };
 
@@ -71,7 +75,7 @@ const ProgressReport = () => {
 
   const renderStackedBarChart = () => {
     const currentColors = chartColors[colorScheme];
-
+  
     const chartConfig = {
       backgroundColor: currentColors.background,
       backgroundGradientFrom: currentColors.background,
@@ -81,22 +85,27 @@ const ProgressReport = () => {
       barPercentage: 0.5,
       decimalPlaces: 0,
     };
-
+  
     const legendData = [
-      { name: "Transportation", color: currentColors.bars[1] },
       { name: "Food", color: currentColors.bars[0] },
+      { name: "Transportation", color: currentColors.bars[1] },
       { name: "Electricity", color: currentColors.bars[2] },
     ];
+  
     return (
-      <>
-       <View className="items-center justify-center">
+      <View className="items-center justify-center">
         <View className="rounded-3xl">
           <StackedBarChart
-            data={stackedChartData}
+            data={{
+              labels: stackedChartData.labels,
+              data: stackedChartData.data,
+              barColors: currentColors.bars,
+              legend: ["Food", "Transportation", "Electricity"],
+            }}
             width={Dimensions.get("window").width - 60}
             height={220}
             chartConfig={chartConfig}
-            style={{ borderRadius: 16, }}
+            style={{ borderRadius: 16 }}
             fromZero
             hideLegend
             withHorizontalLabels={false}
@@ -113,10 +122,9 @@ const ProgressReport = () => {
           ))}
         </View>
       </View>
-      </>
     );
   };
-
+  
   return (
     <StyledLayout className="flex-1">
       <StyledLayout
@@ -174,23 +182,27 @@ const ProgressReport = () => {
                 textAlign: 'center', 
                 justifyContent: 'center', 
                 fontSize: 20, 
-                color: myTheme['color-success-800'], 
+                color: myTheme['color-success-900'], 
               }}
             >
               {(totalEmissions).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>{"\n"}of CO₂e</Text></Text>
-            <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}>Initial Emissions</Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}>Initial 
+              <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}> Emissions</Text>
+            </Text>
             <Text></Text>
             <Text className="" 
               style={{ 
                 fontFamily: 'Poppins-Bold', 
                 textAlign: 'center', 
                 justifyContent: 'center', 
-                fontSize: 20, 
-                color: myTheme['color-success-800'] 
+                fontSize: 24, 
+                color: myTheme['color-success-700'], 
               }}
             >
-              {(currentFootprint).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>{"\n"}of CO2e per year</Text></Text>
-            <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize: 12, color: myTheme['color-basic-600']}}>Current Emissions</Text>
+              {(currentFootprint).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}>{"\n"}of CO₂e</Text></Text>
+              <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:13, color: myTheme['color-basic-600']}}>Current 
+                <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:13, color: myTheme['color-basic-600']}}> Emissions</Text>
+              </Text>
           </StyledCard>
         </View>
         {/* </View> */}

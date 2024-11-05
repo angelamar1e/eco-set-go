@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { styled } from "nativewind";
 import { Text, Layout, Card, Datepicker, Input, ProgressBar } from "@ui-kitten/components";
-import { Ionicons } from "@expo/vector-icons";
+import {  MaterialCommunityIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useUserGoalContext } from "@/contexts/UserGoalContext";
 import { format } from "date-fns";
@@ -57,7 +57,7 @@ const GoalSetting: React.FC = () => {
               }}
               onPress={toggleEdit}
             >
-              <Ionicons name="pencil-outline" size={18} color="#8F9BB3" />
+              <MaterialCommunityIcons name="calendar-edit" size={18} color="#8F9BB3" />
             </TouchableOpacity>
           </View>
 
@@ -68,8 +68,8 @@ const GoalSetting: React.FC = () => {
                   <StyledProgressBar progress={progressPercentage} className="w-full rounded-3xl h-3 mb-1" />
                 </View>
                 <View className="flex-row justify-between">
-                  <StyledText className="text-sm" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-600']}}>{conditionalConvertGramsToKg(progressImpact)}</StyledText>
-                  <StyledText className="text-sm" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-600']}}>{conditionalConvertGramsToKg(latestGoal.target)}</StyledText>
+                  <StyledText className="text-20" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700']}}>{conditionalConvertGramsToKg(progressImpact)}</StyledText>
+                  <StyledText className="text-20" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}>{conditionalConvertGramsToKg(latestGoal.target)}</StyledText>
                 </View>
                 <View className="flex-row items-center justify-between mt-3">
                   <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟢 Started on {format(latestGoal.start_date.toDate(), "PP")}</StyledText>
@@ -97,12 +97,12 @@ const GoalSetting: React.FC = () => {
               </View>
               <View className="flex-row w-full justify-end">
               <TouchableOpacity
-                className="mt-3 border rounded-full p-2 px-4"
+                className="mt-3 border rounded-full p-1 px-4"
                 style={{ borderColor:  myTheme['color-success-700'], backgroundColor: myTheme['color-success-700'] }}
                 onPress={submitNewGoal}
                 
               >
-                <StyledText className="" style={{ color: 'white'}}>Submit</StyledText>
+                <StyledText className="" style={{ color: 'white', fontFamily: 'Poppins-Regular'}}>Submit</StyledText>
               </TouchableOpacity>
               </View>
             </View>
