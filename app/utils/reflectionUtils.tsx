@@ -9,10 +9,13 @@ interface Reflection {
   uid: string;
 }
 
-// Fetch reflections
-export const fetchReflections = async (): Promise<Reflection[]> => {
-  const reflectionsRef = firestore().collection('reflections');
-  const snapshot = await reflectionsRef.get(); // Fetch all reflections
+// Fetch reflections for the logged-in user
+export const fetchReflections = async (userUid: string): Promise<Reflection[]> => {
+  const reflectionsRef = firestore()
+    .collection('reflections')
+    .where('uid', '==', userUid); // Only fetch reflections with matching UID
+
+  const snapshot = await reflectionsRef.get();
 
   return snapshot.docs.map(doc => ({
     id: doc.id,
@@ -36,7 +39,6 @@ export const deleteReflection = async (id: string): Promise<void> => {
 export const editReflection = async (id: string, newContent: string): Promise<void> => {
   await firestore().collection('reflections').doc(id).update({ content: newContent });
 };
-
 
 // Confirm delete reflection
 export const confirmDeleteReflection = async (id: string): Promise<void> => {

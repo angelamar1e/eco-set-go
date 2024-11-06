@@ -44,20 +44,26 @@ const ReflectionList: React.FC = () => {
 
   useEffect(() => {
     applyDateFilter(reflections);
-  }, [startDate, endDate, filterActive, reflections]);  
+  }, [startDate, endDate, filterActive, reflections]);
 
   const applyDateFilter = (fetchedReflections: Reflection[]) => {
     if (filterActive && startDate && endDate) {
+      if (startDate > endDate) {
+        alert("Start date cannot be later than end date.");
+        return;
+      }
+
       const filtered = fetchedReflections.filter(reflection => {
         if (reflection.date && typeof reflection.date.toDate === 'function') {
           const reflectionDate = reflection.date.toDate();
           return reflectionDate >= startDate && reflectionDate <= endDate;
         }
-        return false; 
+        return false;
       });
+
       setFilteredReflections(filtered);
     } else {
-      setFilteredReflections(fetchedReflections); 
+      setFilteredReflections(fetchedReflections);
     }
   };
 
@@ -68,35 +74,50 @@ const ReflectionList: React.FC = () => {
 
   const handleToggleFilter = (isClicked: boolean) => {
     setFilterActive(isClicked);
-    if (!isClicked) {
-      setStartDate(null);
-      setEndDate(null);
-    }
   };
+
+  const handleResetFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setFilterActive(false); // Deactivates filter without resetting automatically
+  };
+
+  const renderEmptyState = () => (
+    <StyledLayout className="items-center justify-center">
+      <StyledText category="s1">No reflections found.</StyledText>
+    </StyledLayout>
+  );
 
   return (
     <StyledLayout style={{ position: 'relative' }}>
-      <StyledLayout className='flex-row justify-between' style={{ zIndex: 1 }}>
-        <StyledText className="m-2 font-bold" category='s1'>Reflection</StyledText>
+      <StyledLayout className="flex-row justify-between" style={{ zIndex: 1 }}>
+        <StyledText className="m-2 font-bold" category="s1">
+          Reflection
+        </StyledText>
         <FilterDate onToggle={handleToggleFilter} onDateChange={handleDateChange} />
       </StyledLayout>
-      
-      <FlatList
-        data={filteredReflections}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ReflectionCard
-            id={item.id}
-            content={item.content}
-            date={item.date}
-            uid={item.uid}
-            onEdit={(newContent) => editReflection(item.id, newContent)}
-            onDelete={() => deleteReflection(item.id)}
-          />
-        )}
-        showsVerticalScrollIndicator={false}
-        style={{ zIndex: 0 }} // Ensure the FlatList has a lower zIndex
-      />
+
+      {/* Display empty state if no reflections and no filter */}
+      {filteredReflections.length === 0 && !filterActive ? (
+        renderEmptyState()
+      ) : (
+        <FlatList
+          data={filteredReflections.length > 0 ? filteredReflections : reflections}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <ReflectionCard
+              id={item.id}
+              content={item.content}
+              date={item.date}
+              uid={item.uid}
+              onEdit={newContent => editReflection(item.id, newContent)}
+              onDelete={() => deleteReflection(item.id)}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          style={{ zIndex: 0 }}
+        />
+      )}
     </StyledLayout>
   );
 };
