@@ -4,6 +4,8 @@ import { Layout, Input, Button, Text } from "@ui-kitten/components";
 import { useRouter } from "expo-router";
 import firestore from '@react-native-firebase/firestore';
 import { useUserContext } from "@/contexts/UserContext";
+import { SafeAreaView } from "react-native";
+import { myTheme } from "@/constants/custom-theme";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -48,35 +50,46 @@ const UpdateEmail = () => {
   }, []);
 
   return (
-    <StyledLayout className="flex-1 mt-4 p-2">
-      <StyledLayout className="flex flex-row justify-between p-2 items-center">
-        <StyledButton 
-          appearance="ghost" 
-          onPress={() => router.back()}
-          className="m-1 p-1 rounded-full">
-          Cancel
-        </StyledButton>
-        <StyledText category="h6">Update Email Address</StyledText>
-        <StyledButton 
-          appearance="ghost" 
-          onPress={handleUpdate}
-          className="m-1 p-1 rounded-full">
-          Done
-        </StyledButton>
-      </StyledLayout>
+    <SafeAreaView className="flex-1 pt-6">
+      <StyledLayout className="flex-1 mt-4 p-2">
+        <StyledLayout className="flex flex-row justify-between p-2 items-center">
+          <StyledButton 
+            appearance="ghost" 
+            onPress={() => router.back()}
+            className="m-1 p-1 rounded-full">
+            Cancel
+          </StyledButton>
+          <StyledText category="h6">Update Email Address</StyledText>
+          <StyledButton 
+            appearance="ghost" 
+            onPress={handleUpdate}
+            className="m-1 p-1 rounded-full">
+            Done
+          </StyledButton>
+        </StyledLayout>
 
-      <StyledLayout className="flex-1 p-2">
-        <StyledText category="s1" className="font-bold p-1">Current Email Address:</StyledText>
-        <StyledText category="s1" className="p-1">{currentEmail}</StyledText>
-        <StyledText category="s1" className="font-bold p-1">New Email Address:</StyledText>
-        <StyledInput
-          value={newEmail}
-          status="basic"
-          onChangeText={setNewEmail}
-          placeholder="Enter your new email"
-        />
+        <StyledLayout className="flex-1 p-2">
+          <StyledText category="s1" className="font-bold p-1">Current Email Address:</StyledText>
+          <StyledText category="s1" className="p-1 border rounded-lg p-3"
+            style={{
+              borderColor: myTheme['color-basic-600'],
+              backgroundColor: myTheme['color-basic-200'],
+              color: myTheme['color-basic-600'],
+            }}
+          >
+            {currentEmail}
+          </StyledText>
+          <StyledText category="s1" className="font-bold p-1 mt-5">New Email Address:</StyledText>
+          <StyledInput
+            value={newEmail}
+            status="basic"
+            onChangeText={setNewEmail}
+            placeholder="Enter your new email"
+            className="rounded-lg"
+          />
+        </StyledLayout>
       </StyledLayout>
-    </StyledLayout>
+    </SafeAreaView>
   );
 };
 

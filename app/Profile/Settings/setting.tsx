@@ -65,7 +65,9 @@ const settings = () => {
       
       <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}>
-         <StyledText category="h4" className='text-white'>Settings</StyledText>
+          <StyledText className="text-white text-3xl text-center" style={{ fontFamily: 'Poppins-SemiBold'}}>
+            Settings
+          </StyledText>      
       </StyledLayout>
 
       <StyledLayout className="ml-2 mr-2">
