@@ -6,7 +6,7 @@ import { styled } from 'nativewind';
 import { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
 
 const StyledLayout = styled(Layout);
@@ -79,9 +79,15 @@ const QuizEnd = () => {
     }
 
     // Handle loading and error states
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
-
+    {/*if (loading) {
+        return (
+          <StyledLayout className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+          </StyledLayout>
+        );
+      }
+    if (error) return <StyledLayout className="flex-1 justify-center items-center"><Text>Error: {error.message}</Text></StyledLayout>;*/}
+    
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <StyledLayout className='flex-1 p-4 py-10'>

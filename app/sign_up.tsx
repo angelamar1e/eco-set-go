@@ -1,12 +1,12 @@
 import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   View
 } from "react-native";
-import { Link, router, Stack } from 'expo-router';
+import { Link, router, Stack, useRouter } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { goToInterface } from './utils/utils';
@@ -18,6 +18,7 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
+import TakeaQuiz from './(quiz)/takeaquiz';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -53,6 +54,8 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
+  const [showQuizModal, setShowQuizModal] = useState(false);  
+  const router = useRouter();
 
   const current_date = Date().toString();
 
@@ -84,7 +87,6 @@ export default function SignUp() {
     return true;
   };
 
-
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
     const userUid = response.user.uid;
 
@@ -102,8 +104,6 @@ export default function SignUp() {
         overall_footprint: 0
       });
 
-      
-
       firestore().collection('initial_footprint').doc(userUid).set({
         food_footprint: 0,
         transportation_footprint: 0,
@@ -111,38 +111,31 @@ export default function SignUp() {
         overall_footprint: 0
       });
 
-      firestore().collection('daily_logs').doc(userUid).set({
-      })
-
-      firestore().collection('user_logs').doc(userUid).set({
-      })
-
-      firestore().collection('goals').doc(userUid).set({
-      });
-
+      firestore().collection('daily_logs').doc(userUid).set({});
+      firestore().collection('user_logs').doc(userUid).set({});
+      firestore().collection('goals').doc(userUid).set({});
     }
-    catch(error){
+    catch (error) {
       console.error(error);
     }
   }
 
   const handleSignUp = async () => {
-    if (email && password){
+    if (email && password) {
       try {
-          const response = await auth().createUserWithEmailAndPassword(email, password);
-          await createProfile(response);
-          clearAllInput();
-      } catch (error){
-          handleError(error);
-      }
-      finally{
+        const response = await auth().createUserWithEmailAndPassword(email, password);
+        await createProfile(response);
+        clearAllInput();
+        setShowQuizModal(true);  // Show quiz modal only after successful sign-up
+      } catch (error) {
+        handleError(error);
       }
     }
   };
 
-  if (!loading){
-    goToInterface("user");
-  }
+  //if (!loading){
+  //  goToInterface("user");
+  //}
 
   const handleError = (error: any) => {
     let message = 'An error occurred. Please try again.';
@@ -161,7 +154,7 @@ export default function SignUp() {
         message = 'Please provide an email address.';
         break;
       default:
-        message = error.message; // Generic error message
+        message = error.message;
     }
 
     setAlertMessage(message);
@@ -172,6 +165,15 @@ export default function SignUp() {
     setUsername('');
     setEmail('');
     setPassword('');
+  };
+
+  const handleTakeQuiz = () => {
+    setShowQuizModal(false);
+    router.push("/(quiz)"); // Navigate to the quiz screen
+  };
+
+  const handleDismiss = () => {
+    setShowQuizModal(false);
   };
 
   return (
@@ -215,22 +217,25 @@ export default function SignUp() {
           />
         </StyledLayout>
 
-        <Button style={{ marginVertical: 12, borderRadius: 12, }} onPress={handleSignUp}>
+        <Button style={{ marginVertical: 12, borderRadius: 12 }} onPress={handleSignUp}>
           Sign Up
         </Button>
         <StyledLayout className="flex-row items-center justify-center">
           <ThemedText>Already have an account?</ThemedText>
-          <Button appearance="ghost" 
-             style={{ marginLeft: -16 }}
-             onPress={() => router.push("/login")}
-          >Login</Button>    
-          </StyledLayout>
+          <Button appearance="ghost" style={{ marginLeft: -16 }} onPress={() => router.push("/login")}>Login</Button>    
+        </StyledLayout>
       </Container>
 
       <CustomAlert
         visible={alertVisible}
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
+      />
+
+      <TakeaQuiz
+        visible={showQuizModal}
+        onTakeQuiz={handleTakeQuiz}
+        onDismiss={handleDismiss}
       />
     </StyledLayout>
   );
