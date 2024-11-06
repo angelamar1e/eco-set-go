@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { styled } from 'nativewind';
-import { Button, Layout, Input, Text } from '@ui-kitten/components';
-import { Modal, TouchableWithoutFeedback } from 'react-native';
+import { Button, Layout, Input, Text, Modal } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { createReflection } from '@/app/utils/reflectionUtils';
 import { useUserContext } from '@/contexts/UserContext';
+import firestore from '@react-native-firebase/firestore';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
@@ -14,30 +13,41 @@ const StyledText = styled(Text);
 
 const ReflectionButton = () => {
   const [isClicked, setIsClicked] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [createmodalVisible, setcreateModalVisible] = useState(false);
   const [content, setContent] = useState('');
   const [date, setDate] = useState(new Date()); // State for date
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const { userUid } = useUserContext();
+  const { userUid } = useUserContext(); // Assuming `userUid` is provided by context
 
   const handlePress = () => {
-    setModalVisible(true);
+    setcreateModalVisible(true);
   };
 
   const handleCreateReflection = async () => {
-    await createReflection({ 
-      content, 
-      date: date.toISOString(), // Convert date to ISO string
-      uid: userUid 
-    });
-    setContent(''); // Clear content after creating
-    setModalVisible(false); // Close modal after creating
+    if (content.trim().length > 0 && userUid) {  // Ensure content is not empty
+      try {
+        // Add reflection to Firestore
+        await firestore().collection('reflections').add({
+          content: content,
+          uid: userUid,  // Use the userUid from context
+          date: date.toISOString(), 
+          timestamp: firestore.FieldValue.serverTimestamp(), 
+        });
+
+        setContent('');
+        setcreateModalVisible(false);
+        setIsClicked(false);
+        
+      } catch (error) {
+        console.error("Error creating reflection: ", error);
+      }
+    }
   };
 
-  const formattedDate = date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const formattedDate = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return (
@@ -52,69 +62,65 @@ const ReflectionButton = () => {
         )}
         onPress={handlePress}
       >
+        {/* Reflection button */}
       </StyledButton>
 
       {/* Modal for Creating Reflection */}
       <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
+        visible={createmodalVisible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        onBackdropPress={() => setcreateModalVisible(false)}
+        style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
-                <StyledButton
-                  className='m-1'
-                  appearance="ghost"
-                  onPress={() => setShowDatePicker(true)}>
-                  {formattedDate}
-                </StyledButton>
-                
-                <StyledInput
-                  className='m-1'
-                  placeholder="Share your thoughts... 💭"
-                  value={content}
-                  onChangeText={setContent}
-                  multiline={true}
-                />
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledButton
+            className='m-1'
+            appearance="ghost"
+            onPress={() => setShowDatePicker(true)}>
+            {formattedDate}
+          </StyledButton>
 
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      const currentDate = selectedDate || date;
-                      setShowDatePicker(false);
-                      setDate(currentDate);
-                    }}
-                  />
-                )}
-                <StyledLayout className="flex-row justify-between mt-2">
-                <StyledButton
-                    onPress={() => setModalVisible(false)}
-                    appearance="filled"
-                    status="info"
-                    size='small'
-                    className='m-1 rounded-full'
-                  >
-                    <StyledText>Cancel</StyledText>
-                  </StyledButton>
-                  <StyledButton
-                    className='m-1 rounded-full'
-                    status="success"
-                    appearance="filled"
-                    size='small'
-                    onPress={handleCreateReflection}>
-                    Create Reflection
-                  </StyledButton>
-                </StyledLayout>
+          <StyledInput
+            className='m-1'
+            placeholder="Share your thoughts... 💭"
+            value={content}
+            onChangeText={setContent}
+            multiline={true}
+          />
 
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || date;
+                setShowDatePicker(false);
+                setDate(currentDate);
+              }}
+            />
+          )}
+
+          <StyledLayout className="flex-row justify-between mt-2">
+            <StyledButton
+              onPress={() => setcreateModalVisible(false)}
+              appearance="ghost"
+              status="info"
+              size='small'
+              className='m-1 rounded-full'
+            >
+              <StyledText>Cancel</StyledText>
+            </StyledButton>
+            <StyledButton
+              className='m-1 rounded-full'
+              status="success"
+              appearance="ghost"
+              size='small'
+              onPress={handleCreateReflection}>
+              Create Reflection
+            </StyledButton>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
     </StyledLayout>
   );

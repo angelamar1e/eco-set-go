@@ -9,6 +9,7 @@ import auth from '@react-native-firebase/auth';
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
+const StyledCard = styled(Card);
 
 export const CreatePost = (): React.ReactElement => {
   const [value, setValue] = useState('');
@@ -59,7 +60,7 @@ export const CreatePost = (): React.ReactElement => {
   };
 
   return (
-    <StyledLayout className="mt-12 ml-2 mr-2 p-3 border border-gray-100">
+    <StyledCard className="mt-12 ml-2 mr-2">
       <StyledLayout className="flex-row items-center mb-3">
         <StyledInput
           className="flex-1 rounded-lg"
@@ -98,7 +99,7 @@ export const CreatePost = (): React.ReactElement => {
           <Text>Post successfully added! 🎉</Text>
         </Card>
       </Modal>
-    </StyledLayout>
+    </StyledCard>
   );
 };
 

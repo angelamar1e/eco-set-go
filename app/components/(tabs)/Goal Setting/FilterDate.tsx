@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
 import { Text, Layout, Button } from '@ui-kitten/components';
@@ -21,6 +21,12 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState<'start' | 'end' | null>(null);
 
+  useEffect(() => {
+    if (startDate || endDate) {
+      onDateChange(startDate, endDate);
+    }
+  }, [startDate, endDate]);
+
   const handlePress = () => {
     const newState = !isClicked;
     setIsClicked(newState);
@@ -31,19 +37,17 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
     if (event.type === 'set' && selectedDate) {
       if (isStart) {
         setStartDate(selectedDate);
-        onDateChange(selectedDate, endDate);
       } else {
         setEndDate(selectedDate);
-        onDateChange(startDate, selectedDate);
       }
+      setShowDatePicker(null);
     }
-    setShowDatePicker(null);
   };
 
   const resetFilters = () => {
     setStartDate(null);
     setEndDate(null);
-    onDateChange(null, null); // Notify parent component to reset dates
+    onDateChange(null, null);
   };
 
   return (
@@ -80,21 +84,21 @@ const FilterDate: React.FC<FilterDateProps> = ({ onToggle, onDateChange }) => {
             zIndex: 10,
           }}
         >
-          <StyledText category="p2" className='text-left font-bold' style={{ color: myTheme['color-basic-600'] }}>
+          <StyledText category="p2" className="text-left font-bold" style={{ color: myTheme['color-basic-600'] }}>
             Start Date:
           </StyledText>
           <StyledButton onPress={() => setShowDatePicker('start')}>
-            <StyledText category="p2" className='text-left font-bold'>
-              {startDate ? startDate.toLocaleDateString() : "Select Start Date"}
+            <StyledText category="p2" className="text-left font-bold">
+              {startDate ? startDate.toLocaleDateString() : 'Select Start Date'}
             </StyledText>
           </StyledButton>
 
-          <StyledText category="p2" className='text-left font-bold' style={{ color: myTheme['color-basic-600'] }}>
+          <StyledText category="p2" className="text-left font-bold" style={{ color: myTheme['color-basic-600'] }}>
             End Date:
           </StyledText>
           <StyledButton onPress={() => setShowDatePicker('end')}>
-            <StyledText category="p2" className='text-left font-bold'>
-              {endDate ? endDate.toLocaleDateString() : "Select End Date"}
+            <StyledText category="p2" className="text-left font-bold">
+              {endDate ? endDate.toLocaleDateString() : 'Select End Date'}
             </StyledText>
           </StyledButton>
 

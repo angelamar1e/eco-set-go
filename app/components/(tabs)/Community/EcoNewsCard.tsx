@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Image, TouchableOpacity, Linking } from 'react-native';
+import { Image, TouchableOpacity, Linking, useColorScheme } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import storage from '@react-native-firebase/storage';
-import { myTheme } from '@/constants/custom-theme';
 
 interface EcoNewsCardProps {
   thumbnail: string;
@@ -18,6 +17,7 @@ const StyledText = styled(Text);
 
 const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, link }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const colorScheme = useColorScheme();  // Hook to detect color scheme (light or dark mode)
 
   const getDownloadUrl = async (gsUrl: string): Promise<string | null> => {
     try {
@@ -47,20 +47,25 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
     }
   };
 
+  // Dynamically apply the border color based on the color scheme
+  const borderClass = colorScheme === 'dark' ? 'border-black' : 'border-gray-200';
+
   return (
-    <StyledLayout className="h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border border-gray-200">
+    <StyledLayout
+      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border ${borderClass}`}  // Dynamically applied border class
+    >
       <StyledLayout className="flex-row items-start">
-      <StyledLayout>
+        <StyledLayout>
           {imageUrl && (
             <TouchableOpacity onPress={handlePress}>
               <Image source={{ uri: imageUrl }} className="w-[130px] h-full rounded-l-md" accessibilityLabel="News Thumbnail" />
             </TouchableOpacity>
           )}
         </StyledLayout>
-      
+
         <StyledLayout className="flex-1 m-2 p-2">
           <TouchableOpacity onPress={handlePress}>
-            <StyledText category='p2' className="font-bold text-gray-800">
+            <StyledText category="s2" className="font-bold">
               {headline}
             </StyledText>
           </TouchableOpacity>
