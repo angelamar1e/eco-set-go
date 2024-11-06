@@ -137,7 +137,7 @@ const PostCard: React.FC<PostCardProps> = ({
               .slice()
               .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis())
               .map((comment) => (
-                <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
+                <View key={comment.id} className="pb-2 mb-2">
                   <StyledLayout className='flex-row justify-between'>
                     <StyledText className="font-bold">@{comment.userName}</StyledText>
                     {/* for comment actions */}
@@ -180,20 +180,16 @@ const PostCard: React.FC<PostCardProps> = ({
             placeholder="Add a comment..."
             value={newComment}
             onChangeText={setNewComment}
-            className="rounded-lg m-2"
+            className="rounded-lg m-1"
+            accessoryRight={() => (
+              <TouchableOpacity
+                onPress={() => handleAddComment(newComment, id, username, uid, setNewComment)}
+                disabled={!newComment.trim()}
+              >
+                <Ionicons name="send" size={20} color={newComment.trim() ? "#34C759" : "#A9A9A9"} />
+              </TouchableOpacity>
+            )}
           />
-          <StyledLayout className="flex-row justify-end">
-            <StyledButton
-              onPress={() => handleAddComment(newComment, id, username, uid, setNewComment)}
-              disabled={!newComment.trim()}
-              className="m-1 rounded-full justify-end"
-              status="success"
-              size="small"
-              appearance="filled"
-            >
-              Send
-            </StyledButton>
-          </StyledLayout>
         </StyledLayout>
       </Modal>
 

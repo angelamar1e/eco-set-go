@@ -199,20 +199,21 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             placeholder="Add a comment..."
             value={newComment}
             onChangeText={setNewComment}
-            className="rounded-lg m-2"
+            className="rounded-lg m-1"
+            accessoryRight={() => (
+              <TouchableOpacity
+                onPress={handleAddCommentWrapper}
+                disabled={!newComment.trim()}
+                className="justify-center"
+              >
+                <Ionicons 
+                  name="send" 
+                  size={20} 
+                  color={newComment.trim() ? "#34C759" : "#A9A9A9"} 
+                />
+              </TouchableOpacity>
+            )}
           />
-          <StyledLayout className="flex-row justify-end">
-            <StyledButton
-              onPress={handleAddCommentWrapper}
-              disabled={!newComment.trim()}
-              className="m-1 rounded-full justify-end"
-              status="success"
-              size="small"
-              appearance="filled"
-            >
-              Send
-            </StyledButton>
-          </StyledLayout>
         </StyledLayout>
       </Modal>
 
