@@ -3,8 +3,8 @@ import { styled } from 'nativewind';
 import { Button, Layout, Input, Text, Modal } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { createReflection } from '@/app/utils/reflectionUtils';
 import { useUserContext } from '@/contexts/UserContext';
+import firestore from '@react-native-firebase/firestore';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
@@ -13,34 +13,41 @@ const StyledText = styled(Text);
 
 const ReflectionButton = () => {
   const [isClicked, setIsClicked] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [createmodalVisible, setcreateModalVisible] = useState(false);
   const [content, setContent] = useState('');
   const [date, setDate] = useState(new Date()); // State for date
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const { userUid } = useUserContext();
+  const { userUid } = useUserContext(); // Assuming `userUid` is provided by context
 
   const handlePress = () => {
-    setModalVisible(true);
+    setcreateModalVisible(true);
   };
 
   const handleCreateReflection = async () => {
-    // Create reflection in Firestore
-    await createReflection({ 
-      content, 
-      date: date.toISOString(), // Convert date to ISO string
-      uid: userUid 
-    });
+    if (content.trim().length > 0 && userUid) {  // Ensure content is not empty
+      try {
+        // Add reflection to Firestore
+        await firestore().collection('reflections').add({
+          content: content,
+          uid: userUid,  // Use the userUid from context
+          date: date.toISOString(), 
+          timestamp: firestore.FieldValue.serverTimestamp(), 
+        });
 
-    // Clear content after creating
-    setContent('');
-    // Close modal after creating the reflection
-    setModalVisible(false);
+        setContent('');
+        setcreateModalVisible(false);
+        setIsClicked(false);
+        
+      } catch (error) {
+        console.error("Error creating reflection: ", error);
+      }
+    }
   };
 
-  const formattedDate = date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const formattedDate = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return (
@@ -55,13 +62,14 @@ const ReflectionButton = () => {
         )}
         onPress={handlePress}
       >
+        {/* Reflection button */}
       </StyledButton>
 
       {/* Modal for Creating Reflection */}
       <Modal
-        visible={modalVisible}
+        visible={createmodalVisible}
         backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
-        onBackdropPress={() => setModalVisible(false)}
+        onBackdropPress={() => setcreateModalVisible(false)}
         style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
@@ -95,7 +103,7 @@ const ReflectionButton = () => {
 
           <StyledLayout className="flex-row justify-between mt-2">
             <StyledButton
-              onPress={() => setModalVisible(false)}
+              onPress={() => setcreateModalVisible(false)}
               appearance="ghost"
               status="info"
               size='small'

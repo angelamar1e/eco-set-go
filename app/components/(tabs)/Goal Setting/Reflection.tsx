@@ -27,12 +27,6 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
 
-  const handleEdit = async () => {
-    await editReflection(id, editedContent);
-    setEditModalVisible(false);
-    onEdit(editedContent);
-  };
-
   const handleDelete = async () => {
     await confirmDeleteReflection(id);
     setConfirmDeleteVisible(false);
@@ -90,39 +84,47 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
         <StyledText category='p1'>{content}</StyledText>
       </StyledLayout>
 
+      {/* Edit Modal */}
       <Modal
         visible={editModalVisible}
-        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         onBackdropPress={() => setEditModalVisible(false)}
-        style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
+        style={{ width: 300, height: 250, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category='s1' className='font-bold m-2'>Edit reflection</StyledText>
+          <StyledText category="h6" className="font-bold">
+            Edit Post
+          </StyledText>
           <StyledInput
-            multiline={true}
             value={editedContent}
             onChangeText={setEditedContent}
-            className='rounded-lg'
+            placeholder="Edit your post..."
+            multiline
+            className="mb-2 mt-2"
           />
-          <StyledLayout className="flex-row justify-between mt-4">
+          <StyledLayout className="flex-row justify-between mt-3">
             <StyledButton
-              onPress={() => setEditModalVisible(false)}
               appearance="ghost"
               status="info"
-              size='small'
-              className='rounded-full'
+              size="small"
+              className="m-1 rounded-full"
+              onPress={() => setEditModalVisible(false)}
             >
-              <StyledText>Cancel</StyledText>
+              Cancel
             </StyledButton>
-
             <StyledButton
-              onPress={handleEdit}
-              status="success"
+              onPress={() => {
+                if (editedContent !== content) {
+                  onEdit(editedContent);
+                }
+                setEditModalVisible(false);
+              }}
               appearance="ghost"
-              size='small'
-              className='rounded-full'
+              status="primary"
+              size="small"
+              className="m-1 rounded-full"
             >
-              <StyledText>Finish Editing</StyledText>
+              Save Changes
             </StyledButton>
           </StyledLayout>
         </StyledLayout>
