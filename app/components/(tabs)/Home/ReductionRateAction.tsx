@@ -12,6 +12,7 @@ import { Card, Input, Layout, Text } from "@ui-kitten/components";
 import { Ionicons } from "@expo/vector-icons";
 import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { myTheme } from "@/constants/custom-theme";
+import { EmissionsContext } from "@/contexts/Emissions";
 
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
@@ -24,7 +25,7 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
   handleDelete,
 }) => {
   // Get emissions data from the real-time context
-  const { emissionsData} = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
 
   // Destructure emissions data
   const { carEmissions, carNumOfPassengers } = emissionsData || {};
@@ -93,7 +94,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
   const [showInput, setShowInput] = useState(false);
   let impact = 0;
 
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
 
   const handleMoreDetails = () => {
     setShowInput(!showInput);

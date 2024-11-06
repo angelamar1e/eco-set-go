@@ -19,6 +19,7 @@ import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { useLogsContext } from "@/contexts/UserLogs";
 import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
 import { ActivityIndicator } from "react-native-paper";
+import { EmissionsContext } from "@/contexts/Emissions";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -36,7 +37,7 @@ const Box = ({ className = "", style = "", ...props }) => (
 
 export default function LandingPage() {
   const router = useRouter();
-  const { username, overallFootprint } = useUserContext();
+  const { username, currentFootprint, initialFootprint } = useUserContext();
   const fontsLoaded = useLoadFonts(); 
 
   useEffect(() => {
@@ -50,19 +51,17 @@ export default function LandingPage() {
   const theme = useTheme();
   const headertextColor = theme['color-success-900'];
   const {progressPercentage} = useUserGoalContext();
-  const {totalImpact, currentFootprint} = useLogsContext();
-  const {totalEmissions} = useContext(EmissionsDataContext);
   const [loading, setLoading] = useState(true);
 
   let percentage = (progressPercentage * 100);
-  let difference = conditionalConvertGramsToKg(convertTonsToGrams(totalEmissions - currentFootprint));
+  let difference = conditionalConvertGramsToKg(convertTonsToGrams(initialFootprint - currentFootprint));
 
     // Check if all required data is loaded
     useEffect(() => {
       if (fontsLoaded) {
         setLoading(false);
       }
-    }, [fontsLoaded, username, currentFootprint, totalEmissions]);
+    }, [fontsLoaded]);
 
   const data = [
     {
@@ -139,13 +138,13 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  if (loading) {
-    return (
-      <StyledLayout className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
-      </StyledLayout>
-    );
-  }
+  // if (currentFootprint) {
+  //   return (
+  //     <StyledLayout className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+  //     </StyledLayout>
+  //   );
+  // }
 
   return (
     <StyledLayout className="flex-1">

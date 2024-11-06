@@ -46,7 +46,7 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
   handleDelete,
 }) => {
   
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [vehicleLessEF, setVehicleLessEF] = useState<number>();

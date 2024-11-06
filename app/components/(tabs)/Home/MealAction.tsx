@@ -53,7 +53,7 @@ export const Meal: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
