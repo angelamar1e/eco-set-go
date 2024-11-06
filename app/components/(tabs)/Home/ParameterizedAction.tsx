@@ -23,7 +23,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
   handleDelete,
 }) => {
 
-    const { emissionsData } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let impact = 0;
 
     function getImpact() {

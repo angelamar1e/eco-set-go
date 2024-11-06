@@ -11,6 +11,9 @@ import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/Est
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { set } from "@react-native-firebase/database";
 import { DEFAULT_X_LABELS_HEIGHT_PERCENTAGE } from "react-native-chart-kit/dist/AbstractChart";
+import { EmissionsData } from '../../../constants/DefaultValues';
+import { EmissionsContext } from "@/contexts/Emissions";
+import { useUserContext } from "@/contexts/UserContext";
 
 // Define types for report data
 type ReportData = {
@@ -30,7 +33,6 @@ const ProgressReport = () => {
   const [colorScheme, setColorScheme] = useState<"light" | "dark">(Appearance.getColorScheme() || "light");
 
   const {
-    currentFootprint,
     dailyImpact,
     weeklyImpact,
     monthlyImpact,
@@ -38,7 +40,7 @@ const ProgressReport = () => {
     stackedChartData,
     handlePeriodChange
   } = useLogsContext();
-  const { totalEmissions } = useContext(EmissionsDataContext);
+  const { initialFootprint, currentFootprint } = useUserContext();
 
   // Helper function to validate stackedChartData
   const isStackedChartDataValid = () => {
@@ -177,7 +179,7 @@ const ProgressReport = () => {
                 color: myTheme['color-success-800'], 
               }}
             >
-              {(totalEmissions).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>{"\n"}of CO₂e</Text></Text>
+              {(initialFootprint).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>{"\n"}of CO₂e</Text></Text>
             <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}>Initial Emissions</Text>
             <Text></Text>
             <Text className="" 

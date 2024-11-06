@@ -4,18 +4,18 @@ import { useUserContext } from "./UserContext";
 import { convertGramsToTons } from "@/app/utils/EstimationUtils";
 import { EmissionsDataContext } from "./EmissionsData";
 import { useActionsContext } from "./EcoActions";
+import { EmissionsContext } from "./Emissions";
 
 // Create User Logs Context
 const UserLogsContext = createContext();
 
 // Create Provider Component
 export const UserLogsProvider = ({ children }) => {
-  const { userUid } = useUserContext();
+  const { userUid, role, initialFootprint, currentFootprint} = useUserContext();
   const currentFootprintDoc = firestore().collection('current_footprint').doc(userUid);
   const [userLogs, setUserLogs] = useState({});
-  const { totalEmissions, foodEmissions, transportationEmissions, electricityEmissions } = useContext(EmissionsDataContext);
+  const { foodFootprint, transportationFootprint, electricityFootprint } = useContext(EmissionsContext);
   const [totalImpact, setTotalImpact] = useState(0);
-  const [currentFootprint, setCurrentFootprint] = useState(0);
   const { foodEcoActions, transportationEcoActions, electricityEcoActions } = useActionsContext();
   const [loading, setLoading] = useState(true);
 
@@ -145,27 +145,20 @@ useEffect(() => {
   }, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
 
   useEffect(() => {
-    if (totalEmissions) { 
-      const footprint = totalEmissions - totalImpact;
-      const food = foodEmissions - foodImpact;
-      const transpo = transportationEmissions - transportationImpact;
-      const elec = electricityEmissions - electricityImpact;
-
-      console.log(totalImpact, foodImpact);
-
-      console.log(totalImpact, foodImpact);
-
-      setCurrentFootprint(footprint ?? totalEmissions);
+    if (initialFootprint && role === "user") { 
+      const currentOverall = initialFootprint - totalImpact;
+      const currentFood = foodFootprint - foodImpact;
+      const currentTranspo = transportationFootprint - transportationImpact;
+      const currentElectricity = electricityFootprint - electricityImpact;
 
       firestore().collection('current_footprint').doc(userUid).set({
-        overall_footprint: footprint ?? totalEmissions,
-        food_footprint: food ?? foodEmissions,
-        electricity_footprint: elec ?? transportationEmissions,
-        transportation_footprint: transpo ?? electricityEmissions          
+        overall_footprint: currentOverall,
+        food_footprint: currentFood,
+        electricity_footprint: currentElectricity,
+        transportation_footprint: currentTranspo          
       }, {merge: true});
     }
-  }, [userUid, totalEmissions, totalImpact, userLogs])
-
+  }, [userUid, initialFootprint, totalImpact, userLogs]);
 
   // Get week string for weekly impacts
   const getWeekString = (date) => {

@@ -102,8 +102,6 @@ export default function SignUp() {
         overall_footprint: 0
       });
 
-      
-
       firestore().collection('initial_footprint').doc(userUid).set({
         food_footprint: 0,
         transportation_footprint: 0,

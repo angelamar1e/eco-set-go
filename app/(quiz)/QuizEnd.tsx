@@ -8,38 +8,25 @@ import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
+import { EmissionsContext } from '@/contexts/Emissions';
+import { EmissionsData } from '../../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
 
 const QuizEnd = () => {
-    const { userUid } = useUserContext();
     const {
-        foodEmissions,
-        transportationEmissions,
-        electricityEmissions,
-        totalEmissions
-    } = useContext(EmissionsDataContext);
-
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        const setInitialFootprint = async () => {
-            await firestore().collection("initial_footprint").doc(userUid).set({
-                food_footprint: foodEmissions,
-                transportation_footprint: transportationEmissions,
-                electricity_footprint: electricityEmissions,
-                overall_footprint: totalEmissions
-            });
-        };
-        setInitialFootprint();
-    }, [userUid, foodEmissions, transportationEmissions, electricityEmissions, totalEmissions]);
+        foodFootprint,
+        transportationFootprint,
+        electricityFootprint,
+        overallFootprint
+    } = useContext(EmissionsContext);
 
     // Prepare an array with each category and its value, then sort it from highest to lowest
     const sortedEmissions = [
-        { category: "Food 🥗", value: foodEmissions },
-        { category: "Transportation 🛻", value: transportationEmissions },
-        { category: "Electricity ⚡", value: electricityEmissions }
+        { category: "Food 🥗", value: foodFootprint },
+        { category: "Transportation 🛻", value: transportationFootprint },
+        { category: "Electricity ⚡", value: electricityFootprint }
     ].sort((a, b) => b.value - a.value); 
 
     const maxWidth = 100; 
@@ -47,7 +34,7 @@ const QuizEnd = () => {
 
     const widthDecrement = (maxWidth - minWidth) / (sortedEmissions.length - 1);
 
-    const total = totalEmissions;
+    const total = overallFootprint;
 
     // Calculate percentages for each category
     const percentageEmissions = sortedEmissions.map(emission => ({
@@ -55,7 +42,7 @@ const QuizEnd = () => {
         percentage: ((Number(emission.value) / total) * 100).toFixed(2) // Ensure emission.value is a number
     }));
 
-    const { emissionsData, loading, error } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let highestEmissions = {
         food: { value: 0, source: '', percentage: 0 },
         transportation: { value: 0, source: '', percentage: 0 },
@@ -77,10 +64,6 @@ const QuizEnd = () => {
         transportationCategory = percentageEmissions.find(e => e.category === "Transportation 🛻");
         electricityCategory = percentageEmissions.find(e => e.category === "Electricity ⚡");
     }
-
-    // Handle loading and error states
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -108,7 +91,7 @@ const QuizEnd = () => {
 
                             }}
                         >
-                            {totalEmissions.toFixed(2)}
+                            {overallFootprint.toFixed(2)}
                         </Text>
                         <Text
                             className=""
