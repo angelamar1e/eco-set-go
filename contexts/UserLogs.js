@@ -194,8 +194,8 @@ export const UserLogsProvider = ({ children }) => {
   }, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
 
   const getCurrentFootprint = () => {
-    if (initialFootprint && totalImpact && role === "user") {
-      const currentOverall = initialFootprint - totalImpact ?? 0;
+    if (initialFootprint && role === "user") {
+      const currentOverall = initialFootprint - totalImpact;
       const currentFood = foodFootprint - foodImpact;
       const currentTranspo = transportationFootprint - transportationImpact;
       const currentElectricity = electricityFootprint - electricityImpact;
