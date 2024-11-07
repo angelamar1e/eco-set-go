@@ -10,7 +10,7 @@ import { Link, router, Stack, useRouter } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { goToInterface } from './utils/utils';
-import { LoginButton } from '@/components/LoginButton';
+import { CTAButton } from '@/components/CTAButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
@@ -18,6 +18,8 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { myTheme } from '@/constants/custom-theme';
 import TakeaQuiz from './(quiz)/takeaquiz';
 
 const StyledLayout = styled(Layout);
@@ -133,10 +135,6 @@ export default function SignUp() {
     }
   };
 
-  //if (!loading){
-  //  goToInterface("user");
-  //}
-
   const handleError = (error: any) => {
     let message = 'An error occurred. Please try again.';
     
@@ -220,10 +218,12 @@ export default function SignUp() {
         <Button style={{ marginVertical: 12, borderRadius: 12 }} onPress={handleSignUp}>
           Sign Up
         </Button>
-        <StyledLayout className="flex-row items-center justify-center">
-          <ThemedText>Already have an account?</ThemedText>
-          <Button appearance="ghost" style={{ marginLeft: -16 }} onPress={() => router.push("/login")}>Login</Button>    
-        </StyledLayout>
+        <StyledLayout className="flex-row mt-3 items-center justify-center">
+          <ThemedText className='text-gray-600 text-sm'>Already have an account?</ThemedText>
+          <TouchableOpacity onPress={() => router.push("/login")}>
+              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Login</StyledText>
+            </TouchableOpacity>
+          </StyledLayout>
       </Container>
 
       <CustomAlert

@@ -97,7 +97,7 @@ const Details: React.FC<DetailsProps> = ({
               paddingHorizontal: 20,
               paddingVertical: 10
             }}
-            onPress={() => router.push('/login')}
+            onPress={handleLogOut}
             appearance= "ghost" 
           >
             <MaterialCommunityIcons name='logout' size={18} color={''}>
