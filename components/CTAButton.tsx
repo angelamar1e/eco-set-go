@@ -1,7 +1,7 @@
+import { myTheme } from "@/constants/custom-theme";
 import React, { FC } from "react";
-
+import { useColorScheme } from "react-native";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 type ButtonType = "primary" | "secondary";
 
@@ -12,40 +12,26 @@ interface CTAButtonProps {
 }
 
 export const CTAButton: FC<CTAButtonProps> = ({ title, onPress, variant }) => {
-  const containerStyle =
-    variant === "primary" ? styles.containerPrimary : styles.containerSecondary;
+    const colorScheme = useColorScheme();
 
-  const textStyle =
-    variant === "primary" ? styles.textPrimary : styles.textSecondary;
+    const isDarkMode = colorScheme === "dark";
+    
+    const containerStyle =
+      variant === "primary" 
+        ? "mt-2 mb-2 h-12 w-full rounded-2xl justify-center items-center" 
+        : "justify-center items-center";
+  
+    const textStyle =
+      variant === "primary"
+        ? "text-white text-base font-bold"
+        : isDarkMode
+        ? "text-white text-base font-bold"
+        : "text-black text-base font-bold";
+      
 
   return (
-    <TouchableOpacity onPress={onPress} style={containerStyle}>
-      <Text style={textStyle}>{title}</Text>
+    <TouchableOpacity onPress={onPress} className={containerStyle} style={{backgroundColor: myTheme['color-success-700']}}>
+      <Text className={textStyle}>{title}</Text>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  containerPrimary: {
-    height: 50,
-    backgroundColor: "#407F3D",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  containerSecondary: {
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textPrimary: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: "white",
-  },
-  textSecondary: {
-    fontSize: 15,
-    fontWeight: "regular",
-    color: "gray",
-  },
-});
