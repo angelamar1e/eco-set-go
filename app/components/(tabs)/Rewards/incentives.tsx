@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FlatList } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
+import { Swipeable } from 'react-native-gesture-handler';
 import ConvertButton from './ConvertButton';
 import { myTheme } from '@/constants/custom-theme';
 
@@ -24,43 +25,48 @@ const Incentives = () => {
     { id: '2', icon:'🌱', title: 'Plant a Tree', content: 'Support OrgName environmental cause', points: 5000 },
   ]);
 
+  // Function to render right swipe action
+  const renderRightActions = () => (
+    <StyledLayout className="justify-center items-center w-11/12" style={{ backgroundColor: myTheme['color-success-100'] }}>
+      <ConvertButton />
+    </StyledLayout>
+  );
+
   const renderItem = ({ item }: { item: Incentive }) => (
-    <StyledLayout className="flex-row mr-2 ml-2 mt-1 mb-1">
-      <StyledCard
-        className="flex-1 rounded-l-2xl border-r-0 items-center justify-center"
-        style={{
-          flex: 1, 
-          elevation: 1,
-          backgroundColor: myTheme['color-success-transparent-100'],
-          borderColor: myTheme['color-success-transparent-100'],
-          borderWidth: 2,
-        }}
-      >
-        <StyledText className='text-center mb-2 text-xl'>{item.icon}</StyledText>
-        <StyledText
-          className="text-center text-2sm"
-          style={{ fontFamily: 'Poppins-Medium'}}
+    <StyledLayout className="flex-row mr-2 ml-2 mt-1 mb-1 ">
+      {/* Wrap the first StyledCard in a Swipeable */}
+        <StyledLayout className='w-1/3'>
+      <Swipeable renderLeftActions={renderRightActions}>
+        <StyledCard
+          className="rounded items-center justify-center"
+          style={{
+            backgroundColor: myTheme['color-success-100'],
+            borderColor: myTheme['color-success-transparent-100'],
+          }}
         >
-          {item.title}
-        </StyledText>
-      </StyledCard>
-  
+          <StyledText className='text-center mb-2 text-xl'>{item.icon}</StyledText>
+          <StyledText
+            className="text-center text-sm"
+            style={{ fontFamily: 'Poppins-Medium'}}
+          >
+            {item.title}
+          </StyledText>
+        </StyledCard>
+      </Swipeable>
+        </StyledLayout>
+
+      {/* Second card with the item details */}
       <StyledCard
-        className="flex-2 rounded-r-2xl"
+      className='w-2/3 rounded'
         style={{
-          flex: 2,
-          elevation: 1,
-          padding: 8, 
+          elevation: 1/2,
+          padding: 2,
           borderWidth: 1,
         }}
       >
         <StyledLayout className="flex-row items-center justify-between">
-          <StyledLayout style={{ flex: 1, marginRight: 8 }}> 
-            <StyledText
-              category="p2"
-              className="text-left"
-              numberOfLines={2} 
-            >
+          <StyledLayout>
+            <StyledText className="text-left text-xs" numberOfLines={2}>
               {item.content}
             </StyledText>
             <StyledText
@@ -71,14 +77,11 @@ const Incentives = () => {
               {item.points} EcoPoints
             </StyledText>
           </StyledLayout>
-          <StyledLayout style={{ alignSelf: 'flex-start' }}> 
-            <ConvertButton />
-          </StyledLayout>
         </StyledLayout>
       </StyledCard>
     </StyledLayout>
   );
-  
+
   return (
     <FlatList
       data={incentives}

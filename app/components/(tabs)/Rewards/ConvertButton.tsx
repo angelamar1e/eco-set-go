@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { myTheme } from '@/constants/custom-theme';
 const StyledButton = styled(Button);
 const StyledText = styled(Text);
 
@@ -15,12 +16,9 @@ const ConvertButton = () => {
   return (
     <StyledButton
       onPress={handleSetGoal}
-      className="rounded-full m-1 py-2 px-3"
-      size="small"
-      appearance={isGoalSet ? "filled" : "outline"} 
-      status={isGoalSet ? "success" : "basic"} 
+      className="rounded-full m-0 p-0"
     >
-      <StyledText category="s1">
+      <StyledText className='text-xs'>
         {isGoalSet ? 'Converted' : 'Convert'} 
       </StyledText>
     </StyledButton>
