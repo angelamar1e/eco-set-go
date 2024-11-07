@@ -16,6 +16,7 @@ import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import AddActionButton from "../Goal Setting/AddActionButton";
 import { myTheme } from "@/constants/custom-theme";
+import { ActivityIndicator } from "react-native-paper";
 
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
@@ -33,6 +34,7 @@ const DailyLog: FC = () => {
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
+  const [loading, setLoading] = useState(true);
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -72,6 +74,8 @@ const DailyLog: FC = () => {
 
   useEffect(() => {
     const fetchEcoActions = async () => {
+      setLoading(true);
+
       if (actionIds.length > 0) {
         const remainingActions = actionIds.filter((id) => !Object.keys(completedActionIds).includes(id));
         const actionsData = await getActionInfo(remainingActions);
@@ -79,9 +83,12 @@ const DailyLog: FC = () => {
 
         setDailyLog(actionsData);
         setCompletedActions(completedActionsData);
+        setLoading(false);
       } else if (actionIds.length === 0) {
         setDailyLog([]);
       }
+
+      setLoading(false);
     };
 
     fetchEcoActions();
@@ -188,6 +195,12 @@ const DailyLog: FC = () => {
       //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">*/}
       <StyledLayout className=" relative">
         <StyledLayout className="pt-1">
+        {loading ? ( // Show loading spinner if loading
+          <StyledLayout className="mt-6" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="small" color={myTheme['color-success-700']} />
+          </StyledLayout>
+        ) : (
+          <>
             {dailyLog.length > 0 ? (
               <FlatList
                 data={dailyLog}
@@ -226,6 +239,8 @@ const DailyLog: FC = () => {
                 <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
               </StyledLayout>
             )}
+          </>
+          )}
         </StyledLayout>
       </StyledLayout>
       //*</KeyboardAvoidingView>*/}
