@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { router } from 'expo-router';
@@ -9,11 +9,14 @@ import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
 import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";
+import storage from '@react-native-firebase/storage';
 import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
 const StyledText = styled(Text);
+
+const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
 
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
@@ -23,17 +26,24 @@ const EcoActionsList = () => {
     try {
       let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
 
-      // Apply category filter if it's not "ALL" and not "Getting Started"
       if (category !== 'ALL' && category !== 'Getting Started') {
         query = query.where('category', '==', category);
       }
 
       const ecoActionsCollection = await query.get();
-      const data = ecoActionsCollection.docs.map((doc) => ({
-        id: doc.id,
-        title: doc.data().title,
-        category: doc.data().category,
-      })) as EcoAction[];
+      const data = await Promise.all(
+        ecoActionsCollection.docs.map(async (doc) => {
+          const ecoActionData = doc.data();
+          let imageUrl = ecoActionData.image ? await loadImage(ecoActionData.image) : null;
+          
+          return {
+            id: doc.id,
+            title: ecoActionData.title,
+            category: ecoActionData.category,
+            image: imageUrl,
+          };
+        })
+      );
 
       setEcoActions(data);
     } catch (error) {
@@ -41,34 +51,137 @@ const EcoActionsList = () => {
     }
   };
 
-  // Fetch eco actions whenever the filter changes
+  const loadImage = async (gsUrl: string) => {
+    if (cache[gsUrl]) return cache[gsUrl];
+
+    try {
+      const ref = storage().refFromURL(gsUrl);
+      const url = await ref.getDownloadURL();
+      cache[gsUrl] = url;
+      return url;
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchEcoActions(filter);
   }, [filter]);
 
-  const renderItem = ({ item }: { item: EcoAction }) => (
-    <StyledCard
-      onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
-      className='m-2 h-[150px] bg-transparent justify-end'
-    >
-      <Text category='s1'>{item.title}</Text>
-    </StyledCard>
-  );
+  const renderItem = ({ item }: { item: EcoAction }) => {
+    return (
+      <StyledCard
+        onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
+        className="m-2 h-[150px] rounded-xl"
+        style={{
+          borderColor: myTheme['color-success-700'],
+          borderWidth: 1,
+          borderBottomWidth: 0,
+          overflow: 'hidden',
+        }}
+      >
+        {item.image && (
+          <Image
+            source={{ uri: item.image }}
+            className='rounded-xl'
+            style={{
+              width: '100%', 
+              height: '100%', 
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
+            resizeMode="cover"
+          />
+        )}
+        {/* Title section positioned at the bottom */}
+        <StyledLayout
+          className="justify-center items-center"
+          style={{
+            backgroundColor: myTheme['color-success-700'],
+            position: 'absolute',
+            bottom: 0,
+            width: '120%',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              paddingVertical: 10,
+              fontFamily: 'Poppins-Regular',
+              width: '95%',
+            }}
+          >
+            {item.title}
+          </Text>
+        </StyledLayout>
+      </StyledCard>
+    );
+  };
 
   const renderGettingStartedItems = () => (
     <>
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
-        className='m-2 h-[150px] bg-transparent justify-end'
+        style={{
+          borderColor: myTheme['color-success-700'],
+          borderWidth: 1,
+          borderBottomWidth: 0,
+          overflow: 'hidden',
+        }}
+        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
-        <Text category='s1'>Introduction to Carbon Footprint</Text>
+        <StyledLayout
+          className="justify-center items-center"
+          style={{
+            backgroundColor: myTheme['color-success-700'],
+            position: 'absolute',
+            bottom: 0,
+            width: '120%',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              paddingVertical: 10,
+              fontFamily: 'Poppins-Regular',
+              width: '95%',
+            }}
+          >Introduction to Carbon Footprint
+          </Text>
+          </StyledLayout>
       </StyledCard>
 
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
-        className='m-2 h-[150px] bg-transparent justify-end'
+        style={{
+          borderColor: myTheme['color-success-700'],
+          borderWidth: 1,
+          borderBottomWidth: 0,
+          overflow: 'hidden',
+        }}
+        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
-        <Text category='s1'>Goal Guidelines</Text>
+        <StyledLayout
+          className="justify-center items-center"
+          style={{
+            backgroundColor: myTheme['color-success-700'],
+            position: 'absolute',
+            bottom: 0,
+            width: '120%',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              paddingVertical: 10,
+              fontFamily: 'Poppins-Regular',
+              width: '95%',
+            }}>Goal Guidelines
+          </Text>
+        </StyledLayout>
       </StyledCard>
     </>
   );

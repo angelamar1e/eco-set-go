@@ -9,5 +9,6 @@ export interface EcoAction {
     options?: Map<string,number>;
     baseMeal?: Map<string, string>;
     baseEmission?: any;
-    defaultKmTravelled?: number
+    defaultKmTravelled?: number;
+    image: string;
 }
