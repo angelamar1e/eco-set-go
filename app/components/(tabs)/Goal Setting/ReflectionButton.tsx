@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'nativewind';
 import { Button, Layout, Input, Text, Modal } from '@ui-kitten/components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useUserContext } from '@/contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
@@ -14,34 +14,27 @@ const StyledText = styled(Text);
 const ReflectionButton = () => {
   const [isClicked, setIsClicked] = useState(false);
   const [createmodalVisible, setcreateModalVisible] = useState(false);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(''); // Updated to use 'content' for input state
   const [date, setDate] = useState(new Date()); // State for date
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const { userUid } = useUserContext(); // Assuming `userUid` is provided by context
+  const [loading, setLoading] = useState(false); // Added loading state
+  const [uid, setUid] = useState<string | null>(null); // State for storing the user UID
+
+  useEffect(() => {
+    const fetchUserUid = async () => {
+      const currentUser = auth().currentUser;
+      if (currentUser) {
+        setUid(currentUser.uid); // Store the UID in state
+      } else {
+        console.error("User is not authenticated");
+      }
+    };
+
+    fetchUserUid(); // Call the function on mount
+  }, []);
 
   const handlePress = () => {
     setcreateModalVisible(true);
-  };
-
-  const handleCreateReflection = async () => {
-    if (content.trim().length > 0 && userUid) {  // Ensure content is not empty
-      try {
-        // Add reflection to Firestore
-        await firestore().collection('reflections').add({
-          content: content,
-          uid: userUid,  // Use the userUid from context
-          date: date.toISOString(), 
-          timestamp: firestore.FieldValue.serverTimestamp(), 
-        });
-
-        setContent('');
-        setcreateModalVisible(false);
-        setIsClicked(false);
-        
-      } catch (error) {
-        console.error("Error creating reflection: ", error);
-      }
-    }
   };
 
   const formattedDate = date.toLocaleDateString('en-US', {
@@ -49,6 +42,26 @@ const ReflectionButton = () => {
     month: 'long',
     day: 'numeric',
   });
+
+  const handleCreateReflection = async () => {
+    if (content.trim().length > 0 && uid) { // Ensure there is content and a valid UID
+      setLoading(true); // Start loading
+      try {
+        await firestore().collection('reflections').add({
+          content: content,  // Use content state here
+          uid: uid,           // Use the uid from state
+          date: firestore.FieldValue.serverTimestamp(),
+        });
+        setContent(''); // Clear content after successful submission
+        setcreateModalVisible(false); // Close modal
+        setIsClicked(false); // Reset button state
+      } catch (error) {
+        console.error("Error adding reflection: ", error);
+      } finally {
+        setLoading(false); // Reset loading state
+      }
+    }
+  };
 
   return (
     <StyledLayout>
@@ -61,6 +74,7 @@ const ReflectionButton = () => {
           <Ionicons name="pencil" size={20} color="#8F9BB3" />
         )}
         onPress={handlePress}
+        disabled={loading} // Disable the button while loading
       >
         {/* Reflection button */}
       </StyledButton>
@@ -108,6 +122,7 @@ const ReflectionButton = () => {
               status="info"
               size='small'
               className='m-1 rounded-full'
+              disabled={loading} // Disable cancel button while loading
             >
               <StyledText>Cancel</StyledText>
             </StyledButton>
@@ -116,8 +131,10 @@ const ReflectionButton = () => {
               status="success"
               appearance="ghost"
               size='small'
-              onPress={handleCreateReflection}>
-              Create Reflection
+              onPress={handleCreateReflection}
+              disabled={loading} // Disable create button while loading
+            >
+              {loading ? 'Creating...' : 'Create Reflection'}
             </StyledButton>
           </StyledLayout>
         </StyledLayout>
