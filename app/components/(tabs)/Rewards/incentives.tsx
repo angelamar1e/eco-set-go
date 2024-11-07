@@ -32,8 +32,8 @@ const Incentives = () => {
           flex: 1, 
           elevation: 1,
           backgroundColor: myTheme['color-success-transparent-100'],
-          borderColor: myTheme['color-success-transparent-100'],
-          borderWidth: 2,
+          borderColor: myTheme['color-success-900'],
+          borderWidth: 1,
         }}
       >
         <StyledText className='text-center mb-2 text-xl'>{item.icon}</StyledText>
@@ -52,6 +52,7 @@ const Incentives = () => {
           elevation: 1,
           padding: 8, 
           borderWidth: 1,
+          borderColor: myTheme['color-success-900'],
         }}
       >
         <StyledLayout className="flex-row items-center justify-between">

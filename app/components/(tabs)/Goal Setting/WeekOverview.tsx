@@ -21,12 +21,12 @@ const theme = useTheme();
 const headertextColor = theme['color-success-900'];
 
   return (
-    <View className="items-center -mt-14 -bottom-3 mb-4 z-50">
-      <StyledCard className='bg-white border-0' style={{ borderRadius: 100, padding: 0, width: '90%', elevation: 2}}>
+    <View className="items-center -mt-14 -bottom-3 mb-6 z-50 justify-items-center">
+      <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
-      <StyledLayout className="ml-2 mr-2 relative bg-white">
-        <StyledText className="text-center mb-1 text-lg" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>
-          Week Overview
+      <StyledLayout className="ml-1 mr-2 relative bg-white">
+        <StyledText className="text-center mb-2 text-xl p-2" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>
+          Week Overview  📆
         </StyledText>
 
         {/* Flex container for dates and labels */}
@@ -50,7 +50,12 @@ const headertextColor = theme['color-success-900'];
                     paddingTop: 4
                   }}
                 >
-                  <StyledText className='text-lg' style={{color: myTheme['color-basic'], fontFamily: 'Poppins-Medium'}}>
+                  <StyledText className='text-lg' 
+                    style={{
+                      color: isDone
+                      ? 'white'
+                      : myTheme['color-basic'],
+                      fontFamily: 'Poppins-Regular'}}>
                     {date}
                   </StyledText>
                 </View>

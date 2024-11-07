@@ -13,7 +13,17 @@ import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionBut
 import { useLoadFonts } from "@/assets/fonts/loadFonts";
 import ReflectionList from "@/app/components/(tabs)/Goal Setting/ReflectionList";
 
-const GoalSetting = () => {
+const Logs = () => {
+    const data = [
+        { id: '1', component: <DailyLog /> },
+        { id: '2', component: <Reflection /> },
+    ];
+
+    const goalDates = {
+        startDate: '10/20/2024',
+        endDate: '11/05/2024',
+    };
+
     const theme = useTheme();
     const fontsLoaded = useLoadFonts(); 
 
@@ -29,13 +39,13 @@ const GoalSetting = () => {
 
             <StyledLayout className="flex-1 px-2">
                 <WeekOverview />
-                <View className="flex-row m-1 items-center justify-between">
-                    <Text style={{ fontSize: 40, marginLeft: 10 }}>🌞💭</Text>
-                    <View className="flex-row items-center">
+                {/*<View className="flex-row m-1 items-center justify-between">
+                <Text style={{ fontSize: 40, marginLeft: 10 }}>🌞💭</Text>*/}
+                    <View className="flex-row items-center justify-center">
                         <AddActionButton />
                         <ReflectionButton />
                     </View>
-                </View>
+               {/*</View>*/}
 
                 <View className="flex-1">
                     <FlatList
@@ -52,4 +62,4 @@ const GoalSetting = () => {
     );
 };
 
-export default GoalSetting;
+export default Logs;

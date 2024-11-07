@@ -4,7 +4,7 @@ import { useTheme } from '@ui-kitten/components';
 import LandingPage from './Home';
 import EcoActionsList from './Eco Articles/list';
 import CombinedReport from './Progress Monitoring/report';
-import GoalSetting from './Goal Setting/logs';
+import Logs from './Goal Setting/logs';
 import Feed from './Community/Feed';
 import EcoPoints from './Rewards/points';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
@@ -54,7 +54,7 @@ export default function TabLayout() {
       />
       <Screen
         name="Goal Setting/logs"
-        component={GoalSetting}
+        component={Logs}
         options={{
           title: 'Actions',
           tabBarIcon: ({ color, focused }) => (

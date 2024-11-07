@@ -6,40 +6,27 @@ import { styled } from 'nativewind';
 import { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
+import { EmissionsContext } from '@/contexts/Emissions';
+import { EmissionsData } from '../../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
 
 const QuizEnd = () => {
-    const { userUid } = useUserContext();
     const {
-        foodEmissions,
-        transportationEmissions,
-        electricityEmissions,
-        totalEmissions
-    } = useContext(EmissionsDataContext);
-
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        const setInitialFootprint = async () => {
-            await firestore().collection("initial_footprint").doc(userUid).set({
-                food_footprint: foodEmissions,
-                transportation_footprint: transportationEmissions,
-                electricity_footprint: electricityEmissions,
-                overall_footprint: totalEmissions
-            });
-        };
-        setInitialFootprint();
-    }, [userUid, foodEmissions, transportationEmissions, electricityEmissions, totalEmissions]);
+        foodFootprint,
+        transportationFootprint,
+        electricityFootprint,
+        overallFootprint
+    } = useContext(EmissionsContext);
 
     // Prepare an array with each category and its value, then sort it from highest to lowest
     const sortedEmissions = [
-        { category: "Food 🥗", value: foodEmissions },
-        { category: "Transportation 🛻", value: transportationEmissions },
-        { category: "Electricity ⚡", value: electricityEmissions }
+        { category: "Food 🥗", value: foodFootprint },
+        { category: "Transportation 🛻", value: transportationFootprint },
+        { category: "Electricity ⚡", value: electricityFootprint }
     ].sort((a, b) => b.value - a.value); 
 
     const maxWidth = 100; 
@@ -47,7 +34,7 @@ const QuizEnd = () => {
 
     const widthDecrement = (maxWidth - minWidth) / (sortedEmissions.length - 1);
 
-    const total = totalEmissions;
+    const total = overallFootprint;
 
     // Calculate percentages for each category
     const percentageEmissions = sortedEmissions.map(emission => ({
@@ -55,7 +42,7 @@ const QuizEnd = () => {
         percentage: ((Number(emission.value) / total) * 100).toFixed(2) // Ensure emission.value is a number
     }));
 
-    const { emissionsData, loading, error } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let highestEmissions = {
         food: { value: 0, source: '', percentage: 0 },
         transportation: { value: 0, source: '', percentage: 0 },
@@ -78,10 +65,6 @@ const QuizEnd = () => {
         electricityCategory = percentageEmissions.find(e => e.category === "Electricity ⚡");
     }
 
-    // Handle loading and error states
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
-
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <StyledLayout className='flex-1 p-4 py-10'>
@@ -101,14 +84,14 @@ const QuizEnd = () => {
                             className=""
                             style={{
                                 fontFamily: 'Poppins-Bold',
-                                fontSize: 90,
+                                fontSize: 100,
                                 textAlign: 'center',
                                 top: 20,
                                 color: myTheme['color-success-700']
 
                             }}
                         >
-                            {totalEmissions.toFixed(2)}
+                            {overallFootprint.toFixed(2)}
                         </Text>
                         <Text
                             className=""
@@ -178,7 +161,7 @@ const QuizEnd = () => {
                     </Text>
                     
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -186,7 +169,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                    {highestEmissions.food.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                    {highestEmissions.food.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.food.source || 'Unknown'} 
@@ -204,7 +187,7 @@ const QuizEnd = () => {
                     </Text>
 
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -212,7 +195,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.transportation.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                {highestEmissions.transportation.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.transportation.source || 'Unknown'} 
@@ -229,7 +212,7 @@ const QuizEnd = () => {
                     </Text>
 
                     <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-1/2 items-center rounded-xl shadow mb-2' 
+                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
                             style={{
                                 borderColor: myTheme['color-success-900'], 
                                 backgroundColor: myTheme['color-success-transparent-100']
@@ -237,7 +220,7 @@ const QuizEnd = () => {
                             >
                             <View style={{ alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.electricity.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}>kg</Text>
+                                {highestEmissions.electricity.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
                                 </Text>
                                 <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                     <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.electricity.source || 'Unknown'} 
@@ -253,16 +236,16 @@ const QuizEnd = () => {
                     left: 0,
                     right: 0,
                     padding: 5,
-                    paddingHorizontal: 15
+                    paddingHorizontal: 30,
+                    alignItems: 'flex-end'
                 }}>
-                    <Button
+                    <TouchableOpacity
                         onPress={() => router.push('/(tabs)/Home')}
-                        style={{ borderRadius: 15, borderColor: 'green',}} 
-                        status="primary" 
-                        appearance='ghost'
                     >
-                        Take action
-                    </Button>
+                    <Text style={{fontFamily:'Poppins-SemiBold', fontSize: 23, alignItems: 'center', color: myTheme['color-success-900']}}>Take action 
+                        <Text style={{color: myTheme['color-success-700'], fontSize: 28}}> →</Text>
+                    </Text>
+                    </TouchableOpacity>
                 </StyledLayout>
             </StyledLayout>
         </ScrollView>

@@ -132,7 +132,9 @@ const DailyLog: FC = () => {
             chosenMeal
         };
     } else if (template === 1 || template === 2 || template === 3) {
-        updatePayload = impact;
+        updatePayload = {   
+          impact
+        };
     } else if (template === 4 || template === 5) {
         updatePayload = {
             impact,

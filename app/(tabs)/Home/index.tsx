@@ -14,6 +14,12 @@ import LogOutButton from "@/app/components/LogOutButton";
 import ReflectionButton from "@/app/components/(tabs)/Goal Setting/ReflectionButton";
 import AddActionButton from "@/app/components/(tabs)/Goal Setting/AddActionButton";
 import { useLoadFonts } from "@/assets/fonts/loadFonts";
+import { useUserGoalContext } from "@/contexts/UserGoalContext";
+import { EmissionsDataContext } from "@/contexts/EmissionsData";
+import { useLogsContext } from "@/contexts/UserLogs";
+import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
+import { ActivityIndicator } from "react-native-paper";
+import { EmissionsContext } from "@/contexts/Emissions";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -31,10 +37,11 @@ const Box = ({ className = "", style = "", ...props }) => (
 
 export default function LandingPage() {
   const router = useRouter();
-  const { username, overallFootprint } = useUserContext();
-  const [impactValue, setImpactValue] = useState<number>(0);
+  const { username, currentFootprint, initialFootprint } = useUserContext();
   const fontsLoaded = useLoadFonts(); 
 
+  const firstName = username ? username.split(" ")[0] : "";
+  
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -45,6 +52,18 @@ export default function LandingPage() {
 
   const theme = useTheme();
   const headertextColor = theme['color-success-900'];
+  const {progressPercentage} = useUserGoalContext();
+  const [loading, setLoading] = useState(true);
+
+  let percentage = (progressPercentage * 100);
+  let difference = conditionalConvertGramsToKg(convertTonsToGrams(initialFootprint - currentFootprint));
+
+    // Check if all required data is loaded
+    useEffect(() => {
+      if (fontsLoaded) {
+        setLoading(false);
+      }
+    }, [fontsLoaded]);
 
   const data = [
     {
@@ -62,7 +81,7 @@ export default function LandingPage() {
                     fontFamily: 'Poppins-Italic' 
                   }}
                 >
-                  {username!}!
+                  {firstName!}! 🌱
                 </StyledText>
               </StyledText>
               <StyledButton
@@ -83,7 +102,7 @@ export default function LandingPage() {
                   Carbon Footprint
                 </StyledText>
                 <StyledText className="text-center text-white text-6xl pt-2" style={{ fontFamily: 'Poppins-Bold'}} >
-                  {overallFootprint.toFixed(2)}
+                  {currentFootprint.toFixed(2)}
                 </StyledText>
                 <StyledText className="text-center text-white text-sm" style={{ fontFamily: 'Poppins-Regular'}}>
                   tons of{'\n'}CO2 equivalent
@@ -91,24 +110,24 @@ export default function LandingPage() {
               </Box>
               <StyledLayout className="flex-column w-1/2 space-y-2">
                 <StyledCard className="flex-row w-full h-auto items-center justify-center rounded-xl bg-transparent">
-                  <StyledText className="text-3xl" style={{ fontFamily: 'Poppins-Bold'}}>{impactValue}g</StyledText>
+                  <StyledText className="text-3xl" style={{ fontFamily: 'Poppins-Bold'}}>{difference}</StyledText>
                   <StyledText className="text-base text-sm" style={{ fontFamily: 'Poppins-Regular'}}>less than initial record</StyledText>
                 </StyledCard>
                 <StyledCard className="flex-row w-full h-auto items-center justify-center rounded-xl bg-transparent">
-                  <StyledText className="text-3xl" style={{ fontFamily: 'Poppins-Bold'}}>0%</StyledText>
+                  <StyledText className="text-3xl" style={{ fontFamily: 'Poppins-Bold'}}>{percentage > 100 ? 100 : percentage.toFixed(0)}%</StyledText>
                   <StyledText className="text-base text-sm" style={{ fontFamily: 'Poppins-Regular'}}>of the goal is completed</StyledText>
                 </StyledCard>
               </StyledLayout>
             </StyledLayout>
-            <StyledLayout className="flex-row items-center justify-between mt-4 ml-3">
-              <StyledText className="text-3xl" style={{ color: headertextColor, flex: 1, fontFamily: 'Poppins-SemiBold' }}>
-                Daily Log <Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>
+            <StyledLayout className="flex-row items-center justify-between mt-4">
+              <StyledText className="text-3xl mb-2 text-center" style={{ color: headertextColor, flex: 1, fontFamily: 'Poppins-SemiBold' }}>
+                Daily Log {/*<Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>*/}
               </StyledText>
-              <View className='m-1 mr-3' style={{ flexDirection: 'row', alignItems: 'center' }}>
+            </StyledLayout>
+            <View className= 'ml-2' style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AddActionButton />
                 <ReflectionButton />
-              </View>
-            </StyledLayout>
+            </View>
             <DailyLog />
           </StyledLayout>
         </StyledLayout>
@@ -119,6 +138,15 @@ export default function LandingPage() {
   if (!fontsLoaded) {
     return <View />; // Or a loading spinner
   }
+
+  // Render loading indicator if data is still being loaded
+  // if (currentFootprint) {
+  //   return (
+  //     <StyledLayout className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+  //     </StyledLayout>
+  //   );
+  // }
 
   return (
     <StyledLayout className="flex-1">

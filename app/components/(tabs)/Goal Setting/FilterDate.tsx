@@ -29,8 +29,8 @@ const FilterDate: React.FC<FilterDateProps> = ({ onDateChange }) => {
       } else {
         setEndDate(selectedDate);
       }
+      setShowDatePicker(null);
     }
-    setShowDatePicker(null);
   };
 
   const togglePopover = () => setVisible(!visible);
@@ -93,12 +93,15 @@ const FilterDate: React.FC<FilterDateProps> = ({ onDateChange }) => {
             appearance="ghost"
             status="danger"
             size="small"
-            style={{ marginVertical: 5 }}
           >
             Reset Filter
           </StyledResetButton>
 
-          <Button onPress={confirmFilter} appearance="filled" size="small">
+          <Button 
+            onPress={confirmFilter} 
+            appearance="ghost"
+            size="small"
+          >
             Confirm
           </Button>
         </StyledLayout>

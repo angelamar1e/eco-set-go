@@ -15,10 +15,10 @@ const ListHeader = () => {
   const theme = useTheme();
 
   const navigateBack = () => navigation.goBack();
-  const BackIcon = () => <Ionicons name="chevron-back-outline" size={25} color={theme['color-success-900']} />;
+  const BackIcon = () => <Ionicons name="chevron-back" size={25} color={theme['color-success-900']} />;
 
   return (
-    <Layout level='1' style={{ borderBottomWidth: 1, borderBottomColor: myTheme["color-success-900"], borderStyle: 'solid' }}>
+    <Layout level='1' style={{ borderBottomWidth: 2, borderBottomColor: myTheme["color-success-900"], borderStyle: 'solid' }}>
       <TopNavigation
         accessoryLeft={() => (
           <View className='flex-row items-center'>

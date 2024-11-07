@@ -55,6 +55,7 @@ const ReflectionList: React.FC = () => {
         }
         return false;
       });
+
       setFilteredReflections(filtered);
     } else {
       setFilteredReflections(reflections);

@@ -23,7 +23,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
   handleDelete,
 }) => {
 
-    const { emissionsData } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let impact = 0;
 
     function getImpact() {
@@ -64,7 +64,7 @@ export const Parameterized: React.FC<ActionItemProps> = ({
             }
             onPress={() => getImpact()}
           />
-            <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+            <StyledText category="p1" numberOfLines={2} style={{width: "85%",}} className="ml-1 mb-2 text-base">
               {item.title}
             </StyledText>
         </View>
