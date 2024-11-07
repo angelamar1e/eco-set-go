@@ -20,6 +20,8 @@ import { useLogsContext } from "@/contexts/UserLogs";
 import { conditionalConvertGramsToKg, convertTonsToGrams } from "@/app/utils/EstimationUtils";
 import { ActivityIndicator } from "react-native-paper";
 import { EmissionsContext } from "@/contexts/Emissions";
+import TakeaQuiz from "@/app/(quiz)/takeaquiz";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -36,11 +38,33 @@ const Box = ({ className = "", style = "", ...props }) => (
 );
 
 export default function LandingPage() {
+  const [showQuizModal, setShowQuizModal] = useState(false);  
   const router = useRouter();
-  const { username, currentFootprint, initialFootprint } = useUserContext();
+  const { username, currentFootprint, initialFootprint, userUid } = useUserContext();
+  const {getCurrentFootprint} = useLogsContext();
+  const { initializeData } = useContext(EmissionsContext);
   const fontsLoaded = useLoadFonts(); 
 
   const firstName = username ? username.split(" ")[0] : "";
+
+  useEffect(() => {
+    const initialize = async () => {
+      await initializeData();
+      getCurrentFootprint();
+    }
+
+    // Function to check if modal has already been shown
+    const checkModalStatus = async () => {
+      const shown = await AsyncStorage.getItem(`quizModalShown${userUid}`);
+      if (!shown) {
+        // If not shown, display the modal
+        setShowQuizModal(true);
+        initialize();
+      }
+    };
+
+    checkModalStatus();
+  }, [])
   
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -58,12 +82,16 @@ export default function LandingPage() {
   let percentage = (progressPercentage * 100);
   let difference = conditionalConvertGramsToKg(convertTonsToGrams(initialFootprint - currentFootprint));
 
-    // Check if all required data is loaded
-    useEffect(() => {
-      if (fontsLoaded) {
-        setLoading(false);
-      }
-    }, [fontsLoaded]);
+    const handleTakeQuiz = async () => {
+      setShowQuizModal(false);
+      await AsyncStorage.setItem(`quizModalShown${userUid}`, "true"); // Set flag so it doesn’t show again
+      router.push("/(quiz)");
+    };
+  
+    const handleDismiss = async () => {
+      setShowQuizModal(false);
+      await AsyncStorage.setItem(`quizModalShown${userUid}`, "true"); // Set flag so it doesn’t show again
+    };
 
   const data = [
     {
@@ -160,6 +188,12 @@ export default function LandingPage() {
           showsVerticalScrollIndicator={false}
         />
       </SafeAreaView>
+
+      <TakeaQuiz
+        visible={showQuizModal}
+        onTakeQuiz={handleTakeQuiz}
+        onDismiss={handleDismiss}
+      />
     </StyledLayout>
   );
 }

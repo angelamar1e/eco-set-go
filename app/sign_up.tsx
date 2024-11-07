@@ -1,7 +1,7 @@
 import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Alert,
   View
@@ -21,6 +21,8 @@ import { styled } from 'nativewind';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { myTheme } from '@/constants/custom-theme';
 import TakeaQuiz from './(quiz)/takeaquiz';
+import { EmissionsContext } from '@/contexts/Emissions';
+import { EmissionsData } from '../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -47,7 +49,8 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
-  const {userUid, loading} = useUserContext();
+  const {initializeData} = useContext(EmissionsContext);
+  const {userUid, fetchUserDetails, setProfileCreated} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -56,7 +59,6 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
-  const [showQuizModal, setShowQuizModal] = useState(false);  
   const router = useRouter();
 
   const current_date = Date().toString();
@@ -91,44 +93,45 @@ export default function SignUp() {
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
     const userUid = response.user.uid;
-
+  
     try {
-      firestore().collection('users').doc(userUid).set({
-        role: "user",
-        username,
-        created_at: current_date,
-      });
-
-      firestore().collection('current_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      firestore().collection('initial_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      firestore().collection('daily_logs').doc(userUid).set({});
-      firestore().collection('user_logs').doc(userUid).set({});
-      firestore().collection('goals').doc(userUid).set({});
-    }
-    catch (error) {
+      await Promise.all([
+        firestore().collection('users').doc(userUid).set({
+          role: "user",
+          username,
+          created_at: current_date,
+          points: 0,
+          redeemablePoints: 0,
+        }, {merge: true}),
+        firestore().collection('current_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('initial_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('daily_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('user_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('goals').doc(userUid).set({}, {merge: true})
+      ]);
+    } catch (error) {
       console.error(error);
     }
   }
-
+  
   const handleSignUp = async () => {
     if (email && password) {
       try {
         const response = await auth().createUserWithEmailAndPassword(email, password);
+        setProfileCreated(false);
         await createProfile(response);
+        setProfileCreated(true);
         clearAllInput();
-        setShowQuizModal(true);  // Show quiz modal only after successful sign-up
       } catch (error) {
         handleError(error);
       }
@@ -163,15 +166,6 @@ export default function SignUp() {
     setUsername('');
     setEmail('');
     setPassword('');
-  };
-
-  const handleTakeQuiz = () => {
-    setShowQuizModal(false);
-    router.push("/(quiz)"); // Navigate to the quiz screen
-  };
-
-  const handleDismiss = () => {
-    setShowQuizModal(false);
   };
 
   return (
@@ -230,12 +224,6 @@ export default function SignUp() {
         visible={alertVisible}
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
-      />
-
-      <TakeaQuiz
-        visible={showQuizModal}
-        onTakeQuiz={handleTakeQuiz}
-        onDismiss={handleDismiss}
       />
     </StyledLayout>
   );

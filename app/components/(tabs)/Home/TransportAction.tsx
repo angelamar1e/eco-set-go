@@ -82,12 +82,8 @@ export const Transportation: React.FC<ActionItemProps> = ({
         </View>       
       )}
     >
-      <StyledLayout className="pt-1 m-1" 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} >
-        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
+      <StyledLayout className="pt-1 m-1">
+        <View className="rounded-lg px-3 border border-gray-200 py-2" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
           <View className="flex-row items-center justify-start bottom-1">
               <CircularCheckbox
               status={
@@ -102,7 +98,7 @@ export const Transportation: React.FC<ActionItemProps> = ({
             {item.title}
           </StyledText>        
           </View>
-        </StyledCard>
+        </View>
       </StyledLayout>
     </Swipeable>
   );

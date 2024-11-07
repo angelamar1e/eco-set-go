@@ -19,13 +19,9 @@ const StaticDone: React.FC<DoneItemProps> = ({
   handleUnmark,
 }) => {
   return (
-    <StyledLayout className="pt-1 m-1" 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} >
-        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
-          <View className="flex-row items-center justify-start bottom-1">
+    <StyledLayout className="pt-1 m-1" >
+        <View className="rounded px-3 border border-gray-200 py-2 w-full" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
+          <View className="flex-row items-center justify-start">
             <CircularCheckbox
             status={
               completedActions.some((action) => action.id === item.id)
@@ -34,11 +30,15 @@ const StaticDone: React.FC<DoneItemProps> = ({
                 }
                 onPress={() => handleUnmark(item.id)}
               />
-          <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%",}} className="ml-1 mb-2">
-            {item.title}
-          </StyledText>
+            <StyledText
+              numberOfLines={2}
+              style={{ width: "85%" }}
+              className="text-base leading-5"
+            >
+              {item.title}
+            </StyledText>
         </View>
-    </StyledCard>
+    </View>
     </StyledLayout>
   );
 };

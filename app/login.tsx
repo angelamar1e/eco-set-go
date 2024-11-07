@@ -73,7 +73,7 @@ export default function LogInScreen() {
   const [alertVisible, setAlertVisible] = useState<boolean>(false); // State for alert visibility
   const [alertMessage, setAlertMessage] = useState<string>(""); // State for alert message
 
-  const { role } = useUserContext();
+  const { userUid, fetchUserDetails, setProfileCreated } = useUserContext();
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -101,7 +101,6 @@ export default function LogInScreen() {
     if (isEmailValid && isPasswordValid) {
       try {
         await auth().signInWithEmailAndPassword(email, password);
-        // Navigate to the interface after successful login
         clearAllInput();
       } catch (e) {
         setAlertMessage("Login Error");

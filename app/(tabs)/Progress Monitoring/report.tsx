@@ -23,6 +23,8 @@ import { DEFAULT_X_LABELS_HEIGHT_PERCENTAGE } from "react-native-chart-kit/dist/
 import { EmissionsData } from "../../../constants/DefaultValues";
 import { EmissionsContext } from "@/contexts/Emissions";
 import { useUserContext } from "@/contexts/UserContext";
+import { ActivityIndicator } from "react-native-paper";
+import { convertGramsToKg } from '../../utils/EstimationUtils';
 
 // Define types for report data
 type ReportData = {
@@ -65,6 +67,21 @@ const ProgressReport = () => {
   } = useLogsContext();
   const { initialFootprint, currentFootprint } = useUserContext();
 
+  // Chart data state
+  const [chartData, setChartData] = useState({
+    labels: [],
+    legend: ["Food", "Transportation", "Electricity"],
+    data: [[0]],
+    barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
+  });
+
+  // Update chartData when stackedChartData changes
+  useEffect(() => {
+    if (stackedChartData) {
+      setChartData(stackedChartData);
+    }
+  }, [stackedChartData]);
+
   // Helper function to validate stackedChartData
   const isStackedChartDataValid = () => {
     return (
@@ -97,6 +114,40 @@ const ProgressReport = () => {
     });
     return () => listener.remove();
   }, []);
+
+  const renderDataValues = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        {chartData.labels.map((label, index) => (
+          <View key={index} style={{ marginBottom: 8 }}>
+            <Text
+              style={{
+                fontFamily: "Poppins-Medium",
+                fontSize: 13,
+                color: myTheme["color-basic-600"],
+              }}
+            >
+              {label}:
+            </Text>
+            {chartData.data[index].map((value, subIndex) => (
+              <Text
+                key={subIndex}
+                style={{
+                  fontFamily: "Poppins-Regular",
+                  fontSize: 13,
+                  color: myTheme["color-basic-800"],
+                }}
+              >
+                {chartData.legend[subIndex]}: {convertGramsToKg(value).toFixed(2)} kg CO₂e
+              </Text>
+            ))}
+          </View>
+        ))}
+      </View>
+    );
+  };
+  
+  
 
   const renderStackedBarChart = () => {
     const currentColors = chartColors[colorScheme];
@@ -163,6 +214,14 @@ const ProgressReport = () => {
     );
   };
   
+  if (!stackedChartData && !isStackedChartDataValid()){
+    return (
+      <StyledLayout className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+      </StyledLayout>
+    );
+  }
+
   return (
     <StyledLayout className="flex-1">
       <StyledLayout
@@ -301,7 +360,7 @@ const ProgressReport = () => {
           >
             <Layout level="2">{renderStackedBarChart()}</Layout>
             <Layout level="2">
-              <Text>Hello</Text>
+              <Text>{renderDataValues()}</Text>
             </Layout>
           </ViewPager>
         </StyledLayout>

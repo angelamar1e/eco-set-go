@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export const Milestones = {
   "The first step 🥇": ["You have added your first Eco Action.", 100],
   "Keep it up! 🎯": ["Completed an Eco Action for the first time.", 100],
@@ -33,12 +35,23 @@ export const Points = {
   ]
 };
 
-export const Levels = {
-    "Level 1": 500,
-    "Level 2": 1000,
-    "Level 3": 1500,
+
+type LevelsType = { [key: string]: number };
+
+function generateLevels(totalLevels: number, increment: number = 500): LevelsType {
+  const levels: LevelsType = {};
+
+  for (let i = 1; i <= totalLevels; i++) {
+    levels[`Level ${i}`] = i * increment;
+  }
+
+  return levels;
 }
 
-export const Incentives = {
-    
-}
+export const Levels = generateLevels(10);
+console.log(Levels); 
+
+export const Rewards = [
+  {icon: '🌏', title: 'Free Delivery', content: 'Get ₱120 off your delivery fee with Ecomove', terms: ['Minimum of 3 bookings'], points: 500},
+  {icon: '💰', title: '₱10 off', content: 'Get ₱10 off your first booking with Ecomove', terms: ['No minimum spend'], points: 500}
+]
