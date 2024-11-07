@@ -79,7 +79,7 @@ export default function LandingPage() {
                     fontFamily: 'Poppins-Italic' 
                   }}
                 >
-                  {username!}!
+                  {username!}! 🌱
                 </StyledText>
               </StyledText>
               <StyledButton
@@ -117,15 +117,15 @@ export default function LandingPage() {
                 </StyledCard>
               </StyledLayout>
             </StyledLayout>
-            <StyledLayout className="flex-row items-center justify-between mt-4 ml-3">
-              <StyledText className="text-3xl" style={{ color: headertextColor, flex: 1, fontFamily: 'Poppins-SemiBold' }}>
-                Daily Log <Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>
+            <StyledLayout className="flex-row items-center justify-between mt-4">
+              <StyledText className="text-3xl mb-2 text-center" style={{ color: headertextColor, flex: 1, fontFamily: 'Poppins-SemiBold' }}>
+                Daily Log {/*<Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>*/}
               </StyledText>
-              <View className='m-1 mr-3' style={{ flexDirection: 'row', alignItems: 'center' }}>
+            </StyledLayout>
+            <View className= 'ml-2' style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AddActionButton />
                 <ReflectionButton />
-              </View>
-            </StyledLayout>
+            </View>
             <DailyLog />
           </StyledLayout>
         </StyledLayout>

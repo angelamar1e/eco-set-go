@@ -39,13 +39,13 @@ const Logs = () => {
 
             <StyledLayout className="flex-1 px-2">
                 <WeekOverview />
-                <View className="flex-row m-1 items-center justify-between">
-                    <Text style={{ fontSize: 40, marginLeft: 10 }}>🌞💭</Text>
-                    <View className="flex-row items-center">
+                {/*<View className="flex-row m-1 items-center justify-between">
+                <Text style={{ fontSize: 40, marginLeft: 10 }}>🌞💭</Text>*/}
+                    <View className="flex-row items-center justify-center">
                         <AddActionButton />
                         <ReflectionButton />
                     </View>
-                </View>
+               {/*</View>*/}
 
                 <View className="flex-1">
                     <FlatList
