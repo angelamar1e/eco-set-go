@@ -138,13 +138,13 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  // if (currentFootprint) {
-  //   return (
-  //     <StyledLayout className="flex-1 justify-center items-center">
-  //       <ActivityIndicator size="large" color={myTheme['color-success-700']} />
-  //     </StyledLayout>
-  //   );
-  // }
+  if (!username && currentFootprint === 0 && initialFootprint === 0) {
+    return (
+      <StyledLayout className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+      </StyledLayout>
+    );
+  }
 
   return (
     <StyledLayout className="flex-1">
