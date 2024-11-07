@@ -77,7 +77,7 @@ const ReflectionButton = () => {
         onPress={handlePress}
         disabled={loading} // Disable the button while loading
       >
-        {/* Reflection button */}
+        Create reflection
       </StyledButton>
 
       {/* Modal for Creating Reflection */}
