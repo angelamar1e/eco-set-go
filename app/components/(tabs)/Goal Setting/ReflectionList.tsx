@@ -1,3 +1,4 @@
+// ReflectionList.tsx
 import React, { useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import ReflectionCard from './Reflection';
@@ -22,7 +23,6 @@ const ReflectionList: React.FC = () => {
   const [filteredReflections, setFilteredReflections] = useState<Reflection[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [filterActive, setFilterActive] = useState(false);
 
   useEffect(() => {
     const unsubscribeReflections = firestore()
@@ -33,7 +33,6 @@ const ReflectionList: React.FC = () => {
           id: doc.id,
           ...doc.data(),
         })) as Reflection[];
-
         setReflections(fetchedReflections);
       });
 
@@ -43,50 +42,31 @@ const ReflectionList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    applyDateFilter(reflections);
-  }, [startDate, endDate, filterActive, reflections]);
-
-  const applyDateFilter = (fetchedReflections: Reflection[]) => {
-    if (filterActive && startDate && endDate) {
-      if (startDate > endDate) {
-        alert("Start date cannot be later than end date.");
-        return;
-      }
-
-      const filtered = fetchedReflections.filter(reflection => {
+    if (startDate && endDate) {
+      // Clear the time portion of the startDate and endDate for accurate comparison
+      const startOfDay = new Date(startDate.setHours(0, 0, 0, 0));
+      const endOfDay = new Date(endDate.setHours(23, 59, 59, 999));
+  
+      const filtered = reflections.filter(reflection => {
         if (reflection.date && typeof reflection.date.toDate === 'function') {
           const reflectionDate = reflection.date.toDate();
-          return reflectionDate >= startDate && reflectionDate <= endDate;
+          // Now comparing the reflectionDate with the inclusive start and end of day
+          return reflectionDate >= startOfDay && reflectionDate <= endOfDay;
         }
         return false;
       });
 
       setFilteredReflections(filtered);
     } else {
-      setFilteredReflections(fetchedReflections);
+      setFilteredReflections(reflections);
     }
-  };
+  }, [startDate, endDate, reflections]);
+  
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setStartDate(start);
     setEndDate(end);
   };
-
-  const handleToggleFilter = (isClicked: boolean) => {
-    setFilterActive(isClicked);
-  };
-
-  const handleResetFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setFilterActive(false); // Deactivates filter without resetting automatically
-  };
-
-  const renderEmptyState = () => (
-    <StyledLayout className="items-center justify-center">
-      <StyledText category="s1">No reflections found.</StyledText>
-    </StyledLayout>
-  );
 
   return (
     <StyledLayout style={{ position: 'relative' }}>
@@ -94,30 +74,25 @@ const ReflectionList: React.FC = () => {
         <StyledText className="m-2 font-bold" category="s1">
           Reflection
         </StyledText>
-        <FilterDate onToggle={handleToggleFilter} onDateChange={handleDateChange} />
+        <FilterDate onDateChange={handleDateChange} />
       </StyledLayout>
 
-      {/* Display empty state if no reflections and no filter */}
-      {filteredReflections.length === 0 && !filterActive ? (
-        renderEmptyState()
-      ) : (
-        <FlatList
-          data={filteredReflections.length > 0 ? filteredReflections : reflections}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <ReflectionCard
-              id={item.id}
-              content={item.content}
-              date={item.date}
-              uid={item.uid}
-              onEdit={newContent => editReflection(item.id, newContent)}
-              onDelete={() => deleteReflection(item.id)}
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          style={{ zIndex: 0 }}
-        />
-      )}
+      <FlatList
+        data={filteredReflections}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <ReflectionCard
+            id={item.id}
+            content={item.content}
+            date={item.date}
+            uid={item.uid}
+            onEdit={newContent => editReflection(item.id, newContent)}
+            onDelete={() => deleteReflection(item.id)}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+        style={{ zIndex: 0 }}
+      />
     </StyledLayout>
   );
 };
