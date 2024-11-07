@@ -40,6 +40,8 @@ export default function LandingPage() {
   const { username, currentFootprint, initialFootprint } = useUserContext();
   const fontsLoaded = useLoadFonts(); 
 
+  const firstName = username ? username.split(" ")[0] : "";
+  
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -79,7 +81,7 @@ export default function LandingPage() {
                     fontFamily: 'Poppins-Italic' 
                   }}
                 >
-                  {username!}! 🌱
+                  {firstName!}! 🌱
                 </StyledText>
               </StyledText>
               <StyledButton

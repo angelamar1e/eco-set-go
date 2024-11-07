@@ -79,6 +79,10 @@ export default function RootLayout() {
                         name="components/(tabs)/Eco Articles/Introduction" 
                         options={{headerShown: false}}
                       />              
+                      <Stack.Screen 
+                        name="components/(tabs)/Rewards/MilestonesPage" 
+                        options={{headerShown: false}}
+                      />              
                     </Stack>     
                   </GestureHandlerRootView>
                 </ApplicationProvider>

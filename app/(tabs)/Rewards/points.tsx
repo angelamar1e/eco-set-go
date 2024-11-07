@@ -10,11 +10,13 @@ import { myTheme } from "@/constants/custom-theme";
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
+const StyledProgressBar = styled(ProgressBar);
+
 
 const EcoPoints = () => {
 
   const theme = useTheme();
-    const maintextcolor = theme['color-success-700'];
+    const maintextcolor = theme['color-success-900'];
     const subtextColor1 = theme['color-basic-600']; 
     const subtextColor2 = theme['color-basic-900']; 
 
@@ -25,22 +27,36 @@ const EcoPoints = () => {
             <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Rewards</StyledText>
       </StyledLayout>
 
-      <View className="items-center -mt-14 -bottom-3 mb-3 z-50">
-        <StyledCard style={{ borderRadius: 100, padding: 1, width: '90%', elevation: 2}} className="bg-white border-0">
-          <StyledText className='text-center text-xl' style={{ color: maintextcolor, fontFamily: 'Poppins-Medium' }}>Level 10</StyledText>
+      <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
+        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
-          <StyledLayout className="mt-1">
-            <ProgressBar
+        <StyledText className="text-center mb-1 p-2" style={{ color: maintextcolor, fontFamily: 'Poppins-SemiBold', fontSize: 22}}>Level 10 ⭐</StyledText>
+          <View className="items-center">
+            <StyledProgressBar
               progress={0.1}
-              className="h-2 rounded-lg bg-gray-300 w-full mt-2"
+              className="w-full rounded-lg rounded-3xl h-3 mb-1"
             />
-          </StyledLayout>
+          </View>
 
-          <StyledLayout className="flex-row items-center justify-between mt-2 bg-white">
-            <StyledText category="s1" style={{ color: subtextColor2 }}>100</StyledText>
-            <StyledText category="c1" className="right-11" style={{ color: subtextColor1 }}>current EcoPoints</StyledText>
-            <StyledText category="c1" className="left-11" style={{ color: subtextColor1 }}>Level 11</StyledText>
-            <StyledText category="s1" style={{ color: subtextColor2 }}>1000</StyledText>
+          <StyledLayout className="flex-row items-center justify-between bg-white">
+            <StyledText className="text-20" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700']}}>100 <StyledText 
+              className="right-10 text-sm" 
+              style={{ 
+                fontFamily: 'Poppins-Regular', 
+                color: subtextColor1 
+              }}
+            >
+              current EcoPoints
+              </StyledText>
+            </StyledText>
+            <StyledText className="text-20" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}><StyledText 
+              className="left-10 text-sm" 
+              style={{ 
+                fontFamily: 'Poppins-Regular', 
+                color: subtextColor1 
+              }}
+            >Level 11  </StyledText>1000
+            </StyledText>
           </StyledLayout>
         </StyledCard>
       </View>
@@ -55,7 +71,7 @@ const EcoPoints = () => {
               backgroundColor: myTheme['color-success-700']
             }}
           >
-            <StyledText className='text-sm' style={{ fontFamily: 'Poppins-Medium'}}>5000 EcoPoints</StyledText>
+            <StyledText className='text-sm text-white' style={{ fontFamily: 'Poppins-Medium'}}>5000 EcoPoints</StyledText>
           </StyledLayout>
         </StyledLayout>
       </StyledLayout>

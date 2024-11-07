@@ -16,10 +16,6 @@ const StyledCard = styled(Card);
 const MilestoneList: React.FC = () => {
   const milestones: Milestone[] = [
     {
-      title: "Reached 100 kg CO2",
-      content: "You have reduced your carbon footprint by 20 kg!",
-    },
-    {
       title: "Adopted Eco-Friendly Practices",
       content: "Started using reusable bags and containers.",
     },
