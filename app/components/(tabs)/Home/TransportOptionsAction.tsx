@@ -30,6 +30,8 @@ const StyledSelect = styled(Select);
 const StyledSelectItem = styled(SelectItem);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
+const StyledInput = styled(Input);
+
 
 function isBicycle(title: string){
     if (title.startsWith("Use a bicycle")){
@@ -99,19 +101,19 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
       )}
     >
        <StyledLayout className="pt-1 m-1"
-          style={{
-            borderBottomWidth: 1, 
-            borderBottomColor: myTheme['color-basic-500']
-          }} 
         >
-          <StyledSelect
-            className="w-full rounded-lg mb-2"
-            placeholder={() => (
-              <StyledText numberOfLines={2} style={{ fontSize: 14, width: "85%" }}>
-                {item.title}
-              </StyledText>
-            )}
-          >
+        <StyledSelect
+          className="w-full rounded-lg"
+          placeholder={() => (
+            <StyledText
+              numberOfLines={2}
+              style={{ width: "85%" }}
+              className="text-base leading-5"
+            >
+              {item.title}
+            </StyledText>
+          )}
+        >
           {item.options ? (
               Object.entries(item.options).map(([key, value]) => (
                 <StyledSelectItem
@@ -192,14 +194,10 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
   return (
     <View>
       <StyledLayout 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} 
           className="pt-1 m-1"
         >
-        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
-          <View className="flex-row items-center justify-start bottom-1">
+        <View className="border border-gray-200 rounded-lg">
+          <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
               <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
@@ -208,30 +206,31 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
                 }
                 onPress={() => handleUnmark(item.id)}
               />
-              <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
-                {item.title}
-              </StyledText>
+            <StyledText className="text-base w-10/12 leading-6">
+              {item.title}
+            </StyledText>
           </View>
-        </StyledCard>
-        
-        <TouchableOpacity onPress={handleMoreDetails}>
-          <StyledText category="s1" 
-            className="ml-4 m-1"
-            style={{ 
-              color: myTheme['color-info-500']}}
+
+          <TouchableOpacity onPress={handleMoreDetails}>
+          <StyledText
+              category="s1"
+              className="ml-12 mt-2 mb-2 font-bold"
+              style={{
+                color: myTheme['color-success-700'],
+              }}
             >
               Enter more details
-          </StyledText>
+            </StyledText>
         </TouchableOpacity>
 
         {showInput && (
           <View>
-            <StyledLayout className="rounded-xl mb-3 ml-1 flex-row items-center">
-              <StyledText className="mr-2">
-                Input distance travelled
+            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
+              <StyledText className="mr-2 text-sm">
+                Distance travelled:
               </StyledText>
-              <Input
-                style={{width: "30%"}}
+              <StyledInput
+                className="w-1/4"
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
@@ -242,12 +241,23 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
               </StyledText>
             </StyledLayout>
             <View className="items-center">
-              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3" onPress={handleCompleteDetails}>
-                <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
+            <TouchableOpacity
+                className="rounded-lg w-full p-2 px-6 mb-3"
+                onPress={handleCompleteDetails}
+              >
+                <StyledText
+                  category="p1"
+                  className="text-white text-sm font-bold text-right"
+                  style={{color: myTheme['color-success-700']}}
+                >
+                  → Submit
+                </StyledText>
               </TouchableOpacity>
             </View>
           </View>
           )}
+
+        </View>
       </StyledLayout>
     </View>
   );

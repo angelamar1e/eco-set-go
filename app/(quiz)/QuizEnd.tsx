@@ -1,4 +1,4 @@
-import { EmissionsDataContext, getHighestEmissions } from '@/contexts/EmissionsData';
+import { getHighestEmissions } from '@/contexts/EmissionsData';
 import { useUserContext } from '@/contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import { Layout, Text, Button, Card } from '@ui-kitten/components';
@@ -9,7 +9,6 @@ import { router } from 'expo-router';
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
 import { EmissionsContext } from '@/contexts/Emissions';
-import { EmissionsData } from '../../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);

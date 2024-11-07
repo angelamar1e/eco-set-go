@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import auth from '@react-native-firebase/auth'; // Firebase Auth
-import firestore from '@react-native-firebase/firestore'; // Firebase Firestore
-import { router } from 'expo-router';
-import { goToInterface } from '@/app/utils/utils';
-import moment from 'moment';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import auth from "@react-native-firebase/auth"; // Firebase Auth
+import firestore from "@react-native-firebase/firestore"; // Firebase Firestore
+import { router } from "expo-router";
+import { goToInterface } from "@/app/utils/utils";
+import moment from "moment";
 
 // Create a User Context
 const UserContext = createContext();
@@ -15,8 +15,11 @@ export const UserProvider = ({ children }) => {
   const [role, setRole] = useState("");
   const [currentFootprint, setCurrentFootprint] = useState(0);
   const [initialFootprint, setInitialFootprint] = useState(0);
+  const [points, setPoints] = useState(100);
+  const [redeemablePoints, setRedeemablePoints] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [joinDate, setJoinDate] = useState('');
+  const [joinDate, setJoinDate] = useState("");
+  const [profileCreated, setProfileCreated] = useState(true);
 
   // Function to fetch user details
   const fetchUserDetails = async (uid) => {
@@ -26,20 +29,23 @@ export const UserProvider = ({ children }) => {
       const userDoc = await firestore().collection("users").doc(uid).get();
 
       if (userDoc.exists) {
-        const { username, role } = userDoc.data();
+        const { username, role, created_at, points, redeemablePoints } = userDoc.data();
         setRole(role || ""); // Fallback to an empty string if undefined
         setUsername(username || ""); // Fallback to an empty string if undefined
-        setRole(role || ""); // Fallback to an empty string if undefined
-        
+        setPoints(points || 0); // Fallback to an empty string if undefined
+        setRedeemablePoints(redeemablePoints || 0); // Fallback to an empty string if undefined
+
         if (created_at) {
-          const parsedDate = moment(created_at, "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ").format("YYYY-MM-DD");
+          const parsedDate = moment(
+            created_at,
+            "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
+          ).format("YYYY-MM-DD");
           setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
+        } else {
+          setJoinDate("");
+        }
       } else {
-          setJoinDate('');
-      }
-  } else {
-        console.log("User document does not exist");
-        resetUserDetails();
+        console.log("User document does not exist", uid);
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -62,7 +68,7 @@ export const UserProvider = ({ children }) => {
           const data = doc.data();
           setInitialFootprint(data.overall_footprint);
         }
-      });
+      },  {merge: true});
 
     const unsubscribeCurrent = firestore()
       .collection("current_footprint")
@@ -72,17 +78,28 @@ export const UserProvider = ({ children }) => {
           const data = doc.data();
           setCurrentFootprint(data.overall_footprint);
         }
-      });
+      }, {merge: true});
+
+    const unsubscribePoints = firestore()
+      .collection('users')
+      .doc(userUid)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          setPoints(data.points);
+          setRedeemablePoints(data.redeemablePoints);
+        }
+      }, {merge: true});
 
     return () => {
       unsubscribeInitial();
       unsubscribeCurrent();
+      unsubscribePoints();
     };
   }, [userUid]);
 
   // Function to reset user details
   const resetUserDetails = () => {
-    console.log("RESET");
     setUserUID(null);
     setUsername("");
     setRole(""); // Ensure role is cleared
@@ -94,17 +111,19 @@ export const UserProvider = ({ children }) => {
     const unsubscribe = auth().onAuthStateChanged((user) => {
       if (user) {
         setUserUID(user.uid);
-        fetchUserDetails(user.uid);
+        if (profileCreated){
+          fetchUserDetails(user.uid);
+        }
         console.log(user);
       } else {
         resetUserDetails();
-        console.log(user);
+        console.log("LOW");
         setLoading(false);
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [profileCreated]);
 
   // Trigger goToInterface only when user is signed in and role is valid
   useEffect(() => {
@@ -116,14 +135,18 @@ export const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        fetchUserDetails,
+        setProfileCreated,
         userUid,
         username,
         role,
+        points,
+        redeemablePoints,
         loading,
         currentFootprint,
         initialFootprint,
         setLoading,
-        joinDate
+        joinDate,
       }}
     >
       {children}

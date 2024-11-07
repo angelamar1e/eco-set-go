@@ -3,10 +3,14 @@ import { View, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps } from "@/types/ActionItemProps";
-import { computeImpact, convertKgToGrams, getCarEFPerKm } from '../../../utils/EstimationUtils';
+import {
+  computeImpact,
+  convertKgToGrams,
+  getCarEFPerKm,
+} from "../../../utils/EstimationUtils";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { ThemedText } from "@/components/ThemedText";
-import { DoneItemProps } from '../../../../types/ActionItemProps';
+import { DoneItemProps } from "../../../../types/ActionItemProps";
 import { styled } from "nativewind";
 import { Card, Input, Layout, Text } from "@ui-kitten/components";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,6 +21,7 @@ import { EmissionsContext } from "@/contexts/Emissions";
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 const StyledLayout = styled(Layout);
+const StyledInput = styled(Input);
 
 export const ReductionRate: React.FC<ActionItemProps> = ({
   item,
@@ -30,7 +35,6 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
   // Destructure emissions data
   const { carEmissions, carNumOfPassengers } = emissionsData || {};
 
-  
   // Update impact calculation
   function getImpact() {
     let impact = 0;
@@ -39,10 +43,9 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
     const reductionRate = item.impact;
 
     // Calculate impact
-    if (item.title === "Carpool"){
-      impact = (baseEmissions * reductionRate)
-    }
-    else{
+    if (item.title === "Carpool") {
+      impact = baseEmissions * reductionRate;
+    } else {
       impact = (baseEmissions * reductionRate) / passengers;
     }
 
@@ -53,33 +56,42 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
     <Swipeable
       renderRightActions={() => (
         <View className="flex items-center justify-center ml-2 mr-4">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>        
+          <Ionicons
+            name="trash"
+            size={20}
+            color="red"
+            onPress={() => handleDelete(item.id)}
+          />
+        </View>
       )}
     >
-    <StyledLayout 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} 
-          className="pt-1 m-1"
+      <StyledLayout className="pt-1 m-1">
+        <View
+          className="rounded px-3 border border-gray-200 py-2"
+          style={{
+            justifyContent: "center",
+            backgroundColor: myTheme["color-basic-200"],
+          }}
         >
-       <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
-          <View className="flex-row items-center justify-start bottom-1">
-              <CircularCheckbox
-            status={
-              completedActions.some((action) => action.id === item.id)
-                ? "checked"
-                : "unchecked"
-            }
-            onPress={() => getImpact()}
-          />
-          <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+          <View className="flex-row items-center justify-start">
+            <CircularCheckbox
+              status={
+                completedActions.some((action) => action.id === item.id)
+                  ? "checked"
+                  : "unchecked"
+              }
+              onPress={() => getImpact()}
+            />
+            <StyledText
+              numberOfLines={1}
+              style={{ width: "85%" }}
+              className="text-base leading-5"
+            >
               {item.title}
-          </StyledText>
+            </StyledText>
+          </View>
         </View>
-      </StyledCard>
-    </StyledLayout>    
+      </StyledLayout>
     </Swipeable>
   );
 };
@@ -88,7 +100,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
   item,
   completedActions,
   handleComplete,
-  handleUnmark
+  handleUnmark,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
@@ -101,64 +113,65 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
   };
 
   const handleCompleteDetails = () => {
-    const kmTravelled = inputValue ? parseFloat(inputValue) : emissionsData['carKmTravelled'] / 365;
-    const baseEmissions = emissionsData['carEFPerKm'] * kmTravelled;
+    const kmTravelled = inputValue
+      ? parseFloat(inputValue)
+      : emissionsData["carKmTravelled"] / 365;
+    const baseEmissions = emissionsData["carEFPerKm"] * kmTravelled;
     const reductionRate = item.impact;
 
     // Calculate impact
-    if (item.title === "Carpool"){
-      impact = (baseEmissions * reductionRate)
+    if (item.title === "Carpool") {
+      impact = baseEmissions * reductionRate;
+    } else {
+      impact =
+        (baseEmissions * reductionRate) / emissionsData["carNumOfPassengers"];
     }
-    else{
-      impact = (baseEmissions * reductionRate) / emissionsData['carNumOfPassengers'];
-    }
-    
+
     handleComplete(item.id, item.template, convertKgToGrams(impact));
-  }
+  };
 
   return (
     <View>
-      <StyledLayout 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} 
-          className="pt-1 m-1"
-        >
-       <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center',}}>
-          <View className="flex-row items-center justify-start bottom-1">
-              <CircularCheckbox
+      <StyledLayout className="pt-1 m-1">
+        <View className="border border-gray-200 rounded-lg">
+          <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
+            <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
                   : "unchecked"
-                }
-                onPress={() => handleUnmark(item.id)}
-              />
-              <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+              }
+              onPress={() => handleUnmark(item.id)}
+            />
+            <StyledText
+              category="p1"
+              numberOfLines={2}
+              style={{ fontSize: 15, width: "85%" }}
+              className="ml-1 mb-2"
+            >
               {item.title}
             </StyledText>
           </View>
-        </StyledCard>
-        
         <TouchableOpacity onPress={handleMoreDetails}>
-          <StyledText category="s1" 
-            className="ml-4 m-1"
-            style={{ 
-              color: myTheme['color-info-500']}}
+        <StyledText
+              category="s1"
+              className="ml-12 mt-2 mb-2 font-bold"
+              style={{
+                color: myTheme['color-success-700'],
+              }}
             >
               Enter more details
-          </StyledText>
+            </StyledText>
         </TouchableOpacity>
 
         {showInput && (
           <View>
-            <StyledLayout className="rounded-xl mb-3 ml-1 flex-row items-center">
-              <StyledText className="mr-2">
-                Input distance travelled
+<StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
+              <StyledText className="mr-2 text-sm">
+                Distance travelled:
               </StyledText>
-              <Input
-                style={{width: "30%"}}
+              <StyledInput
+                className="w-1/4"
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
@@ -169,12 +182,23 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
               </StyledText>
             </StyledLayout>
             <View className="items-center">
-              <TouchableOpacity className="bg-blue-500 rounded-lg items-center w-full p-2 px-3 mb-3" onPress={handleCompleteDetails}>
-                <StyledText category='p1' className="text-white text-sm text-center">Submit</StyledText>
+            <TouchableOpacity
+                className="rounded-lg w-full p-2 px-6 mb-3"
+                onPress={handleCompleteDetails}
+              >
+                <StyledText
+                  category="p1"
+                  className="text-white text-sm font-bold text-right"
+                  style={{color: myTheme['color-success-700']}}
+                >
+                  → Submit
+                </StyledText>
               </TouchableOpacity>
             </View>
           </View>
-          )}
+        )}
+        </View>
+
       </StyledLayout>
     </View>
   );

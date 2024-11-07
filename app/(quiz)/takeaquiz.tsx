@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Modal } from 'react-native';
+import { View, Modal, TouchableOpacity } from 'react-native';
 import { Text, Button } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { myTheme } from '@/constants/custom-theme';
+import { styled } from 'nativewind';
 
 interface TakeaQuizProps {
   visible: boolean;
@@ -13,6 +14,7 @@ interface TakeaQuizProps {
 
 const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss }) => {
   const router = useRouter();
+  const StyledText = styled(Text);
 
   return (
     <Modal
@@ -32,6 +34,9 @@ const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss })
           </Text>
           <View style={{ flexDirection: 'row', marginTop: 15, alignItems: 'center' }}>
             <Button onPress={onTakeQuiz} style={{ flex: 1, borderRadius: 50, alignItems: 'center' }} status="primary">Take a Quiz</Button>
+            <TouchableOpacity onPress={onDismiss}>
+              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Take the quiz later</StyledText>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
