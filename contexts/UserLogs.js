@@ -14,6 +14,7 @@ export const UserLogsProvider = ({ children }) => {
   const { userUid, role, initialFootprint, currentFootprint} = useUserContext();
   const currentFootprintDoc = firestore().collection('current_footprint').doc(userUid);
   const [userLogs, setUserLogs] = useState({});
+  const [loggedActionIds, setLoggedActionIds] = useState([]);
   const { foodFootprint, transportationFootprint, electricityFootprint } = useContext(EmissionsContext);
   const [totalImpact, setTotalImpact] = useState(0);
   const { foodEcoActions, transportationEcoActions, electricityEcoActions } = useActionsContext();
@@ -66,6 +67,7 @@ const isUserLogsEmpty = (logs) => {
 };
 
 // Calculate total impact and prepare chart data
+// Calculate total impact and prepare chart data
 useEffect(() => {
   let totalImpact = 0;
   let foodImpact = 0;
@@ -76,8 +78,9 @@ useEffect(() => {
   const weekly = {};
   const monthly = {};
   
+  const loggedActionIds = [];
   // Initialize stacked data array
-  const stackedData = [];
+  let stackedData = [];
 
   // Check if userLogs has entries with data
   if (userLogs && Object.keys(userLogs).length > 0 && !isUserLogsEmpty(userLogs)) {
@@ -92,6 +95,7 @@ useEffect(() => {
       if (!monthly[monthString]) monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
 
       Object.entries(actions).forEach(([id, action]) => {
+        loggedActionIds.push(id);
         const category = getCategoryFromId(id); // Define this function based on your action structure
         if (category && typeof action.impact === 'number') {
           totalImpact += action.impact;
@@ -111,19 +115,29 @@ useEffect(() => {
       });
     });
 
-    // Convert impacts based on selected period for stacked chart data
+    // Select impacts for the chosen time period
     const selectedImpacts = selectedPeriod === "Daily" ? daily : selectedPeriod === "Weekly" ? weekly : selectedPeriod === "Monthly" ? monthly : daily;
 
-    Object.entries(selectedImpacts).forEach(([label, impacts]) => {
-      stackedData.push([impacts.Food, impacts.Transportation, impacts.Electricity]);
-    });
+    // Sort and limit to the last 5 entries
+    const limitedEntries = Object.entries(selectedImpacts)
+      .sort((a, b) => new Date(a[0]) - new Date(b[0])) // Sort entries by date
+      .slice(-5); // Take only the last 5 entries
+
+    // Prepare chart labels and data for the limited entries
+    const limitedLabels = limitedEntries.map(([label]) => label);
+    stackedData = limitedEntries.map(([, impacts]) => [
+      impacts.Food, impacts.Transportation, impacts.Electricity
+    ]);
 
     // Update chart data only if userLogs has meaningful entries
     setStackedChartData(prevData => ({
       ...prevData,
-      labels: Object.keys(selectedImpacts),
+      labels: limitedLabels,
       data: stackedData,
     }));
+
+    console.log(stackedChartData);
+
   } else {
     // If userLogs is empty or has no meaningful data, clear stackedChartData
     setStackedChartData({
@@ -134,6 +148,7 @@ useEffect(() => {
     });
   }
 
+  setLoggedActionIds(loggedActionIds);
   setTotalImpact(convertGramsToTons(totalImpact));
   setFoodImpact(convertGramsToTons(foodImpact));
   setTransportationImpact(convertGramsToTons(transportImpact));
@@ -142,7 +157,7 @@ useEffect(() => {
   setWeeklyImpact(weekly);
   setMonthlyImpact(monthly);
 
-  }, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
+}, [userUid, userLogs, selectedPeriod]); // Include selectedPeriod as a dependency
 
   useEffect(() => {
     if (initialFootprint && role === "user") { 
