@@ -9,6 +9,7 @@ import auth from '@react-native-firebase/auth';
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
+const StyledCard = styled(Card);
 
 export const CreateListing = (): React.ReactElement => {
   const [description, setDescription] = useState('');
@@ -58,7 +59,7 @@ export const CreateListing = (): React.ReactElement => {
   };
 
   return (
-    <StyledLayout className="h-100 mt-10 mb-2 ml-2 mr-2 p-3 rounded-lg border border-gray-200">
+    <StyledCard className="h-100 mt-12 mb-2 ml-2 mr-2 rounded-lg">
       <StyledInput
         className="mt-2 mb-2 rounded-lg"
         placeholder="Item description... 🏷️"
@@ -98,7 +99,7 @@ export const CreateListing = (): React.ReactElement => {
           <Text>Listing successfully added! 🎉</Text>
         </Card>
       </Modal>
-    </StyledLayout>
+    </StyledCard>
   );
 };
 

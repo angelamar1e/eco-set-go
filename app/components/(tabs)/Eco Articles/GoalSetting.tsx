@@ -9,8 +9,11 @@ const StyledText = styled(Text);
 const GoalSetting = () => {
   return (
     <StyledLayout className="flex-1 p-4">
-      <StyledText category="h4" className="text-center mb-4">
-        Goal Setting for a Greener Life
+      <StyledText category="h6" className="text-center mb-4">
+        Carbon Reduction Guidelines
+      </StyledText>
+      <StyledText category="h6" className="text-center mb-4 italic">
+        What makes a significant goal for reduction?
       </StyledText>
       <ScrollView>
         <Card style={styles.card}>

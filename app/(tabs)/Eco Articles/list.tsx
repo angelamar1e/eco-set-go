@@ -61,14 +61,14 @@ const EcoActionsList = () => {
         onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
         className='m-2 h-[150px] bg-transparent justify-end'
       >
-        <Text category='s1'>Introduction</Text>
+        <Text category='s1'>Introduction to Carbon Footprint</Text>
       </StyledCard>
 
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
         className='m-2 h-[150px] bg-transparent justify-end'
       >
-        <Text category='s1'>Goal Setting</Text>
+        <Text category='s1'>Goal Guidelines</Text>
       </StyledCard>
     </>
   );

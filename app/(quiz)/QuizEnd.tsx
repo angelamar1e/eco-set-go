@@ -6,7 +6,7 @@ import { styled } from 'nativewind';
 import { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
 import { EmissionsContext } from '@/contexts/Emissions';
 import { EmissionsData } from '../../constants/DefaultValues';

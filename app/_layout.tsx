@@ -63,7 +63,27 @@ export default function RootLayout() {
                         name="components/(tabs)/Eco Articles/[article]"
                         options={{ headerShown: false }}
                       />
-                    </Stack>
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/UpdateUsername" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/updatepassword" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/updateemail" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Eco Articles/Introduction" 
+                        options={{headerShown: false}}
+                      />              
+                      <Stack.Screen 
+                        name="components/(tabs)/Rewards/MilestonesPage" 
+                        options={{headerShown: false}}
+                      />              
+                    </Stack>     
                   </GestureHandlerRootView>
                 </ApplicationProvider>
               </UserGoalProvider>

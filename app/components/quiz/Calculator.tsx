@@ -15,14 +15,14 @@ const Calculator: React.FC = () => {
     <StyledLayout className="flex-row items-center justify-center shadow p-2">
       <StyledTextLarge
         category='h1' 
-        style={{ color: myTheme["color-primary-700"] }}
+        style={{ color: myTheme["color-success-700"] }}
         className="ml-2"
       >
         {overallFootprint.toFixed(2)}
       </StyledTextLarge>
       <StyledTextSmall
         category="p1"
-        style={{ color: myTheme["color-primary-900"] }} 
+        style={{ color: myTheme["color-success-900"] }} 
         className="ml-2" 
       >
         tons{"\n"}of CO2e per year

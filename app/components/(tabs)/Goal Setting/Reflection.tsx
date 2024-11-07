@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Modal, TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, View, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Card, Text, Layout, Input, Button } from '@ui-kitten/components';
+import { Card, Text, Layout, Input, Button, Popover, Modal } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { editReflection, confirmDeleteReflection } from '@/app/utils/reflectionUtils';
 import { Timestamp } from '@react-native-firebase/firestore';
@@ -11,8 +11,8 @@ interface ReflectionCardProps {
   content: string;
   date: Timestamp;
   uid: string;
-  onEdit: (newContent: string) => Promise<void>;
-  onDelete: () => Promise<void>;
+  onEdit: (newContent: string) => Promise<void>; // Type for onEdit prop
+  onDelete: () => Promise<void>; // Type for onDelete prop
 }
 
 const StyledCard = styled(Card);
@@ -27,9 +27,10 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
 
-  const handleEdit = async () => {
-    await onEdit(editedContent);
-    setEditModalVisible(false);
+  const handleDelete = async () => {
+    await confirmDeleteReflection(id);
+    setConfirmDeleteVisible(false);
+    onDelete();
   };
 
   const formattedDate = (date instanceof Timestamp ? date.toDate() : new Date()).toLocaleDateString('en-US', {
@@ -42,127 +43,122 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
     <StyledCard className="m-1 rounded-lg">
       <StyledLayout className="flex-row justify-between">
         <StyledText className="font-bold" category='s1'>{formattedDate}</StyledText>
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-          <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
-        </TouchableOpacity>
+        <Popover
+          placement="bottom end"
+          visible={showMenu}
+          anchor={() => (
+            <TouchableOpacity onPress={() => setShowMenu(true)}>
+              <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9" />
+            </TouchableOpacity>
+          )}
+          onBackdropPress={() => setShowMenu(false)}
+        >
+          <StyledLayout className="rounded shadow-lg">
+            <StyledButton
+              size='small'
+              appearance='ghost'
+              status='info'
+              onPress={() => {
+                setEditModalVisible(true);
+                setShowMenu(false);
+              }}
+            >
+              <StyledText>Edit</StyledText>
+            </StyledButton>
+            <StyledButton
+              size='small'
+              appearance='ghost'
+              status='danger'
+              onPress={() => {
+                setConfirmDeleteVisible(true);
+                setShowMenu(false);
+              }}
+            >
+              <StyledText>Delete</StyledText>
+            </StyledButton>
+          </StyledLayout>
+        </Popover>
       </StyledLayout>
 
       <StyledLayout>
         <StyledText category='p1'>{content}</StyledText>
       </StyledLayout>
 
-      {/* Popup Menu */}
-      {showMenu && (
-        <View className="absolute right-0 top-0 bg-white border border-gray-200 rounded shadow-lg">
-          <StyledButton
-            size='small'
-            className='font-bold'
-            appearance='ghost'
-            status='info'
-            onPress={() => {
-              setEditModalVisible(true);
-              setShowMenu(false);
-            }}
-          > 
-            <StyledText>Edit</StyledText>
-          </StyledButton>
-          <StyledButton
-            size='small'
-            className='font-bold'
-            appearance='ghost'
-            status='danger'
-            onPress={() => {
-              setConfirmDeleteVisible(true);
-              setShowMenu(false);
-            }}>
-            <StyledText>Delete</StyledText>
-          </StyledButton>
-        </View>
-      )}
-
       {/* Edit Modal */}
       <Modal
-        transparent={true}
         visible={editModalVisible}
-        animationType="slide"
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setEditModalVisible(false)}
+        style={{ width: 300, height: 250, alignSelf: 'center', justifyContent: 'center' }}
       >
-        <TouchableWithoutFeedback onPress={() => setEditModalVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
-                <StyledText category='s1' className='font-bold m-2'>Edit reflection</StyledText>
-                <StyledInput
-                  multiline={true}
-                  value={editedContent}
-                  onChangeText={setEditedContent}
-                  className='rounded-lg'
-                />
-                <StyledLayout className="flex-row justify-between mt-4">
-                  {/* Cancel Button */}
-                  <StyledButton
-                    onPress={() => setEditModalVisible(false)}
-                    appearance="filled"
-                    status="info"
-                    size='small'
-                    className='rounded-full'
-                  >
-                    <StyledText>Cancel</StyledText>
-                  </StyledButton>
-
-                  <StyledButton
-                    onPress={handleEdit}
-                    status="success"
-                    appearance="filled"
-                    size='small'
-                    className='rounded-full'
-                  >
-                    <StyledText>Finish Editing</StyledText>
-                  </StyledButton>
-                  
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText category="h6" className="font-bold">
+            Edit Post
+          </StyledText>
+          <StyledInput
+            value={editedContent}
+            onChangeText={setEditedContent}
+            placeholder="Edit your post..."
+            multiline
+            className="mb-2 mt-2"
+          />
+          <StyledLayout className="flex-row justify-between mt-3">
+            <StyledButton
+              appearance="ghost"
+              status="info"
+              size="small"
+              className="m-1 rounded-full"
+              onPress={() => setEditModalVisible(false)}
+            >
+              Cancel
+            </StyledButton>
+            <StyledButton
+              onPress={() => {
+                if (editedContent !== content) {
+                  onEdit(editedContent);
+                }
+                setEditModalVisible(false);
+              }}
+              appearance="ghost"
+              status="primary"
+              size="small"
+              className="m-1 rounded-full"
+            >
+              Save Changes
+            </StyledButton>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
 
-      {/* Confirmation Modal for Deletion */}
       <Modal
-        transparent={true}
         visible={confirmDeleteVisible}
-        animationType="slide"
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        onBackdropPress={() => setConfirmDeleteVisible(false)}
+        style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
-        <TouchableWithoutFeedback onPress={() => setConfirmDeleteVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg">
-              <StyledText category='s1' className='font-bold text-center'>Delete reflection</StyledText>
-                <StyledText className=' m-2 text-center'>Are you sure you want to delete this reflection?</StyledText>
-                <StyledLayout className="m-2 flex-row justify-between">
-                  <StyledButton 
-                    className='font-bold rounded-full'
-                    appearance='filled'
-                    status='info'
-                    size='small'
-                    onPress={() => setConfirmDeleteVisible(false)}>
-                    <StyledText>Cancel</StyledText>
-                  </StyledButton>
-                  <StyledButton
-                    className='font-bold rounded-full'
-                    appearance='filled'
-                    status='danger'
-                    size='small'
-                    onPress={async () => {
-                      await onDelete();
-                      setConfirmDeleteVisible(false);
-                    }}>
-                    <StyledText>Delete</StyledText>
-                  </StyledButton>
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText className=' m-2 text-center'>Are you sure you want to delete this reflection?</StyledText>
+          <StyledLayout className="m-2 flex-row justify-between">
+            <StyledButton
+              className='font-bold rounded-full'
+              appearance='ghost'
+              status='info'
+              size='small'
+              onPress={() => setConfirmDeleteVisible(false)}
+            >
+              <StyledText>Cancel</StyledText>
+            </StyledButton>
+            <StyledButton
+              className='font-bold rounded-full'
+              appearance='ghost'
+              status='danger'
+              size='small'
+              onPress={handleDelete}
+            >
+              <StyledText>Delete</StyledText>
+            </StyledButton>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
     </StyledCard>
   );

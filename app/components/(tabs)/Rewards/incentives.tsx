@@ -62,6 +62,7 @@ const Incentives = () => {
           elevation: 1/2,
           padding: 2,
           borderWidth: 1,
+          borderColor: myTheme['color-success-900'],
         }}
       >
         <StyledLayout className="flex-row items-center justify-between">

@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import auth from "@react-native-firebase/auth"; // Firebase Auth
-import firestore from "@react-native-firebase/firestore"; // Firebase Firestore
-import { router } from "expo-router";
-import { goToInterface } from "@/app/utils/utils";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import auth from '@react-native-firebase/auth'; // Firebase Auth
+import firestore from '@react-native-firebase/firestore'; // Firebase Firestore
+import { router } from 'expo-router';
+import { goToInterface } from '@/app/utils/utils';
+import moment from 'moment';
 
 // Create a User Context
 const UserContext = createContext();
@@ -15,6 +16,7 @@ export const UserProvider = ({ children }) => {
   const [currentFootprint, setCurrentFootprint] = useState(0);
   const [initialFootprint, setInitialFootprint] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [joinDate, setJoinDate] = useState('');
 
   // Function to fetch user details
   const fetchUserDetails = async (uid) => {
@@ -27,7 +29,15 @@ export const UserProvider = ({ children }) => {
         const { username, role } = userDoc.data();
         setRole(role || ""); // Fallback to an empty string if undefined
         setUsername(username || ""); // Fallback to an empty string if undefined
+        setRole(role || ""); // Fallback to an empty string if undefined
+        
+        if (created_at) {
+          const parsedDate = moment(created_at, "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ").format("YYYY-MM-DD");
+          setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
       } else {
+          setJoinDate('');
+      }
+  } else {
         console.log("User document does not exist");
         resetUserDetails();
       }
@@ -113,6 +123,7 @@ export const UserProvider = ({ children }) => {
         currentFootprint,
         initialFootprint,
         setLoading,
+        joinDate
       }}
     >
       {children}

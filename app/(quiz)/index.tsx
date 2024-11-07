@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Image, TouchableOpacity } from "react-native";
+import { View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
 import { EmissionsContext } from "@/contexts/Emissions";
 import { QuestionData } from "@/types/QuestionData";
@@ -247,8 +247,8 @@ const QuizIndex = () => {
           />
           </>
         ) : (
-          <StyledLayout>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 20, padding: 20, }}>Loading...</Text>
+          <StyledLayout className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color={myTheme['color-success-700']} />
           </StyledLayout>
         )}
     </StyledLayout>
