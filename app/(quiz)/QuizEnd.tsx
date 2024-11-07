@@ -19,8 +19,9 @@ const QuizEnd = () => {
         foodFootprint,
         transportationFootprint,
         electricityFootprint,
-        overallFootprint
     } = useContext(EmissionsContext);
+
+    const {initialFootprint} = useUserContext();
 
     // Prepare an array with each category and its value, then sort it from highest to lowest
     const sortedEmissions = [
@@ -34,7 +35,7 @@ const QuizEnd = () => {
 
     const widthDecrement = (maxWidth - minWidth) / (sortedEmissions.length - 1);
 
-    const total = overallFootprint;
+    const total = initialFootprint;
 
     // Calculate percentages for each category
     const percentageEmissions = sortedEmissions.map(emission => ({
@@ -91,7 +92,7 @@ const QuizEnd = () => {
 
                             }}
                         >
-                            {overallFootprint.toFixed(2)}
+                            {initialFootprint.toFixed(2)}
                         </Text>
                         <Text
                             className=""

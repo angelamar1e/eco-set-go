@@ -5,20 +5,20 @@ import { Platform, BackHandler } from 'react-native';
 import firestore, { firebase } from '@react-native-firebase/firestore';
 
 export async function goToInterface(role: string) {
-    if (role == 'user'){
+    if (role === 'user'){
         router.push('/(tabs)/Home');
     }
-    else if (role == 'admin'){
+    else if (role === 'admin'){
         router.push('/(admin)');
     }
     else{
-        return;
+        router.push('..');
     }
 }
 
 export function handleLogOut() {
     firebase.auth().signOut();
-    router.push('..');
+    router.push('/login');
 }
 
 export function handleBackAction(){
