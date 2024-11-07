@@ -19,7 +19,7 @@ const Introduction = () => {
           <StyledText category="h6" className="m-2">
             CO2 footprint
           </StyledText>
-          <StyledLayout className="flex-row items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+          <StyledLayout className="flex-row items-start m-1 p-2 rounded-md shadow-lg">
           <StyledText category="h5" className="ml-2 mr-2">🍃</StyledText>
             <StyledText category='p2' className="ml-2 mr-2 text-justify flex-shrink">
             The IPCC defines carbon footprint as the “measure of the exclusive total amount of emissions of carbon dioxide (CO2) that is directly and indirectly caused by an activity or accumulated over the life stages of a product.”, 
@@ -33,12 +33,12 @@ const Introduction = () => {
           <StyledText category="h6" className="m-2">
           Which gases carbon footprint encompass?
           </StyledText>
-          <StyledLayout className="flex-row items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+          <StyledLayout className="flex-row items-start m-1 p-2 rounded-md shadow-lg">
           <StyledText category="h5" className="ml-2 mr-2">🍃</StyledText>
             <StyledText category='p2' className="ml-2 mr-2 text-justify flex-shrink">
             A carbon footprint is composed of various greenhouse gases (GHGs),  each contributing differently to global warming:
             {'\n'}<StyledText category='p2' className='font-bold'>Carbon Dioxide (CO2): </StyledText>Makes up about 76% of global GHG emissions, primarily from fossil fuel combustion, deforestation, and industrial processes. Its volume and longevity in the atmosphere make it a key contributor to the greenhouse effect.
-            {'\n'}<StyledText category='p2' className='font-bold'>Methane (CH4): </StyledText> Represents about 16% of emissions and is over 25 times more effective than CO2 at trapping heat . Methane emissions result from  production and transport of fossil fuel, livestock and other agricultural practices.
+            {'\n'}<StyledText category='p2' className='font-bold'>Methane (CH4): </StyledText> Represents about 16% of emissions and is over 25 times more effective than CO2 at trapping heat. Methane emissions result from  production and transport of fossil fuel, livestock and other agricultural practices.
             {'\n'}<StyledText category='p2' className='font-bold'>Nitrous Oxide (N2O): </StyledText> Accounts for around 6% of emissions, with a global warming potential 298 times that of CO2. It primarily comes from agriculture, industry, and burning biomass.
             </StyledText>
           </StyledLayout>
@@ -48,7 +48,7 @@ const Introduction = () => {
           <StyledText category="h6" className="m-2">
           Sources of the emissions
           </StyledText>
-          <StyledLayout className="flex-row items-start m-1 p-2 bg-gray-100 rounded-md shadow-lg">
+          <StyledLayout className="flex-row items-start m-1 p-2 rounded-md shadow-lg">
           <StyledText category="h5" className="ml-2 mr-2">🍃</StyledText>
             <StyledText category='p2' className="ml-2 mr-2 text-justify flex-shrink">
             Our everyday actions, whether as individuals or within organizations, have a significant impact on the global carbon footprint.
