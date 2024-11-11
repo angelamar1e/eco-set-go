@@ -1,4 +1,3 @@
-// GoalSetting.tsx
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { styled } from "nativewind";
@@ -12,6 +11,8 @@ import CongratulationsModal from "../Goal Setting/CongratulationsModal";
 import { router } from "expo-router";
 import { myTheme } from "@/constants/custom-theme";
 import DateTimePicker from "@react-native-community/datetimepicker"; 
+import TipsModal from "../../quiz/tips";
+import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -37,6 +38,7 @@ const GoalSetting: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState<"start" | "end" | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
     if (progressPercentage >= 1){
@@ -132,16 +134,28 @@ const GoalSetting: React.FC = () => {
               )}
             </View>
 
+            {/* Tooltip Modal */}
+            <TipsModal
+              visible={tooltipVisible}
+              onClose={() => setTooltipVisible(false)}
+              tips="It is recommended to set a carbon reduction goal of about 2 tons (2000 kg) of CO2e"
+            />
+            
+
             {/* Target Input */}
-            <View className="basis-full mt-3">
+            <View className="flex-row basis-full mt-3">
               <StyledInput
-                style={{ backgroundColor: myTheme['color-basic-200'], borderColor: myTheme['color-basic-600']  }}
+                style={{ backgroundColor: myTheme['color-basic-200'], borderColor: myTheme['color-basic-600'], flex: 1 }}
                 className="rounded-lg"
                 label={"Target"}
                 caption={"in grams of CO₂e"}
                 keyboardType="number-pad"
                 onChangeText={(target) => setNewTarget(parseInt(target, 10))}
               />
+
+              <TouchableOpacity onPress={() => setTooltipVisible(true)}>
+                <Ionicons name="information-circle-outline" size={15} color={myTheme['color-primary-600']} />
+              </TouchableOpacity>
             </View>
 
             {/* Submit Button */}

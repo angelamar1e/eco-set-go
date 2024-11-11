@@ -78,7 +78,11 @@ export default function RootLayout() {
                       <Stack.Screen 
                         name="components/(tabs)/Eco Articles/Introduction" 
                         options={{headerShown: false}}
-                      />              
+                      />        
+                      <Stack.Screen 
+                        name="components/(tabs)/Eco Articles/GoalSetting" 
+                        options={{headerShown: false}}
+                      />      
                       <Stack.Screen 
                         name="components/(tabs)/Rewards/MilestonesPage" 
                         options={{headerShown: false}}
