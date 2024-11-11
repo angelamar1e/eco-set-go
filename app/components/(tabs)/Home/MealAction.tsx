@@ -152,7 +152,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
   handleUnmark,
 }) => {
   const { userUid, loading } = useUserContext();
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
   const [inputValue, setInputValue] = useState("");
