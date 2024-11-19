@@ -11,7 +11,7 @@ interface QuestionContainerProps {
 
 export const QuestionContainer: React.FC<QuestionContainerProps> = ({ children }) => {
   return (
-    <StyledCard className="mt-4 mb-2 rounded-xl" style={{ borderWidth: 1, elevation: 2, borderColor: myTheme['color-success-900']}}>
+    <StyledCard className="mt-4 mb-2 rounded-xl px-1" style={{ borderWidth: 1, elevation: 2, borderColor: myTheme['color-success-900']}}>
       {children}
     </StyledCard>
   );

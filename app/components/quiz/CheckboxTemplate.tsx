@@ -61,21 +61,22 @@ const CheckboxTemplate: FC<TemplateProps> = ({
           </StyledText>
           {tips && tips.length > 0 && (
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
+              <Ionicons name="information-circle-outline" size={22} style={{ color: myTheme['color-success-700'], top: 2}} />
             </TouchableOpacity>
           )}
         </View>
 
-      <StyledLayout className="flex-row flex-wrap justify-center mt-10 mb-3">
+      <StyledLayout className="flex-row flex-wrap justify-center">
         <PresetChoices title="None" isSelected={selectedAnswers.length === 0} onPress={handleReset} />
       </StyledLayout>
       {/* Checkboxes */}
       <StyledLayout className="flex-row flex-wrap justify-center mt-10 mb-3">
         {choices ? (
-          Object.entries(choices).map(([key, value]) => (
+          Object.entries(choices).map(([key, { text, value, example }]) => (
             <CheckboxChoices
               key={key}
-              title={key}
+              title={text}
+              example={example}
               isChecked={selectedAnswers.includes(value)}
               onPress={() => handlePress(value)}
             />
