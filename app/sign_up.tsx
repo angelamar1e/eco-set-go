@@ -1,7 +1,7 @@
 import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Alert,
   View
@@ -10,7 +10,7 @@ import { Link, router, Stack, useRouter } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { goToInterface } from './utils/utils';
-import { LoginButton } from '@/components/LoginButton';
+import { CTAButton } from '@/components/CTAButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
@@ -18,7 +18,11 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { myTheme } from '@/constants/custom-theme';
 import TakeaQuiz from './(quiz)/takeaquiz';
+import { EmissionsContext } from '@/contexts/Emissions';
+import { EmissionsData } from '../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -45,7 +49,8 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
-  const {userUid, loading} = useUserContext();
+  const {initializeData} = useContext(EmissionsContext);
+  const {userUid, fetchUserDetails, setProfileCreated} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -54,7 +59,6 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
-  const [showQuizModal, setShowQuizModal] = useState(false);  
   const router = useRouter();
 
   const current_date = Date().toString();
@@ -89,53 +93,50 @@ export default function SignUp() {
 
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
     const userUid = response.user.uid;
-
+  
     try {
-      firestore().collection('users').doc(userUid).set({
-        role: "user",
-        username,
-        created_at: current_date,
-      });
-
-      firestore().collection('current_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      firestore().collection('initial_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      firestore().collection('daily_logs').doc(userUid).set({});
-      firestore().collection('user_logs').doc(userUid).set({});
-      firestore().collection('goals').doc(userUid).set({});
-    }
-    catch (error) {
+      await Promise.all([
+        firestore().collection('users').doc(userUid).set({
+          role: "user",
+          username,
+          created_at: current_date,
+          points: 0,
+          redeemablePoints: 0,
+        }, {merge: true}),
+        firestore().collection('current_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('initial_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('daily_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('user_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('goals').doc(userUid).set({}, {merge: true})
+      ]);
+    } catch (error) {
       console.error(error);
     }
   }
-
+  
   const handleSignUp = async () => {
     if (email && password) {
       try {
         const response = await auth().createUserWithEmailAndPassword(email, password);
+        setProfileCreated(false);
         await createProfile(response);
+        setProfileCreated(true);
         clearAllInput();
-        setShowQuizModal(true);  // Show quiz modal only after successful sign-up
       } catch (error) {
         handleError(error);
       }
     }
   };
-
-  //if (!loading){
-  //  goToInterface("user");
-  //}
 
   const handleError = (error: any) => {
     let message = 'An error occurred. Please try again.';
@@ -165,15 +166,6 @@ export default function SignUp() {
     setUsername('');
     setEmail('');
     setPassword('');
-  };
-
-  const handleTakeQuiz = () => {
-    setShowQuizModal(false);
-    router.push("/(quiz)"); // Navigate to the quiz screen
-  };
-
-  const handleDismiss = () => {
-    setShowQuizModal(false);
   };
 
   return (
@@ -220,22 +212,18 @@ export default function SignUp() {
         <Button style={{ marginVertical: 12, borderRadius: 12 }} onPress={handleSignUp}>
           Sign Up
         </Button>
-        <StyledLayout className="flex-row items-center justify-center">
-          <ThemedText>Already have an account?</ThemedText>
-          <Button appearance="ghost" style={{ marginLeft: -16 }} onPress={() => router.push("/login")}>Login</Button>    
-        </StyledLayout>
+        <StyledLayout className="flex-row mt-3 items-center justify-center">
+          <ThemedText className='text-gray-600 text-sm'>Already have an account?</ThemedText>
+          <TouchableOpacity onPress={() => router.push("/login")}>
+              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Login</StyledText>
+            </TouchableOpacity>
+          </StyledLayout>
       </Container>
 
       <CustomAlert
         visible={alertVisible}
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
-      />
-
-      <TakeaQuiz
-        visible={showQuizModal}
-        onTakeQuiz={handleTakeQuiz}
-        onDismiss={handleDismiss}
       />
     </StyledLayout>
   );

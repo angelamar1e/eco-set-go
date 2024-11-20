@@ -8,7 +8,6 @@ export const EmissionsDataContext = createContext();
 // Provider component
 export const EmissionsDataProvider = ({ children }) => {
   const { userUid } = useUserContext();
-  const [emissionsData, setEmissionsData] = useState({});
   const [initialData, setInitialData] = useState({});
   const [foodEmissions, setFoodEmissions] = useState(0);
   const [transportationEmissions, setTransportationEmissions] = useState(0);
@@ -20,7 +19,6 @@ export const EmissionsDataProvider = ({ children }) => {
   return (
     <EmissionsDataContext.Provider
       value={{
-        emissionsData,
         foodEmissions,
         transportationEmissions,
         electricityEmissions,

@@ -41,6 +41,7 @@ const StyledSelect = styled(Select);
 const StyledSelectItem = styled(SelectItem);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
+const StyledInput = styled(Input);
 
 export interface MealData {
   mealType: string;
@@ -111,13 +112,9 @@ export const Meal: React.FC<ActionItemProps> = ({
     >
       <StyledLayout
         className="pt-1 m-1"
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: myTheme["color-basic-500"],
-        }}
       >
         <StyledSelect
-          className="w-full rounded-lg mb-2"
+          className="w-full rounded-lg"
           placeholder={() => (
             <StyledText
               numberOfLines={2}
@@ -155,7 +152,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
   handleUnmark,
 }) => {
   const { userUid, loading } = useUserContext();
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
   const [inputValue, setInputValue] = useState("");
@@ -248,7 +245,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
       <StyledLayout
         className="pt-1 m-1"
       >
-        <View className="border rounded-lg">
+        <View className="border border-gray-200 rounded-lg">
           <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
             <CircularCheckbox
               status={
@@ -265,9 +262,9 @@ export const MealDone: React.FC<DoneItemProps> = ({
           <TouchableOpacity onPress={handleMoreDetails}>
             <StyledText
               category="s1"
-              className="ml-12 mt-2 mb-2"
+              className="ml-12 mt-2 mb-2 font-bold"
               style={{
-                color: myTheme["color-info-500"],
+                color: myTheme['color-success-700'],
               }}
             >
               Enter more details
@@ -277,18 +274,18 @@ export const MealDone: React.FC<DoneItemProps> = ({
 
         {showInput && (
           <View>
-            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end">
-              <StyledText>
+            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
+              <StyledText className="text-sm">
                 Amount of{" "}
                 <Text className="italic">
                   {chosenMeal?.mealBase === "Cereal Products"
                     ? chosenMeal?.mealType
                     : chosenMeal?.mealBase}
                 </Text>
-                {" "}eaten{" "}
+                {" "}eaten{": "} 
               </StyledText>
-              <Input
-                className="w-8"
+              <StyledInput
+                className="w-1/4"
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
@@ -300,14 +297,15 @@ export const MealDone: React.FC<DoneItemProps> = ({
             </StyledLayout>
             <View className="items-center">
               <TouchableOpacity
-                className="bg-blue-500 rounded-lg items-center w-1/3 p-2 px-3 mb-3"
+                className="rounded-lg w-full p-2 px-6 mb-3"
                 onPress={handleCompleteDetails}
               >
                 <StyledText
                   category="p1"
-                  className="text-white text-sm text-center"
+                  className="text-white text-sm font-bold text-right"
+                  style={{color: myTheme['color-success-700']}}
                 >
-                  Submit
+                  → Submit
                 </StyledText>
               </TouchableOpacity>
             </View>

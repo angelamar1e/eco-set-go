@@ -1121,6 +1121,7 @@ export const EmissionsProvider = ({ children }) => {
     <EmissionsContext.Provider
       value={{
         initialized,
+        initializeData,
         emissionsData,
         foodFootprint,
         transportationFootprint,

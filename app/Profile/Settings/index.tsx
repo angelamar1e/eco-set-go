@@ -78,12 +78,7 @@ const setting = () => {
                 password={password}
             />
         ) : (
-            <Preferences
-            pushNotifications={pushNotifications}
-            setPushNotifications={setPushNotifications}
-            actionReminders={actionReminders}
-            setActionReminders={setActionReminders}
-            />
+            <Preferences/>
         )}    
         </StyledLayout>
 

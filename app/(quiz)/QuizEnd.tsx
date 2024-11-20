@@ -1,4 +1,4 @@
-import { EmissionsDataContext, getHighestEmissions } from '@/contexts/EmissionsData';
+import { getHighestEmissions } from '@/contexts/EmissionsData';
 import { useUserContext } from '@/contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import { Layout, Text, Button, Card } from '@ui-kitten/components';
@@ -9,7 +9,6 @@ import { router } from 'expo-router';
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
 import { EmissionsContext } from '@/contexts/Emissions';
-import { EmissionsData } from '../../constants/DefaultValues';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -19,8 +18,9 @@ const QuizEnd = () => {
         foodFootprint,
         transportationFootprint,
         electricityFootprint,
-        overallFootprint
     } = useContext(EmissionsContext);
+
+    const {initialFootprint} = useUserContext();
 
     // Prepare an array with each category and its value, then sort it from highest to lowest
     const sortedEmissions = [
@@ -34,7 +34,7 @@ const QuizEnd = () => {
 
     const widthDecrement = (maxWidth - minWidth) / (sortedEmissions.length - 1);
 
-    const total = overallFootprint;
+    const total = initialFootprint;
 
     // Calculate percentages for each category
     const percentageEmissions = sortedEmissions.map(emission => ({
@@ -91,7 +91,7 @@ const QuizEnd = () => {
 
                             }}
                         >
-                            {overallFootprint.toFixed(2)}
+                            {initialFootprint.toFixed(2)}
                         </Text>
                         <Text
                             className=""

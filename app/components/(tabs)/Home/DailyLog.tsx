@@ -1,5 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import {  FlatList } from "react-native";
+import {  FlatList, ScrollView } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
 import { EcoAction } from "@/types/EcoAction";
@@ -16,6 +16,8 @@ import { Card, Layout, Text, useTheme } from "@ui-kitten/components";
 import { styled } from "nativewind";
 import AddActionButton from "../Goal Setting/AddActionButton";
 import { myTheme } from "@/constants/custom-theme";
+import { ActivityIndicator } from "react-native-paper";
+import { Points } from "@/constants/Points";
 
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
@@ -24,15 +26,17 @@ const doneTemplates = [MealDone, StaticDone, StaticDone, DrivingActionDone, Done
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
+const StyledScrollView = styled(ScrollView);
 
 
 const DailyLog: FC = () => {
-  const { userUid } = useUserContext();
+  const { userUid, points, redeemablePoints } = useUserContext();
   const [dailyLog, setDailyLog] = useState<EcoAction[]>([]);
   const [completedActions, setCompletedActions] = useState<EcoAction[]>([]);
   const [actionIds, setActionIds] = useState<string[]>([]);
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
+  const [loading, setLoading] = useState(true);
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -72,6 +76,8 @@ const DailyLog: FC = () => {
 
   useEffect(() => {
     const fetchEcoActions = async () => {
+      setLoading(true);
+
       if (actionIds.length > 0) {
         const remainingActions = actionIds.filter((id) => !Object.keys(completedActionIds).includes(id));
         const actionsData = await getActionInfo(remainingActions);
@@ -79,9 +85,12 @@ const DailyLog: FC = () => {
 
         setDailyLog(actionsData);
         setCompletedActions(completedActionsData);
+        setLoading(false);
       } else if (actionIds.length === 0) {
         setDailyLog([]);
       }
+
+      setLoading(false);
     };
 
     fetchEcoActions();
@@ -106,6 +115,8 @@ const DailyLog: FC = () => {
   async function handleUnmark(actionId: string) {
     const currentDate = moment().format("YYYY-MM-DD");
 
+    getActionPointsById(actionId, "minus");
+
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
 
     // Remove the specific actionId from the map for the current date
@@ -116,8 +127,44 @@ const DailyLog: FC = () => {
     });
   }
 
+  const getActionPointsById = (actionId: string, method: "add" | "minus") => {
+    // Define the points mapping
+    const pointsMap = {
+      100: Points[100],
+      200: Points[200]
+    };
+  
+    // Initialize point variables
+    let pointsToAddOrSubtract = 0;
+  
+    // Check if the actionId is in the Points mapping
+    if (pointsMap[100].includes(actionId)) {
+      pointsToAddOrSubtract = method === "add" ? 100 : -100;
+    } else if (pointsMap[200].includes(actionId)) {
+      pointsToAddOrSubtract = method === "add" ? 200 : -200;
+    }
+  
+    // If no valid actionId, no points are changed
+    if (pointsToAddOrSubtract === 0) {
+      return; // Early exit if no valid points associated with the actionId
+    }
+  
+    // Calculate new points and redeemable points, ensuring no negative values
+    const newPoints = Math.max(0, points + pointsToAddOrSubtract);
+    const newRedeemablePoints = Math.max(0, redeemablePoints + pointsToAddOrSubtract);
+  
+    // Update Firestore with the new points and redeemable points
+    firestore().collection('users').doc(userUid).set({
+      points: newPoints,
+      redeemablePoints: newRedeemablePoints
+    }, { merge: true });
+  };
+  
+  
   async function handleComplete(actionId: string, template: number, impact: number, baseMeal?: MealData, chosenMeal?: MealData, vehicleHigherEF?: number, vehicleLessEF?: number) {
     const currentDate = moment().format("YYYY-MM-DD");
+
+    getActionPointsById(actionId, "add");
 
     // Fetch the existing log for the current date
     const currentLog = (await userLogs.get()).data()?.[currentDate] || {};
@@ -186,8 +233,15 @@ const DailyLog: FC = () => {
 
     return (
       //<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400} className="flex-1">*/}
+      // <StyledScrollView className="flex-1" style={{height: "auto"}}>
       <StyledLayout className=" relative">
         <StyledLayout className="pt-1">
+        {loading ? ( // Show loading spinner if loading
+          <StyledLayout className="mt-6" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="small" color={myTheme['color-success-700']} />
+          </StyledLayout>
+        ) : (
+          <>
             {dailyLog.length > 0 ? (
               <FlatList
                 data={dailyLog}
@@ -206,7 +260,7 @@ const DailyLog: FC = () => {
               </StyledLayout>            
             )}
         
-            <StyledText category="s1" style={{ fontWeight: 'bold', }} className="mt-1 ml-3">
+            <StyledText category="s1" style={{ fontWeight: 'bold', }} className="mt-3 ml-3">
               Actions Done
             </StyledText>
             {completedActions.length > 0 ? (
@@ -226,8 +280,11 @@ const DailyLog: FC = () => {
                 <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
               </StyledLayout>
             )}
+          </>
+          )}
         </StyledLayout>
       </StyledLayout>
+      // </StyledScrollView>
       //*</KeyboardAvoidingView>*/}
     );
 };

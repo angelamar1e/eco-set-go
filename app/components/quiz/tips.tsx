@@ -33,7 +33,7 @@ const TipsModal: React.FC<TipsProps> = ({ visible, onClose, tips }) => {
           borderRadius: 10,
           elevation: 1,
         }}>
-          <Text className="text-xl text-center" style={{ fontFamily: 'Poppins-Bold', color: myTheme['color-success-700'] }}>Tips 🤷🏽‍♀️</Text>
+          <Text className="text-xl text-center" style={{ fontFamily: 'Poppins-Bold', color: myTheme['color-success-700'] }}>Tips 💡</Text>
           {Array.isArray(tips) ? (
             tips.map((tip, index) => (
               <Text key={index} className='text-justify' style={{ marginTop: 10 }}>{tip}</Text>
