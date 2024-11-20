@@ -83,6 +83,7 @@ const QuizIndex = () => {
     let newIndex = currentQuestionIndex + skipSteps;
     const questionId = questionDocumentIds[currentQuestionIndex];
 
+    {/*
     // Handle skip logic for question 15 (Checkbox)
     if (questionId === '15') {
         const checkedItems = currentAnswer; // Assume currentAnswer is an array of selected values
@@ -151,6 +152,7 @@ const QuizIndex = () => {
             newIndex += 2; // Skip to 2 questions ahead
         }
     }
+  */}
 
     // Ensure the new index does not exceed the number of questions
     if (newIndex < questionDocumentIds.length) {
