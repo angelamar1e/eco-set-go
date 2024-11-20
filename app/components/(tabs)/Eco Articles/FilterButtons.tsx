@@ -13,7 +13,7 @@ const StyledLayout = styled(Layout);
 const StyledButton = styled(Button);
 
 const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterChange }) => {
-  const filters = ['ALL', 'Getting Started', 'Food', 'Transportation', 'Electricity'];
+  const filters = ['ALL', 'Getting Started', 'Food', 'Transportation', 'Electricity', 'QC Initiatives'];
   const fontsLoaded = useLoadFonts();
 
   return (
