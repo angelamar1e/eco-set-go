@@ -10,7 +10,7 @@ const StyledTextSmall = styled(Text);
 const StyledLayout = styled(Layout);
 
 const Calculator: React.FC = () => {
-  const { currentFootprint } = useUserContext();
+  const { newOverallFootprint } = useContext(EmissionsContext);
 
   return (
     <StyledLayout className="flex-row items-center justify-center shadow p-2">
@@ -19,7 +19,7 @@ const Calculator: React.FC = () => {
         style={{ color: myTheme["color-success-700"] }}
         className="ml-2"
       >
-        {currentFootprint.toFixed(2)}
+        {newOverallFootprint.toFixed(2)}
       </StyledTextLarge>
       <StyledTextSmall
         category="p1"

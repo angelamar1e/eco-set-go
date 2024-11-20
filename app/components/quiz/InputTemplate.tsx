@@ -24,10 +24,10 @@ const InputTemplate: FC<TemplateProps> = ({
   setModalVisible,
   tips,
 }) => {
-  const [inputValue, setInputValue] = useState<string>(defaultValue || "");
+  const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
 
   const handlePress = (value: any) => {
-    setInputValue(value);
+    setInputValue(value.toString());
     onAnswer(value);
   };
 

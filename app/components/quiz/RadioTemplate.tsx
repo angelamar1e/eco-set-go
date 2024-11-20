@@ -25,10 +25,10 @@ const RadioTemplate: FC<TemplateProps> = ({
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
   const [answerText, setAnswerText] = useState<string>("");
 
-  const handlePress = (selectedKey: string, selectedText: string, selectedValue: string) => {
-    setAnswer(selectedKey); 
-    setAnswerText(selectedText); 
-    onAnswer(selectedValue); 
+  const handlePress = (selectedKey: string, selectedText: string, selectedValue: any) => {
+    setAnswer(selectedKey);
+    setAnswerText(selectedText);
+    onAnswer(selectedValue);
   };
 
   return (
