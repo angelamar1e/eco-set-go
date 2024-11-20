@@ -1156,6 +1156,8 @@ export const EmissionsProvider = ({ children }) => {
         longHaulDuration,
         setLongHaulDuration,
         twoWheelersEmissions,
+        usesTwoWheelers,
+        setUsesTwoWheelers,
         setTwoWheelersEmissions,
         twoWheelerEFPerKm,
         setTwoWheelerEFPerKm,
