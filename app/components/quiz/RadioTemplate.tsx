@@ -6,7 +6,7 @@ import { styled } from "nativewind";
 import { Layout, Text } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import TipsModal from "./tips";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
@@ -25,10 +25,10 @@ const RadioTemplate: FC<TemplateProps> = ({
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
   const [answerText, setAnswerText] = useState<string>("");
 
-  const handlePress = (title: string, selected: string | number) => {
-    setAnswer(selected);
-    setAnswerText(title);
-    onAnswer(selected);
+  const handlePress = (selectedKey: string, selectedText: string, selectedValue: string) => {
+    setAnswer(selectedKey); 
+    setAnswerText(selectedText); 
+    onAnswer(selectedValue); 
   };
 
   return (
@@ -38,31 +38,32 @@ const RadioTemplate: FC<TemplateProps> = ({
         </StyledText>
 
         <View className="flex-row justify-between">
-          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
+          <StyledText className='' style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
             {question} 
           </StyledText>
           {tips && tips.length > 0 && (
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
+              <Ionicons name="information-circle-outline" size={22} style={{ color: myTheme['color-success-700'], top: 2}} />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Radio Choices */}
         <StyledLayout className="flex-wrap flex-row justify-center mt-10 mb-3">
-          {choices ? (
-            Object.entries(choices).map(([key, value]) => (
-              <RadioChoices
-                key={key}
-                title={key}
-                isSelected={key === answerText}
-                onPress={() => handlePress(key, value)}
-              />
-            ))
-          ) : (
-            <Text> Loading... </Text>
-          )}
-        </StyledLayout>
+        {choices ? (
+          Object.entries(choices).map(([key, { text, value, example, choices_tip }]) => (
+            <RadioChoices
+              key={key}
+              title={text}
+              example={example}
+              choices_tip={choices_tip}
+              isSelected={answer === key}
+              onPress={() => handlePress(key, text, value)}
+            />
+          ))
+        ) : (
+          <Text>Loading...</Text>
+        )}
+      </StyledLayout>
         
         {tips && tips.length > 0 && (
           <TipsModal

@@ -1,4 +1,3 @@
-// GoalSetting.tsx
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { styled } from "nativewind";
@@ -12,6 +11,8 @@ import CongratulationsModal from "../Goal Setting/CongratulationsModal";
 import { router } from "expo-router";
 import { myTheme } from "@/constants/custom-theme";
 import DateTimePicker from "@react-native-community/datetimepicker"; 
+import TipsModal from "../../quiz/tips";
+import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -37,6 +38,7 @@ const GoalSetting: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState<"start" | "end" | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
     if (progressPercentage >= 1){
@@ -51,7 +53,7 @@ const GoalSetting: React.FC = () => {
       <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
           <View className="flex-row items-center justify-between mb-4">
-            <StyledText className="mb-1 text-xl p-2" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>Your Goal 🎯</StyledText>
+            <StyledText className="text-xl p-2" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>Your Goal 🎯</StyledText>
             <TouchableOpacity
               className="items-center justify-center rounded-full p-2"
               style={{ backgroundColor: myTheme['color-basic-transparent-100'],
@@ -74,10 +76,10 @@ const GoalSetting: React.FC = () => {
                   <StyledText className="text-20" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700']}}>{conditionalConvertGramsToKg(progressImpact)}</StyledText>
                   <StyledText className="text-20" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}>{conditionalConvertGramsToKg(latestGoal.target)}</StyledText>
                 </View>
-                <View className="flex-row items-center justify-between mt-3">
-                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟢 Started on {format(latestGoal.start_date.toDate(), "PP")}</StyledText>
-                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟠 To be completed by {format(latestGoal.end_date.toDate(), "PP")}</StyledText>
-                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🔴 {Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} day/s left</StyledText>
+                <View className="flex-start mt-1 ml-0">
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🔴 <Text style={{ fontFamily: 'Poppins-Medium'}}>{Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}</Text> day/s left</StyledText>
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟢 Started on <Text style={{ fontFamily: 'Poppins-Medium'}}>{format(latestGoal.start_date.toDate(), "PP")}</Text></StyledText>
+                  <StyledText className="" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-900'], fontSize: 13}}>🟠 To be completed by <Text style={{ fontFamily: 'Poppins-Medium'}}>{format(latestGoal.end_date.toDate(), "PP")}</Text></StyledText>
                 </View>
               </View>
             </>
@@ -132,16 +134,28 @@ const GoalSetting: React.FC = () => {
               )}
             </View>
 
+            {/* Tooltip Modal */}
+            <TipsModal
+              visible={tooltipVisible}
+              onClose={() => setTooltipVisible(false)}
+              tips="It is recommended to set a carbon reduction goal of about 2 tons (2000 kg) of CO2e"
+            />
+            
+
             {/* Target Input */}
-            <View className="basis-full mt-3">
+            <View className="flex-row basis-full mt-3">
               <StyledInput
-                style={{ backgroundColor: myTheme['color-basic-200'], borderColor: myTheme['color-basic-600']  }}
+                style={{ backgroundColor: myTheme['color-basic-200'], borderColor: myTheme['color-basic-600'], flex: 1 }}
                 className="rounded-lg"
                 label={"Target"}
                 caption={"in grams of CO₂e"}
                 keyboardType="number-pad"
                 onChangeText={(target) => setNewTarget(parseInt(target, 10))}
               />
+
+              <TouchableOpacity onPress={() => setTooltipVisible(true)}>
+                <Ionicons name="information-circle-outline" size={15} color={myTheme['color-primary-600']} />
+              </TouchableOpacity>
             </View>
 
             {/* Submit Button */}

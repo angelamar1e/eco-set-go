@@ -52,9 +52,9 @@ const StepperTemplate: FC<StepperTemplateProps> = ({
 
         <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
           {question} {tips && (
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Ionicons name="information-circle-outline" size={22} style={{ color: myTheme['color-success-700'], top: 5}} />
+            </TouchableOpacity>
           )}
         </StyledText>
 

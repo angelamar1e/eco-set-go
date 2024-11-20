@@ -163,8 +163,8 @@ const ProgressReport = () => {
     };
   
     const legendData = [
-      { name: "Food", color: currentColors.bars[1] },
-      { name: "Transportation", color: currentColors.bars[0] },
+      { name: "Food", color: currentColors.bars[0] },
+      { name: "Transportation", color: currentColors.bars[1] },
       { name: "Electricity", color: currentColors.bars[2] },
     ];
   
@@ -173,7 +173,12 @@ const ProgressReport = () => {
         <View className="items-center justify-center" style={{backgroundColor: "white"}}>
           <View>
             <StackedBarChart
-              data={stackedChartData}
+              data={{
+                labels: stackedChartData.labels,
+                data: stackedChartData.data,
+                barColors: currentColors.bars,
+                legend: ["Food", "Transportation", "Electricity"],
+              }}              
               width={Dimensions.get("window").width + 60}
               height={220}
               chartConfig={chartConfig}
@@ -184,7 +189,7 @@ const ProgressReport = () => {
               withVerticalLabels={true}
             />
           </View>
-          <View className="flex-row mt-4">
+          <View className="flex-row mt-3">
             {legendData.map((item, index) => (
               <View key={index} className="flex-row items-center mx-5">
                 <View

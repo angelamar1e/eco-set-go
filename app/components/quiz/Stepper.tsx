@@ -28,7 +28,7 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
 
   return (
     <StyledLayout 
-      className="flex-row items-center justify-between p-2 m-1 rounded-lg"
+      className="flex-row items-center justify-between py-2 px-4 mb-2 rounded-lg"
       style={{ borderWidth: 1, borderColor: myTheme['color-basic-400'] }}
     >
       <StyledLayout>
@@ -42,7 +42,7 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
           style={{ backgroundColor: myTheme['color-success-700'] }}
           className="w-1/4 rounded-l-lg border-r border-white"
         >
-          <StyledText className="text-lg text-center">-</StyledText>
+          <StyledText className="text-lg text-center text-white">-</StyledText>
         </Pressable>
 
         <Pressable 
@@ -50,7 +50,7 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
           style={{ backgroundColor: myTheme['color-success-700'] }}
           className="w-1/4 rounded-r-lg border-l border-white"
         >
-          <StyledText className="text-lg text-center">+</StyledText>
+          <StyledText className="text-lg text-center text-white">+</StyledText>
         </Pressable>
       </StyledLayout>
     </StyledLayout>

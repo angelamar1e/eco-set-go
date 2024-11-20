@@ -51,7 +51,7 @@ const InputTemplate: FC<TemplateProps> = ({
           </StyledText>
           {tips && tips.length > 0 && (
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
+              <Ionicons name="information-circle-outline" size={22} style={{ color: myTheme['color-success-700'], top: 2}} />
             </TouchableOpacity>
           )}
         </View>
