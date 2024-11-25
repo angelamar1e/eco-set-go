@@ -74,73 +74,102 @@ const EcoPoints = () => {
     const subtextColor2 = theme['color-basic-900']; 
 
   return (
-    <StyledLayout className="flex-1">
-      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
-          style={{ backgroundColor: myTheme['color-success-700']}}>
-            <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Rewards</StyledText>
-      </StyledLayout>
+<StyledLayout className="flex-1">
+  <StyledLayout 
+    className="h-1/6 rounded-b-3xl justify-center items-center relative"
+    style={{ backgroundColor: myTheme['color-success-700'] }}
+  >
+    <StyledText 
+      className="text-white text-3xl" 
+      style={{ fontFamily: 'Poppins-SemiBold' }}
+    >
+      Eco Rewards
+    </StyledText>
 
-      
+    {/* Profile Button */}
+    <StyledButton
+      className="absolute top-4 right-4 p-1 m-1 rounded-full"
+      size="medium"
+      appearance="outline"
+      status="basic"
+      onPress={() => router.push("/Profile/profile")}
+    >
+      <Ionicons name="person" size={20} color="#FFFFFF"/>
+    </StyledButton>
+  </StyledLayout>
 
-      <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
-        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
-
-        <StyledText className="text-center mb-1 p-2" style={{ color: maintextcolor, fontFamily: 'Poppins-SemiBold', fontSize: 22}}>{currentLevel!} ⭐</StyledText>
-          <View className="items-center">
-            <StyledProgressBar
-              progress={levelProgress}
-              className="w-full rounded-lg rounded-3xl h-3 mb-1"
-            />
-          </View>
-
-          <StyledLayout className="flex-row items-center justify-between bg-white">
-            <StyledText className="text-20" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700']}}>{points} <StyledText 
-              className="right-10 text-sm" 
-              style={{ 
-                fontFamily: 'Poppins-Regular', 
-                color: subtextColor1 
-              }}
-            >
-              EcoPoints
-              </StyledText>
-            </StyledText>
-            <StyledText className="text-20" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}><StyledText 
-              className="left-10 text-sm" 
-              style={{ 
-                fontFamily: 'Poppins-Regular', 
-                color: subtextColor1 
-              }}
-            >{nextLevel!}  </StyledText>{nextLevelPts!}
-            </StyledText>
-          </StyledLayout>
-        </StyledCard>
+  <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
+    <StyledCard 
+      className="bg-white border-0" 
+      style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}
+    >
+      <StyledText 
+        className="text-center mb-1 p-2" 
+        style={{ color: maintextcolor, fontFamily: 'Poppins-SemiBold', fontSize: 22 }}
+      >
+        {currentLevel!} ⭐
+      </StyledText>
+      <View className="items-center">
+        <StyledProgressBar
+          progress={levelProgress}
+          className="w-full rounded-lg rounded-3xl h-3 mb-1"
+        />
       </View>
-
-      <StyledLayout className="flex-row p-4 mt-2 mr-2 ml-2 justify-between items-center">
-      <StyledButton
-                className="p-1 m-1 rounded-full"
-                size="medium"
-                appearance="outline"
-                status="basic"
-                onPress={() => router.push("/Profile/profile")}
-              >
-                <Ionicons name="person" />
-      </StyledButton>
-        <GoToMilestones />
-        <StyledLayout className="flex-column items-center">
-          <StyledText className="text-xs mr-1" style={{ color: subtextColor1, fontFamily: 'Poppins-Regular' }}>Redeemable EcoPoints</StyledText>
-          <StyledLayout 
-            className="py-1 px-3 rounded-full"
-            style={{
-              backgroundColor: myTheme['color-success-700']
-            }}
+      <StyledLayout className="flex-row items-center justify-between bg-white">
+        <StyledText 
+          className="text-20" 
+          style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700'] }}
+        >
+          {points} 
+          <StyledText 
+            className="right-10 text-sm" 
+            style={{ fontFamily: 'Poppins-Regular', color: subtextColor1 }}
           >
-            <StyledText className='text-sm text-white' style={{ fontFamily: 'Poppins-Medium'}}>{redeemablePoints} EcoPoints</StyledText>
-          </StyledLayout>
-        </StyledLayout>
+            EcoPoints
+          </StyledText>
+        </StyledText>
+        <StyledText 
+          className="text-20" 
+          style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700'] }}
+        >
+          <StyledText 
+            className="left-10 text-sm" 
+            style={{ fontFamily: 'Poppins-Regular', color: subtextColor1 }}
+          >
+            {nextLevel!}  
+          </StyledText>
+          {nextLevelPts!}
+        </StyledText>
       </StyledLayout>
-      <Rewards />
+    </StyledCard>
+  </View>
+
+  <StyledLayout className="flex-row p-4 mt-2 mr-2 ml-2 justify-between items-center">
+    <GoToMilestones />
+    <StyledLayout className="flex-column items-center">
+      <StyledText 
+        className="text-xs mr-1" 
+        style={{ color: subtextColor1, fontFamily: 'Poppins-Regular' }}
+      >
+        Redeemable EcoPoints
+      </StyledText>
+      <StyledLayout 
+        className="py-1 px-3 rounded-full"
+        style={{ backgroundColor: myTheme['color-success-700'] }}
+      >
+        <StyledText 
+          className="text-sm text-white" 
+          style={{ fontFamily: 'Poppins-Medium' }}
+        >
+          {redeemablePoints} EcoPoints
+        </StyledText>
+      </StyledLayout>
     </StyledLayout>
+  </StyledLayout>
+
+  <Rewards />
+</StyledLayout>
+
 
 
     
