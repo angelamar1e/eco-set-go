@@ -17,13 +17,12 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
   const fontsLoaded = useLoadFonts();
 
   return (
-    <StyledLayout className="mt-2">
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
+    <StyledLayout className="mt-2 justify-center items-center flex-row flex-wrap">
         {filters.map((category) => (
           <StyledButton
             key={category}
             onPress={() => onFilterChange(category)}
-            className={`p-1 m-1 rounded-full`} 
+            className={`p-1 m-1 rounded-full flex-grow`} 
             appearance={selectedFilter === category ? 'filled' : 'outline'}
             status={selectedFilter === category ? 'success' : 'basic'}
             size='small'
@@ -31,7 +30,6 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
             <Text category='label'>{category}</Text>
           </StyledButton>
         ))}
-      </ScrollView>
     </StyledLayout>
   );
 };
