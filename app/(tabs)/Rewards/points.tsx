@@ -3,19 +3,21 @@ import firestore from "@react-native-firebase/firestore";
 import Rewards from "@/app/components/(tabs)/Rewards/incentives";
 import GoToMilestones from "@/app/components/(tabs)/Rewards/MilestonesButton";
 import { styled } from "nativewind";
-import { Layout, Text, ProgressBar, Card, useTheme } from "@ui-kitten/components";
+import { Layout, Text, ProgressBar, Card, useTheme, Button } from "@ui-kitten/components";
 import { View } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
 import { useUserContext } from "@/contexts/UserContext";
 import { Milestones, Points, Levels } from "@/constants/Points";
 import { useLogsContext } from "@/contexts/UserLogs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 const StyledProgressBar = styled(ProgressBar);
+const StyledButton = styled(Button);
 
 
 const EcoPoints = () => {
@@ -25,6 +27,7 @@ const EcoPoints = () => {
   const [nextLevel, setNextLevel] = useState<keyof typeof Levels | null>(null);
   const [nextLevelPts, setNextLevelPts] = useState<number | null>(null);
   const [levelProgress, setLevelProgress] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const currentLevel = () => {
@@ -77,6 +80,8 @@ const EcoPoints = () => {
             <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Rewards</StyledText>
       </StyledLayout>
 
+      
+
       <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
         <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
@@ -112,6 +117,15 @@ const EcoPoints = () => {
       </View>
 
       <StyledLayout className="flex-row p-4 mt-2 mr-2 ml-2 justify-between items-center">
+      <StyledButton
+                className="p-1 m-1 rounded-full"
+                size="medium"
+                appearance="outline"
+                status="basic"
+                onPress={() => router.push("/Profile/profile")}
+              >
+                <Ionicons name="person" />
+      </StyledButton>
         <GoToMilestones />
         <StyledLayout className="flex-column items-center">
           <StyledText className="text-xs mr-1" style={{ color: subtextColor1, fontFamily: 'Poppins-Regular' }}>Redeemable EcoPoints</StyledText>
@@ -127,6 +141,9 @@ const EcoPoints = () => {
       </StyledLayout>
       <Rewards />
     </StyledLayout>
+
+
+    
   );
 };
 

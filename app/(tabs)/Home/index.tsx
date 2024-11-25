@@ -122,15 +122,6 @@ export default function LandingPage() {
                   {firstName!}! 🌱
                 </StyledText>
               </StyledText>
-              <StyledButton
-                className="p-1 m-1 rounded-full"
-                size="medium"
-                appearance="outline"
-                status="basic"
-                onPress={() => router.push("/Profile/profile")}
-              >
-                <Ionicons name="person" />
-              </StyledButton>
             </StyledLayout>
             <StyledLayout className="flex flex-row h-auto space-x-2 content-center">
               <Box>
