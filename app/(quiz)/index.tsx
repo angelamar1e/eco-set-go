@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { QuizContext } from "@/contexts/QuizContext";
 import { EmissionsContext } from "@/contexts/Emissions";
@@ -14,6 +14,9 @@ import storage from '@react-native-firebase/storage';
 import { myTheme } from "@/constants/custom-theme";
 import TipsModal from "../components/quiz/tips";
 import { NavigationButtons } from "../components/quiz/NavigationButtons";
+import Modal1 from "../components/quiz/Modal1";
+import Modal2 from "../components/quiz/Modal2";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StyledLayout = styled(Layout);
 
@@ -24,7 +27,16 @@ const QuizIndex = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState<any>(null); 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [showModal1, setShowModal1] = useState(true);
+  const [showModal2, setShowModal2] = useState(false);
   const templates = [InputTemplate, RadioTemplate, CheckboxTemplate, StepperTemplate];
+
+  // Check if there's existing data
+  const hasExistingData = useMemo(() => {
+    return Object.values(emissionsContext).some(value => 
+      value !== null && value !== undefined && value !== 0
+    );
+  }, [emissionsContext]);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -173,10 +185,51 @@ const QuizIndex = () => {
     }
   };
 
-  // Dynamically render the template based on the current question
-  const CurrentComponent = questionData
-    ? templates[questionData.template]
-    : templates[0];
+  const CurrentComponent = questionData ? templates[questionData.template] : templates[0];
+
+  // Check quiz status on mount and set up modals
+  useEffect(() => {
+    const initializeModals = async () => {
+      try {
+        const quizCompleted = await AsyncStorage.getItem("quizCompleted");
+        console.log("Quiz completed status:", quizCompleted); // Debug log
+        
+        // Always show Modal1 first
+        setShowModal1(true);
+        
+        // If quiz was completed before, prepare Modal2 to show after Modal1
+        if (quizCompleted === "true") {
+          // We'll show Modal2 after Modal1 closes
+          setShowModal2(false);
+        }
+      } catch (error) {
+        console.error("Error checking quiz status:", error);
+      }
+    };
+    
+    initializeModals();
+  }, []);
+
+  const handleCloseModal1 = () => {
+    setShowModal1(false);
+    // Only show Modal2 if the value is different from default
+    if (emissionsContext?.totalEmissions !== 4.91) {
+      setTimeout(() => {
+        setShowModal2(true);
+      }, 300);
+    }
+  };
+
+  const handleQuizComplete = async () => {
+    try {
+      await AsyncStorage.setItem('quizCompleted', 'true');
+    } catch (error) {
+      console.error('Error saving quiz completion status:', error);
+    }
+  };
+
+  // Check if the value is different from the default 4.91
+  const hasCompletedQuiz = emissionsContext?.totalEmissions !== 4.91;
 
   return (
     <StyledLayout className="flex-1">
@@ -247,6 +300,16 @@ const QuizIndex = () => {
             onClose={() => setModalVisible(false)}
             tips={questionData.tips || []}
           />
+          <Modal1 
+            visible={showModal1} 
+            onClose={handleCloseModal1} 
+          />
+          {hasCompletedQuiz && (  // Only render Modal2 if not default value
+            <Modal2 
+              visible={showModal2} 
+              onClose={() => setShowModal2(false)} 
+            />
+          )}
           </>
         ) : (
           <StyledLayout className="flex-1 justify-center items-center">
