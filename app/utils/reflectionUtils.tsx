@@ -10,20 +10,20 @@ interface Reflection {
 }
 
 // Fetch reflections for the logged-in user
-export const fetchReflections = async (userUid: string): Promise<Reflection[]> => {
-  const reflectionsRef = firestore()
-    .collection('reflections')
-    .where('uid', '==', userUid); // Only fetch reflections with matching UID
+//export const fetchReflections = async (userUid: string): Promise<Reflection[]> => {
+ // const reflectionsRef = firestore()
+ //   .collection('reflections')
+ //   .where('uid', '==', userUid); // Only fetch reflections with matching UID
 
-  const snapshot = await reflectionsRef.get();
+ // const snapshot = await reflectionsRef.get();
 
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    content: doc.data().content || '',
-    date: doc.data().date || '',
-    uid: doc.data().uid || ''
-  }));
-};
+//  return snapshot.docs.map(doc => ({
+ //   id: doc.id,
+ //   content: doc.data().content || '',
+ //   date: doc.data().date || '',
+  //  uid: doc.data().uid || ''
+ // }));
+// };
 
 // Create reflection
 export const createReflection = async (reflection: { content: string; date: string; uid: string }): Promise<void> => {
