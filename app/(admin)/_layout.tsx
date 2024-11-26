@@ -5,15 +5,18 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+
+const EmptyHeader = () => {
+  return (
+    <></>
+  )
+}
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{
@@ -21,7 +24,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
           ),
-          headerShown: false
+          headerShown: true,
+          header: () => <EmptyHeader/>
         }}
       />
       <Tabs.Screen
@@ -31,7 +35,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'book' : 'book-outline'} color={color} />
           ),
-          headerShown: false
+          headerShown: true,
+          header: () => <EmptyHeader/>
         }}
       />
 </Tabs>
