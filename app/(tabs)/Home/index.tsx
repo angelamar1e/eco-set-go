@@ -104,7 +104,7 @@ export default function LandingPage() {
     {
       id: "1",
       component: (
-        <StyledLayout className="flex-1 px-2">
+        <StyledLayout className="flex-1 px-2 pb-20">
           <StyledLayout className="h-1/4 mt-3">
             <StyledLayout className="flex-row items-center m-3 justify-between">
               <StyledText
@@ -156,85 +156,147 @@ export default function LandingPage() {
               </Box>
               {/* initial footprint card */}
               <StyledLayout className="flex-column w-1/2 space-y-2">
-                <StyledLayout className="flex-row w-full border h-auto items-center justify-center rounded-xl bg-transparent flex-wrap p-2" style={{borderColor: myTheme['color-basic-500']}}>
-                  <StyledText className="text-lg" style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700']}}>
+                {/* First Card - Initial Footprint */}
+                <StyledLayout 
+                  className="flex-row w-full border h-auto items-center justify-center rounded-xl bg-transparent flex-wrap p-3" 
+                  style={{borderColor: myTheme['color-basic-500']}}
+                >
+                  <StyledText 
+                    className="text-base" 
+                    style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700']}}
+                  >
                     Initial Footprint
                   </StyledText>
 
                   <StyledView className="flex-row items-center text-center">
                     <StyledText
-                      className="text-base text-center text-3xl leading-10 pt-4"
+                      className="text-3xl pt-4"
                       style={{
                         fontFamily: "Poppins-Bold",
                         color: myTheme["color-success-700"],
                       }}
                     >
                       {initialFootprint.toFixed(2)}
-                      <StyledText className="leading-6" style={{ fontFamily: "Poppins-Regular" }}> tons of {"\n"}CO₂ equivalent</StyledText>
+                      <StyledText className="text-sm" style={{ fontFamily: "Poppins-Regular" }}> tons CO₂e</StyledText>
                     </StyledText>
                   </StyledView>
 
-                  <View className="flex-column items-center py-2 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-700']}}>
-                    <StyledText className="text-base text-center text-white" style={{ fontFamily: "Poppins-Regular" }}>
-                      Reduced by
+                  <View className="flex-column items-center py-2 mt-2 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-transparent-100']}}>
+                    <StyledText className="text-sm text-center text-white" style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}>
+                      Reduced by <Ionicons name="trending-down" size={14} color={myTheme['color-basic-700']} />
                     </StyledText>
-                    <StyledText className="text-xl font-bold text-center text-white" style={{ fontFamily: "Poppins-Regular", textAlign: "center" }}>
+                    <StyledText className="text-xl font-bold text-center text-white" style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}>
                       {difference}
                     </StyledText>
                   </View>
                 </StyledLayout>
 
-                <StyledLayout className="flex-row w-full h-auto border items-center justify-center rounded-xl bg-transparent flex-wrap p-2" style={{borderColor: myTheme['color-basic-500']}}>
-                  <StyledView className="p-1">
-                    <StyledText
-                      className="text-lg"
-                      style={{ fontFamily: "Poppins-Regular" }}
-                    >
-                      <StyledText
-                        className="text-lg"
-                        style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}
-                      >
-                        Goal:
-                      </StyledText>{" "}
-                      <StyledText className="leading-6"
-                        style={{ fontFamily: "Poppins-Regular"}}>Reduce your emissions by{" "}</StyledText>
-                      <StyledText
-                        className="text-lg"
-                        style={{ fontFamily: "Poppins-Bold", color: myTheme['color-success-700'] }}
-                      >
-                        {conditionalConvertGramsToKg(latestGoal?.target ?? 0)}
-                      </StyledText>
-                    </StyledText>
-                  </StyledView>
+                {/* Second Card - Goal */}
+                <StyledLayout 
+                  className="flex-row w-full h-auto border items-center justify-center rounded-xl bg-transparent flex-wrap p-3" 
+                  style={{borderColor: myTheme['color-basic-500']}}
+                >
+                  {latestGoal ? (
+                    <>
+                      <StyledView className="p-1">
+                        <StyledText style={{ fontFamily: "Poppins-Regular" }}>
+                          <StyledText
+                            className="text-base"
+                            style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}
+                          >
+                            Goal:
+                          </StyledText>{" "}
+                          <StyledText className="text-sm" style={{fontFamily: "Poppins-Regular", color: myTheme['color-basic-700']}}>Reduce your emissions by{" "}</StyledText>
+                          <StyledText
+                            className="text-base"
+                            style={{ fontFamily: "Poppins-Bold", color: myTheme['color-success-700'] }}
+                          >
+                            {conditionalConvertGramsToKg(latestGoal?.target ?? 0)}
+                          </StyledText>
+                        </StyledText>
+                      </StyledView>
 
-                  <View className="flex-row justify-center items-center py-2 mt-3 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-700']}}>
-                    <StyledText
-                      className="text-xl text-white text-center"
-                      style={{ fontFamily: "Poppins-Bold" }}
-                    >
-                      {percentage > 100 ? 100 : percentage.toFixed(0)}%
-                    </StyledText>
-                    <StyledText
-                      className="text-base text-white"
-                      style={{ fontFamily: "Poppins-Regular" }}
-                    >
-                      {"  "}
-                      completed
-                    </StyledText>
-                  </View>
-                  
-                  <View className="justify-end left-12">
-                    <StyledText
-                      className="text-right mt-2"
-                      style={{ fontFamily: "Poppins-Medium", fontSize: 14 }}
-                    >
-                      {latestGoal?.end_date
-                        ? `${Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} day/s left`
-                        : "No goal set"}
-                    </StyledText>
-                  </View>
+                      <View className="flex-row items-center justify-center py-2 mt-2 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-transparent-100']}}>
+                        <View className="items-center mx-4 border-r px-4" style={{borderColor: myTheme['color-basic-500']}}>
+                          <StyledText
+                            className="text-2xl"
+                            style={{ fontFamily: "Poppins-SemiBold", color: myTheme['color-success-700'] }}
+                          >
+                            {percentage > 100 ? 100 : percentage.toFixed(0)}%
+                          </StyledText>
+                          <View className="flex-row items-center">
+                            <StyledText
+                              className="text-xs"
+                              style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}
+                            >
+                              done
+                            </StyledText>
+                            <Ionicons name="checkmark" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/>
+                          </View>
+                        </View>
+                        
+                        <View className="items-center mx-4 right-4">
+                          <StyledText
+                            className="text-2xl text-center"
+                            style={{ fontFamily: "Poppins-SemiBold", color: myTheme['color-success-700'] }}
+                          >
+                            {latestGoal?.end_date
+                              ? Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                              : "0"}
+                          </StyledText>
+                          <View className="flex-row items-center">
+                            <StyledText
+                              className="text-xs"
+                              style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}
+                            >
+                              days
+                            </StyledText>
+                            <Ionicons name="time-outline" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/>
+                          </View>
+                        </View>
+                      </View>
+                    </>
+                  ) : (
+                    <StyledLayout className="w-full items-center">
+                      <StyledText 
+                        className="text-base mb-2" 
+                        style={{ 
+                          fontFamily: "Poppins-Regular",
+                          color: myTheme['color-success-700']
+                        }}
+                      >
+                        Ready to make a difference? 🌍
+                      </StyledText>
+                      <StyledButton
+                          className="rounded-xl w-full"
+                          size="medium"
+                          appearance="ghost"
+                          status="success"
+                          onPress={() => router.push('/(tabs)/Progress Monitoring/report')}
+                          style={{
+                            backgroundColor: theme['color-success-transparent-200']
+                          }}
+                          activeOpacity={0.7}
+                        >
+                        {evaProps => (
+                          <StyledView className="flex-row items-center justify-center">
+                            <StyledText
+                              {...evaProps}
+                              style={{ 
+                                fontFamily: "Poppins-Medium",
+                                color: theme['color-success-700'],
+                              }}
+                              className="text-sm"
+                            >
+                              Let's Set a Goal!
+                            </StyledText>
+                          </StyledView>
+                        )}
+                      </StyledButton>
+                    </StyledLayout>
+                  )}
                 </StyledLayout>
-             </StyledLayout>
+              </StyledLayout>
             </StyledLayout>
 
             <StyledLayout className="flex-row items-center justify-between mt-4">
@@ -247,12 +309,11 @@ export default function LandingPage() {
                 }}
               >
                 Daily Log{" "}
-                {/*<Text style={{ fontSize: 25, marginLeft: 10 }}>🌞💭</Text>*/}
               </StyledText>
             </StyledLayout>
             <View
-              className="ml-2"
-              style={{ flexDirection: "row", alignItems: "center" }}
+              className="flex-row justify-center items-center space-x-2"
+              style={{ flexDirection: "row" }}
             >
               <AddActionButton />
               <ReflectionButton />
