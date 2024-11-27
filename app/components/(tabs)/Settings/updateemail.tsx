@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import { useUserContext } from "@/contexts/UserContext";
 import { SafeAreaView } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
+import auth from '@react-native-firebase/auth';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -18,21 +19,20 @@ const UpdateEmail = () => {
   const [newEmail, setNewEmail] = useState("");
   const router = useRouter();
 
-  const fetchUserEmail = async (userUid: string) => {
-    try {
-      const userDoc = await firestore().collection('users').doc(userUid).get();
-      if (userDoc.exists) {
-        setCurrentEmail(userDoc.data()?.email);
-      }
-    } catch (error) {
-      console.error('Error fetching email: ', error);
+  const fetchUserEmail = () => {
+    const user = auth().currentUser;
+    if (user?.email) {
+      setCurrentEmail(user.email);
     }
   };
 
   const handleUpdate = async () => {
     if (newEmail) {
       try {
-        await firestore().collection('users').doc(userUid).update({ email: newEmail });
+        const user = auth().currentUser;
+        if (!user) throw new Error('No user logged in');
+        
+        await user.updateEmail(newEmail);
         setCurrentEmail(newEmail);
         setNewEmail("");
       } catch (error) {
@@ -42,11 +42,7 @@ const UpdateEmail = () => {
   };
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-        fetchUserEmail(userUid);
-    };
-
-    fetchUserDetails();
+    fetchUserEmail();
   }, []);
 
   return (

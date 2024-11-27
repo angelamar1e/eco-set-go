@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "@/contexts/UserContext";
 import { SafeAreaView } from "react-native";
+import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -18,6 +19,9 @@ const UpdatePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [secureTextEntryCurrent, setSecureTextEntryCurrent] = useState(true);
   const [secureTextEntryNew, setSecureTextEntryNew] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [maskedPassword, setMaskedPassword] = useState("••••••••"); // Default masked password
   const router = useRouter();
 
   const toggleSecureEntryCurrent = () => {
@@ -29,14 +33,47 @@ const UpdatePassword = () => {
   };
 
   const handleUpdate = async () => {
-    if (newPassword) {
-      try {
-        // Update password logic here
-        setNewPassword("");
-        setConfirmPassword("");
-      } catch (error) {
-        console.error('Error updating password: ', error);
+    if (newPassword !== confirmPassword) {
+      setError("New passwords don't match");
+      return;
+    }
+
+    if (!currentPassword || !newPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user || !user.email) {
+        throw new Error("No user found");
       }
+
+      // Reauthenticate user before updating password
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+
+      // Update password
+      await updatePassword(user, newPassword);
+
+      // Clear form
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      router.back();
+    } catch (error: any) {
+      console.error('Error updating password: ', error);
+      setError(error.message || "Failed to update password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,19 +91,30 @@ const UpdatePassword = () => {
           <StyledButton 
             appearance="ghost" 
             onPress={handleUpdate}
+            disabled={loading}
             className="m-1 p-1 rounded-full">
-            Done
+            {loading ? 'Updating...' : 'Done'}
           </StyledButton>
         </StyledLayout>
 
         <StyledLayout className="p-2">
+          {error && (
+            <StyledText status="danger" className="mb-2">
+              {error}
+            </StyledText>
+          )}
           <StyledText category="s1" className="font-bold p-1">Current Password:</StyledText>
           <StyledInput
-            value={currentPassword}
-            secureTextEntry={secureTextEntryCurrent}
+            value={maskedPassword}
             disabled={true}
-            onChangeText={setCurrentPassword}
-            className="rounded-lg"
+            className="rounded-lg bg-gray-100"
+            status="basic"
+            accessoryRight={() => (
+              <Ionicons
+                name={'eye-off'}
+                style={{ color: '#8F9BB3' }}
+              />
+            )}
           />
         </StyledLayout>
 
@@ -75,7 +123,7 @@ const UpdatePassword = () => {
           <StyledInput
             value={newPassword}
             secureTextEntry={secureTextEntryNew}
-            status="basic"
+            status={error ? "danger" : "basic"}
             onChangeText={setNewPassword}
             className="rounded-lg"
             placeholder="Enter your new password"
@@ -94,7 +142,7 @@ const UpdatePassword = () => {
           <StyledInput
             value={confirmPassword}
             secureTextEntry={secureTextEntryNew}
-            status="basic"
+            status={error ? "danger" : "basic"}
             onChangeText={setConfirmPassword}
             className="rounded-lg"
             placeholder="Confirm your new password"
