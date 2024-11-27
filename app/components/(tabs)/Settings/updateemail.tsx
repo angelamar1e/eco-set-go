@@ -48,10 +48,10 @@ const UpdateEmail = () => {
       const user = auth().currentUser;
       if (!user) throw new Error('No user logged in');
       
-      await user.updateEmail(newEmail);
-      setCurrentEmail(newEmail);
+      await user.verifyBeforeUpdateEmail(newEmail);
+      setError("Please check your new email for verification link before the change takes effect");
+      
       setNewEmail("");
-      setError("");
     } catch (error: any) {
       console.error('Error updating email: ', error);
       setError(error.message || "Failed to update email");

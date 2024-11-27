@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "@/contexts/UserContext";
 import { SafeAreaView } from "react-native";
-import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -47,27 +47,25 @@ const UpdatePassword = () => {
     setError("");
 
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
+      const user = auth().currentUser;
       if (!user || !user.email) {
         throw new Error("No user found or email not verified");
       }
 
-      // Reauthenticate user before updating password
-      const credential = EmailAuthProvider.credential(
+      // Reauthenticate user
+      const credential = auth.EmailAuthProvider.credential(
         user.email,
         currentPassword
       );
 
       try {
-        await reauthenticateWithCredential(user, credential);
+        await user.reauthenticateWithCredential(credential);
       } catch (error) {
         throw new Error("Current password is incorrect");
       }
 
       // Update password
-      await updatePassword(user, newPassword);
+      await user.updatePassword(newPassword);
 
       // Clear form
       setCurrentPassword("");

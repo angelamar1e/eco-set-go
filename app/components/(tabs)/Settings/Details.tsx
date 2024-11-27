@@ -45,13 +45,16 @@ const Details: React.FC<DetailsProps> = ({
   useEffect(() => {
     const initialize = async () => {
       await fetchUserEmail();
-      if (userUid) {
+      if (userUid && !username) {
         await fetchUserDetails(userUid);
       }
     };
     
-    initialize();
-  }, [userUid]);
+    initialize().catch(err => {
+      console.error('Initialization error:', err);
+      setError('Failed to initialize user details');
+    });
+  }, [userUid, username]);
 
   return (
     <StyledLayout className="p-2 m-2">
