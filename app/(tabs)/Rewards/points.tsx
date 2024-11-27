@@ -10,6 +10,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { Milestones, Points, Levels } from "@/constants/Points";
 import { useLogsContext } from "@/contexts/UserLogs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 
 const StyledLayout = styled(Layout);
@@ -78,35 +79,32 @@ const EcoPoints = () => {
       </StyledLayout>
 
       <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
-        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
-
-        <StyledText className="text-center mb-1 p-2" style={{ color: maintextcolor, fontFamily: 'Poppins-SemiBold', fontSize: 22}}>{currentLevel!} ⭐</StyledText>
-          <View className="items-center">
-            <StyledProgressBar
-              progress={levelProgress}
-              className="w-full rounded-lg rounded-3xl h-3 mb-1"
-            />
-          </View>
-
-          <StyledLayout className="flex-row items-center justify-between bg-white">
-            <StyledText className="text-20" style={{ fontFamily: 'Poppins-Regular', color: myTheme['color-basic-700']}}>{points} <StyledText 
-              className="right-10 text-sm" 
-              style={{ 
-                fontFamily: 'Poppins-Regular', 
-                color: subtextColor1 
-              }}
-            >
-              EcoPoints
+        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 20, width: "90%", elevation: 2 }}>
+          <StyledLayout className="flex-row items-center">
+            <StyledLayout className="justify-center items-center mr-4">
+              <Ionicons name="trophy" size={40} color={myTheme['color-success-700']} />
+            </StyledLayout>
+            <StyledLayout className="flex-1">
+              <StyledText className="text-20 mb-2" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}>
+                {points} <StyledText className="text-sm" style={{ fontFamily: 'Poppins-Regular', color: subtextColor1 }}>EcoPoints</StyledText>
               </StyledText>
-            </StyledText>
-            <StyledText className="text-20" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}><StyledText 
-              className="left-10 text-sm" 
-              style={{ 
-                fontFamily: 'Poppins-Regular', 
-                color: subtextColor1 
-              }}
-            >{nextLevel!}  </StyledText>{nextLevelPts!}
-            </StyledText>
+              <StyledProgressBar
+                progress={levelProgress}
+                className="w-full rounded-lg rounded-3xl h-4 mb-2"
+                status='success'
+              />
+              <StyledLayout className="flex-row justify-between items-center">
+                <StyledText style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-SemiBold', fontSize: 16}}>{currentLevel!}</StyledText>
+                <StyledLayout className="flex-row items-center">
+                  <StyledText style={{ fontFamily: 'Poppins-Regular', color: subtextColor1, fontSize: 12, marginRight: 4 }}>
+                    {nextLevelPts! - points} EcoPoints to
+                  </StyledText>
+                  <StyledText style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-success-700'], fontSize: 14 }}>
+                    {nextLevel!}
+                  </StyledText>
+                </StyledLayout>
+              </StyledLayout>
+            </StyledLayout>
           </StyledLayout>
         </StyledCard>
       </View>
