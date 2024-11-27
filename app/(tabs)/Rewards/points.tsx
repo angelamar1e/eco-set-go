@@ -3,7 +3,7 @@ import firestore from "@react-native-firebase/firestore";
 import Rewards from "@/app/components/(tabs)/Rewards/incentives";
 import GoToMilestones from "@/app/components/(tabs)/Rewards/MilestonesButton";
 import { styled } from "nativewind";
-import { Layout, Text, ProgressBar, Card, useTheme } from "@ui-kitten/components";
+import { Layout, Text, ProgressBar, Card, useTheme, Button } from "@ui-kitten/components";
 import { View } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
 import { useUserContext } from "@/contexts/UserContext";
@@ -11,12 +11,14 @@ import { Milestones, Points, Levels } from "@/constants/Points";
 import { useLogsContext } from "@/contexts/UserLogs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 const StyledProgressBar = styled(ProgressBar);
+const StyledButton = styled(Button);
 
 
 const EcoPoints = () => {
@@ -74,15 +76,31 @@ const EcoPoints = () => {
   return (
     <StyledLayout className="flex-1">
       <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
-          style={{ backgroundColor: myTheme['color-success-700']}}>
-            <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Eco Rewards</StyledText>
+          style={{ backgroundColor: myTheme['color-success-700']}}
+          >
+            <StyledText className="text-white text-3xl" 
+            style={{ fontFamily: 'Poppins-SemiBold'}}
+            >
+              Eco Rewards
+            </StyledText>
+
+            {/* Profile Button */}
+            <StyledButton
+              className="absolute top-4 right-4 p-1 m-1 mt-4 rounded-full"
+              size="medium"
+              style={{borderColor: 'white'}}
+              onPress={() => router.push("/Profile/profile")}
+            >
+              <Ionicons name="person" size={20} color="white"/>
+            </StyledButton>  
       </StyledLayout>
 
+
       <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
-        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 20, width: "90%", elevation: 2 }}>
+        <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 5, width: "90%", elevation: 2 }}>
           <StyledLayout className="flex-row items-center">
-            <StyledLayout className="justify-center items-center mr-4">
-              <Ionicons name="trophy" size={40} color={myTheme['color-success-700']} />
+            <StyledLayout className="justify-center items-center mr-4 right-2" style={{backgroundColor: myTheme['color-success-transparent-200'], padding: 8, borderRadius: 12}}>
+              <Ionicons name="trophy" size={45} color={myTheme['color-success-500']} />
             </StyledLayout>
             <StyledLayout className="flex-1">
               <StyledText className="text-20 mb-2" style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-basic-700']}}>
@@ -90,7 +108,7 @@ const EcoPoints = () => {
               </StyledText>
               <StyledProgressBar
                 progress={levelProgress}
-                className="w-full rounded-lg rounded-3xl h-4 mb-2"
+                className="w-full rounded-lg rounded-3xl h-4 mb-3"
                 status='success'
               />
               <StyledLayout className="flex-row justify-between items-center">
@@ -109,7 +127,7 @@ const EcoPoints = () => {
         </StyledCard>
       </View>
 
-      <StyledLayout className="flex-row p-4 mt-2 mr-2 ml-2 justify-between items-center">
+      <StyledLayout className="flex-row p-4 mr-2 ml-2 justify-between items-center">
         <GoToMilestones />
         <StyledLayout className="flex-column items-center">
           <StyledText className="text-xs mr-1" style={{ color: subtextColor1, fontFamily: 'Poppins-Regular' }}>Redeemable EcoPoints</StyledText>

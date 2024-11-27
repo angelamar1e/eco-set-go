@@ -208,7 +208,7 @@ const Incentives = () => {
       renderItem={renderItem}
       keyExtractor={(item, index) => index.toString()}
       contentContainerStyle={{
-        paddingVertical: 8,
+        paddingVertical: 2,
         paddingBottom: 100,
       }}
       showsVerticalScrollIndicator={false}

@@ -60,7 +60,7 @@ export const CreatePost = (): React.ReactElement => {
   };
 
   return (
-    <StyledCard className="mt-12 ml-2 mr-2">
+    <StyledCard className="mt-16 ml-2 mr-2">
       <StyledLayout className="flex-row items-center mb-3">
         <StyledInput
           className="flex-1 rounded-lg"

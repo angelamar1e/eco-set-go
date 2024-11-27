@@ -1,8 +1,8 @@
-// ReflectionList.tsx
 import React, { useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import ReflectionCard from './Reflection';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
 import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
@@ -25,16 +25,46 @@ const ReflectionList: React.FC = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
+    const user = auth().currentUser;
+
+    if (!user) {
+      console.error('No user is logged in');
+      return;
+    }
+
+    const userUid = user.uid;
+
     const unsubscribeReflections = firestore()
       .collection('reflections')
-      .orderBy('date', 'desc')
-      .onSnapshot(snapshot => {
-        const fetchedReflections = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Reflection[];
-        setReflections(fetchedReflections);
-      });
+      .where('uid', '==', userUid)
+      .onSnapshot(
+        snapshot => {
+          if (snapshot && !snapshot.empty) {
+            const fetchedReflections = snapshot.docs.map(doc => {
+              const data = doc.data();
+              return {
+                id: doc.id,
+                content: data.content,
+                date: data.date,
+                uid: data.uid,
+              } as Reflection;
+            });
+
+            // Sort reflections by date in descending order
+            const sortedReflections = fetchedReflections.sort(
+              (a, b) => b.date.toDate().getTime() - a.date.toDate().getTime()
+            );
+
+            setReflections(sortedReflections);
+          } else {
+            console.warn('No reflections found for this user');
+            setReflections([]);
+          }
+        },
+        error => {
+          console.error('Error fetching reflections:', error);
+        }
+      );
 
     return () => {
       unsubscribeReflections();
@@ -43,17 +73,12 @@ const ReflectionList: React.FC = () => {
 
   useEffect(() => {
     if (startDate && endDate) {
-      // Clear the time portion of the startDate and endDate for accurate comparison
       const startOfDay = new Date(startDate.setHours(0, 0, 0, 0));
       const endOfDay = new Date(endDate.setHours(23, 59, 59, 999));
-  
+
       const filtered = reflections.filter(reflection => {
-        if (reflection.date && typeof reflection.date.toDate === 'function') {
-          const reflectionDate = reflection.date.toDate();
-          // Now comparing the reflectionDate with the inclusive start and end of day
-          return reflectionDate >= startOfDay && reflectionDate <= endOfDay;
-        }
-        return false;
+        const reflectionDate = reflection.date.toDate();
+        return reflectionDate >= startOfDay && reflectionDate <= endOfDay;
       });
 
       setFilteredReflections(filtered);
@@ -61,7 +86,6 @@ const ReflectionList: React.FC = () => {
       setFilteredReflections(reflections);
     }
   }, [startDate, endDate, reflections]);
-  
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setStartDate(start);
