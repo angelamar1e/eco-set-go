@@ -37,7 +37,7 @@ const Modal1: React.FC<Modal1Props> = ({ visible, onClose }) => {
           justifyContent: 'center',
         }}>
           <View style={{
-            backgroundColor: myTheme['color-success-100'],
+            backgroundColor: myTheme['color-success-transparent-100'],
             padding: 12,
             paddingLeft: 20,
             flexDirection: 'row',
