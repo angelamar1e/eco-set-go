@@ -18,26 +18,45 @@ const UpdateEmail = () => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const router = useRouter();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const fetchUserEmail = () => {
-    const user = auth().currentUser;
-    if (user?.email) {
-      setCurrentEmail(user.email);
+  const fetchUserEmail = async () => {
+    try {
+      const user = auth().currentUser;
+      if (user?.email) {
+        setCurrentEmail(user.email);
+      } else {
+        setError("Unable to fetch current email");
+      }
+    } catch (err) {
+      console.error('Error fetching email: ', err);
+      setError("Failed to fetch email");
     }
   };
 
   const handleUpdate = async () => {
-    if (newEmail) {
-      try {
-        const user = auth().currentUser;
-        if (!user) throw new Error('No user logged in');
-        
-        await user.updateEmail(newEmail);
-        setCurrentEmail(newEmail);
-        setNewEmail("");
-      } catch (error) {
-        console.error('Error updating email: ', error);
-      }
+    if (!newEmail) {
+      setError("Please enter a new email");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const user = auth().currentUser;
+      if (!user) throw new Error('No user logged in');
+      
+      await user.updateEmail(newEmail);
+      setCurrentEmail(newEmail);
+      setNewEmail("");
+      setError("");
+    } catch (error: any) {
+      console.error('Error updating email: ', error);
+      setError(error.message || "Failed to update email");
+    } finally {
+      setLoading(false);
     }
   };
 

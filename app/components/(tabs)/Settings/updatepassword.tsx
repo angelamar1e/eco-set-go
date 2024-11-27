@@ -38,8 +38,8 @@ const UpdatePassword = () => {
       return;
     }
 
-    if (!currentPassword || !newPassword) {
-      setError("Please fill in all fields");
+    if (!newPassword) {
+      setError("Please enter a new password");
       return;
     }
 
@@ -51,7 +51,7 @@ const UpdatePassword = () => {
       const user = auth.currentUser;
 
       if (!user || !user.email) {
-        throw new Error("No user found");
+        throw new Error("No user found or email not verified");
       }
 
       // Reauthenticate user before updating password
@@ -59,7 +59,12 @@ const UpdatePassword = () => {
         user.email,
         currentPassword
       );
-      await reauthenticateWithCredential(user, credential);
+
+      try {
+        await reauthenticateWithCredential(user, credential);
+      } catch (error) {
+        throw new Error("Current password is incorrect");
+      }
 
       // Update password
       await updatePassword(user, newPassword);
@@ -68,6 +73,7 @@ const UpdatePassword = () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setError("");
       router.back();
     } catch (error: any) {
       console.error('Error updating password: ', error);
