@@ -7,6 +7,7 @@ import { handleLogOut } from '@/app/utils/utils';
 import { myTheme } from '@/constants/custom-theme';
 import auth from '@react-native-firebase/auth';
 import { useEffect, useState } from 'react';
+import { useUserContext } from '@/contexts/UserContext';
 
 const StyledText = styled(Text);
 const StyledButton = styled(Button);
@@ -25,6 +26,7 @@ const Details: React.FC<DetailsProps> = ({
   const router = useRouter();
   const [currentEmail, setCurrentEmail] = useState("");
   const [error, setError] = useState("");
+  const { userUid, fetchUserDetails } = useUserContext();
 
   const fetchUserEmail = async () => {
     try {
@@ -41,8 +43,15 @@ const Details: React.FC<DetailsProps> = ({
   };
 
   useEffect(() => {
-    fetchUserEmail();
-  }, []);
+    const initialize = async () => {
+      await fetchUserEmail();
+      if (userUid) {
+        await fetchUserDetails(userUid);
+      }
+    };
+    
+    initialize();
+  }, [userUid]);
 
   return (
     <StyledLayout className="p-2 m-2">
