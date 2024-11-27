@@ -26,22 +26,6 @@ import { useUserContext } from "@/contexts/UserContext";
 import { ActivityIndicator } from "react-native-paper";
 import { convertGramsToKg } from '../../utils/EstimationUtils';
 
-// Define types for report data
-type ReportData = {
-  Daily: Record<
-    string,
-    { Food: number; Transportation: number; Electricity: number }
-  >;
-  Weekly: Record<
-    string,
-    { Food: number; Transportation: number; Electricity: number }
-  >;
-  Monthly: Record<
-    string,
-    { Food: number; Transportation: number; Electricity: number }
-  >;
-};
-
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
