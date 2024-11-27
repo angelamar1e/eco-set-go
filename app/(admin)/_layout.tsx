@@ -29,6 +29,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="Analytics/dashboard"
+        options={{
+          title: 'Analytics',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color={color} />
+          ),
+          headerShown: true,
+          header: () => <EmptyHeader/>
+        }}
+      />
+      <Tabs.Screen
         name="Eco Articles/list"
         options={{
           title: 'Eco Articles',
