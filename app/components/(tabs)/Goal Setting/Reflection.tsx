@@ -5,6 +5,7 @@ import { Card, Text, Layout, Input, Button, Popover, Modal } from '@ui-kitten/co
 import { styled } from 'nativewind';
 import { editReflection, confirmDeleteReflection } from '@/app/utils/reflectionUtils';
 import { Timestamp } from '@react-native-firebase/firestore';
+import { myTheme } from '@/constants/custom-theme';
 
 interface ReflectionCardProps {
   id: string;
@@ -42,7 +43,12 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   return (
     <StyledLayout className="m-1 p-1 rounded-lg border border-gray-200">
       <StyledLayout className="m-1 p-1 flex-row justify-between">
-        <StyledText className="font-bold" category='s1'>{formattedDate}</StyledText>
+        <StyledText 
+          category='s1'
+          style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14 }}
+        >
+          {formattedDate}
+        </StyledText>
         <Popover
           placement="bottom end"
           visible={showMenu}
@@ -54,34 +60,54 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
           onBackdropPress={() => setShowMenu(false)}
         >
           <StyledLayout className="rounded shadow-lg">
-            <StyledButton
-              size='small'
-              appearance='ghost'
-              status='info'
+            <TouchableOpacity
               onPress={() => {
                 setEditModalVisible(true);
                 setShowMenu(false);
               }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              <StyledText>Edit</StyledText>
-            </StyledButton>
-            <StyledButton
-              size='small'
-              appearance='ghost'
-              status='danger'
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Edit
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 setConfirmDeleteVisible(true);
                 setShowMenu(false);
               }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              <StyledText>Delete</StyledText>
-            </StyledButton>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-danger-500']
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </Popover>
       </StyledLayout>
 
       <StyledLayout>
-        <StyledText className="ml-2 mb-1" category='p1'>{content}</StyledText>
+        <StyledText 
+          className="ml-2 mb-1" 
+          category='p1'
+          style={{ fontFamily: 'Poppins-Regular', fontSize: 13 }}
+        >
+          {content}
+        </StyledText>
       </StyledLayout>
 
       {/* Edit Modal */}
@@ -92,7 +118,13 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
         style={{ width: 300, height: 250, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category="h6" className="font-bold">
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 16,
+              marginBottom: 8
+            }}
+          >
             Edit Post
           </StyledText>
           <StyledInput
@@ -101,35 +133,50 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
             placeholder="Edit your post..."
             multiline
             className="mb-2 mt-2"
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}
+            style={{ fontFamily: 'Poppins-Regular' }}
           />
           <StyledLayout className="flex-row justify-between mt-3">
-            <StyledButton
-              appearance="ghost"
-              status="info"
-              size="small"
-              className="m-1 rounded-full"
+            <TouchableOpacity
               onPress={() => setEditModalVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              Cancel
-            </StyledButton>
-            <StyledButton
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 if (editedContent !== content) {
                   onEdit(editedContent);
                 }
                 setEditModalVisible(false);
               }}
-              appearance="ghost"
-              status="primary"
-              size="small"
-              className="m-1 rounded-full"
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              Save Changes
-            </StyledButton>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-primary-700']
+                }}
+              >
+                Save Changes
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>
 
+      {/* Delete Confirmation Modal */}
       <Modal
         visible={confirmDeleteVisible}
         backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
@@ -137,26 +184,47 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
         style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText className=' m-2 text-center'>Are you sure you want to delete this reflection?</StyledText>
+          <StyledText 
+            className='m-2 text-center'
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              lineHeight: 20
+            }}
+          >
+            Are you sure you want to delete this reflection?
+          </StyledText>
           <StyledLayout className="m-2 flex-row justify-between">
-            <StyledButton
-              className='font-bold rounded-full'
-              appearance='ghost'
-              status='info'
-              size='small'
+            <TouchableOpacity
               onPress={() => setConfirmDeleteVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              <StyledText>Cancel</StyledText>
-            </StyledButton>
-            <StyledButton
-              className='font-bold rounded-full'
-              appearance='ghost'
-              status='danger'
-              size='small'
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={handleDelete}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              <StyledText>Delete</StyledText>
-            </StyledButton>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-danger-500']
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>

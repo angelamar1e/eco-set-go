@@ -58,7 +58,16 @@ const FilterDate: React.FC<FilterDateProps> = ({ onDateChange }) => {
         }}
       >
         <Ionicons name="calendar" size={18} color="#8F9BB3" />
-        <StyledText category="label" style={{ color: myTheme['color-basic-600'], marginLeft: 5, marginRight: 5 }}>
+        <StyledText 
+          style={{ 
+            color: myTheme['color-basic-600'], 
+            marginLeft: 5, 
+            marginRight: 5,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 12,
+            top: 2
+          }}
+        >
           Filter date
         </StyledText>
         <Ionicons name={visible ? "chevron-up" : "chevron-down"} size={13} color="#8F9BB3" />
@@ -70,40 +79,83 @@ const FilterDate: React.FC<FilterDateProps> = ({ onDateChange }) => {
         onBackdropPress={() => setVisible(false)}
       >
         <StyledLayout style={{ padding: 10 }}>
-          <StyledText category="p2" style={{ color: myTheme['color-basic-600'], fontWeight: 'bold' }}>
+          <StyledText 
+            category="p2" 
+            style={{ 
+              color: myTheme['color-basic-600'],
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 12
+            }}
+          >
             Start Date:
           </StyledText>
           <StyledButton onPress={() => setShowDatePicker('start')} className="mb-2">
-            <StyledText category="p2">
+            <StyledText 
+              category="p2"
+              style={{ 
+                fontFamily: 'Poppins-Regular',
+                fontSize: 12
+              }}
+            >
               {startDate ? startDate.toLocaleDateString() : 'Select Start Date'}
             </StyledText>
           </StyledButton>
 
-          <StyledText category="p2" style={{ color: myTheme['color-basic-600'], fontWeight: 'bold' }}>
+          <StyledText 
+            category="p2" 
+            style={{ 
+              color: myTheme['color-basic-600'],
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 12
+            }}
+          >
             End Date:
           </StyledText>
           <StyledButton onPress={() => setShowDatePicker('end')} className="mb-2">
-            <StyledText category="p2">
+            <StyledText 
+              category="p2"
+              style={{ 
+                fontFamily: 'Poppins-Regular',
+                fontSize: 12
+              }}
+            >
               {endDate ? endDate.toLocaleDateString() : 'Select End Date'}
             </StyledText>
           </StyledButton>
 
-          <StyledResetButton
+          <TouchableOpacity
             onPress={resetFilter}
-            appearance="ghost"
-            status="danger"
-            size="small"
+            className="p-1"
+            style={{ backgroundColor: 'transparent' }}
           >
-            Reset Filter
-          </StyledResetButton>
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                color: myTheme['color-danger-500'],
+                textAlign: 'center'
+              }}
+            >
+              Reset Filter
+            </StyledText>
+          </TouchableOpacity>
 
-          <Button 
-            onPress={confirmFilter} 
-            appearance="ghost"
-            size="small"
+          <TouchableOpacity
+            onPress={confirmFilter}
+            className="p-1"
+            style={{ backgroundColor: 'transparent' }}
           >
-            Confirm
-          </Button>
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                color: myTheme['color-primary-500'],
+                textAlign: 'center'
+              }}
+            >
+              Confirm
+            </StyledText>
+          </TouchableOpacity>
         </StyledLayout>
       </Popover>
 
