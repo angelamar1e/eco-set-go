@@ -47,7 +47,7 @@ export default function LandingPage() {
     useUserContext();
   const { latestGoal } = useUserGoalContext();
   const { initializeData } = useContext(EmissionsContext);
-  const { setUserLogs, userLogs, setData, stackedChartData, selectedPeriod } = useLogsContext();
+  const { setUserLogs, totalImpact } = useLogsContext();
   const fontsLoaded = useLoadFonts();
 
   const firstName = username ? username.split(" ")[0] : "";
@@ -112,7 +112,7 @@ export default function LandingPage() {
 
   let percentage = progressPercentage * 100;
   let difference = conditionalConvertGramsToKg(
-    convertTonsToGrams(initialFootprint - currentFootprint)
+    convertTonsToGrams(totalImpact)
   );
 
   const handleTakeQuiz = async () => {
@@ -134,7 +134,7 @@ export default function LandingPage() {
           <StyledLayout className="h-1/4 mt-3">
             <StyledLayout className="flex-row items-center m-3 justify-between">
               <StyledText
-                className="w-3/4 text-2xl"
+                className="w-full text-2xl"
                 style={{ fontFamily: "Poppins-Bold" }}
               >
                 Welcome,{" "}
@@ -242,13 +242,13 @@ export default function LandingPage() {
                             {percentage > 100 ? 100 : percentage.toFixed(0)}%
                           </StyledText>
                           <View className="flex-row items-center">
-                            <StyledText
+                            {/* <StyledText
                               className="text-xs"
                               style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}
                             >
-                              done
-                            </StyledText>
-                            <Ionicons name="checkmark" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/>
+                              
+                            </StyledText> */}
+                            {/* <Ionicons name="checkmark" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/> */}
                           </View>
                         </View>
                         
