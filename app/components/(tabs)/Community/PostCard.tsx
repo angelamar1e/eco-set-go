@@ -63,19 +63,20 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
+    <StyledLayout className="p-1 m-2 rounded-lg border border-gray-200">
       <StyledLayout className="flex-row justify-between">
-        <View>
-          <StyledText category="s1" className="font-bold">@{userName}</StyledText>
-          <StyledText category="c1" className="text-gray-500">{formattedTimestamp}</StyledText>
-        </View>
+        <StyledLayout>
+          <StyledText category="s1" className="mt-2 ml-2 font-bold">@{userName}</StyledText>
+          <StyledText category="c1" className="ml-2 text-gray-500">{formattedTimestamp}</StyledText>
+        </StyledLayout>
 
+        <StyledLayout className='m-1 p-1'>
         <Popover
           visible={postPopoverVisible}
           placement="bottom end"
           anchor={() => (
             <TouchableOpacity onPress={togglePostPopover}>
-              <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9" />
+              <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9"/>
             </TouchableOpacity>
           )}
           onBackdropPress={togglePostPopover}
@@ -107,9 +108,11 @@ const PostCard: React.FC<PostCardProps> = ({
             </StyledButton>
           </StyledLayout>
         </Popover>
+        </StyledLayout>
+
       </StyledLayout>
 
-      <StyledLayout className="mt-2">
+      <StyledLayout className="mt-2 ml-2">
         <StyledText category="p1">{content}</StyledText>
       </StyledLayout>
 
@@ -119,8 +122,8 @@ const PostCard: React.FC<PostCardProps> = ({
         status='basic'
         size='small'
         onPress={() => setCommentModalVisible(true)}
-        className="mt-2 items-center rounded-full flex-row">
-        <StyledText>Add a comment</StyledText>
+        className="mt-2 mb-2 items-center rounded-full flex-row">
+        <StyledText>Comments</StyledText>
       </StyledButton>
 
       {/* Comment Modal */}
@@ -163,7 +166,7 @@ const PostCard: React.FC<PostCardProps> = ({
                             setCommentPopoverVisible(null);
                           }}
                         >
-                          Delete
+                          Delete Comment
                         </StyledButton>
                       </StyledLayout>
                     </Popover>
@@ -310,7 +313,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </StyledLayout>
         </StyledLayout>
       </Modal>
-    </StyledCard>
+    </StyledLayout>
   );
 };
 

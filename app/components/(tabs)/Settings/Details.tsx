@@ -5,6 +5,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { handleLogOut } from '@/app/utils/utils';
 import { myTheme } from '@/constants/custom-theme';
+import auth from '@react-native-firebase/auth';
+import { useEffect, useState } from 'react';
+import { useUserContext } from '@/contexts/UserContext';
 
 const StyledText = styled(Text);
 const StyledButton = styled(Button);
@@ -12,17 +15,46 @@ const StyledLayout = styled(Layout);
 
 interface DetailsProps {
   username: string;
-  email: string;
   password: string;
 }
 
 const Details: React.FC<DetailsProps> = ({
   username,
-  email,
   password,
 }) => {
 
   const router = useRouter();
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [error, setError] = useState("");
+  const { userUid, fetchUserDetails } = useUserContext();
+
+  const fetchUserEmail = async () => {
+    try {
+      const user = auth().currentUser;
+      if (user?.email) {
+        setCurrentEmail(user.email);
+      } else {
+        setError("Unable to fetch current email");
+      }
+    } catch (err) {
+      console.error('Error fetching email: ', err);
+      setError("Failed to fetch email");
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      await fetchUserEmail();
+      if (userUid && !username) {
+        await fetchUserDetails(userUid);
+      }
+    };
+    
+    initialize().catch(err => {
+      console.error('Initialization error:', err);
+      setError('Failed to initialize user details');
+    });
+  }, [userUid, username]);
 
   return (
     <StyledLayout className="p-2 m-2">
@@ -46,7 +78,7 @@ const Details: React.FC<DetailsProps> = ({
           style={{ backgroundColor: myTheme['color-basic-200'], borderColor: myTheme['color-basic-600']}}
           status='basic' 
           accessoryRight={<Ionicons name="chevron-forward-outline" size={20} color="#8F9BB3" />}>
-          <StyledText>{email}</StyledText>
+          <StyledText>{currentEmail}</StyledText>
         </StyledButton>
       </StyledLayout>
 

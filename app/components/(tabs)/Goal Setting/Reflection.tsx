@@ -40,8 +40,8 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   });
 
   return (
-    <StyledCard className="m-1 rounded-lg">
-      <StyledLayout className="flex-row justify-between">
+    <StyledLayout className="m-1 p-1 rounded-lg border border-gray-200">
+      <StyledLayout className="m-1 p-1 flex-row justify-between">
         <StyledText className="font-bold" category='s1'>{formattedDate}</StyledText>
         <Popover
           placement="bottom end"
@@ -81,7 +81,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
       </StyledLayout>
 
       <StyledLayout>
-        <StyledText category='p1'>{content}</StyledText>
+        <StyledText className="ml-2 mb-1" category='p1'>{content}</StyledText>
       </StyledLayout>
 
       {/* Edit Modal */}
@@ -160,7 +160,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
           </StyledLayout>
         </StyledLayout>
       </Modal>
-    </StyledCard>
+    </StyledLayout>
   );
 };
 

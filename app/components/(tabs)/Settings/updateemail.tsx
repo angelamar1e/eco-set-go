@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import { useUserContext } from "@/contexts/UserContext";
 import { SafeAreaView } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
+import auth from '@react-native-firebase/auth';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -17,36 +18,50 @@ const UpdateEmail = () => {
   const [currentEmail, setCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const router = useRouter();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const fetchUserEmail = async (userUid: string) => {
+  const fetchUserEmail = async () => {
     try {
-      const userDoc = await firestore().collection('users').doc(userUid).get();
-      if (userDoc.exists) {
-        setCurrentEmail(userDoc.data()?.email);
+      const user = auth().currentUser;
+      if (user?.email) {
+        setCurrentEmail(user.email);
+      } else {
+        setError("Unable to fetch current email");
       }
-    } catch (error) {
-      console.error('Error fetching email: ', error);
+    } catch (err) {
+      console.error('Error fetching email: ', err);
+      setError("Failed to fetch email");
     }
   };
 
   const handleUpdate = async () => {
-    if (newEmail) {
-      try {
-        await firestore().collection('users').doc(userUid).update({ email: newEmail });
-        setCurrentEmail(newEmail);
-        setNewEmail("");
-      } catch (error) {
-        console.error('Error updating email: ', error);
-      }
+    if (!newEmail) {
+      setError("Please enter a new email");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const user = auth().currentUser;
+      if (!user) throw new Error('No user logged in');
+      
+      await user.verifyBeforeUpdateEmail(newEmail);
+      setError("Please check your new email for verification link before the change takes effect");
+      
+      setNewEmail("");
+    } catch (error: any) {
+      console.error('Error updating email: ', error);
+      setError(error.message || "Failed to update email");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-        fetchUserEmail(userUid);
-    };
-
-    fetchUserDetails();
+    fetchUserEmail();
   }, []);
 
   return (

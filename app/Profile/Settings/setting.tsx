@@ -20,7 +20,7 @@ const settings = () => {
   const [actionReminders, setActionReminders] = useState(false);
   const [email, setEmail] = useState<string>(''); 
   const [password, setPassword] = useState<string>('••••••••');
-  const {userUid, username} = useUserContext();
+  const {userUid, username, fetchUserDetails} = useUserContext();
 
   const router = useRouter();
   
@@ -54,11 +54,12 @@ const settings = () => {
       if (userUid) {
         fetchEmail(userUid);
         fetchPassword(userUid);
+        await fetchUserDetails();
       }
     };
 
     fetchUserDetails();
-  }, []);
+  }, [userUid]);
   
   return (
     <StyledLayout className='flex-1'>
@@ -81,7 +82,6 @@ const settings = () => {
         {selectedTab === 'Details' ? (
             <Details 
                 username={username}
-                email={email}
                 password={password}
             />
         ) : (

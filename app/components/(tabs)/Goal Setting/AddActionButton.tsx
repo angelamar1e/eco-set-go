@@ -12,23 +12,25 @@ const AddActionButton = () => {
   const router = useRouter(); 
 
   const handlePress = () => {
-    setIsClicked(!isClicked); 
+    setIsClicked(true);
     console.log('Add Action Pressed');
-    router.push('/(tabs)/Eco Articles/list');
+    
+    setTimeout(() => {
+      setIsClicked(false);
+      router.push('/(tabs)/Eco Articles/list');
+    }, 200);
   };
-
-  const iconColor = isClicked ? "white" : "#8F9BB3"; 
 
   return (
     <StyledLayout>
       <StyledButton
-        className='m-1 p-1 rounded-full px-10'
+        className='m-1 p-1 rounded-full'
         style={{ width: 180 }}
-        status={isClicked ? 'success' : 'basic'} 
+        status='basic'
         size='small'
-        appearance={isClicked ? "filled" : "outline"}
+        appearance="outline"
         accessoryLeft={() => (
-          <Ionicons name="add" size={20} color={iconColor} />
+          <Ionicons name="add" size={20} color="#8F9BB3" />
         )}
         onPress={handlePress}
       >Add action</StyledButton>

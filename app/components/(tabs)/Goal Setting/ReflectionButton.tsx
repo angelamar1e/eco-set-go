@@ -66,7 +66,7 @@ const ReflectionButton = () => {
   return (
     <StyledLayout>
       <StyledButton
-        className='m-1 p-1 rounded-full px-10'
+        className='m-1 p-1 rounded-full'
         style={{ width: 180 }}
         status={isClicked ? 'success' : 'basic'}
         size='small'
