@@ -999,6 +999,7 @@ export const EmissionsProvider = ({ children }) => {
     busHrsTravelled,
     jeepHrsTravelled,
     tricycleHrsTravelled,
+    additionals,
     breakfastEmissions,
     breakfastType,
     breakfastEF,
