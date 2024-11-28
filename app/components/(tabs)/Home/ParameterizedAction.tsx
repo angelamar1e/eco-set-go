@@ -62,7 +62,12 @@ export const Parameterized: React.FC<ActionItemProps> = ({
           />
             <StyledText
               numberOfLines={2}
-              style={{ width: "85%" }}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14,
+                top: 8
+              }}
               className="text-base leading-5"
             >
               {item.title}

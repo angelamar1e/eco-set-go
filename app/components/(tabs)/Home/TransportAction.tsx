@@ -82,21 +82,29 @@ export const Transportation: React.FC<ActionItemProps> = ({
         </View>       
       )}
     >
-      <StyledLayout className="pt-1 m-1">
-        <View className="rounded-lg px-3 border border-gray-200 py-2" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
-          <View className="flex-row items-center justify-start bottom-1">
-              <CircularCheckbox
+      <StyledLayout className="pt-1 m-1 justify-start items-start">
+        <View className="rounded px-3 border border-gray-200 py-2 w-full" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
+          <View className="flex-row">
+            <CircularCheckbox
               status={
-              completedActions.some((action) => action.id === item.id)
-                ? "checked"
-                : "unchecked"
-            }
-            onPress={() => getImpact()}
-            // onPress={() => handleComplete(item.id, item.impact ? item.impact : 0)}
-          />
-          <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
-            {item.title}
-          </StyledText>        
+                completedActions.some((action) => action.id === item.id)
+                  ? "checked"
+                  : "unchecked"
+              }
+              onPress={() => getImpact()}
+            />
+            <StyledText
+              numberOfLines={2}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14,
+                top: 8
+              }}
+              className="text-base leading-5"
+            >
+              {item.title}
+            </StyledText>        
           </View>
         </View>
       </StyledLayout>

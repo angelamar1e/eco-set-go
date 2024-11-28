@@ -256,11 +256,27 @@ const DailyLog: FC = () => {
                   borderBottomColor: myTheme['color-basic-500']
                 }} 
               >
-                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No pending actions.</StyledText>
+                <StyledText 
+                  category="p2" 
+                  className="mb-2" 
+                  style={{ 
+                    textAlign: 'center', 
+                    color: '#AAA',
+                    fontFamily: 'Poppins-Regular'
+                  }}
+                >
+                  No pending actions.
+                </StyledText>
               </StyledLayout>            
             )}
         
-            <StyledText category="s1" style={{ fontWeight: 'bold', }} className="mt-3 ml-3">
+            <StyledText 
+              category="s1" 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+              }} 
+              className="mt-3 ml-3"
+            >
               Actions Done
             </StyledText>
             {completedActions.length > 0 ? (
@@ -277,7 +293,17 @@ const DailyLog: FC = () => {
                   borderBottomColor: myTheme['color-basic-500']
                 }} 
               >
-                <StyledText category="p2" className="mb-2" style={{ textAlign: 'center', color: '#AAA' }}>No actions done yet.</StyledText>
+                <StyledText 
+                  category="p2" 
+                  className="mb-2" 
+                  style={{ 
+                    textAlign: 'center', 
+                    color: '#AAA',
+                    fontFamily: 'Poppins-Regular'
+                  }}
+                >
+                  No actions done yet.
+                </StyledText>
               </StyledLayout>
             )}
           </>

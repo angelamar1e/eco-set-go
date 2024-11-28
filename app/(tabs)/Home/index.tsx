@@ -108,12 +108,12 @@ export default function LandingPage() {
           <StyledLayout className="h-1/4 mt-3">
             <StyledLayout className="flex-row items-center m-3 justify-between">
               <StyledText
-                className="w-3/4 text-2xl"
+                className="w-3/4 text-xl"
                 style={{ fontFamily: "Poppins-Bold" }}
               >
                 Welcome,{" "}
                 <StyledText
-                  className="text-2xl"
+                  className="text-xl"
                   style={{
                     color: myTheme["color-success-600"],
                     fontFamily: "Poppins-Italic",
@@ -127,7 +127,7 @@ export default function LandingPage() {
             <StyledLayout className="flex flex-row h-auto space-x-2 content-center">
               <Box>
                 <StyledText
-                  className="text-center text-white mb-3 text-lg"
+                  className="text-center text-white mb-3 text-16"
                   style={{ fontFamily: "Poppins-Regular" }}
                 >
                   Carbon Footprint
@@ -139,7 +139,7 @@ export default function LandingPage() {
                   {currentFootprint.toFixed(2)}
                 </StyledText>
                 <StyledText
-                  className="text-center text-white text-15"
+                  className="text-center text-white text-13"
                   style={{ fontFamily: "Poppins-Regular" }}
                 >
                   tons of{"\n"}CO₂ equivalent
@@ -153,7 +153,7 @@ export default function LandingPage() {
                   style={{borderColor: myTheme['color-basic-500']}}
                 >
                   <StyledText 
-                    className="text-base" 
+                    className="text-13" 
                     style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700']}}
                   >
                     Initial Footprint
@@ -192,7 +192,7 @@ export default function LandingPage() {
                       <StyledView className="p-1">
                         <StyledText style={{ fontFamily: "Poppins-Regular" }}>
                           <StyledText
-                            className="text-base"
+                            className="text-13"
                             style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}
                           >
                             Goal:
@@ -292,7 +292,7 @@ export default function LandingPage() {
 
             <StyledLayout className="flex-row items-center justify-between mt-4">
               <StyledText
-                className="text-3xl mb-2 text-center"
+                className="text-2xl mb-2 text-center"
                 style={{
                   color: headertextColor,
                   flex: 1,

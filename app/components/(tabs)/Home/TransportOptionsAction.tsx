@@ -107,7 +107,11 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
           placeholder={() => (
             <StyledText
               numberOfLines={2}
-              style={{ width: "85%" }}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14
+              }}
               className="text-base leading-5"
             >
               {item.title}
@@ -118,7 +122,9 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
               Object.entries(item.options).map(([key, value]) => (
                 <StyledSelectItem
                   key={key}
-                  title={key}
+                  title={props => (
+                    <Text style={{fontFamily: 'Poppins-Regular', fontSize: 14}}>{key}</Text>
+                  )}
                   onPress={() => {
                     getImpact(value);
                     setExpanded(false); // Collapse the dropdown after selection
@@ -206,7 +212,13 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
                 }
                 onPress={() => handleUnmark(item.id)}
               />
-            <StyledText className="text-base w-10/12 leading-6">
+            <StyledText 
+              className="text-base w-10/12 leading-6"
+              style={{ 
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14 
+              }}
+            >
               {item.title}
             </StyledText>
           </View>
@@ -214,9 +226,11 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
           <TouchableOpacity onPress={handleMoreDetails}>
           <StyledText
               category="s1"
-              className="ml-12 mt-2 mb-2 font-bold"
+              className="ml-12 mt-2 mb-2"
               style={{
                 color: myTheme['color-success-700'],
+                fontFamily: 'Poppins-Medium',
+                fontSize: 14
               }}
             >
               Enter more details
@@ -226,7 +240,10 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
         {showInput && (
           <View>
             <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
-              <StyledText className="mr-2 text-sm">
+              <StyledText 
+                className="mr-2 text-sm"
+                style={{ fontFamily: 'Poppins-Regular' }}
+              >
                 Distance travelled:
               </StyledText>
               <StyledInput
@@ -236,7 +253,10 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
                 value={inputValue}
                 onChangeText={setInputValue}
               />
-              <StyledText category='label' className="ml-2 mr-8 text-sm">
+              <StyledText 
+                className="ml-2 mr-8 text-sm"
+                style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}
+              >
                 km
               </StyledText>
             </StyledLayout>
@@ -247,8 +267,11 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
               >
                 <StyledText
                   category="p1"
-                  className="text-white text-sm font-bold text-right"
-                  style={{color: myTheme['color-success-700']}}
+                  className="text-white text-sm text-right"
+                  style={{
+                    color: myTheme['color-success-700'],
+                    fontFamily: 'Poppins-SemiBold'
+                  }}
                 >
                   → Submit
                 </StyledText>

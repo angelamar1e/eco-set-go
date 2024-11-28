@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { TouchableOpacity } from 'react-native';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
@@ -65,20 +66,27 @@ const ReflectionButton = () => {
 
   return (
     <StyledLayout>
-      <StyledButton
-        className='m-1 p-1 rounded-full'
-        style={{ width: 180 }}
-        status={isClicked ? 'success' : 'basic'}
-        size='small'
-        appearance={isClicked ? "filled" : "outline"}
-        accessoryLeft={() => (
-          <Ionicons name="pencil" size={20} color="#8F9BB3" />
-        )}
+      <TouchableOpacity 
+        className='m-1 p-1 rounded-full flex-row items-center justify-center border border-[#8F9BB3]'
+        style={{ width: 180, backgroundColor: '#F5F7F9' }}
         onPress={handlePress}
-        disabled={loading} // Disable the button while loading
+        disabled={loading}
       >
-        Create reflection
-      </StyledButton>
+        <Ionicons name="pencil" size={20} color="#8F9BB3" />
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-Medium',
+            color: '#8F9BB3',
+            marginLeft: 8,
+            fontSize: 12,
+            alignContent: 'center',
+            justifyContent: 'center',
+            top: 2
+          }}
+        >
+          Create reflection
+        </StyledText>
+      </TouchableOpacity>
 
       {/* Modal for Creating Reflection */}
       <Modal
