@@ -131,7 +131,7 @@ const ProgressReport = () => {
             maxHeight: 400,
           }}
         >
-          {chartData.labels.map((label, index) => (
+          {stackedChartData.labels.map((label: string, index: number) => (
             <View 
               key={index} 
               className="mb-4 p-4 rounded-lg" 
@@ -158,12 +158,12 @@ const ProgressReport = () => {
               >
                 {label}
               </Text>
-              {chartData.data[index].map((value, subIndex) => (
+              {stackedChartData.data[index].map((value: number, subIndex: number) => (
                 <View 
                   key={subIndex} 
                   className="flex-row justify-between items-center py-1 px-5"
                   style={{
-                    borderBottomWidth: subIndex !== chartData.data[index].length - 1 ? 1 : 0,
+                    borderBottomWidth: subIndex !== stackedChartData.data[index].length - 1 ? 1 : 0,
                     borderBottomColor: `${myTheme['color-basic-300']}50`
                   }}
                 >
@@ -174,7 +174,7 @@ const ProgressReport = () => {
                       color: myTheme["color-basic-600"],
                     }}
                   >
-                    {chartData.legend[subIndex]}
+                    {stackedChartData.legend[subIndex]}
                   </Text>
                   <Text
                     style={{

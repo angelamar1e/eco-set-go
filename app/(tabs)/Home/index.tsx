@@ -46,16 +46,42 @@ export default function LandingPage() {
   const { username, currentFootprint, initialFootprint, userUid } =
     useUserContext();
   const { latestGoal } = useUserGoalContext();
-  const { getCurrentFootprint } = useLogsContext();
   const { initializeData } = useContext(EmissionsContext);
+  const { setUserLogs, userLogs, setData, stackedChartData, selectedPeriod } = useLogsContext();
   const fontsLoaded = useLoadFonts();
 
   const firstName = username ? username.split(" ")[0] : "";
 
+   // Fetch user logs from Firestore
+   useEffect(() => {
+    setLoading(true);
+    const unsubscribe = firestore()
+      .collection("user_logs")
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            try {
+              if (doc.data()){
+                setUserLogs(doc.data());
+                setLoading(false);
+              }
+            }
+            catch(error){
+              console.log("NOPE!", error);
+            }
+          } else {
+            setUserLogs({});
+          }
+        }
+      );
+
+    return () => unsubscribe();
+  }, [userUid]);
+
   useEffect(() => {
     const initialize = async () => {
       await initializeData();
-      getCurrentFootprint();
     };
 
     // Function to check if modal has already been shown
@@ -64,10 +90,10 @@ export default function LandingPage() {
       if (!shown) {
         // If not shown, display the modal
         setShowQuizModal(true);
-        initialize();
       }
     };
 
+    initialize();
     checkModalStatus();
   }, []);
 
