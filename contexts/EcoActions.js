@@ -12,40 +12,40 @@ export const EcoActionsProvider = ({ children }) => {
     const [loading, setLoading] = useState(true); // Initialize loading state
 
     useEffect(() => {
-        const initializeData = async () => {
-            try {
-                const snapshot = await firestore().collection('eco_actions').get();
-                const ecoActionsDict = {}; // Temporary object to store ID-title mappings
-
-                snapshot.docs.forEach((doc) => {
-                    const actionId = doc.id;
-                    const actionData = doc.data();
-                    const title = actionData.title;
-
-                    // Map eco action ID to title in the dictionary
-                    ecoActionsDict[actionId] = title;
-
-                    // Categorize eco actions based on their category
-                    if (actionData.category === "Food") {
-                        setFoodEcoActions(prev => [...prev, actionId]); // Append to the previous state
-                    } else if (actionData.category === "Transportation") {
-                        setTransportationEcoActions(prev => [...prev, actionId]);
-                    } else if (actionData.category === "Electricity") {
-                        setElectricityEcoActions(prev => [...prev, actionId]);
-                    }
-                });
-
-                // Update the state with the populated dictionary
-                setEcoActionsDictionary(ecoActionsDict);
-            } catch (error) {
-                setError(error); // Set error if occurs
-            } finally {
-                setLoading(false); // Set loading to false regardless of success or failure
-            }
-        };
-
         initializeData();
     }, []);
+
+    const initializeData = async () => {
+        try {
+            const snapshot = await firestore().collection('eco_actions').get();
+            const ecoActionsDict = {}; // Temporary object to store ID-title mappings
+
+            snapshot.docs.forEach((doc) => {
+                const actionId = doc.id;
+                const actionData = doc.data();
+                const title = actionData.title;
+
+                // Map eco action ID to title in the dictionary
+                ecoActionsDict[actionId] = title;
+
+                // Categorize eco actions based on their category
+                if (actionData.category === "Food") {
+                    setFoodEcoActions(prev => [...prev, actionId]); // Append to the previous state
+                } else if (actionData.category === "Transportation") {
+                    setTransportationEcoActions(prev => [...prev, actionId]);
+                } else if (actionData.category === "Electricity") {
+                    setElectricityEcoActions(prev => [...prev, actionId]);
+                }
+            });
+
+            // Update the state with the populated dictionary
+            setEcoActionsDictionary(ecoActionsDict);
+        } catch (error) {
+            setError(error); // Set error if occurs
+        } finally {
+            setLoading(false); // Set loading to false regardless of success or failure
+        }
+    };
 
     // Function to get eco action title by its ID
     const getEcoActionTitle = (id) => {
@@ -57,6 +57,7 @@ export const EcoActionsProvider = ({ children }) => {
             foodEcoActions,
             transportationEcoActions,
             electricityEcoActions,
+            initializeData,
             loading,
             error,
             getEcoActionTitle // Provide the function to get the title

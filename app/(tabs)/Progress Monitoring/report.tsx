@@ -30,7 +30,6 @@ const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 
-
 // ProgressReport component
 const ProgressReport = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -42,38 +41,23 @@ const ProgressReport = () => {
   );
 
   const {
-    dailyImpact,
-    weeklyImpact,
-    monthlyImpact,
     totalImpact,
     stackedChartData,
     handlePeriodChange,
+    userLogs,
+    selectedPeriod,
+    setData,
+    loading,
   } = useLogsContext();
   const { initialFootprint, currentFootprint } = useUserContext();
 
   // Chart data state
   const [chartData, setChartData] = useState({
-    labels: [],
-    legend: ["Food", "Transportation", "Electricity"],
-    data: [[0]],
+    labels: [""], // No labels initially
+    legend: ["Food", "Transportation", "Electricity"], // Maintain consistent legends
+    data: [[0, 0, 0]], // Valid but empty data structure
     barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
   });
-
-  // Update chartData when stackedChartData changes
-  useEffect(() => {
-    if (stackedChartData) {
-      setChartData(stackedChartData);
-    }
-  }, [stackedChartData]);
-
-  // Helper function to validate stackedChartData
-  const isStackedChartDataValid = () => {
-    return (
-      stackedChartData &&
-      stackedChartData.labels?.length > 0 &&
-      stackedChartData.data?.every((dataset: any) => dataset.length > 0)
-    );
-  };
 
   const chartColors = {
     light: {
@@ -99,10 +83,29 @@ const ProgressReport = () => {
     return () => listener.remove();
   }, []);
 
+  const isChartDataValid = (data: any) => {
+    return (
+      data &&
+      Array.isArray(data.labels) &&
+      data.labels.length > 0 &&
+      Array.isArray(data.data) &&
+      data.data.length > 0 &&
+      data.data.every((entry: any) => Array.isArray(entry) && entry.length === 3) // Ensure all rows have 3 values
+    );
+  }; 
+
+  if (!isChartDataValid(stackedChartData)){
+    return (
+      <View className="flex-1 justify-center">
+        <ActivityIndicator size={"small"} color={myTheme["color-success-600"]}/>
+      </View>
+    )
+  }
+
   const renderDataValues = () => {
     return (
       <View style={{ padding: 10 }}>
-        {chartData.labels.map((label, index) => (
+        {stackedChartData.labels.map((label: string, index: number) => (
           <View key={index} style={{ marginBottom: 8 }}>
             <Text
               style={{
@@ -113,7 +116,7 @@ const ProgressReport = () => {
             >
               {label}:
             </Text>
-            {chartData.data[index].map((value, subIndex) => (
+            {stackedChartData.data[index].map((value: number, subIndex: number) => (
               <Text
                 key={subIndex}
                 style={{
@@ -122,7 +125,7 @@ const ProgressReport = () => {
                   color: myTheme["color-basic-800"],
                 }}
               >
-                {chartData.legend[subIndex]}: {convertGramsToKg(value).toFixed(2)} kg CO₂e
+                {stackedChartData.legend[subIndex]}: {convertGramsToKg(value).toFixed(2)} kg CO₂e
               </Text>
             ))}
           </View>
@@ -130,8 +133,6 @@ const ProgressReport = () => {
       </View>
     );
   };
-  
-  
 
   const renderStackedBarChart = () => {
     const currentColors = chartColors[colorScheme];
@@ -202,14 +203,6 @@ const ProgressReport = () => {
       </>
     );
   };
-  
-  if (!stackedChartData && !isStackedChartDataValid()){
-    return (
-      <StyledLayout className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
-      </StyledLayout>
-    );
-  }
 
   return (
     <StyledLayout className="flex-1">
