@@ -30,7 +30,7 @@ const CheckboxTemplate: FC<TemplateProps> = ({
 
   // Function to handle checkbox toggle
   const handlePress = (selected: string) => {
-    let updatedAnswers;
+    let updatedAnswers = [];
     
     if (selectedAnswers.includes(selected)) {
       // Remove answer if already selected
@@ -41,8 +41,8 @@ const CheckboxTemplate: FC<TemplateProps> = ({
     }
     
     setSelectedAnswers(updatedAnswers);
-    onAnswer(updatedAnswers); // Call onAnswer with the updated array
     console.log(updatedAnswers);
+    onAnswer(updatedAnswers); // Call onAnswer with the updated array
   };
 
   const handleReset = () => {
@@ -56,7 +56,7 @@ const CheckboxTemplate: FC<TemplateProps> = ({
           {category}
         </StyledText>
         <View className="flex-row justify-between">
-          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
+          <StyledText className="mb-1" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
             {question} 
           </StyledText>
           {tips && tips.length > 0 && (
@@ -70,7 +70,7 @@ const CheckboxTemplate: FC<TemplateProps> = ({
         <PresetChoices title="None" isSelected={selectedAnswers.length === 0} onPress={handleReset} />
       </StyledLayout>
       {/* Checkboxes */}
-      <StyledLayout className="flex-row flex-wrap justify-center mt-10 mb-3">
+      <StyledLayout className="flex-row flex-wrap justify-center mt-3 mb-3">
         {choices ? (
           Object.entries(choices).map(([key, { text, value, example }]) => (
             <CheckboxChoices

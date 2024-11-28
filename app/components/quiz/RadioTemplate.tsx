@@ -48,7 +48,7 @@ const RadioTemplate: FC<TemplateProps> = ({
           )}
         </View>
 
-        <StyledLayout className="flex-wrap flex-row justify-center mt-10 mb-3">
+        <StyledLayout className="flex-wrap flex-row justify-center mt-3 mb-3">
         {choices ? (
           Object.entries(choices).map(([key, { text, value, example, choices_tip }]) => (
             <RadioChoices
