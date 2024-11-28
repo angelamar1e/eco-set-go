@@ -157,14 +157,30 @@ const EcoActionDetail = () => {
       )}
       {/* Title and Button Section */}
       <StyledLayout className="items-center">
-        <StyledText className="m-1 text-center" category="h6">
+        <StyledText 
+          className="m-1 text-center" 
+          style={{ fontFamily: 'Poppins-SemiBold', fontSize: 18 }}
+        >
           {actionDetail.title}
         </StyledText>
         <StyledLayout className="flex-row justify-between m-2">
-          <Button icon="star" mode="contained" className="w-30 bg-lime-800 mx-1">
+          <Button 
+            icon="star" 
+            mode="contained" 
+            className="w-30 mx-1"
+            buttonColor={scheme === 'dark' ? '#2E7D32' : '#34C759'}
+            labelStyle={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}
+          >
             Points
           </Button>
-          <Button icon="note-plus" mode="contained" className="w-40 bg-lime-800 mx-1" onPress={handleAddToLog}>
+          <Button 
+            icon="note-plus" 
+            mode="contained" 
+            className="w-40 mx-1"
+            buttonColor={scheme === 'dark' ? '#2E7D32' : '#34C759'}
+            onPress={handleAddToLog}
+            labelStyle={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}
+          >
             Add to Daily Log
           </Button>
         </StyledLayout>
@@ -174,7 +190,13 @@ const EcoActionDetail = () => {
 
   const SectionHeader = ({ title }: { title: string }) => (
     <StyledLayout className="ml-2">
-      <StyledText category="h6" className="font-bold flex-row items-center">
+      <StyledText 
+        className="flex-row items-center"
+        style={{ 
+          fontFamily: 'Poppins-SemiBold', 
+          fontSize: 16,
+        }}
+      >
         {title}
       </StyledText>
     </StyledLayout>
@@ -199,12 +221,20 @@ const EcoActionDetail = () => {
           {item.data.map((contentItem) => (
             <StyledLayout
               key={contentItem.id}
-              className={`flex-row items-start p-2 m-2 rounded-md shadow-lg ${borderColor}`}
+              className={`flex-row items-start p-2 m-2 mb-4 rounded-md shadow-lg ${borderColor}`}
             >
-              <StyledText category="h5" className="mr-1 flex-shrink">
+              <StyledText 
+                category="h5" 
+                className="mr-1 flex-shrink"
+                style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}
+              >
                 {item.emoji}
               </StyledText>
-              <StyledText category="p2" className="ml-2 mr-2 flex-shrink">
+              <StyledText 
+                category="p2" 
+                className="ml-2 mr-2 flex-shrink"
+                style={{ fontFamily: 'Poppins-Regular', fontSize: 13 , textAlign: 'justify'}}
+              >
                 {contentItem.content}
               </StyledText>
             </StyledLayout>
