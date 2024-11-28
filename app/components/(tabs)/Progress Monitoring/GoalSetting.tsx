@@ -24,6 +24,7 @@ const GoalSetting: React.FC = () => {
   const {
     latestGoal,
     editGoal,
+    setEditGoal,
     progressImpact,
     progressPercentage,
     toggleEdit,
@@ -44,12 +45,24 @@ const GoalSetting: React.FC = () => {
     if (progressPercentage >= 1){
       setModalVisible(true);
     }
-  }, [progressPercentage])
+    else{
+      setModalVisible(false);
+    }
+  }, [progressPercentage]);
+
+  const closeModal = () => {
+    setModalVisible(false);
+  }
+
+  const showGoalEditor = () => {
+    setEditGoal(true);
+  }
   
   const headertextColor = myTheme['color-success-900'];
 
   return (
     <View className="items-center -mt-14 -bottom-3 mb-4 z-50 justify-items-center">
+      <CongratulationsModal visible={modalVisible} onClose={() => closeModal()} onSetNewGoal={() => showGoalEditor()}/>
       <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
           <View className="flex-row items-center justify-between mb-4">
