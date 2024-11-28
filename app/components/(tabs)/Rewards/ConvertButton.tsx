@@ -32,7 +32,7 @@ const ConvertButton: React.FC<ConvertButtonProps> = ({ reqPoints, rewardId }) =>
   }, [rewardId]);
 
   const handleClaim = async () => {
-    if (points >= reqPoints) {
+    if (redeemablePoints >= reqPoints) {
       const updateRedeemablePoints = async () => {
         firestore().collection('users').doc(userUid).set({
           redeemablePoints: redeemablePoints - reqPoints
@@ -41,11 +41,17 @@ const ConvertButton: React.FC<ConvertButtonProps> = ({ reqPoints, rewardId }) =>
 
       updateRedeemablePoints();
       setIsClaimed(true); // Set the button as claimed
-      await AsyncStorage.setItem(rewardId.toString(), 'true'); // Set status to 'false' to indicate the reward has been claimed
+      await AsyncStorage.setItem(rewardId.toString(), 'true'); // Set status to 'true' to indicate the reward has been claimed
 
       Alert.alert(
         'Take a pic! 📸',
         'To avail, message Ecomove on Instagram with a screenshot of the claimed reward.'
+      );
+    }
+    else{
+      Alert.alert(
+        "Oops!",
+        "You do not have enough points yet, keep your eco actions up! 🌏"
       );
     }
   };

@@ -62,12 +62,12 @@ const InputTemplate: FC<TemplateProps> = ({
             <PresetChoices
               key={key}
               title={key}
-              isSelected={value === defaultValue}
+              isSelected={value === defaultValue || value.toString() === inputValue}
               onPress={() => handlePress(value)}
             />
           ))
         ) : (
-          <Text> Loading... </Text>
+          <></>
         )}
       </StyledLayout>
 
