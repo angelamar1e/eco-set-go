@@ -985,6 +985,7 @@ export const EmissionsProvider = ({ children }) => {
     shortHaulDuration,
     mediumHaulDuration,
     longHaulDuration,
+    usesTwoWheelers,
     twoWheelersEmissions,
     twoWheelerEFPerKm,
     twoWheelersKmTravelled,
@@ -1107,7 +1108,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateFootprint();
-  }, [initialized, carEmissions, 
+  }, [carEmissions, 
     airplaneTravelEmissions,
     twoWheelersEmissions,
     efficientTravelEmissions,
