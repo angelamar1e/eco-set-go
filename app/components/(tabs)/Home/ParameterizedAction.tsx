@@ -29,7 +29,6 @@ export const Parameterized: React.FC<ActionItemProps> = ({
     function getImpact() {
         const baseEmissions = emissionsData[item.baseEmission!] ?? 0;
         const replacementEmissions = emissionsData[item.impact] ?? item.impact
-        console.log(baseEmissions);
 
         if (item.title === "Carpool"){
           impact = baseEmissions * replacementEmissions;

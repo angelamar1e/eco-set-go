@@ -114,10 +114,8 @@ export const UserProvider = ({ children }) => {
         if (profileCreated){
           fetchUserDetails(user.uid);
         }
-        console.log(user);
       } else {
         resetUserDetails();
-        console.log("LOW");
         setLoading(false);
       }
     });

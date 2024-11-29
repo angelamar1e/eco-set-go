@@ -59,7 +59,6 @@ export const UserLogsProvider = ({ children }) => {
   useEffect(() => {
     initializeData();
     setData(userLogs);
-    console.log("LOGS", userLogs);
   }, [userLogs, selectedPeriod]);
 
   // Calculate total impact and prepare chart data
@@ -98,7 +97,6 @@ export const UserLogsProvider = ({ children }) => {
         Object.entries(actions).forEach(([id, action]) => {
           loggedActionIds.push(id);
           const category = getCategoryFromId(id);
-          console.log("Category and Impact:", { id, category, impact: action.impact });
         
           if (category && typeof action.impact === "number") {
             totalImpact += action.impact;
@@ -118,8 +116,6 @@ export const UserLogsProvider = ({ children }) => {
           : selectedPeriod === "Weekly"
           ? weekly
           : monthly;
-
-      console.log("Selected Impacts:", selectedImpacts);
 
       setChartData(selectedImpacts);
     }
@@ -147,10 +143,6 @@ export const UserLogsProvider = ({ children }) => {
       Number(impacts.Electricity) || 0,
     ]);
   
-    // Ensure the data structure is valid
-    console.log("Limited Labels:", limitedLabels);
-    console.log("Stacked Data:", stackedData);
-  
     setStackedChartData({
       labels: limitedLabels,
       legend: ["Food", "Transportation", "Electricity"],
@@ -158,10 +150,6 @@ export const UserLogsProvider = ({ children }) => {
       barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
     });
   };  
-  
-  useEffect(() => {
-    console.log("Final Chart Data Updated:", stackedChartData);
-  }, [stackedChartData]);  
 
   const setCurrentFootprint = () => {
     if (initialFootprint && role === "user") {
@@ -181,7 +169,7 @@ export const UserLogsProvider = ({ children }) => {
 
   useEffect(() => {
     setCurrentFootprint();
-  }, [userLogs, totalImpact, initialFootprint]);
+  }, [userLogs, initialFootprint]);
 
   // Helper function to check if userLogs is effectively empty
   const isUserLogsEmpty = (logs) => {

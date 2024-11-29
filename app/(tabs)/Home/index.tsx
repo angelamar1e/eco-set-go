@@ -68,7 +68,7 @@ export default function LandingPage() {
               }
             }
             catch(error){
-              console.log("NOPE!", error);
+              console.log(error);
             }
           } else {
             setUserLogs({});

@@ -38,7 +38,7 @@ const DailyLog: FC = () => {
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
   const [loading, setLoading] = useState(true);
-  const {setDailyLogLoading} = useUserGoalContext(); 
+  const {setDailyLogLoading, dailyLogLoading} = useUserGoalContext(); 
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -203,7 +203,6 @@ const DailyLog: FC = () => {
                 [actionId]: updatePayload
             }
         });
-        console.log(`Successfully updated Firestore with actionId: ${actionId}`, updatePayload);
     } catch (error) {
         console.error("Error updating Firestore:", error);
     }

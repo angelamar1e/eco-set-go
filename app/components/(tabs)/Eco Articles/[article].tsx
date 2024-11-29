@@ -339,7 +339,6 @@ const EcoActionDetail = () => {
                     const articleWords = actionDetail!.title
                       .toLowerCase()
                       .split(/[\s-]+/);
-                    console.log(articleWords);
 
                     // Check if any of the article words are in the recipe title
                     const hasMatch = articleWords!.some((word) =>
