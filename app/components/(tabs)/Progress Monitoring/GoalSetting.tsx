@@ -43,7 +43,7 @@ const GoalSetting: React.FC = () => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
-    if (progressPercentage >= 1){
+    if (progressPercentage === 1){
       setModalVisible(true);
     }
   }, [progressPercentage]);
