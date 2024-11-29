@@ -179,7 +179,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                   style={{
                     fontFamily: "Poppins-SemiBold",
                     fontSize: 14,
-                    color: myTheme["color-success-800"],
+                    color: myTheme["color-basic-600"],
                   }}
                 >
                   Close
