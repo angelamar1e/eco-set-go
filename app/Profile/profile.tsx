@@ -224,6 +224,49 @@ const UserProfile = () => {
                         </StyledLayout>
                     </StyledCard>
                 </StyledLayout>
+                
+                {/* Recalculate Button */}
+                <StyledCard className="px-2 mt-2 mb-2"
+                    style={{ 
+                        backgroundColor: myTheme['color-success-transparent-100'],
+                        borderRadius: 12,
+                        borderWidth: 1,
+                        borderColor: myTheme['color-success-900'],
+                    }}
+                >
+                    <TouchableOpacity 
+                        onPress={() => router.push('/(quiz)')}
+                        activeOpacity={0.7}
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons 
+                                name="calculator-outline" 
+                                size={20} 
+                                color={myTheme['color-success-700']} 
+                                style={{ marginRight: 8 }}
+                            />
+                            <Text style={{ 
+                                fontFamily: 'Poppins-Medium',
+                                color: myTheme['color-success-700'],
+                                fontSize: 15,
+                                includeFontPadding: false,
+                                textAlignVertical: 'center'
+                            }}>
+                                Calculate Footprint
+                            </Text>
+                        </View>
+                        <Ionicons 
+                            name="chevron-forward" 
+                            size={20} 
+                            color={myTheme['color-success-700']} 
+                        />
+                    </TouchableOpacity>
+                </StyledCard>
 
                 {/* Combined Initial Footprint and Emissions Card */}
                 <TouchableOpacity 
@@ -231,14 +274,14 @@ const UserProfile = () => {
                     activeOpacity={0.7}
                 >
                     <StyledCard
-                        className='mt-2 rounded-xl shadow-md'
+                        className='rounded-xl'
                         style={{
                             borderColor: myTheme['color-success-900'],
                             backgroundColor: myTheme['color-success-transparent-100']
                         }}
                     >
                         <StyledLayout className='items-center bg-transparent'>
-                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 25 }}>Your initial footprint</Text>
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 23 }}>Your initial footprint</Text>
                             <Text
                                 style={{
                                     fontFamily: 'Poppins-Bold',
@@ -252,7 +295,7 @@ const UserProfile = () => {
                             <Text
                                 style={{
                                     fontFamily: 'Poppins-SemiBold',
-                                    fontSize: 25,
+                                    fontSize: 23,
                                     textAlign: 'center',
                                 }}
                             >
@@ -343,48 +386,6 @@ const UserProfile = () => {
                         </StyledLayout>
                     </StyledCard>
                 </TouchableOpacity>
-
-                {/* Recalculate Button */}
-                <StyledLayout className="px-2 mt-4">
-                    <TouchableOpacity 
-                        onPress={() => router.push('/(quiz)')}
-                        style={{ 
-                            flexDirection: 'row', 
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            paddingVertical: 12,
-                            paddingHorizontal: 16,
-                            backgroundColor: myTheme['color-success-transparent-100'],
-                            borderRadius: 12,
-                            borderWidth: 1,
-                            borderColor: myTheme['color-success-transparent-300'],
-                        }}
-                        activeOpacity={0.7}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Ionicons 
-                                name="calculator-outline" 
-                                size={20} 
-                                color={myTheme['color-success-700']} 
-                                style={{ marginRight: 8 }}
-                            />
-                            <Text style={{ 
-                                fontFamily: 'Poppins-Medium',
-                                color: myTheme['color-success-700'],
-                                fontSize: 15,
-                                includeFontPadding: false,
-                                textAlignVertical: 'center'
-                            }}>
-                                Calculate Footprint
-                            </Text>
-                        </View>
-                        <Ionicons 
-                            name="chevron-forward" 
-                            size={20} 
-                            color={myTheme['color-success-700']} 
-                        />
-                    </TouchableOpacity>
-                </StyledLayout>
             </StyledLayout>
         </ScrollView>
     );

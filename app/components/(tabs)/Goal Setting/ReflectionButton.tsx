@@ -5,6 +5,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { TouchableOpacity } from 'react-native';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledButton = styled(Button);
 const StyledLayout = styled(Layout);
@@ -65,20 +67,27 @@ const ReflectionButton = () => {
 
   return (
     <StyledLayout>
-      <StyledButton
-        className='m-1 p-1 rounded-full'
-        style={{ width: 180 }}
-        status={isClicked ? 'success' : 'basic'}
-        size='small'
-        appearance={isClicked ? "filled" : "outline"}
-        accessoryLeft={() => (
-          <Ionicons name="pencil" size={20} color="#8F9BB3" />
-        )}
+      <TouchableOpacity 
+        className='m-1 p-1 rounded-full flex-row items-center justify-center border border-[#8F9BB3]'
+        style={{ width: 180, backgroundColor: '#F5F7F9' }}
         onPress={handlePress}
-        disabled={loading} // Disable the button while loading
+        disabled={loading}
       >
-        Create reflection
-      </StyledButton>
+        <Ionicons name="pencil" size={20} color="#8F9BB3" />
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-Medium',
+            color: '#8F9BB3',
+            marginLeft: 8,
+            fontSize: 12,
+            alignContent: 'center',
+            justifyContent: 'center',
+            top: 2
+          }}
+        >
+          Create reflection
+        </StyledText>
+      </TouchableOpacity>
 
       {/* Modal for Creating Reflection */}
       <Modal
@@ -88,12 +97,20 @@ const ReflectionButton = () => {
         style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledButton
-            className='m-1'
-            appearance="ghost"
-            onPress={() => setShowDatePicker(true)}>
-            {formattedDate}
-          </StyledButton>
+          <TouchableOpacity
+            className='m-1 p-2 rounded-lg flex-row items-center justify-center'
+            onPress={() => setShowDatePicker(true)}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 14,
+                color: myTheme['color-success-700']
+              }}
+            >
+              {formattedDate}
+            </StyledText>
+          </TouchableOpacity>
 
           <StyledInput
             className='m-1'
@@ -101,6 +118,8 @@ const ReflectionButton = () => {
             value={content}
             onChangeText={setContent}
             multiline={true}
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 12, top: 2 }}
+            style={{ fontFamily: 'Poppins-Regular' }}
           />
 
           {showDatePicker && (
@@ -117,26 +136,39 @@ const ReflectionButton = () => {
           )}
 
           <StyledLayout className="flex-row justify-between mt-2">
-            <StyledButton
+            <TouchableOpacity
               onPress={() => setcreateModalVisible(false)}
-              appearance="ghost"
-              status="info"
-              size='small'
-              className='m-1 rounded-full'
-              disabled={loading} // Disable cancel button while loading
+              disabled={loading}
+              className='m-1 p-2 rounded-full flex-row items-center justify-center'
+              style={{ backgroundColor: 'transparent' }}
             >
-              <StyledText>Cancel</StyledText>
-            </StyledButton>
-            <StyledButton
-              className='m-1 rounded-full'
-              status="success"
-              appearance="ghost"
-              size='small'
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className='m-1 p-2 rounded-full flex-row items-center justify-center'
+              style={{ backgroundColor: 'transparent' }}
               onPress={handleCreateReflection}
-              disabled={loading} // Disable create button while loading
+              disabled={loading}
             >
-              {loading ? 'Creating...' : 'Create Reflection'}
-            </StyledButton>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-success-700']
+                }}
+              >
+                {loading ? 'Creating...' : 'Create Reflection'}
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>

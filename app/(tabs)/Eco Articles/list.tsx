@@ -129,7 +129,7 @@ const EcoActionsList = () => {
           borderBottomWidth: 0,
           overflow: 'hidden',
         }}
-        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
+        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
         <StyledLayout
           className="justify-center items-center"
@@ -146,6 +146,7 @@ const EcoActionsList = () => {
               paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
               width: '95%',
+              fontSize: 13,
             }}
           >Introduction to Carbon Footprint
           </Text>
@@ -160,7 +161,7 @@ const EcoActionsList = () => {
           borderBottomWidth: 0,
           overflow: 'hidden',
         }}
-        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
+        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
         <StyledLayout
           className="justify-center items-center"
@@ -177,6 +178,7 @@ const EcoActionsList = () => {
               paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
               width: '95%',
+              fontSize: 13,
             }}>Goal Guidelines
           </Text>
         </StyledLayout>
@@ -187,12 +189,12 @@ const EcoActionsList = () => {
   const fontsLoaded = useLoadFonts(); 
 
   return (
-    <StyledLayout className='flex-1'>
+    <StyledLayout className='flex-1 pb-12'>
       <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}
         >
-          <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>
+          <StyledText className="text-white text-2xl" style={{ fontFamily: 'Poppins-SemiBold',}}>
             Eco Articles
           </StyledText>
         </StyledLayout>

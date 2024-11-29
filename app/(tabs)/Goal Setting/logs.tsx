@@ -16,7 +16,7 @@ import ReflectionList from "@/app/components/(tabs)/Goal Setting/ReflectionList"
 const Logs = () => {
     const data = [
         { id: '1', component: <DailyLog /> },
-        { id: '2', component: <Reflection /> },
+        { id: '2', component: <ReflectionList /> },
     ];
 
     const goalDates = {
@@ -34,7 +34,7 @@ const Logs = () => {
         <StyledLayout className="flex-1">
             <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
                 style={{ backgroundColor: myTheme['color-success-700'] }}>
-                <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Daily Log</StyledText>
+                <StyledText className="text-white text-2xl" style={{ fontFamily: 'Poppins-SemiBold'}}>Daily Log</StyledText>
             </StyledLayout>
 
             <StyledLayout className="flex-1 px-2">

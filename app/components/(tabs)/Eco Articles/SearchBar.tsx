@@ -17,6 +17,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         placeholder="Search"
         className="flex-1 rounded-full"
         onChangeText={onSearch}
+        style={{
+          fontFamily: 'Poppins-Regular',
+        }}
+        textStyle={{
+          fontFamily: 'Poppins-Regular',
+          fontSize: 13,
+          top: 2
+        }}
         accessoryLeft={() => (
           <Ionicons name='search-outline' size={20} color="#1BD67C" />
         )}

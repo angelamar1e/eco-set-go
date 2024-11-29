@@ -37,7 +37,16 @@ const Static: React.FC<ActionItemProps> = ({
               }
               onPress={() => handleComplete(item.id, item.template, item.impact ? item.impact : 0)}
             />
-            <StyledText category="p1" numberOfLines={2} style={{ fontSize: 15, width: "85%",}} className="ml-1 mb-2">
+            <StyledText 
+              numberOfLines={2} 
+              style={{ 
+                fontSize: 14,
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                top: 5
+              }} 
+              className="ml-1 mb-2"
+            >
               {item.title}
             </StyledText>
           </View>
