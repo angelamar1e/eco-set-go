@@ -7,7 +7,7 @@ import InputTemplate from "../components/quiz/InputTemplate";
 import CheckboxTemplate from "../components/quiz/CheckboxTemplate";
 import StepperTemplate from "../components/quiz/StepperTemplate";
 import RadioTemplate from "../components/quiz/RadioTemplate";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { styled } from "nativewind";
 import { Layout, Text } from "@ui-kitten/components";
 import storage from '@react-native-firebase/storage';
@@ -17,8 +17,12 @@ import { NavigationButtons } from "../components/quiz/NavigationButtons";
 import Modal1 from "../components/quiz/Modal1";
 import Modal2 from "../components/quiz/Modal2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ScrollView } from "react-native-gesture-handler";
 
 const StyledLayout = styled(Layout);
+
+const params = useLocalSearchParams();
+const question = params.question;
 
 const QuizIndex = () => {
   const { questionDocumentIds, questionCollection } = useContext(QuizContext);
@@ -39,8 +43,13 @@ const QuizIndex = () => {
   }, [emissionsContext]);
 
   useEffect(() => {
+    console.log('Search Params:', params);
+  }, [params]);
+
+  useEffect(() => {
     const fetchQuestion = async () => {
-      const currentQuestionId = questionDocumentIds[currentQuestionIndex];
+      const currentQuestionId = question ? questionDocumentIds[parseInt(question.toString())] : questionDocumentIds[currentQuestionIndex];
+      console.log(currentQuestionId, question);
       if (currentQuestionId) {
         try {
           const snapshot = await questionCollection.doc(currentQuestionId).get();
@@ -62,7 +71,7 @@ const QuizIndex = () => {
     };
   
     fetchQuestion();
-  }, [currentQuestionIndex, questionDocumentIds, questionCollection]);
+  }, [question, currentQuestionIndex, questionDocumentIds, questionCollection]);
 
   const loadImage = async (gsUrl: string): Promise<string | null> => {
     try {
@@ -76,9 +85,9 @@ const QuizIndex = () => {
   };
   
   
-  const handleAnswer = (value: any) => {
+  const handleAnswer = (value: any | string[]) => {
     const variable = questionData?.variable;
-    if (['9', '10', '11'].includes(questionDocumentIds[currentQuestionIndex])) {
+    if (['20', '21', '22'].includes(questionDocumentIds[currentQuestionIndex])) {
       value *= 2;
     }
     setCurrentAnswer(value); // Update current answer state
@@ -258,7 +267,7 @@ const QuizIndex = () => {
               />
             </StyledLayout>
           )}
-          <StyledLayout className="pl-4 pr-4">
+          <ScrollView className="pl-4 pr-4 mb-20">
             <CurrentComponent
               key={questionData.variable}
               question={questionData.question}
@@ -272,7 +281,7 @@ const QuizIndex = () => {
               setModalVisible={setModalVisible}
               tips={Array.isArray(questionData.tips) ? questionData.tips : (questionData.tips ? [questionData.tips] : [])}
             />            
-          </StyledLayout>
+          </ScrollView>
           <StyledLayout style={{
             position: 'absolute',
             bottom: 0,
