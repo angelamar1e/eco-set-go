@@ -205,11 +205,11 @@ const EcoActionDetail = () => {
         >
           {actionDetail?.title}
         </StyledText>
-        <StyledLayout className="flex-row justify-between m-2">
+        <StyledLayout className="flex-row justify-between m-2 px-3">
           <Button
             icon="star"
             mode="contained"
-            className="w-30 mx-1"
+            className="w-auto mx-1"
             style={{ backgroundColor: myTheme["color-success-700"] }}
           >
             {actionId in Points[100] ? (
@@ -225,7 +225,7 @@ const EcoActionDetail = () => {
           <Button
             icon="note-plus"
             mode="contained"
-            className="w-52 mx-1"
+            className="w-auto mx-1"
             onPress={handleAddToLog}
             style={{ backgroundColor: myTheme["color-success-700"] }}
           >
@@ -264,7 +264,7 @@ const EcoActionDetail = () => {
         ✅ Added to your Daily Log
       </Snackbar>
       <FlatList
-        className="max-h-screen p-3"
+        className="px-3"
         // style={{maxHeight: vh(97)}}
         data={[
           { type: "Facts", data: facts, emoji: "🌏" },
@@ -275,7 +275,7 @@ const EcoActionDetail = () => {
         ListHeaderComponent={ListHeader}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <StyledLayout>
+          <StyledLayout className="pb-3">
             {/* Section Header */}
             <SectionHeader title={item.type} />
             {/* Display the items in the current section */}

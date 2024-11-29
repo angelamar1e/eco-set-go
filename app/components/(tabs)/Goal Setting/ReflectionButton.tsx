@@ -166,7 +166,7 @@ const ReflectionButton = () => {
                   color: myTheme['color-success-700']
                 }}
               >
-                {loading ? 'Creating...' : 'Create Reflection'}
+                {loading ? 'Saving...' : 'Save Reflection'}
               </StyledText>
             </TouchableOpacity>
           </StyledLayout>

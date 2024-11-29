@@ -54,7 +54,7 @@ const settings = () => {
       if (userUid) {
         fetchEmail(userUid);
         fetchPassword(userUid);
-        await fetchUserDetails();
+        // await fetchUserDetails();
       }
     };
 

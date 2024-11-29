@@ -21,9 +21,13 @@ const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss })
     <Modal
       animationType="fade"
       visible={visible}
+      onRequestClose={onDismiss}
     >
-      <View className="flex-1 justify-center items-center">
-        <View 
+      <StyledLayout 
+        className="flex-1 justify-center items-center"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      >
+        <StyledLayout 
           className="w-4/5 rounded-3xl p-6"
           style={{ 
             backgroundColor: 'white',
@@ -34,13 +38,6 @@ const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss })
             elevation: 5,
           }}
         >
-          <Ionicons 
-            name="help" 
-            size={40} 
-            color={myTheme['color-success-700']} 
-            style={{ alignSelf: 'center', marginBottom: 10 }}
-          />
-          
           <StyledText 
             className="text-center mb-3"
             style={{ 
@@ -49,7 +46,7 @@ const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss })
               color: myTheme['color-success-800']
             }}
           >
-            Take a Quick Quiz!
+            Take a Quick Quiz! 🧐
           </StyledText>
           
           <StyledText 
@@ -106,8 +103,8 @@ const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss })
               Take the quiz later
             </StyledText>
           </TouchableOpacity>
-        </View>
-      </View>
+        </StyledLayout>
+      </StyledLayout>
     </Modal>
   );
 };

@@ -45,7 +45,7 @@ const EcoActionsList = () => {
         })
       );
 
-      setEcoActions(data);
+      setEcoActions(data as EcoAction[]);
     } catch (error) {
       console.error("Error fetching eco actions: ", error);
     }
@@ -86,9 +86,9 @@ const EcoActionsList = () => {
             source={{ uri: item.image }}
             className='rounded-lg'
             style={{
-              zIndex:10,
+              zIndex: 10,
               opacity: 0.5,
-              width: '150%', 
+              width: '115%',
               height: '170%',
             }}
             resizeMode="cover"
@@ -96,13 +96,11 @@ const EcoActionsList = () => {
         )}
         {/* Title section positioned at the bottom */}
         <StyledLayout
-          className="justify-center items-center p-2"
+          className="justify-center items-center p-2 flex-wrap"
           style={{
             zIndex: 20,
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
-            top: 0,
-            height: 70,
             width: '115%',
           }}
         >
@@ -110,6 +108,7 @@ const EcoActionsList = () => {
             style={{
               color: 'white',
               fontFamily: 'Poppins-Regular',
+              fontSize: 15
             }}
           >
             {item.title}
@@ -123,63 +122,64 @@ const EcoActionsList = () => {
     <>
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
+        className="h-[150px] rounded-xl m-2"
         style={{
           borderColor: myTheme['color-success-700'],
           borderWidth: 1,
-          borderBottomWidth: 0,
+          borderBottomWidth: 1,
           overflow: 'hidden',
         }}
-        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
+        {/* Title section positioned at the bottom */}
         <StyledLayout
-          className="justify-center items-center"
+          className="justify-center items-center p-2 flex-wrap"
           style={{
+            zIndex: 20,
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
-            bottom: 0,
-            width: '120%',
+            width: '115%',
           }}
         >
           <Text
             style={{
               color: 'white',
-              paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
-              width: '95%',
-              fontSize: 13,
+              fontSize: 15
             }}
-          >Introduction to Carbon Footprint
+          >
+            Introduction to Carbon Footprint
           </Text>
           </StyledLayout>
       </StyledCard>
 
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
+        className="h-[150px] rounded-xl m-2"
         style={{
           borderColor: myTheme['color-success-700'],
           borderWidth: 1,
-          borderBottomWidth: 0,
+          borderBottomWidth: 1,
           overflow: 'hidden',
         }}
-        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
+        {/* Title section positioned at the bottom */}
         <StyledLayout
-          className="justify-center items-center"
+          className="justify-center items-center p-2 flex-wrap"
           style={{
+            zIndex: 20,
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
-            bottom: 0,
-            width: '120%',
+            width: '115%',
           }}
         >
           <Text
             style={{
               color: 'white',
-              paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
-              width: '95%',
-              fontSize: 13,
-            }}>Goal Guidelines
+              fontSize: 15
+            }}
+          >
+            Goal Guidelines
           </Text>
         </StyledLayout>
       </StyledCard>
