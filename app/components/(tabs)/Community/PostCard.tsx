@@ -5,6 +5,7 @@ import { Card, Text, Layout, Input, Button, Modal, Popover } from '@ui-kitten/co
 import { styled } from 'nativewind';
 import { formatTimeAgo, fetchUserInfo, handleAddComment, handleDeleteComment, confirmDeletePost } from '@/app/utils/communityUtils';
 import { Timestamp } from '@react-native-firebase/firestore';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledCard = styled(Card);
 const StyledText = styled(Text);
@@ -66,8 +67,26 @@ const PostCard: React.FC<PostCardProps> = ({
     <StyledLayout className="p-1 m-2 rounded-lg border border-gray-200">
       <StyledLayout className="flex-row justify-between">
         <StyledLayout>
-          <StyledText category="s1" className="mt-2 ml-2 font-bold">@{userName}</StyledText>
-          <StyledText category="c1" className="ml-2 text-gray-500">{formattedTimestamp}</StyledText>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 14,
+              marginTop: 8,
+              marginLeft: 8
+            }}
+          >
+            @{userName}
+          </StyledText>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 11,
+              marginLeft: 8,
+              color: '#8F9BB3'
+            }}
+          >
+            {formattedTimestamp}
+          </StyledText>
         </StyledLayout>
 
         <StyledLayout className='m-1 p-1'>
@@ -82,30 +101,36 @@ const PostCard: React.FC<PostCardProps> = ({
           onBackdropPress={togglePostPopover}
         >
           <StyledLayout className="p-1 rounded-lg">
-            <StyledButton
-              size="small"
-              className="font-bold"
-              appearance="ghost"
-              status="info"
+            <TouchableOpacity 
               onPress={() => {
                 setEditModalVisible(true);
                 setPostPopoverVisible(false);
               }}
             >
-              Edit
-            </StyledButton>
-            <StyledButton
-              size="small"
-              className="font-bold"
-              appearance="ghost"
-              status="danger"
+              <StyledText style={{ 
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 12,
+                color: myTheme['color-info-500'],
+                padding: 8
+              }}>
+                Edit
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 setConfirmDeleteVisible(true);
                 setPostPopoverVisible(false);
               }}
             >
-              Delete
-            </StyledButton>
+              <StyledText style={{ 
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 12,
+                color: myTheme['color-danger-500'],
+                padding: 8
+              }}>
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </Popover>
         </StyledLayout>
@@ -113,18 +138,17 @@ const PostCard: React.FC<PostCardProps> = ({
       </StyledLayout>
 
       <StyledLayout className="mt-2 ml-2">
-        <StyledText category="p1">{content}</StyledText>
+      <StyledText style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
+        {content}
+        </StyledText>
       </StyledLayout>
-
       {/* Comment Button */}
-      <StyledButton
-        appearance='ghost'
-        status='basic'
-        size='small'
+      <TouchableOpacity 
         onPress={() => setCommentModalVisible(true)}
-        className="mt-2 mb-2 items-center rounded-full flex-row">
-        <StyledText>Comments</StyledText>
-      </StyledButton>
+        className="mt-2 mb-2 items-center rounded-full"
+      >
+        <StyledText style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#8F9BB3' }}>Comments</StyledText>
+      </TouchableOpacity>
 
       {/* Comment Modal */}
       <Modal
@@ -134,16 +158,26 @@ const PostCard: React.FC<PostCardProps> = ({
         style={{ width: 300, height: 250, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category="h6" className="font-bold mb-2">Comments</StyledText>
-          {comments.length > 0 ? (
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 16,
+            marginBottom: 8
+          }}
+        >
+          Comments
+        </StyledText>
+        {comments.length > 0 ? (
             comments
               .slice()
               .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis())
               .map((comment) => (
                 <View key={comment.id} className="pb-2 mb-2">
                   <StyledLayout className='flex-row justify-between'>
-                    <StyledText className="font-bold">@{comment.userName}</StyledText>
-                    {/* for comment actions */}
+                  <StyledText style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14 }}>
+                    @{comment.userName}
+                </StyledText>                     
+                {/* for comment actions */}
                     <Popover
                       visible={commentPopoverVisible === comment.id}
                       placement="bottom end"
@@ -155,25 +189,39 @@ const PostCard: React.FC<PostCardProps> = ({
                       onBackdropPress={() => setCommentPopoverVisible(null)}
                     >
                       <StyledLayout className="p-2 rounded-lg">
-                        <StyledButton
-                          size="small"
-                          className="font-bold"
-                          appearance="ghost"
-                          status="danger"
+                        <TouchableOpacity
                           onPress={() => {
                             setCommentToDelete(comment);
                             setConfirmCommentDeleteVisible(true);
                             setCommentPopoverVisible(null);
                           }}
                         >
-                          Delete Comment
-                        </StyledButton>
+                          <StyledText
+                            style={{
+                              fontFamily: 'Poppins-Medium',
+                              fontSize: 12,
+                              color: myTheme['color-danger-500'],
+                            }}
+                          >
+                            Delete Comment
+                          </StyledText>
+                        </TouchableOpacity>
                       </StyledLayout>
                     </Popover>
                   </StyledLayout>
                  
-                  <StyledText>{comment.content}</StyledText>
-                  <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
+                  <StyledText style={{ fontFamily: 'Poppins-Regular', fontSize: 14, marginLeft: 5 }}>
+                    {comment.content}
+                  </StyledText>
+                  <StyledText 
+                    style={{ 
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 11,
+                      color: '#8F9BB3'
+                    }}
+                  >
+                    {formatTimeAgo(comment.timestamp)}
+                  </StyledText>
                 </View>
               ))
           ) : (
@@ -184,6 +232,7 @@ const PostCard: React.FC<PostCardProps> = ({
             value={newComment}
             onChangeText={setNewComment}
             className="rounded-lg m-1"
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}
             accessoryRight={() => (
               <TouchableOpacity
                 onPress={() => handleAddComment(newComment, id, username, uid, setNewComment)}
@@ -204,7 +253,7 @@ const PostCard: React.FC<PostCardProps> = ({
         style={{ width: 300, height: 250, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category="h6" className="font-bold">
+          <StyledText style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>
             Edit Post
           </StyledText>
           <StyledInput
@@ -213,31 +262,40 @@ const PostCard: React.FC<PostCardProps> = ({
             placeholder="Edit your post..."
             multiline
             className="mb-2 mt-2"
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 13, top: 2 }}
           />
           <StyledLayout className="flex-row justify-between mt-3">
-            <StyledButton
-              appearance="ghost"
-              status="info"
-              size="small"
-              className="m-1 rounded-full"
+            <TouchableOpacity
               onPress={() => setEditModalVisible(false)}
+              className="m-1 rounded-full"
             >
-              Cancel
-            </StyledButton>
-            <StyledButton
+              <StyledText style={{
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                color: myTheme['color-info-500'],
+                padding: 8
+              }}>
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 if (editedContent !== content) {
                   onEdit(editedContent);
                 }
                 setEditModalVisible(false);
               }}
-              appearance="ghost"
-              status="primary"
-              size="small"
               className="m-1 rounded-full"
             >
-              Save Changes
-            </StyledButton>
+              <StyledText style={{
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 12,
+                color: myTheme['color-primary-700'],
+                padding: 8
+              }}>
+                Save Changes
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>
@@ -250,29 +308,43 @@ const PostCard: React.FC<PostCardProps> = ({
         style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category="h6" className="font-bold mb-3">
+          <StyledText style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>
             Are you sure you want to delete this post?
           </StyledText>
           <StyledLayout className="flex-row justify-between">
-            <StyledButton
-              appearance="ghost"
-              status="danger"
-              size="small"
+            <TouchableOpacity
               onPress={() => setConfirmDeleteVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              Cancel
-            </StyledButton>
-            <StyledButton
-              appearance="ghost"
-              status="success"
-              size="small"
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 onDelete(id);
                 setConfirmDeleteVisible(false);
               }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center" 
+              style={{ backgroundColor: 'transparent' }}
             >
-              Delete
-            </StyledButton>
+              <StyledText
+                style={{
+                  fontFamily: 'Poppins-Medium',
+                  fontSize: 12, 
+                  color: myTheme['color-danger-500']
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>
@@ -285,31 +357,45 @@ const PostCard: React.FC<PostCardProps> = ({
         style={{ width: 300, height: 150, alignSelf: 'center', justifyContent: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText category="h6" className="font-bold mb-3">
+          <StyledText style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>
             Are you sure you want to delete this comment?
           </StyledText>
           <StyledLayout className="flex-row justify-between">
-            <StyledButton
-              appearance="ghost"
-              status="danger"
-              size="small"
+            <TouchableOpacity
               onPress={() => setConfirmCommentDeleteVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              Cancel
-            </StyledButton>
-            <StyledButton
-              appearance="ghost"
-              status="success"
-              size="small"
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Medium', 
+                  fontSize: 12,
+                  color: myTheme['color-info-500']
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => {
                 if (commentToDelete) {
                   handleDeleteComment(commentToDelete.id);
                 }
                 setConfirmCommentDeleteVisible(false);
               }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: 'transparent' }}
             >
-              Delete
-            </StyledButton>
+              <StyledText
+                style={{
+                  fontFamily: 'Poppins-Medium',
+                  fontSize: 12, 
+                  color: myTheme['color-danger-500']
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>
       </Modal>

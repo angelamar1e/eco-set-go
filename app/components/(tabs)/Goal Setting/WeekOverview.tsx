@@ -25,7 +25,7 @@ const headertextColor = theme['color-success-900'];
       <StyledCard className="bg-white border-0" style={{ borderRadius: 25, padding: 0, width: "90%", elevation: 2 }}>
 
       <StyledLayout className="ml-1 mr-2 relative bg-white">
-        <StyledText className="text-center mb-2 text-xl p-2" style={{ color: headertextColor, fontFamily: 'Poppins-SemiBold'}}>
+        <StyledText className="text-center mb-1 text-lg p-2" style={{ color: headertextColor, fontFamily: 'Poppins-Medium'}}>
           Week Overview  📆
         </StyledText>
 
@@ -50,7 +50,7 @@ const headertextColor = theme['color-success-900'];
                     paddingTop: 4
                   }}
                 >
-                  <StyledText className='text-lg' 
+                  <StyledText className='text-12' 
                     style={{
                       color: isDone
                       ? 'white'
@@ -62,11 +62,12 @@ const headertextColor = theme['color-success-900'];
 
                 {/* Day Label */}
                 <StyledText
-                className="text-sm"
+                className=""
                   style={{
                     textAlign: "center",
                     color: myTheme['color-basic-600'],
-                    fontFamily: 'Poppins-Medium'
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 12
                   }}
                 >
                   {weekDays[index]}

@@ -95,7 +95,14 @@ const ReflectionList: React.FC = () => {
   return (
     <StyledLayout style={{ position: 'relative' }}>
       <StyledLayout className="flex-row justify-between" style={{ zIndex: 1 }}>
-        <StyledText className="m-2 font-bold" category="s1">
+        <StyledText 
+          category="s1" 
+          className="m-2" 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 16 
+          }}
+        >
           Reflection
         </StyledText>
         <FilterDate onDateChange={handleDateChange} />

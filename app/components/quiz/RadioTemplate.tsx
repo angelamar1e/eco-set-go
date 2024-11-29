@@ -25,10 +25,10 @@ const RadioTemplate: FC<TemplateProps> = ({
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
   const [answerText, setAnswerText] = useState<string>("");
 
-  const handlePress = (selectedKey: string, selectedText: string, selectedValue: string) => {
-    setAnswer(selectedKey); 
-    setAnswerText(selectedText); 
-    onAnswer(selectedValue); 
+  const handlePress = (selectedKey: string, selectedText: string, selectedValue: any) => {
+    setAnswer(selectedKey);
+    setAnswerText(selectedText);
+    onAnswer(selectedValue);
   };
 
   return (
@@ -48,7 +48,7 @@ const RadioTemplate: FC<TemplateProps> = ({
           )}
         </View>
 
-        <StyledLayout className="flex-wrap flex-row justify-center mt-10 mb-3">
+        <StyledLayout className="flex-wrap flex-row justify-center mt-3 mb-3">
         {choices ? (
           Object.entries(choices).map(([key, { text, value, example, choices_tip }]) => (
             <RadioChoices

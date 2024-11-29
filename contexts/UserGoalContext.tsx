@@ -26,6 +26,7 @@ type UserGoalContextProps = {
   newStartDate: Date;
   newEndDate: Date;
   newTarget: number;
+  setEditGoal: (visibility: boolean) => void;
   setNewStartDate: (date: Date) => void;
   setNewEndDate: (date: Date) => void;
   setNewTarget: (target: number) => void;
@@ -79,10 +80,8 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     let totalImpact = 0;
     if (latestGoal && userLogs) {
       const { stringStartDate, stringEndDate } = convertTimestampToString(latestGoal.start_date, latestGoal.end_date);
-      const startDate = latestGoal.start_date.toDate();
-      const endDate = latestGoal.end_date.toDate();
       Object.entries(userLogs as UserLogs).forEach(([date, actions]) => {
-        if (date >= stringStartDate && date <= stringEndDate) {
+        if (date >= stringStartDate) {
           for (const logEntry of Object.values(actions)) {
             if (typeof logEntry.impact === "number") {
               totalImpact += logEntry.impact;
@@ -188,6 +187,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         latestGoal,
         editGoal,
+        setEditGoal,
         progressImpact,
         progressPercentage,
         isComplete,

@@ -5,6 +5,7 @@ import {
   SectionListComponent,
   TouchableOpacity,
   Appearance,
+  ScrollView,
 } from "react-native";
 import { BarChart, StackedBarChart } from "react-native-chart-kit";
 import { styled } from "nativewind";
@@ -117,32 +118,79 @@ const ProgressReport = () => {
 
   const renderDataValues = () => {
     return (
-      <View style={{ padding: 10 }}>
-        {chartData.labels.map((label, index) => (
-          <View key={index} style={{ marginBottom: 8 }}>
-            <Text
+      <View style={{ flex: 1 }}>
+        <ScrollView 
+          className="flex-wrap"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            padding: 20,
+            paddingBottom: 110
+          }}
+          style={{
+            height: '100%',
+            maxHeight: 400,
+          }}
+        >
+          {stackedChartData.labels.map((label: string, index: number) => (
+            <View 
+              key={index} 
+              className="mb-4 p-4 rounded-lg" 
               style={{
-                fontFamily: "Poppins-Medium",
-                fontSize: 13,
-                color: myTheme["color-basic-600"],
+                backgroundColor: myTheme['color-basic-200'],
+                borderColor: myTheme['color-basic-300'],
+                borderWidth: 1,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.1,
+                shadowRadius: 3,
+                elevation: 1,
               }}
             >
-              {label}:
-            </Text>
-            {chartData.data[index].map((value, subIndex) => (
               <Text
-                key={subIndex}
                 style={{
-                  fontFamily: "Poppins-Regular",
+                  fontFamily: "Poppins-Medium",
                   fontSize: 13,
-                  color: myTheme["color-basic-800"],
+                  color: myTheme["color-success-700"],
                 }}
               >
-                {chartData.legend[subIndex]}: {convertGramsToKg(value).toFixed(2)} kg CO₂e
+                {label}
               </Text>
-            ))}
-          </View>
-        ))}
+              {stackedChartData.data[index].map((value: number, subIndex: number) => (
+                <View 
+                  key={subIndex} 
+                  className="flex-row justify-between items-center py-1 px-5"
+                  style={{
+                    borderBottomWidth: subIndex !== stackedChartData.data[index].length - 1 ? 1 : 0,
+                    borderBottomColor: `${myTheme['color-basic-300']}50`
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular", 
+                      fontSize: 13,
+                      color: myTheme["color-basic-600"],
+                    }}
+                  >
+                    {stackedChartData.legend[subIndex]}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Medium",
+                      fontSize: 13,
+                      color: myTheme["color-basic-800"],
+                      marginLeft: 20
+                    }}
+                  >
+                    {convertGramsToKg(value).toFixed(2)} kg CO₂e
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </ScrollView>
       </View>
     );
   };
@@ -234,7 +282,7 @@ const ProgressReport = () => {
         style={{ backgroundColor: myTheme["color-success-700"] }}
       >
         <StyledText
-          className="text-white text-3xl"
+          className="text-white text-2xl"
           style={{ fontFamily: "Poppins-SemiBold" }}
         >
           Progress
@@ -243,88 +291,186 @@ const ProgressReport = () => {
 
       <StyledLayout className="flex-1">
         <GoalSetting />
-        <View className="flex-row h-1/4 justify-center mt-3 mb-5">
-          {/* <View className="h-full w-full justify-between border flex-row content-start"> */}
-          <StyledCard
-            className="h-full w-5/12 p-0 flex mx-2 rounded-3xl"
+        <View className="flex-row justify-center mt-2 mb-3 px-2 h-32">
+          {/* Total Impact Layout */}
+          <StyledLayout
+            className="flex-1 mx-1.5 rounded-3xl justify-center overflow-hidden"
             style={{
-              marginRight: 5,
-              alignItems: "center",
-              justifyContent: "center",
-              borderWidth: 2,
-              borderColor: myTheme["color-success-700"],
-              elevation: 5,
+              backgroundColor: 'transparent',
+              elevation: 4,
+              shadowColor: myTheme["color-success-700"],
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
             }}
           >
-            <Text
-              className=""
+            <View
               style={{
-                fontFamily: "Poppins-Bold",
-                textAlign: "center",
-                justifyContent: "center",
-                fontSize: 30,
-                color: myTheme["color-success-700"],
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: myTheme["color-success-700"],
               }}
             >
-              {conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}
-              <Text style={{ fontFamily: "Poppins-Regular", fontSize: 17 }}>
-                {"\n"}of CO₂e
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: myTheme["color-success-800"],
+                  opacity: 0.3,
+                  borderRadius: 24,
+                }}
+              />
+            </View>
+            <View className="items-center">
+              <Text
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 12,
+                  color: 'white',
+                  opacity: 0.9,
+                  marginBottom: 4,
+                }}
+              >
+                Total Impact
               </Text>
-            </Text>
-            <Text
-              style={{
-                textAlign: "center",
-                fontFamily: "Poppins-Medium",
-                fontSize: 14,
-                color: myTheme["color-basic-600"],
-              }}
-            >
-              Total Impact
-            </Text>
-          </StyledCard>
+              <View className="items-center">
+                <View className="flex-row items-baseline">
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Bold",
+                      fontSize: 24,
+                      color: 'white',
+                    }}
+                  >
+                    {conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Medium",
+                      fontSize: 13,
+                      color: 'white',
+                      marginLeft: 2,
+                    }}
+                  >
+                    CO₂e
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </StyledLayout>
 
-          <StyledCard className='w-5/12 flex mx-2 rounded-3xl' 
-            style={{ 
-              marginLeft: 5, 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              backgroundColor: myTheme['color-success-transparent-100'],
-              borderColor: myTheme['color-success-700'],
-              }}
-            >
-            <Text className="" 
+          {/* Emissions Comparison Layout */}
+
+            {/* Container for both emissions */}
+            <StyledLayout className="flex-1 p-1" 
               style={{ 
-                fontFamily: 'Poppins-Bold', 
-                textAlign: 'center', 
-                justifyContent: 'center', 
-                fontSize: 20, 
-                color: myTheme['color-success-900'], 
+                borderColor: myTheme['color-success-700'],
+                borderWidth: 1,
+                borderRadius: 24,
               }}
-            >
-              {(initialFootprint).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>{"\n"}of CO₂e</Text></Text>
-            <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}>Initial 
-              <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:12, color: myTheme['color-basic-600']}}> Emissions</Text>
-            </Text>
-            <Text></Text>
-            <Text className="" 
-              style={{ 
-                fontFamily: 'Poppins-Bold', 
-                textAlign: 'center', 
-                justifyContent: 'center', 
-                fontSize: 24, 
-                color: myTheme['color-success-700'], 
-              }}
-            >
-              {(currentFootprint).toFixed(2)} tons<Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}>{"\n"}of CO₂e</Text></Text>
-              <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:13, color: myTheme['color-basic-600']}}>Current 
-                <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Medium', fontSize:13, color: myTheme['color-basic-600']}}> Emissions</Text>
-              </Text>
-          </StyledCard>
+              >
+              {/* Initial Emissions */}
+              <StyledLayout 
+                className="flex-1 justify-center"
+                style={{
+                  backgroundColor: 'transparent',
+                }}
+              >
+                <View className="items-center">
+                  <Text 
+                    style={{ 
+                      fontFamily: 'Poppins-Medium',
+                      fontSize: 11,
+                      color: myTheme['color-basic-600'],
+                      marginBottom: 1,
+                    }}
+                  >
+                    Initial Emissions
+                  </Text>
+                  <View className="flex-row items-baseline">
+                    <Text 
+                      style={{ 
+                        fontFamily: 'Poppins-Bold',
+                        fontSize: 18,
+                        color: myTheme['color-success-900'],
+                      }}
+                    >
+                      {(initialFootprint).toFixed(2)} tons
+                    </Text>
+                    <Text 
+                      style={{ 
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 12,
+                        color: myTheme['color-success-900'],
+                        marginLeft: 2,
+                      }}
+                    >
+                      CO₂e
+                    </Text>
+                  </View>
+                </View>
+              </StyledLayout>
+
+              {/* Subtle Divider */}
+              <View 
+                style={{ 
+                  height: 1,
+                  backgroundColor: `${myTheme['color-basic-500']}40`,
+                  marginHorizontal: 16,
+                }} 
+              />
+
+              {/* Current Emissions */}
+              <StyledLayout
+                className="flex-1 justify-center"
+                style={{
+                  backgroundColor: 'transparent'
+                }}
+              >
+                <View className="items-center">
+                  <Text 
+                    style={{ 
+                      fontFamily: 'Poppins-Medium',
+                      fontSize: 11,
+                      color: myTheme['color-basic-600'],
+                      marginBottom: 1,
+                    }}
+                  >
+                    Current Emissions
+                  </Text>
+                  <View className="flex-row items-baseline">
+                    <Text 
+                      style={{ 
+                        fontFamily: 'Poppins-Bold',
+                        fontSize: 20,
+                        color: myTheme['color-success-700'],
+                      }}
+                    >
+                      {(currentFootprint).toFixed(2)} tons
+                    </Text>
+                    <Text 
+                      style={{ 
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 14,
+                        color: myTheme['color-success-700'],
+                        marginLeft: 2,
+                      }}
+                    >
+                      CO₂e
+                    </Text>
+                  </View>
+                </View>
+              </StyledLayout>
+            </StyledLayout>
         </View>
-        {/* </View> */}
-
         <StyledLayout
-          className="justify-center border-t border-gray-200 rounded-xl"
+          className="justify-center border-t border-b pb-3 border-gray-200 rounded-xl"
           style={{}}
         >
           <View
@@ -346,7 +492,7 @@ const ProgressReport = () => {
                 <Text
                   style={{
                     fontFamily: "Poppins-Medium",
-                    fontSize: 16,
+                    fontSize: 14,
                     color:
                       period === option
                         ? myTheme["color-success-700"]

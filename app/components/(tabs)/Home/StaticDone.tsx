@@ -20,7 +20,7 @@ const StaticDone: React.FC<DoneItemProps> = ({
 }) => {
   return (
     <StyledLayout className="pt-1 m-1" >
-        <View className="rounded px-3 border border-gray-200 py-2 w-full" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
+        <View className="rounded px-3 border border-gray-200 py-2 w-full" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-100']}}>
           <View className="flex-row items-center justify-start">
             <CircularCheckbox
             status={
@@ -32,7 +32,11 @@ const StaticDone: React.FC<DoneItemProps> = ({
               />
             <StyledText
               numberOfLines={2}
-              style={{ width: "85%" }}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14
+              }}
               className="text-base leading-5"
             >
               {item.title}

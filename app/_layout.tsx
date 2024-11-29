@@ -9,6 +9,7 @@ import { EmissionsDataProvider } from "@/contexts/EmissionsData";
 import { UserProvider } from "@/contexts/UserContext";
 import { UserLogsProvider } from "@/contexts/UserLogs";
 import { UserGoalProvider } from "@/contexts/UserGoalContext";
+import { UserbaseProvider } from "@/contexts/UserbaseContext";
 import { EcoActionsProvider } from "@/contexts/EcoActions";
 
 export default function RootLayout() {
@@ -19,6 +20,7 @@ export default function RootLayout() {
       <EcoActionsProvider>
         <EmissionsProvider>
           <EmissionsDataProvider>
+            <UserbaseProvider>
             <UserLogsProvider>
               <UserGoalProvider>
                 <ApplicationProvider
@@ -92,6 +94,7 @@ export default function RootLayout() {
                 </ApplicationProvider>
               </UserGoalProvider>
             </UserLogsProvider>
+            </UserbaseProvider>
           </EmissionsDataProvider>
         </EmissionsProvider>
       </EcoActionsProvider>

@@ -32,6 +32,7 @@ export const EmissionsContext = createContext();
 export const EmissionsProvider = ({ children }) => {
   const { userUid, role } = useUserContext();
   const [initialized, setInitialized] = useState(false);
+  const [newOverallFootprint, setNewOverallFootprint] = useState(0);
 
   // Load initial data from Firestore for the logged-in user
   const initializeData = async () => {
@@ -998,6 +999,7 @@ export const EmissionsProvider = ({ children }) => {
     busHrsTravelled,
     jeepHrsTravelled,
     tricycleHrsTravelled,
+    additionals,
     breakfastEmissions,
     breakfastType,
     breakfastEF,
@@ -1081,6 +1083,7 @@ export const EmissionsProvider = ({ children }) => {
           trainEmissions +
           publicTransportEmissions;
 
+        setNewOverallFootprint(newOverallFootprint);
         setFoodFootprint(newFoodEmissions);
         setTransportationFootprint(newTransportEmissions);
         setElectricityFootprint(electricityEmissions);
@@ -1122,6 +1125,7 @@ export const EmissionsProvider = ({ children }) => {
       value={{
         initialized,
         initializeData,
+        newOverallFootprint,
         emissionsData,
         foodFootprint,
         transportationFootprint,
@@ -1153,6 +1157,8 @@ export const EmissionsProvider = ({ children }) => {
         longHaulDuration,
         setLongHaulDuration,
         twoWheelersEmissions,
+        usesTwoWheelers,
+        setUsesTwoWheelers,
         setTwoWheelersEmissions,
         twoWheelerEFPerKm,
         setTwoWheelerEFPerKm,

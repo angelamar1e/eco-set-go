@@ -42,7 +42,7 @@ const Feed: React.FC = () => {
         className='h-1/6 rounded-b-3xl justify-center items-center absolute top-0 left-0 right-0 z-10'
         style={{ backgroundColor: myTheme['color-success-700'] }}
       >
-        <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold' }}>
+        <StyledText className="text-white text-2xl" style={{ fontFamily: 'Poppins-SemiBold' }}>
           Community
         </StyledText>
         <SearchAndButtons 
@@ -52,7 +52,7 @@ const Feed: React.FC = () => {
         />
       </StyledLayout>
 
-      <View style={{ marginTop: '25%' }}>
+      <View style={{ marginTop: '25%', paddingBottom: 50 }}>
         <FlatList
           data={[renderSelectedComponent()]} 
           renderItem={({ item }) => item}

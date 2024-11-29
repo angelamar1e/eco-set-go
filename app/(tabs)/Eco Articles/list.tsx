@@ -73,45 +73,43 @@ const EcoActionsList = () => {
     return (
       <StyledCard
         onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
-        className="m-2 h-[150px] rounded-xl"
+        className="h-[150px] rounded-xl m-2"
         style={{
           borderColor: myTheme['color-success-700'],
           borderWidth: 1,
-          borderBottomWidth: 0,
+          borderBottomWidth: 1,
           overflow: 'hidden',
         }}
       >
         {item.image && (
           <Image
             source={{ uri: item.image }}
-            className='rounded-xl'
+            className='rounded-lg'
             style={{
-              width: '100%', 
-              height: '100%', 
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
+              zIndex:10,
+              opacity: 0.5,
+              width: '150%', 
+              height: '170%',
             }}
             resizeMode="cover"
           />
         )}
         {/* Title section positioned at the bottom */}
         <StyledLayout
-          className="justify-center items-center"
+          className="justify-center items-center p-2"
           style={{
+            zIndex: 20,
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
-            bottom: 0,
-            width: '120%',
+            top: 0,
+            height: 70,
+            width: '115%',
           }}
         >
           <Text
             style={{
               color: 'white',
-              paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
-              width: '95%',
             }}
           >
             {item.title}
@@ -131,7 +129,7 @@ const EcoActionsList = () => {
           borderBottomWidth: 0,
           overflow: 'hidden',
         }}
-        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
+        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
         <StyledLayout
           className="justify-center items-center"
@@ -148,6 +146,7 @@ const EcoActionsList = () => {
               paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
               width: '95%',
+              fontSize: 13,
             }}
           >Introduction to Carbon Footprint
           </Text>
@@ -162,7 +161,7 @@ const EcoActionsList = () => {
           borderBottomWidth: 0,
           overflow: 'hidden',
         }}
-        className='m-2 h-[150px] bg-transparent justify-end rounded-xl'
+        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
       >
         <StyledLayout
           className="justify-center items-center"
@@ -179,6 +178,7 @@ const EcoActionsList = () => {
               paddingVertical: 10,
               fontFamily: 'Poppins-Regular',
               width: '95%',
+              fontSize: 13,
             }}>Goal Guidelines
           </Text>
         </StyledLayout>
@@ -189,12 +189,12 @@ const EcoActionsList = () => {
   const fontsLoaded = useLoadFonts(); 
 
   return (
-    <StyledLayout className='flex-1'>
+    <StyledLayout className='flex-1 pb-12'>
       <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}
         >
-          <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>
+          <StyledText className="text-white text-2xl" style={{ fontFamily: 'Poppins-SemiBold',}}>
             Eco Articles
           </StyledText>
         </StyledLayout>
@@ -216,7 +216,7 @@ const EcoActionsList = () => {
           </StyledLayout>
         ) : (
           <FlatList
-            className="mt-2"
+            className="mt-2 max-h-screen mb-20"
             data={ecoActions}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}

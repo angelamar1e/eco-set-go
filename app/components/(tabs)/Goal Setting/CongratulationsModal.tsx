@@ -1,9 +1,12 @@
 // CongratulationsModal.tsx
 import React from 'react';
-import { Modal, View, Pressable } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Text, Button } from 'react-native-paper';
+import { Modal, TouchableOpacity, View } from 'react-native';
+import { styled } from 'nativewind';
+import { Text, Layout } from '@ui-kitten/components';
+import { myTheme } from '@/constants/custom-theme';
 
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 interface CongratulationsModalProps {
   visible: boolean;
   onClose: () => void;
@@ -22,23 +25,94 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-center items-center bg-opacity-50">
-        <View className="w-4/5 bg-white rounded-3xl p-6 shadow-lg">
-          <Text className="text-2xl font-bold text-center mb-2">🎉 Congratulations! 🎉</Text>
-          <Text className="text-center text-xs mb-4">
-            You’ve successfully reduced your carbon emissions 
-          </Text>
-          <Text className="mb-6 text-center">
-            Ready to set another goal?{"\n"}Let’s keep up the great work! 🌱💚
-          </Text>
-          <TouchableOpacity className="bg-green-500 py-2 rounded-3xl mb-4" onPress={() => onSetNewGoal}>
-            <Text className="text-white font-bold text-center">Set Another Goal 🎯</Text>
+      <StyledLayout 
+        className="flex-1 justify-center items-center"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      >
+        <StyledLayout 
+          className="w-4/5 rounded-3xl p-6"
+          style={{ 
+            backgroundColor: 'white',
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <StyledText 
+            className="text-center mb-2"
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              color: myTheme['color-basic-800']
+            }}
+          >
+            🎉 Congratulations! 🎉
+          </StyledText>
+          
+          <StyledText 
+            className="text-center mb-4"
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              color: myTheme['color-basic-600']
+            }}
+          >
+            You’ve successfully reduced your carbon emissions
+          </StyledText>
+          
+          <StyledText 
+            className="mb-6 text-center"
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              color: myTheme['color-basic-600'],
+              lineHeight: 20
+            }}
+          >
+            Let’s keep up the great work!
+          </StyledText>
+
+          <TouchableOpacity 
+            className="py-2 rounded-full mb-2 items-center justify-center"
+            style={{ backgroundColor: myTheme['color-success-700'] }}
+            onPress={onSetNewGoal}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 14,
+                color: 'white'
+              }}
+            >
+              Set Another Goal 🎯
+            </StyledText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onClose} className="border py-2 rounded-3xl">
-            <Text className="font-bold text-center">Close</Text>
+
+          <TouchableOpacity 
+            className="py-2 rounded-full items-center justify-center border"
+            style={{ 
+              borderColor: myTheme['color-basic-400'],
+              backgroundColor: 'transparent'
+            }}
+            onPress={onClose}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 14,
+                color: myTheme['color-basic-600']
+              }}
+            >
+              Close
+            </StyledText>
           </TouchableOpacity>
-        </View>
-      </View>
+        </StyledLayout>
+      </StyledLayout>
     </Modal>
   );
 };

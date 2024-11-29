@@ -49,7 +49,6 @@ function generateLevels(totalLevels: number, increment: number = 500): LevelsTyp
 }
 
 export const Levels = generateLevels(10);
-console.log(Levels); 
 
 export const Rewards = [
   {icon: '🌏', title: 'Free Delivery', content: 'Get ₱120 off your delivery fee with Ecomove', terms: ['Minimum of 3 bookings'], points: 500},
