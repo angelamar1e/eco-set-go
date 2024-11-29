@@ -65,7 +65,10 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
 
         <StyledLayout className="flex-1 m-2 p-2">
           <TouchableOpacity onPress={handlePress}>
-            <StyledText category="s2" className="font-bold">
+            <StyledText style={{
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 12
+            }}>
               {headline}
             </StyledText>
           </TouchableOpacity>

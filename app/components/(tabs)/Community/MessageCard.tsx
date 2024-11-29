@@ -1,14 +1,16 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
+import { myTheme } from '@/constants/custom-theme';
 
 interface MessageCardProps {
   recipientName: string;
   recipientHandle: string; 
   recipientIcon: string;
   latestMessage: string;
-  latestMessageDate: string; 
+  latestMessageDate: string;
+  onPress?: () => void;
 }
 
 const StyledLayout = styled(Layout);
@@ -20,28 +22,82 @@ const MessageCard: React.FC<MessageCardProps> = ({
   recipientIcon,
   latestMessage,
   latestMessageDate,
+  onPress
 }) => {
   return (
-    <StyledLayout className="flex-row items-center p-4 rounded-lg shadow">
-      {/* Recipient Icon */}
-      <Image
-        source={{ uri: recipientIcon }}
-        className="w-10 h-10 rounded-full mr-4"
-        alt={`${recipientName}'s icon`}
-      />
-      
-      {/* Name, handle, and latest message */}
-      <StyledLayout className="flex-1 p-2">
-        <StyledText category="s1">
-          {recipientName} 
-          <StyledText category="s1"> @{recipientHandle}</StyledText>
-          <StyledText category="s1"> {latestMessageDate}</StyledText>
-        </StyledText>
-        <StyledText category="p1" numberOfLines={1} ellipsizeMode="tail">
-          {latestMessage}
-        </StyledText>
+    <TouchableOpacity 
+      onPress={onPress}
+      className="mx-2 my-1"
+    >
+      <StyledLayout 
+        className="flex-row items-center p-4 rounded-lg"
+        style={{
+          backgroundColor: 'white',
+          borderWidth: 1,
+          borderColor: myTheme['color-basic-300']
+        }}
+      >
+        {/* Recipient Icon */}
+        <Image
+          source={{ uri: recipientIcon }}
+          className="w-12 h-12 rounded-full mr-3"
+          alt={`${recipientName}'s icon`}
+        />
+        
+        {/* Content Container */}
+        <StyledLayout className="flex-1">
+          {/* Header Row */}
+          <StyledLayout className="flex-row items-center justify-between mb-1">
+            <StyledLayout className="flex-row items-center">
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-SemiBold',
+                  fontSize: 14,
+                  color: myTheme['color-basic-800']
+                }}
+              >
+                {recipientName}
+              </StyledText>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 12,
+                  color: myTheme['color-basic-600'],
+                  marginLeft: 4
+                }}
+              >
+                @{recipientHandle}
+              </StyledText>
+            </StyledLayout>
+            
+            {/* Date */}
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-Regular',
+                fontSize: 11,
+                color: myTheme['color-basic-500']
+              }}
+            >
+              {latestMessageDate}
+            </StyledText>
+          </StyledLayout>
+
+          {/* Message Preview */}
+          <StyledText 
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 13,
+              color: myTheme['color-basic-600'],
+              lineHeight: 18
+            }}
+          >
+            {latestMessage}
+          </StyledText>
+        </StyledLayout>
       </StyledLayout>
-    </StyledLayout>
+    </TouchableOpacity>
   );
 };
 
