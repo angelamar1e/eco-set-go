@@ -18,6 +18,7 @@ import AddActionButton from "../Goal Setting/AddActionButton";
 import { myTheme } from "@/constants/custom-theme";
 import { ActivityIndicator } from "react-native-paper";
 import { Points } from "@/constants/Points";
+import { useUserGoalContext } from "@/contexts/UserGoalContext";
 
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
@@ -37,6 +38,7 @@ const DailyLog: FC = () => {
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
   const [loading, setLoading] = useState(true);
+  const {setDailyLogLoading} = useUserGoalContext(); 
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -47,6 +49,10 @@ const DailyLog: FC = () => {
 
     setCurrentLog(currentLog[actionId]);
   }
+
+  useEffect(() => {
+    setDailyLogLoading(loading);
+  }, [loading]);
 
   const dailyLogDoc = firestore().collection("daily_logs").doc(userUid);
   const userLogs = firestore().collection("user_logs").doc(userUid);

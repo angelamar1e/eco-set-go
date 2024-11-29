@@ -41,9 +41,10 @@ const GoalSetting: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState<"start" | "end" | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const {dailyLogLoading} = useUserGoalContext();
 
   useEffect(() => {
-    if (progressPercentage === 1){
+    if (progressPercentage >= 1 && dailyLogLoading){
       setModalVisible(true);
     }
   }, [progressPercentage]);

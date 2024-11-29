@@ -16,6 +16,8 @@ export type GoalData = {
 };
 
 type UserGoalContextProps = {
+  dailyLogLoading: boolean,
+  setDailyLogLoading: (state: boolean) => void,
   latestGoal: GoalData | null;
   editGoal: boolean;
   progressImpact: number;
@@ -37,8 +39,10 @@ const UserGoalContext = createContext<UserGoalContextProps | undefined>(undefine
 export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userUid } = useUserContext();
   const { userLogs } = useLogsContext();
+
   const goalsDoc = firestore().collection("goals").doc(userUid);
 
+  const [dailyLogLoading, setDailyLogLoading] = useState(true);
   const [latestGoal, setLatestGoal] = useState<GoalData | null>(null);
   const [editGoal, setEditGoal] = useState(false);
   const [newStartDate, setNewStartDate] = useState<Date>(new Date());
@@ -185,6 +189,8 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   return (
     <UserGoalContext.Provider
       value={{
+        dailyLogLoading,
+        setDailyLogLoading,
         latestGoal,
         editGoal,
         setEditGoal,
