@@ -24,10 +24,8 @@ const ListHeader = () => {
           <View className='flex-row items-center'>
             <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
             <StyledText 
-            category='h2'
-            style={{ color: myTheme["color-success-700"] }} 
-            className='p-2'
-          >
+              style={{ color: myTheme["color-success-700"], fontFamily: 'Poppins-Bold', fontSize: 30, top: 5 }}   
+            >
             All Questions
           </StyledText>
           </View> 

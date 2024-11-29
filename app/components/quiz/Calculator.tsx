@@ -13,20 +13,28 @@ const Calculator: React.FC = () => {
   const { newOverallFootprint } = useContext(EmissionsContext);
 
   return (
-    <StyledLayout className="flex-row items-center justify-center shadow p-2">
+    <StyledLayout className="flex-row items-center justify-center shadow">
       <StyledTextLarge
-        category='h1' 
-        style={{ color: myTheme["color-success-700"] }}
+        style={{ 
+          fontFamily: 'Poppins-Bold',
+          color: myTheme["color-success-700"],
+          fontSize: 35,
+          top: 5
+        }}
         className="ml-2"
       >
         {newOverallFootprint.toFixed(2)}
       </StyledTextLarge>
       <StyledTextSmall
-        category="p1"
-        style={{ color: myTheme["color-success-900"] }} 
+        style={{ 
+          fontFamily: 'Poppins-Regular',
+          fontSize: 14,
+          color: myTheme["color-success-900"],
+          lineHeight: 20
+        }}
         className="ml-2" 
       >
-        tons{"\n"}of CO2e per year
+        tons{"\n"}of CO₂e per year
       </StyledTextSmall>
     </StyledLayout>
   );

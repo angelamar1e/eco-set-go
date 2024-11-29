@@ -75,7 +75,7 @@ const EcoPoints = () => {
 
   return (
     <StyledLayout className="flex-1">
-      <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
+      <StyledLayout className='h-1/6 rounded-b-2xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}
           >
             <StyledText className="text-white text-3xl" 
