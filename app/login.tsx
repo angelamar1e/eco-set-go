@@ -10,6 +10,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import { styled } from "nativewind";
 import { myTheme } from "@/constants/custom-theme";
+import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -66,6 +67,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
 );
 
 export default function LogInScreen() {
+  const fontsLoaded = useLoadFonts();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -118,6 +120,10 @@ export default function LogInScreen() {
     setPassword("");
   };
 
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <StyledLayout
       style={{ flex: 1, justifyContent: "center", paddingHorizontal: 35 }}
@@ -135,6 +141,7 @@ export default function LogInScreen() {
             caption={emailError || ""}
             accessoryLeft={<Ionicons name="mail" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
           <Input
@@ -149,19 +156,33 @@ export default function LogInScreen() {
               <Ionicons name="lock-closed" size={25} color="#8F9BB3" />
             }
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
-          <Button
-            style={{ marginVertical: 12, borderRadius: 12 }}
+          <TouchableOpacity
+            style={{ 
+              marginVertical: 12,
+              borderRadius: 12,
+              backgroundColor: myTheme['color-success-700'],
+              padding: 10,
+              alignItems: 'center'
+            }}
             onPress={handleSignIn}
           >
-            Log In
-          </Button>
+            <StyledText style={{
+              fontFamily: 'Poppins-Medium',
+              color: 'white',
+              fontSize: 14,
+              top: 2
+            }}>
+              Log In
+            </StyledText>
+          </TouchableOpacity>
 
           <StyledLayout className="flex-row mt-3 items-center justify-center">
-            <StyledText className='text-gray-600 text-sm'>Don't have an account?</StyledText>
+            <StyledText style={{fontFamily: 'Poppins-Regular', fontSize: 13}} className='text-gray-600'>Don't have an account?</StyledText>
             <TouchableOpacity onPress={() => router.push("/sign_up")}>
-              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Sign up</StyledText>
+              <StyledText style={{fontFamily: 'Poppins-SemiBold', color: myTheme['color-success-700'], fontSize: 13}}> Sign up</StyledText>
             </TouchableOpacity>
           </StyledLayout>
         </StyledLayout>

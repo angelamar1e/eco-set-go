@@ -23,6 +23,7 @@ import { myTheme } from '@/constants/custom-theme';
 import TakeaQuiz from './(quiz)/takeaquiz';
 import { EmissionsContext } from '@/contexts/Emissions';
 import { EmissionsData } from '../constants/DefaultValues';
+import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -49,6 +50,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
+  const fontsLoaded = useLoadFonts();
   const {initializeData} = useContext(EmissionsContext);
   const {userUid, fetchUserDetails, setProfileCreated} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
@@ -168,6 +170,10 @@ export default function SignUp() {
     setPassword('');
   };
 
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <StyledLayout style={{ flex: 1, justifyContent: "center", paddingHorizontal: 35 }}>
       <Container>
@@ -183,6 +189,7 @@ export default function SignUp() {
             caption={usernameError || ""}
             accessoryLeft={<Ionicons name="person" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
           <Input
@@ -194,6 +201,7 @@ export default function SignUp() {
             caption={emailError || ""}
             accessoryLeft={<Ionicons name="mail" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
           <Input
@@ -206,18 +214,36 @@ export default function SignUp() {
             caption={passwordError || ""}
             accessoryLeft={<Ionicons name="lock-closed" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
         </StyledLayout>
 
-        <Button style={{ marginVertical: 12, borderRadius: 12 }} onPress={handleSignUp}>
-          Sign Up
-        </Button>
-        <StyledLayout className="flex-row mt-3 items-center justify-center">
-          <ThemedText className='text-gray-600 text-sm'>Already have an account?</ThemedText>
+        <TouchableOpacity
+          style={{ 
+            marginVertical: 12,
+            borderRadius: 12,
+            backgroundColor: myTheme['color-success-700'],
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onPress={handleSignUp}
+        >
+          <StyledText style={{
+            fontFamily: 'Poppins-Medium',
+            color: 'white',
+            fontSize: 14,
+            top: 2
+          }}>
+            Sign Up
+          </StyledText>
+        </TouchableOpacity>
+        <StyledLayout style={{flexDirection: 'row', marginTop: 12, alignItems: 'center', justifyContent: 'center'}}>
+          <StyledText style={{color: '#8F9BB3', fontSize: 13, fontFamily: 'Poppins-Regular'}}>Already have an account?</StyledText>
           <TouchableOpacity onPress={() => router.push("/login")}>
-              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Login</StyledText>
-            </TouchableOpacity>
-          </StyledLayout>
+            <StyledText style={{fontSize: 13, fontFamily: 'Poppins-SemiBold', color: myTheme['color-success-700']}}> Login</StyledText>
+          </TouchableOpacity>
+        </StyledLayout>
       </Container>
 
       <CustomAlert
