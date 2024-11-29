@@ -1,7 +1,7 @@
 // CongratulationsModal.tsx
 import React from 'react';
 import { Modal, View, Pressable } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 
 interface CongratulationsModalProps {
@@ -24,17 +24,17 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
     >
       <View className="flex-1 justify-center items-center bg-opacity-50">
         <View className="w-4/5 bg-white rounded-3xl p-6 shadow-lg">
-          <Text className="text-2xl font-bold text-center mb-2">🎉 Congratulations! 🎉</Text>
+          <Text className="text-2xl font-bold text-center mb-2">Congratulations! 🎉</Text>
           <Text className="text-center text-xs mb-4">
-            You’ve successfully reduced your carbon emissions 
+            You’ve successfully reduced your carbon emissions
           </Text>
-          <Text className="mb-6 text-center">
-            Ready to set another goal?{"\n"}Let’s keep up the great work! 🌱💚
+          <Text className="mb-6 text-lg text-center">
+            Let’s keep up the great work!
           </Text>
-          <TouchableOpacity className="bg-green-500 py-2 rounded-3xl mb-4" onPress={() => onSetNewGoal}>
+          <TouchableOpacity className="bg-green-500 py-2 rounded-3xl mb-4" onPress={() => onSetNewGoal()}>
             <Text className="text-white font-bold text-center">Set Another Goal 🎯</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onClose} className="border py-2 rounded-3xl">
+          <TouchableOpacity onPress={() => onClose()} className="border py-2 rounded-3xl">
             <Text className="font-bold text-center">Close</Text>
           </TouchableOpacity>
         </View>
