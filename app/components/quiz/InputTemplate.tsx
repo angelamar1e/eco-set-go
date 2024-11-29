@@ -46,7 +46,7 @@ const InputTemplate: FC<TemplateProps> = ({
         </StyledText>
 
         <View className="flex-row justify-between">
-          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
+          <StyledText className="mb-1" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
             {question} 
           </StyledText>
           {tips && tips.length > 0 && (
@@ -56,7 +56,7 @@ const InputTemplate: FC<TemplateProps> = ({
           )}
         </View>
 
-      <StyledLayout className="flex-row flex-wrap justify-left mb-10">
+      <StyledLayout className="flex-row flex-wrap justify-left mb-3">
         {choices ? (
           Object.entries(choices).map(([key, value]) => (
             <PresetChoices

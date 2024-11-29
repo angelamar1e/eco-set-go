@@ -46,9 +46,6 @@ const GoalSetting: React.FC = () => {
     if (progressPercentage >= 1){
       setModalVisible(true);
     }
-    else{
-      setModalVisible(false);
-    }
   }, [progressPercentage]);
 
   const closeModal = () => {
@@ -56,7 +53,9 @@ const GoalSetting: React.FC = () => {
   }
 
   const showGoalEditor = () => {
+    router.push('/(tabs)/Progress Monitoring/report');
     setEditGoal(true);
+    setModalVisible(false);
   }
   
   const headertextColor = myTheme['color-success-900'];

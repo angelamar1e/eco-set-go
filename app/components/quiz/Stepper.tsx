@@ -31,9 +31,9 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
       className="flex-row items-center justify-between py-2 px-4 mb-2 rounded-lg"
       style={{ borderWidth: 1, borderColor: myTheme['color-basic-400'] }}
     >
-      <StyledLayout>
-        <StyledText category='label' className="mr-3" style={{ fontSize: 16 }}>{title}</StyledText>
-        <Text className="text-[15px] text-gray-500 mt-1">{value}x</Text>
+      <StyledLayout className='w-1/2'>
+        <StyledText className="mr-3 font-bold text-lime-700">{title}</StyledText>
+        <StyledText className="text-[15px] font-bold text-gray-500 mt-1">{value}x</StyledText>
       </StyledLayout>
 
       <StyledLayout className="flex-row justify-end"> 

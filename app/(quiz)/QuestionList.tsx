@@ -50,9 +50,9 @@ const QuestionList = () => {
     fetchQuestions();
   }, []);
 
-  const renderItem: ListRenderItem<QuestionItem> = ({ item }) => (
+  const renderItem: ListRenderItem<QuestionItem> = ({ item, index }) => (
     <StyledButton  
-      onPress={() => router.push(`/(quiz)/${item.id}`)} // Navigate to the specific question page
+      onPress={() => router.push(`/(quiz)/?params=${index}`)} // Navigate to the specific question page
       style={{ 
         marginBottom: 10, 
         borderRadius: 15, 
