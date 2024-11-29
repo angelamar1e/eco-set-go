@@ -47,7 +47,7 @@ const Logs = () => {
                     </View>
                {/*</View>*/}
 
-                <View className="flex-1">
+                <View className="flex-1 pb-10">
                     <FlatList
                         data={[{ id: '1', component: <DailyLog /> }, { id: '2', component: <ReflectionList /> }]}
                         keyExtractor={(item) => item.id}

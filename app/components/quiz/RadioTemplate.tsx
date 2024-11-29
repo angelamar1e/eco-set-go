@@ -32,23 +32,45 @@ const RadioTemplate: FC<TemplateProps> = ({
   };
 
   return (
-      <QuestionContainer>
-        <StyledText className="text-sm mb-3" style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-Medium' }}>
-          {category}
+    <QuestionContainer>
+      <StyledText 
+        className="mb-3" 
+        style={{ 
+          fontFamily: 'Poppins-Medium',
+          fontSize: 14,
+          color: myTheme['color-success-700']
+        }}
+      >
+        {category}
+      </StyledText>
+
+      <View className="flex-row justify-between items-center mb-2">
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 16,
+            flex: 1,
+            marginRight: 8,
+            color: myTheme['color-basic-800']
+          }}
+        >
+          {question}
         </StyledText>
+        {tips && tips.length > 0 && (
+          <TouchableOpacity 
+            onPress={() => setModalVisible(true)}
+            className="p-1"
+          >
+            <Ionicons 
+              name="information-circle-outline" 
+              size={22} 
+              style={{ color: myTheme['color-success-700'] }} 
+            />
+          </TouchableOpacity>
+        )}
+      </View>
 
-        <View className="flex-row justify-between">
-          <StyledText className='' style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
-            {question} 
-          </StyledText>
-          {tips && tips.length > 0 && (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={22} style={{ color: myTheme['color-success-700'], top: 2}} />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        <StyledLayout className="flex-wrap flex-row justify-center mt-3 mb-3">
+      <StyledLayout className="flex-wrap flex-row justify-center mt-2">
         {choices ? (
           Object.entries(choices).map(([key, { text, value, example, choices_tip }]) => (
             <RadioChoices
@@ -61,18 +83,26 @@ const RadioTemplate: FC<TemplateProps> = ({
             />
           ))
         ) : (
-          <Text>Loading...</Text>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              color: myTheme['color-basic-600']
+            }}
+          >
+            Loading...
+          </StyledText>
         )}
       </StyledLayout>
         
-        {tips && tips.length > 0 && (
-          <TipsModal
-            visible={isModalVisible}
-            onClose={() => setModalVisible(false)}
-            tips={tips}
-          />
-        )}
-      </QuestionContainer>
+      {tips && tips.length > 0 && (
+        <TipsModal
+          visible={isModalVisible}
+          onClose={() => setModalVisible(false)}
+          tips={tips}
+        />
+      )}
+    </QuestionContainer>
   );
 };
 

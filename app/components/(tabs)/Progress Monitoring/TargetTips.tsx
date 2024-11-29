@@ -18,133 +18,94 @@ const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
   ];
 
   return (
-    <Modal 
-      visible={visible}
+    <Modal
       animationType="fade"
-      backdropStyle={{
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-      }}
+      visible={visible}
     >
-      <StyledLayout
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'transparent',
-          padding: 20,
-        }}
-      >
-        <View style={{
-          backgroundColor: 'white',
-          borderRadius: 20,
-          width: '85%',
-          maxWidth: 320,
-          elevation: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          overflow: 'hidden',
-          justifyContent: 'center',
-        }}>
-          {/* Header */}
-          <View 
-            style={{
-              backgroundColor: myTheme['color-success-transparent-100'],
-              padding: 10,
-              paddingTop: 15,
-              borderBottomWidth: 1,
-              borderBottomColor: `${myTheme['color-success-200']}50`,
+      <View className="flex-1 justify-center items-center">
+        <View 
+          className="w-4/5 rounded-3xl p-6"
+          style={{ 
+            backgroundColor: 'white',
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <Text 
+            className="text-center mb-4"
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              color: myTheme['color-basic-800'],
             }}
           >
-            <Text 
-              style={{ 
-                fontFamily: 'Poppins-SemiBold', 
-                fontSize: 15,
-                color: myTheme['color-success-700'],
-                textAlign: 'center',
+            Setting Your Carbon Goal 🎯
+          </Text>
+
+          {tips.map((tip, index) => (
+            <View 
+              key={index} 
+              className="mb-4 p-4 rounded-xl"
+              style={{
+                backgroundColor: myTheme['color-success-transparent-100'],
               }}
             >
-              Setting Your Carbon Goal 🎯
-            </Text>
-          </View>
-
-          {/* Content */}
-          <View style={{ padding: 18 }}>
-            {tips.map((tip, index) => (
-              <View 
-                key={index} 
-                style={{
-                  backgroundColor: myTheme['color-success-transparent-100'],
-                  padding: 14,
-                  borderRadius: 12,
+              <Text 
+                className="text-justify"
+                style={{ 
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 14,
+                  lineHeight: 20,
+                  color: myTheme['color-basic-800'],
                 }}
               >
-                <Text 
-                  style={{ 
-                    fontFamily: 'Poppins-Regular',
-                    fontSize: 13,
-                    color: myTheme['color-basic-800'],
-                    lineHeight: 18,
-                    textAlign: 'justify',
-                    paddingHorizontal: 5,      
-                  }}
-                >
-                  {tip}
+                {tip}
+              </Text>
+
+              <TouchableOpacity
+                className="mt-3 pt-3 items-center"
+                style={{
+                  borderTopWidth: 1,
+                  borderTopColor: `${myTheme['color-success-200']}30`,
+                }}
+                onPress={() => {
+                  onClose();
+                  router.push("/components/(tabs)/Eco Articles/GoalSetting");
+                }}
+              >
+                <Text style={{ 
+                  fontFamily: 'Poppins-Medium',
+                  fontSize: 14,
+                  color: myTheme['color-success-700'],
+                  textDecorationLine: 'underline',
+                }}>
+                  Learn more
                 </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
 
-                {/* Learn More Link */}
-                <View 
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 5,
-                    paddingTop: 8,
-                    borderTopWidth: 1,
-                    borderTopColor: `${myTheme['color-success-200']}30`,
-                  }}
-                >
-                  <Text
-                    onPress={() => {
-                      onClose();
-                      router.push("/components/(tabs)/Eco Articles/GoalSetting");
-                    }}
-                    style={{ 
-                      fontFamily: 'Poppins-Medium',
-                      fontSize: 12,
-                      color: myTheme['color-success-700'],
-                      textDecorationLine: 'underline',
-                    }}
-                  >
-                    Learn more
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          {/* Footer */}
           <TouchableOpacity
-            onPress={onClose}
-            style={{
-              borderRadius: 10,
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              paddingBottom: 20
+            className="py-2 rounded-full items-center justify-center border"
+            style={{ 
+              borderColor: myTheme['color-basic-400'],
+              backgroundColor: 'transparent'
             }}
+            onPress={onClose}
           >
             <Text style={{
               fontFamily: 'Poppins-SemiBold',
-              fontSize: 16,
-              color: myTheme['color-success-800'],
+              fontSize: 14,
+              color: myTheme['color-basic-600'],
             }}>
               Got it!
             </Text>
           </TouchableOpacity>
         </View>
-      </StyledLayout>
+      </View>
     </Modal>
   );
 };

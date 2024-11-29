@@ -10,6 +10,7 @@ const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 export const CreatePost = (): React.ReactElement => {
   const [value, setValue] = useState('');
@@ -68,6 +69,12 @@ export const CreatePost = (): React.ReactElement => {
           value={value}
           onChangeText={setValue}
           multiline={true}
+          textStyle={{ 
+            fontFamily: 'Poppins-Regular',
+            fontSize: 13,
+            top: 2
+          }}
+          style={{ fontFamily: 'Poppins-Regular' }}
         />
       </StyledLayout>
 
@@ -79,14 +86,24 @@ export const CreatePost = (): React.ReactElement => {
         </StyledLayout>
         
         <StyledButton
-          className="ml-1 rounded-full"
+          className="ml-1 rounded-full px-4 py-0"
           status="success"
           size="small"
           appearance="filled"
           disabled={value.length === 0 || loading}
           onPress={handlePostSubmit}
         >
-          {loading ? 'Posting...' : 'Post'}
+          {evaProps => (
+            <Text 
+              style={{ 
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                color: 'white'
+              }}
+            >
+              {loading ? 'Posting...' : 'Post'}
+            </Text>
+          )}
         </StyledButton>
       </StyledLayout>
 
@@ -96,7 +113,15 @@ export const CreatePost = (): React.ReactElement => {
         onBackdropPress={() => setSuccess(false)}
       >
         <Card disabled={true}>
-          <Text>Post successfully added! 🎉</Text>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              textAlign: 'center'
+            }}
+          >
+            Post successfully added! 🎉
+          </StyledText>
         </Card>
       </Modal>
     </StyledCard>

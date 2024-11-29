@@ -17,7 +17,7 @@ interface MessageFeedProps {
 
 const MessageFeed: React.FC<MessageFeedProps> = ({ messages }) => {
   return (
-    <View className="mt-10 flex-1">
+    <View className="mt-12 flex-1">
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}

@@ -282,7 +282,7 @@ const ProgressReport = () => {
         style={{ backgroundColor: myTheme["color-success-700"] }}
       >
         <StyledText
-          className="text-white text-3xl"
+          className="text-white text-2xl"
           style={{ fontFamily: "Poppins-SemiBold" }}
         >
           Progress

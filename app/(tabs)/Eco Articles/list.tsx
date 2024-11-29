@@ -216,7 +216,7 @@ const EcoActionsList = () => {
           </StyledLayout>
         ) : (
           <FlatList
-            className="mt-2 max-h-screen"
+            className="mt-2"
             data={ecoActions}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}

@@ -24,6 +24,11 @@ const SearchAndButtons: React.FC<SearchAndButtonsProps> = ({ onSearch, selectedB
         placeholder="Search"
         className="flex-1 rounded-full"
         onChangeText={onSearch}
+        textStyle={{ 
+          fontFamily: 'Poppins-Regular',
+          fontSize: 12,
+          top: 2
+        }}
         accessoryLeft={() => (
           <Ionicons name="search-outline" size={20} color="#1BD67C" />
         )}

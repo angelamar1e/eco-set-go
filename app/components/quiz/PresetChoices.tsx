@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, Pressable, ViewStyle } from 'react-native';
+import { Text, Pressable, ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '@ui-kitten/components';
 
 interface PresetChoicesProps {
@@ -15,21 +15,21 @@ export const PresetChoices: FC<PresetChoicesProps> = ({ title, isSelected, onPre
     ? {
         marginVertical: 4,
         marginHorizontal: 4,
-        paddingVertical: 8,
-        paddingHorizontal: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 20,
         height: 'auto',
         borderRadius: 20,
         borderWidth: 2,
         borderColor: theme['color-success-700'], 
         backgroundColor: theme['color-success-900'], 
         justifyContent: 'center', 
-        alignItems: 'center',   
+        alignItems: 'center',  
       }
     : {
         marginVertical: 4,
         marginHorizontal: 4,
-        paddingVertical: 8,
-        paddingHorizontal: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 20,
         height: 'auto',
         borderRadius: 20,
         backgroundColor: theme['color-success-700'], 
@@ -37,9 +37,11 @@ export const PresetChoices: FC<PresetChoicesProps> = ({ title, isSelected, onPre
         alignItems: 'center',  
       };
 
-  const textStyle = {
+  const textStyle: TextStyle = {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
     color: theme['color-basic-100'],
-    textAlign: 'center' as const,
+    top: 2,
   };
 
   return (
