@@ -7,7 +7,6 @@ import { myTheme } from '@/constants/custom-theme';
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
-
 interface CongratulationsModalProps {
   visible: boolean;
   onClose: () => void;
@@ -63,7 +62,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
               color: myTheme['color-basic-600']
             }}
           >
-            You've successfully reduced your carbon emissions 
+            You’ve successfully reduced your carbon emissions
           </StyledText>
           
           <StyledText 
@@ -75,7 +74,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
               lineHeight: 20
             }}
           >
-            Ready to set another goal?{"\n"}Let's keep up the great work! 🌱💚
+            Let’s keep up the great work!
           </StyledText>
 
           <TouchableOpacity 
