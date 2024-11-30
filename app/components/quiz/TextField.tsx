@@ -18,6 +18,7 @@ export const TextField: FC<TextFieldProps> = ({ unit, value, onChangeText, onBlu
         onChangeText={onChangeText}
         onBlur={onBlur}
         onPressOut={onBlur}
+        keyboardType='numeric'
         style={{ borderRadius: 10, width: '40%', marginRight: 10 }} 
         textStyle={{ minHeight: 40, fontFamily: 'Poppins-Regular', fontSize: 14 }}
       />

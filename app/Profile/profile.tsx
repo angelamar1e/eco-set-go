@@ -56,7 +56,7 @@ interface EmissionsData {
 
 const UserProfile = () => {
     const router = useRouter();
-    const { username, userUid, joinDate, initialFootprint } = useUserContext();
+    const { username, userUid, joinDate, initialFootprint, points: userPoints, level: userLevel } = useUserContext();
     const {
         foodFootprint,
         transportationFootprint,
@@ -64,8 +64,6 @@ const UserProfile = () => {
         emissionsData
     } = useContext(EmissionsContext);
 
-    const [points, setPoints] = useState<string>("0");
-    const [level, setLevel] = useState<string>("1");
     const initials = getInitials(username);
     const [avatarColor, setAvatarColor] = useState(getRandomColor());
 
@@ -180,7 +178,7 @@ const UserProfile = () => {
                                     fontSize: 18,
                                     color: myTheme['color-success-700']
                                 }}>
-                                    {points}
+                                    {userPoints}
                                 </StyledText>
                                 <StyledText style={{ 
                                     fontFamily: 'Poppins-Regular',
@@ -212,7 +210,7 @@ const UserProfile = () => {
                                     fontSize: 18,
                                     color: myTheme['color-success-700']
                                 }}>
-                                    {level}
+                                    {userLevel || 1}
                                 </StyledText>
                                 <StyledText style={{ 
                                     fontFamily: 'Poppins-Regular',

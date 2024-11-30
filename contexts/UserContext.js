@@ -22,6 +22,7 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [joinDate, setJoinDate] = useState("");
   const [profileCreated, setProfileCreated] = useState(true);
+  const [level, setLevel] = useState(1);
 
   const fetchUserDetails = (uid) => {
     setLoading(true);
@@ -41,6 +42,7 @@ export const UserProvider = ({ children }) => {
                 points = 0,
                 redeemablePoints = 0,
                 notificationPreferences = "",
+                level = 1,
               } = doc.data();
 
               setName(name);
@@ -49,6 +51,7 @@ export const UserProvider = ({ children }) => {
               setUsername(username);
               setPoints(points);
               setRedeemablePoints(redeemablePoints);
+              setLevel(level);
 
               if (created_at) {
                 const parsedDate = moment(
@@ -180,6 +183,7 @@ export const UserProvider = ({ children }) => {
         initialFootprint,
         setLoading,
         joinDate,
+        level,
       }}
     >
       {children}
