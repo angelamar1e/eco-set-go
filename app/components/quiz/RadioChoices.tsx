@@ -13,7 +13,7 @@ interface ChoicesProps {
 }
 
 export const RadioChoices: FC<ChoicesProps> = ({ title, example, choices_tip, isSelected, onPress }) => {
-  const [isTipVisible, setTipVisible] = useState(false); // State to toggle tip visibility
+  const [isTipVisible, setTipVisible] = useState(false);
 
   const cardStyle = {
     marginVertical: 4,
@@ -26,16 +26,21 @@ export const RadioChoices: FC<ChoicesProps> = ({ title, example, choices_tip, is
   };
 
   const titleTextStyle = {
-    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+    color: myTheme['color-basic-800'],
   };
 
   const exampleTextStyle = {
-    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
     color: myTheme['color-basic-600'],
   };
 
   const tipTextStyle = {
-    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    lineHeight: 18,
     color: myTheme['color-basic-700'],
   };
 
@@ -57,17 +62,33 @@ export const RadioChoices: FC<ChoicesProps> = ({ title, example, choices_tip, is
       <View style={titleRowStyle}>
         <Text style={titleTextStyle}>{title}</Text>
         {choices_tip && (
-          <Pressable onPress={() => setTipVisible(!isTipVisible)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FontAwesome6 name="question-circle" size={16} color={myTheme['color-success-700']} />
+          <Pressable 
+            onPress={() => setTipVisible(!isTipVisible)} 
+            style={{ 
+              flexDirection: 'row', 
+              alignItems: 'center',
+            }}
+          >
+            <FontAwesome6 
+              name="question-circle" 
+              size={16} 
+              color={myTheme['color-success-700']} 
+            />
           </Pressable>
         )}
       </View>
 
-      {example && <Text style={exampleTextStyle}>{example}</Text>}
+      {example && (
+        <Text style={exampleTextStyle}>
+          {example}
+        </Text>
+      )}
 
       {isTipVisible && choices_tip && (
         <View style={tipCardStyle}>
-          <Text style={tipTextStyle}>{choices_tip}</Text>
+          <Text style={tipTextStyle}>
+            {choices_tip}
+          </Text>
         </View>
       )}
     </Pressable>

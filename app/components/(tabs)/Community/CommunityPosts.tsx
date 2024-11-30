@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ScrollView, Text } from 'react-native';
+import { View, FlatList, ScrollView } from 'react-native';
+import { styled } from 'nativewind';
+import { Text } from '@ui-kitten/components';
 import PostCard from './PostCard';
 import { CreatePost } from './CreatePost';
 import EcoNewsCard from './EcoNewsCard';
 import firestore, { Timestamp } from '@react-native-firebase/firestore';
 import { handleEditPost, handleDeletePost } from '@/app/utils/communityUtils';
+
+const StyledText = styled(Text);
 
 interface Post {
   id: string;
@@ -105,7 +109,16 @@ const CommunityPosts: React.FC = () => {
                 />
               ))
             ) : (
-              <Text>No eco news available.</Text>
+              <StyledText 
+                style={{ 
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 14,
+                  textAlign: 'center',
+                  padding: 16
+                }}
+              >
+                No eco news available.
+              </StyledText>
             )}
           </ScrollView>
         </>

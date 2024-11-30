@@ -8,6 +8,8 @@ import { Modal, View, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Text, Button } from "react-native-paper";
 
+const StyledText = styled(Text);
+const StyledLayout = styled(Layout);
 interface CongratulationsModalProps {
   visible: boolean;
   onClose: () => void;

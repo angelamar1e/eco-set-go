@@ -19,9 +19,9 @@ export const TextField: FC<TextFieldProps> = ({ unit, value, onChangeText, onBlu
         onBlur={onBlur}
         onPressOut={onBlur}
         style={{ borderRadius: 10, width: '40%', marginRight: 10 }} 
-        textStyle={{ minHeight: 40 }}
+        textStyle={{ minHeight: 40, fontFamily: 'Poppins-Regular', fontSize: 14 }}
       />
-      <Text style={{ fontFamily: 'Poppins-Regular'}}>{unit}</Text>
+      <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13}}>{unit}</Text>
     </View>
   );
 };

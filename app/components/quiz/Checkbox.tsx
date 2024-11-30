@@ -35,12 +35,22 @@ const CheckboxChoices: FC<CheckboxProps> = ({ title, example, isChecked, onPress
         color={isChecked ? theme['color-primary-500'] : theme['color-basic-600']}
       />
       <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text style={{ fontSize: 16, }}>{title}</Text>
+        <Text 
+          style={{ 
+            fontFamily: 'Poppins-Medium',
+            fontSize: 15,
+            color: myTheme['color-basic-800'],
+            top: 2
+          }}
+        >
+          {title}
+        </Text>
 
         {example && (
           <Text
             style={{
-              fontSize: 14,
+              fontFamily: 'Poppins-Regular',
+              fontSize: 12,
               color: theme['color-basic-600'],
             }}
           >

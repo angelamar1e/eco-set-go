@@ -1,6 +1,6 @@
 import { myTheme } from '@/constants/custom-theme';
 import { Ionicons } from '@expo/vector-icons';
-import { Layout, Modal, Button } from '@ui-kitten/components';
+import { Layout, Modal, Button, Text as KittenText } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -12,49 +12,86 @@ interface TipsProps {
 }
 
 const StyledLayout = styled(Layout);
+const StyledText = styled(KittenText);
 
 const TipsModal: React.FC<TipsProps> = ({ visible, onClose, tips }) => {
   return (
     <Modal
+      animationType="fade"
       visible={visible}
-     >
-      <StyledLayout
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'transparent',
-        }}
-      >
-        <View style={{
-          width: '90%',
-          padding: 20,
-          backgroundColor: 'white',
-          borderRadius: 10,
-          elevation: 1,
-        }}>
-          <Text className="text-xl text-center" style={{ fontFamily: 'Poppins-Bold', color: myTheme['color-success-700'] }}>Tips 💡</Text>
-          {Array.isArray(tips) ? (
-            tips.map((tip, index) => (
-              <Text key={index} className='text-justify' style={{ marginTop: 10 }}>{tip}</Text>
-            ))
-          ) : (
-            <Text className="text-justify" style={{ marginTop: 10 }}>{tips}</Text>
-          )}
-          <Button 
-            onPress={onClose}
-            appearance='ghost' 
+    >
+      <View className="flex-1 justify-center items-center">
+        <View 
+          className="w-4/5 rounded-3xl p-6"
+          style={{ 
+            backgroundColor: 'white',
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <StyledText 
+            className="text-center mb-4"
             style={{ 
-              alignSelf: 'center',
-              borderColor: myTheme['color-success-700'],
-              borderRadius: 30,
-              marginTop: 10
+              fontFamily: 'Poppins-Bold',
+              fontSize: 20,
+              color: myTheme['color-success-800']
             }}
           >
-            Close
-          </Button>
+            Tips 💡
+          </StyledText>
+          
+          {Array.isArray(tips) ? (
+            tips.map((tip, index) => (
+              <StyledText 
+                key={index} 
+                className="text-justify mb-3" 
+                style={{ 
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 14,
+                  lineHeight: 20,
+                  color: myTheme['color-basic-600']
+                }}
+              >
+                {tip}
+              </StyledText>
+            ))
+          ) : (
+            <StyledText 
+              className="text-justify mb-3" 
+              style={{ 
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14,
+                lineHeight: 20,
+                color: myTheme['color-basic-600']
+              }}
+            >
+              {tips}
+            </StyledText>
+          )}
+          
+          <TouchableOpacity 
+            className="py-2 rounded-full items-center justify-center border mt-2"
+            style={{ 
+              borderColor: myTheme['color-basic-400'],
+              backgroundColor: 'transparent'
+            }}
+            onPress={onClose}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 14,
+                color: myTheme['color-basic-600']
+              }}
+            >
+              Close
+            </StyledText>
+          </TouchableOpacity>
         </View>
-      </StyledLayout>
+      </View>
     </Modal>
   );
 };

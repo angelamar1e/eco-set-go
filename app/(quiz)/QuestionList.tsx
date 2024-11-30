@@ -63,7 +63,7 @@ const QuestionList = () => {
   );
 
   return (
-    <StyledLayout className="flex-1 p-4">
+    <StyledLayout className="flex-1 px-4 pt-1">
       <FlatList
         data={questions}
         renderItem={renderItem}

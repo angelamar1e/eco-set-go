@@ -10,6 +10,7 @@ const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 export const CreateListing = (): React.ReactElement => {
   const [description, setDescription] = useState('');
@@ -66,6 +67,11 @@ export const CreateListing = (): React.ReactElement => {
         value={description}
         onChangeText={setDescription}
         multiline={true}
+        textStyle={{ 
+          fontFamily: 'Poppins-Regular',
+          fontSize: 13,
+          top: 2
+        }}
       />
       <StyledInput
         className="mt-2 mb-2 rounded-lg"
@@ -73,20 +79,35 @@ export const CreateListing = (): React.ReactElement => {
         value={price}
         keyboardType="numeric"
         onChangeText={setPrice}
+        textStyle={{ 
+          fontFamily: 'Poppins-Regular',
+          fontSize: 13,
+          top: 2
+        }}
       />
       <StyledLayout className="flex-row justify-between">
         <Pressable onPress={() => console.log('Attach image')}>
           <Ionicons size={22} name="image-outline" color="#34C759" />
         </Pressable>
         <StyledButton
-          className="ml-1 rounded-full"
+          className="ml-1 rounded-full px-4 py-0"
           status="success"
           size="small"
           appearance="filled"
           disabled={!description || !price || loading}
           onPress={handleListingSubmit}
         >
-          {loading ? 'Listing...' : 'List'}
+          {evaProps => (
+            <Text 
+              style={{ 
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                color: 'white'
+              }}
+            >
+              {loading ? 'Listing...' : 'List'}
+            </Text>
+          )}
         </StyledButton>
       </StyledLayout>
 
@@ -96,7 +117,14 @@ export const CreateListing = (): React.ReactElement => {
         onBackdropPress={() => setSuccess(false)}
       >
         <Card disabled={true}>
-          <Text>Listing successfully added! 🎉</Text>
+        <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              textAlign: 'center'
+            }}
+          >Listing successfully added! 🎉
+        </StyledText>
         </Card>
       </Modal>
     </StyledCard>

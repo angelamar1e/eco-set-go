@@ -11,6 +11,7 @@ const StyledButton = styled(Button);
 const StyledInput = styled(Input);
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
+const StyledText = styled(Text);
 
 export const CreatePost = (): React.ReactElement => {
   const [value, setValue] = useState('');
@@ -98,7 +99,15 @@ export const CreatePost = (): React.ReactElement => {
         onBackdropPress={() => setSuccess(false)}
       >
         <Card disabled={true}>
-          <Text>Post successfully added! 🎉</Text>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              textAlign: 'center'
+            }}
+          >
+            Post successfully added! 🎉
+          </StyledText>
         </Card>
       </Modal>
     </StyledCard>
