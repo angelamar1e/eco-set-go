@@ -2,7 +2,9 @@
 import { myTheme } from "@/constants/custom-theme";
 import { useUserGoalContext } from "@/contexts/UserGoalContext";
 import { Timestamp } from "@react-native-firebase/firestore";
+import { Layout } from "@ui-kitten/components";
 import { differenceInDays } from "date-fns";
+import { styled } from "nativewind";
 import React from "react";
 import { Modal, View, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native";
@@ -69,7 +71,8 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             shadowOpacity: 0.3,
             shadowRadius: 8,
             overflow: "hidden",
-            justifyContent: "top",
+            justifyContent: "flex-start",
+            //justifyContent: "top",
             minHeight: 270,
           }}
         >
