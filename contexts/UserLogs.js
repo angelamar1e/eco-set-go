@@ -137,9 +137,12 @@ export const UserLogsProvider = ({ children }) => {
   };
 
   const setChartData = (selectedImpacts) => {
-    const limitedEntries = Object.entries(selectedImpacts)
-      .sort((a, b) => new Date(a[0]) - new Date(b[0]))
-      .slice(-5);
+    // Sort entries by date in ascending order
+  const sortedEntries = Object.entries(selectedImpacts).sort(
+    ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
+  );
+
+  const limitedEntries = sortedEntries.slice(-5);
 
     const limitedLabels = limitedEntries.map(([label]) => label);
 
