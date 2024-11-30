@@ -4,9 +4,9 @@ import { Layout, Input, Button, Text } from "@ui-kitten/components";
 import { useRouter } from "expo-router";
 import firestore from '@react-native-firebase/firestore';
 import { useUserContext } from "@/contexts/UserContext";
-import { SafeAreaView } from "react-native";
+import { Alert, SafeAreaView } from "react-native";
 import { myTheme } from "@/constants/custom-theme";
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -37,7 +37,7 @@ const UpdateEmail = () => {
 
   const handleUpdate = async () => {
     if (!newEmail) {
-      setError("Please enter a new email");
+      Alert.alert("⚠️","Please enter a valid email address.")
       return;
     }
 
@@ -48,8 +48,9 @@ const UpdateEmail = () => {
       const user = auth().currentUser;
       if (!user) throw new Error('No user logged in');
       
-      await user.verifyBeforeUpdateEmail(newEmail);
-      setError("Please check your new email for verification link before the change takes effect");
+      Alert.alert("👩‍💻", "Sorry, this feature is still in development.")
+      // await user.verifyBeforeUpdateEmail(newEmail);
+      // setError("Please check your new email for verification link before the change takes effect");
       
       setNewEmail("");
     } catch (error: any) {
