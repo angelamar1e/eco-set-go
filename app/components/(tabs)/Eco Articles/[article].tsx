@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Button, Snackbar } from "react-native-paper";
 import firestore from "@react-native-firebase/firestore";
-import { useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import storage from "@react-native-firebase/storage";
 import { styled } from "nativewind";
 import { Text, Layout } from "@ui-kitten/components";
@@ -22,6 +22,7 @@ import { EcoAction } from "@/types/EcoAction";
 import { ArticleInfo } from "@/types/ArticleInfo";
 import { myTheme } from "@/constants/custom-theme";
 import { Points } from "@/constants/Points";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
@@ -29,7 +30,25 @@ const { height: screenHeight } = Dimensions.get("window");
 
 const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
 
-const recipes = {
+// Define the type for recipe categories
+type RecipeCategory =
+  | "beef"
+  | "pork"
+  | "chicken"
+  | "fish"
+  | "vegetarian"
+  | "vegan";
+
+// Define the recipes object with the correct type
+const recipes: Record<
+  RecipeCategory,
+  { icon: string; title: string; link: string }
+> = {
+  beef: {
+    icon: "🥩",
+    title: "Beef",
+    link: "",
+  },
   pork: {
     icon: "🥩",
     title: "Pork Recipes | Panlasang Pinoy",
@@ -55,6 +74,16 @@ const recipes = {
     title: "15 Vegan Versions of Classic Filipino Dishes | PETA",
     link: "https://www.peta.org/living/food/vegan-filipino-recipes/",
   },
+};
+
+// Define carbon emissions with the same type
+const carbonEmissionsRank: Record<RecipeCategory, number> = {
+  beef: 6,
+  pork: 5,
+  chicken: 4,
+  fish: 3,
+  vegetarian: 2,
+  vegan: 1,
 };
 
 const openLink = (url: string) => {
@@ -183,7 +212,7 @@ const EcoActionDetail = () => {
       <BackButton />
       {image && (
         <Image
-        className="mt-4"
+          className="mt-4"
           source={{ uri: image }}
           style={{
             width: "90%",
@@ -205,6 +234,7 @@ const EcoActionDetail = () => {
         >
           {actionDetail?.title}
         </StyledText>
+        {!(actionDetail?.category === 'QC Initiatives') && (
         <StyledLayout className="flex-row justify-between m-2">
           <Button
             icon="star"
@@ -234,9 +264,27 @@ const EcoActionDetail = () => {
             </StyledText>
           </Button>
         </StyledLayout>
+        )}
+        {actionDetail?.category === "QC Initiatives" && <QCPlug />}
       </StyledLayout>
     </StyledLayout>
   );
+
+  const QCPlug = () => {
+    return (
+    <>
+      <StyledText className="text-start w-80 text-sm p-2 text-gray-600">Visit their page for schedules and details ✨</StyledText>
+      <Link href={"https://web.facebook.com/qc.climatechangedepartment"} className="rounded-2xl p-3 mb-3" style={{backgroundColor: myTheme["color-info-500"]}}>
+        <StyledLayout className="px-1 bg-transparent justify-end">
+        <MaterialCommunityIcons name="facebook" size={20} color={"white"}/> 
+        </StyledLayout>
+        <StyledText className="text-[17px] leading-6 text-white border underline font-bold">
+          Quezon City Climate Change and Environmental Sustainability Department
+        </StyledText>
+      </Link>
+      </>
+    );
+  };
 
   const SectionHeader = ({ title }: { title: string }) => (
     <StyledLayout className="ml-2">
@@ -335,21 +383,27 @@ const EcoActionDetail = () => {
                 </StyledText>
                 {Object.entries(recipes)
                   .filter(([key, recipe]) => {
-                    // Split the article title into words
                     const articleWords = actionDetail!.title
                       .toLowerCase()
                       .split(/[\s-]+/);
 
-                    // Check if any of the article words are in the recipe title
-                    const hasMatch = articleWords!.some((word) =>
-                      recipe.title
-                        .toLowerCase()
-                        .split(/[\s-]+/)
-                        .includes(word)
-                    );
+                    // Ensure the key is a valid category
+                    const matchedCategory = Object.keys(recipes).find(
+                      (category) =>
+                        articleWords.some((word) =>
+                          category.toLowerCase().includes(word)
+                        )
+                    ) as RecipeCategory | undefined;
 
-                    // Only show recipes whose title does not have any words from the article title
-                    return !hasMatch;
+                    if (!matchedCategory) return false; // No match found
+
+                    // Compare carbon emissions
+                    const matchedCategoryEmissions =
+                      carbonEmissionsRank[matchedCategory];
+                    return (
+                      carbonEmissionsRank[key as RecipeCategory] <
+                      matchedCategoryEmissions
+                    );
                   })
                   .map(([key, recipe]) => (
                     <TouchableOpacity

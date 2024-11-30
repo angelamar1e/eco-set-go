@@ -92,7 +92,7 @@ export default function LandingPage() {
         setShowQuizModal(true);
       }
     };
-
+    
     initialize();
     checkModalStatus();
   }, []);
