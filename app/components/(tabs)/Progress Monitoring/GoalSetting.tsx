@@ -98,7 +98,7 @@ const GoalSetting: React.FC = () => {
               </View>
             </>
           ) : (
-            <View className="flex-row flex-wrap mb-4 justify-between">
+            <View className="flex-row flex-wrap mb-1 justify-between">
             <View className="basis-1/2">
               <StyledText category="label" className="mb-1" style={{ color: myTheme['color-basic-600'], fontFamily: 'Poppins-Medium'}}>Start Date</StyledText>
               <TouchableOpacity

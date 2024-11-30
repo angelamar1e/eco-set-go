@@ -11,7 +11,6 @@ import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";
 import storage from '@react-native-firebase/storage';
 import { useLoadFonts } from '@/assets/fonts/loadFonts';
-import { ActivityIndicator } from 'react-native-paper';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -48,7 +47,7 @@ const EcoActionsList = () => {
         })
       );
 
-      setEcoActions(data);
+      setEcoActions(data as EcoAction[]);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching eco actions: ", error);
@@ -152,11 +151,11 @@ const EcoActionsList = () => {
         </StyledLayout>
         ) : (
           <FlatList
-          className="mt-2 max-h-screen"
-          data={ecoActions}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+            className="mt-2"
+            data={ecoActions}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
         )}
       </StyledLayout>
     </StyledLayout>

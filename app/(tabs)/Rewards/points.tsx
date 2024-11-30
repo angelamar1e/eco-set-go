@@ -78,7 +78,7 @@ const EcoPoints = () => {
       <StyledLayout className='h-1/6 rounded-b-2xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}
           >
-            <StyledText className="text-white text-3xl" 
+            <StyledText className="text-white text-2xl" 
             style={{ fontFamily: 'Poppins-SemiBold'}}
             >
               Eco Rewards
