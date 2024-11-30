@@ -23,6 +23,11 @@ import { ArticleInfo } from "@/types/ArticleInfo";
 import { myTheme } from "@/constants/custom-theme";
 import { Points } from "@/constants/Points";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  GoalGuidelines,
+  Introduction,
+} from "@/constants/GettingStartedArticles";
+import { act } from "react-test-renderer";
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
@@ -234,36 +239,36 @@ const EcoActionDetail = () => {
         >
           {actionDetail?.title}
         </StyledText>
-        {!(actionDetail?.category === 'QC Initiatives') && (
-        <StyledLayout className="flex-row justify-between m-2">
-          <Button
-            icon="star"
-            mode="contained"
-            className="w-30 mx-1"
-            style={{ backgroundColor: myTheme["color-success-700"] }}
-          >
-            {actionId in Points[100] ? (
+        {!["QC Initiatives", "Getting Started"].includes(actionDetail!.category) && (
+          <StyledLayout className="flex-row justify-between m-2">
+            <Button
+              icon="star"
+              mode="contained"
+              className="w-30 mx-1"
+              style={{ backgroundColor: myTheme["color-success-700"] }}
+            >
+              {actionId in Points[100] ? (
+                <StyledText className="text-white font-bold">
+                  100 Points
+                </StyledText>
+              ) : (
+                <StyledText className="text-white font-bold">
+                  200 Points
+                </StyledText>
+              )}
+            </Button>
+            <Button
+              icon="note-plus"
+              mode="contained"
+              className="w-52 mx-1"
+              onPress={handleAddToLog}
+              style={{ backgroundColor: myTheme["color-success-700"] }}
+            >
               <StyledText className="text-white font-bold">
-                100 Points
+                Add to Daily Log
               </StyledText>
-            ) : (
-              <StyledText className="text-white font-bold">
-                200 Points
-              </StyledText>
-            )}
-          </Button>
-          <Button
-            icon="note-plus"
-            mode="contained"
-            className="w-52 mx-1"
-            onPress={handleAddToLog}
-            style={{ backgroundColor: myTheme["color-success-700"] }}
-          >
-            <StyledText className="text-white font-bold">
-              Add to Daily Log
-            </StyledText>
-          </Button>
-        </StyledLayout>
+            </Button>
+          </StyledLayout>
         )}
         {actionDetail?.category === "QC Initiatives" && <QCPlug />}
       </StyledLayout>
@@ -272,16 +277,23 @@ const EcoActionDetail = () => {
 
   const QCPlug = () => {
     return (
-    <>
-      <StyledText className="text-start w-80 text-sm p-2 text-gray-600">Visit their page for schedules and details ✨</StyledText>
-      <Link href={"https://web.facebook.com/qc.climatechangedepartment"} className="rounded-2xl p-3 mb-3" style={{backgroundColor: myTheme["color-info-500"]}}>
-        <StyledLayout className="px-1 bg-transparent justify-end">
-        <MaterialCommunityIcons name="facebook" size={20} color={"white"}/> 
-        </StyledLayout>
-        <StyledText className="text-[17px] leading-6 text-white border underline font-bold">
-          Quezon City Climate Change and Environmental Sustainability Department
+      <>
+        <StyledText className="text-start w-80 text-sm p-2 text-gray-600">
+          Visit their page for schedules and details ✨
         </StyledText>
-      </Link>
+        <Link
+          href={"https://web.facebook.com/qc.climatechangedepartment"}
+          className="rounded-2xl p-3 mb-3"
+          style={{ backgroundColor: myTheme["color-info-500"] }}
+        >
+          <StyledLayout className="px-1 bg-transparent justify-end">
+            <MaterialCommunityIcons name="facebook" size={20} color={"white"} />
+          </StyledLayout>
+          <StyledText className="text-[17px] leading-6 text-white border underline font-bold">
+            Quezon City Climate Change and Environmental Sustainability
+            Department
+          </StyledText>
+        </Link>
       </>
     );
   };
@@ -311,128 +323,154 @@ const EcoActionDetail = () => {
       >
         ✅ Added to your Daily Log
       </Snackbar>
-      <FlatList
-        className="max-h-screen p-3"
-        // style={{maxHeight: vh(97)}}
-        data={[
-          { type: "Facts", data: facts, emoji: "🌏" },
-          { type: "Benefits", data: benefits, emoji: "💡" },
-          { type: "Instructions", data: instructions, emoji: "📝" },
-        ]}
-        keyExtractor={(item) => item.type}
-        ListHeaderComponent={ListHeader}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <StyledLayout>
-            {/* Section Header */}
-            <SectionHeader title={item.type} />
-            {/* Display the items in the current section */}
-            {item.data.map((contentItem) => (
-              <StyledLayout
-                key={contentItem.id}
-                className={`flex-row items-start p-3 m-2 rounded-md shadow-lg ${borderColor}`}
-                style={{ backgroundColor: myTheme["color-success-100"] }}
-              >
-                <StyledText category="h5" className="" style={{ zIndex: 40 }}>
-                  {item.emoji}
-                </StyledText>
+      {actionDetail?.category === "Getting Started" ? (
+        <FlatList
+          data={actionDetail.title === "🌏 Your Carbon Game Plan" ? [{data: GoalGuidelines}] : [{data: Introduction}]}
+          ListHeaderComponent={ListHeader}
+          renderItem={({ item }) => (
+            <StyledLayout className="">
+              {Object.entries(item.data).map(([category, items]) => (
+                <StyledLayout key={category} className="mx-3 my-2 p-4 rounded-2xl" style={{backgroundColor: myTheme['color-success-transparent-100']}}>
+                  <StyledText className="rounded-xl my-2 p-3 text-lg"  style={{backgroundColor: myTheme['color-success-transparent-100'], color: myTheme['color-success-700'], fontFamily:"Poppins-Bold"}}>{category}</StyledText>
+                  {Object.entries(items).map(([key, value]) => (
+                    <StyledLayout key={key} className="mx-5 bg-transparent">
+                      {key.length <= 1 ? (<></>) : (<StyledText className="py-2" style={{fontFamily:"Poppins-Bold"}}>{key}</StyledText>)}
+                      <StyledText className="text-[16px] py-2" style={{color: myTheme['color-basic-700'], fontFamily:"Poppins-Medium"}}>{value}</StyledText>
+                    </StyledLayout>
+                  ))}
+                </StyledLayout>
+              ))}
+            </StyledLayout>
+          )}
+        />
+      ) : (
+        <FlatList
+          className="max-h-screen p-3"
+          // style={{maxHeight: vh(97)}}
+          data={[
+            { type: "Facts", data: facts, emoji: "🌏" },
+            { type: "Benefits", data: benefits, emoji: "💡" },
+            { type: "Instructions", data: instructions, emoji: "📝" },
+          ]}
+          keyExtractor={(item) => item.type}
+          ListHeaderComponent={ListHeader}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <StyledLayout>
+              {/* Section Header */}
+              <SectionHeader title={item.type} />
+              {/* Display the items in the current section */}
+              {item.data.map((contentItem) => (
                 <StyledLayout
-                  className="m-1 flex-shrink"
+                  key={contentItem.id}
+                  className={`flex-row items-start p-3 m-2 rounded-md shadow-lg ${borderColor}`}
                   style={{ backgroundColor: myTheme["color-success-100"] }}
                 >
-                  {contentItem.benefitTitle && (
-                    <StyledLayout
-                      className="rounded-lg p-1 mb-1 align-center"
-                      style={{ backgroundColor: myTheme["color-success-200"] }}
-                    >
-                      <StyledText
-                        className="text-white"
-                        style={{
-                          fontFamily: "Poppins-Bold",
-                          fontSize: 16,
-                          color: myTheme["color-success-800"],
-                        }}
-                      >
-                        {contentItem.benefitTitle}
-                      </StyledText>
-                    </StyledLayout>
-                  )}
-                  <StyledText
-                    className=""
-                    style={{ fontFamily: "Poppins-Medium" }}
-                  >
-                    {contentItem.content}
+                  <StyledText category="h5" className="" style={{ zIndex: 40 }}>
+                    {item.emoji}
                   </StyledText>
-                </StyledLayout>
-              </StyledLayout>
-            ))}
-
-            {(actionDetail!.title.includes("Choose a meal") ||
-              actionDetail!.title.includes("Replace a vegetarian meal")) &&
-            item.type === "Instructions" ? (
-              <StyledLayout className="h-max mb-10">
-                <StyledText
-                  className="p-3 mx-2 my-1"
-                  style={{
-                    color: myTheme["color-success-700"],
-                    fontFamily: "Poppins-Bold",
-                    fontSize: 20,
-                  }}
-                >
-                  Your next meal idea is on us—get inspired and enjoy!
-                </StyledText>
-                {Object.entries(recipes)
-                  .filter(([key, recipe]) => {
-                    const articleWords = actionDetail!.title
-                      .toLowerCase()
-                      .split(/[\s-]+/);
-
-                    // Ensure the key is a valid category
-                    const matchedCategory = Object.keys(recipes).find(
-                      (category) =>
-                        articleWords.some((word) =>
-                          category.toLowerCase().includes(word)
-                        )
-                    ) as RecipeCategory | undefined;
-
-                    if (!matchedCategory) return false; // No match found
-
-                    // Compare carbon emissions
-                    const matchedCategoryEmissions =
-                      carbonEmissionsRank[matchedCategory];
-                    return (
-                      carbonEmissionsRank[key as RecipeCategory] <
-                      matchedCategoryEmissions
-                    );
-                  })
-                  .map(([key, recipe]) => (
-                    <TouchableOpacity
-                      className="rounded-lg p-2 mx-2 my-1"
-                      onPress={() => openLink(recipe.link)}
-                      style={{ backgroundColor: myTheme["color-success-800"] }}
-                    >
-                      <StyledText
-                        className=""
-                        key={key}
+                  <StyledLayout
+                    className="m-1 flex-shrink"
+                    style={{ backgroundColor: myTheme["color-success-100"] }}
+                  >
+                    {contentItem.benefitTitle && (
+                      <StyledLayout
+                        className="rounded-lg p-1 mb-1 align-center"
                         style={{
-                          color: myTheme["color-success-100"],
-                          fontFamily: "Poppins-Regular",
-                          fontSize: 16,
+                          backgroundColor: myTheme["color-success-200"],
                         }}
                       >
-                        {recipe.title}
-                        {"  "}
-                        {recipe.icon}
-                      </StyledText>
-                    </TouchableOpacity>
-                  ))}
-              </StyledLayout>
-            ) : (
-              <></>
-            )}
-          </StyledLayout>
-        )}
-      />
+                        <StyledText
+                          className="text-white"
+                          style={{
+                            fontFamily: "Poppins-Bold",
+                            fontSize: 16,
+                            color: myTheme["color-success-800"],
+                          }}
+                        >
+                          {contentItem.benefitTitle}
+                        </StyledText>
+                      </StyledLayout>
+                    )}
+                    <StyledText
+                      className=""
+                      style={{ fontFamily: "Poppins-Medium" }}
+                    >
+                      {contentItem.content}
+                    </StyledText>
+                  </StyledLayout>
+                </StyledLayout>
+              ))}
+
+              {(actionDetail!.title.includes("Choose a meal") ||
+                actionDetail!.title.includes("Replace a vegetarian meal")) &&
+              item.type === "Instructions" ? (
+                <StyledLayout className="h-max mb-10">
+                  <StyledText
+                    className="p-3 mx-2 my-1"
+                    style={{
+                      color: myTheme["color-success-700"],
+                      fontFamily: "Poppins-Bold",
+                      fontSize: 20,
+                    }}
+                  >
+                    Your next meal idea is on us—get inspired and enjoy!
+                  </StyledText>
+                  {Object.entries(recipes)
+                    .filter(([key, recipe]) => {
+                      const articleWords = actionDetail!.title
+                        .toLowerCase()
+                        .split(/[\s-]+/);
+
+                      // Ensure the key is a valid category
+                      const matchedCategory = Object.keys(recipes).find(
+                        (category) =>
+                          articleWords.some((word) =>
+                            category.toLowerCase().includes(word)
+                          )
+                      ) as RecipeCategory | undefined;
+
+                      if (!matchedCategory) return false; // No match found
+
+                      // Compare carbon emissions
+                      const matchedCategoryEmissions =
+                        carbonEmissionsRank[matchedCategory];
+                      return (
+                        carbonEmissionsRank[key as RecipeCategory] <
+                        matchedCategoryEmissions
+                      );
+                    })
+                    .map(([key, recipe]) => (
+                      <TouchableOpacity
+                        className="rounded-lg p-2 mx-2 my-1"
+                        onPress={() => openLink(recipe.link)}
+                        style={{
+                          backgroundColor: myTheme["color-success-800"],
+                        }}
+                      >
+                        <StyledText
+                          className=""
+                          key={key}
+                          style={{
+                            color: myTheme["color-success-100"],
+                            fontFamily: "Poppins-Regular",
+                            fontSize: 16,
+                          }}
+                        >
+                          {recipe.title}
+                          {"  "}
+                          {recipe.icon}
+                        </StyledText>
+                      </TouchableOpacity>
+                    ))}
+                </StyledLayout>
+              ) : (
+                <></>
+              )}
+            </StyledLayout>
+          )}
+        />
+      )}
     </StyledLayout>
   );
 };
