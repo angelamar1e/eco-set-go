@@ -71,8 +71,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             shadowOpacity: 0.3,
             shadowRadius: 8,
             overflow: "hidden",
-            justifyContent: "flex-start",
-            //justifyContent: "top",
+            justifyContent: "top",
             minHeight: 270,
           }}
         >

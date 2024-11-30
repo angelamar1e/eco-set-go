@@ -112,17 +112,23 @@ export function computeCarEmissions(
 
   switch (user) {
     case "owner":
-      manufacture = constructionPerKm * thresholdKm;
+      if (kmTravelled < thresholdKm){
+        manufacture = constructionPerKm * thresholdKm;
+      }
+      else{
+        manufacture = constructionPerKm * kmTravelled;
+      }
       break;
     case "non-owner":
       manufacture = constructionPerKm * kmTravelled;
+      console.log(manufacture, efPerKm);
       break;
     case "car-sharer":
       manufacture = 0;
       efPerKm = TransportEmission.Car.efPerKm;
       break;
     default:
-      manufacture = constructionPerKm * thresholdKm;
+      manufacture = constructionPerKm * kmTravelled;
       break;
   }
 

@@ -217,7 +217,6 @@ export const MealDone: React.FC<DoneItemProps> = ({
       parseFloat(inputValue) <= 0 ? 0.15 : parseFloat(inputValue);
     const additionals = emissionsData["additionals"] || {};
     const maxReplacementAmount = getMaxReplacementAmount();
-    console.log(maxReplacementAmount);
 
     if (weightInGrams > maxReplacementAmount) {
       Alert.alert(

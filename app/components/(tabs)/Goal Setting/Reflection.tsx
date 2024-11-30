@@ -41,11 +41,11 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
   });
 
   return (
-    <StyledLayout className="m-1 p-1 rounded-lg border border-gray-200">
-      <StyledLayout className="m-1 p-1 flex-row justify-between">
+    <StyledLayout className="m-1 p-1 rounded-lg border border-gray-200" style={{backgroundColor:myTheme['color-basic-200']}}>
+      <StyledLayout className="m-1 p-1 flex-row justify-between" style={{backgroundColor:myTheme['color-basic-200']}}>
         <StyledText 
           category='s1'
-          style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14 }}
+          style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, backgroundColor:myTheme['color-basic-200']}}
         >
           {formattedDate}
         </StyledText>
@@ -59,7 +59,7 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
           )}
           onBackdropPress={() => setShowMenu(false)}
         >
-          <StyledLayout className="rounded shadow-lg">
+          <StyledLayout className="rounded shadow-lg" style={{backgroundColor:myTheme['color-basic-200']}}>
             <TouchableOpacity
               onPress={() => {
                 setEditModalVisible(true);
@@ -100,11 +100,11 @@ const ReflectionCard: React.FC<ReflectionCardProps> = ({ id, content, date, onEd
         </Popover>
       </StyledLayout>
 
-      <StyledLayout>
+      <StyledLayout style={{backgroundColor:myTheme['color-basic-200']}}>
         <StyledText 
           className="ml-2 mb-1" 
           category='p1'
-          style={{ fontFamily: 'Poppins-Regular', fontSize: 13 }}
+          style={{ fontFamily: 'Poppins-Regular', fontSize: 13, backgroundColor:myTheme['color-basic-200']}}
         >
           {content}
         </StyledText>

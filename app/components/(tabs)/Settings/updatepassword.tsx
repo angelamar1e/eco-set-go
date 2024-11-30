@@ -4,7 +4,7 @@ import { Layout, Input, Button, Text, Tooltip } from "@ui-kitten/components";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserContext } from "@/contexts/UserContext";
-import { SafeAreaView } from "react-native";
+import { Alert, SafeAreaView } from "react-native";
 import auth from '@react-native-firebase/auth';
 
 const StyledLayout = styled(Layout);
@@ -33,39 +33,40 @@ const UpdatePassword = () => {
   };
 
   const handleUpdate = async () => {
-    if (newPassword !== confirmPassword) {
-      setError("New passwords don't match");
-      return;
-    }
+    Alert.alert("👩‍💻", "Sorry, this feature is still in development.")
+    // if (newPassword !== confirmPassword) {
+    //   setError("New passwords don't match");
+    //   return;
+    // }
 
-    if (!newPassword) {
-      setError("Please enter a new password");
-      return;
-    }
+    // if (!newPassword) {
+    //   setError("Please enter a new password");
+    //   return;
+    // }
 
-    setLoading(true);
-    setError("");
+    // setLoading(true);
+    // setError("");
 
-    try {
-      const user = auth().currentUser;
-      if (!user || !user.email) {
-        throw new Error("No user found or email not verified");
-      }
+    // try {
+      // const user = auth().currentUser;
+      // if (!user || !user.email) {
+      //   throw new Error("No user found or email not verified");
+      // }
 
-      // Reauthenticate user
-      const credential = auth.EmailAuthProvider.credential(
-        user.email,
-        currentPassword
-      );
+      // // Reauthenticate user
+      // const credential = auth.EmailAuthProvider.credential(
+      //   user.email,
+      //   currentPassword
+      // );
 
-      try {
-        await user.reauthenticateWithCredential(credential);
-      } catch (error) {
-        throw new Error("Current password is incorrect");
-      }
+      // try {
+      //   await user.reauthenticateWithCredential(credential);
+      // } catch (error) {
+      //   throw new Error("Current password is incorrect");
+      // }
 
-      // Update password
-      await user.updatePassword(newPassword);
+      // // Update password
+      // await user.updatePassword(newPassword);
 
       // Clear form
       setCurrentPassword("");
@@ -73,12 +74,12 @@ const UpdatePassword = () => {
       setConfirmPassword("");
       setError("");
       router.back();
-    } catch (error: any) {
-      console.error('Error updating password: ', error);
-      setError(error.message || "Failed to update password");
-    } finally {
-      setLoading(false);
-    }
+    // } catch (error: any) {
+    //   console.error('Error updating password: ', error);
+    //   setError(error.message || "Failed to update password");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (

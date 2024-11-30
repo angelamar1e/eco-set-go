@@ -1,14 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Platform, Alert } from 'react-native';
-import { Toggle, Text, Layout, Button, Select, SelectItem, IndexPath } from '@ui-kitten/components';
-import { styled } from 'nativewind';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import Constants from 'expo-constants';
-import { Divider } from 'react-native-paper';
-import { useUserContext } from '@/contexts/UserContext';  
-import firestore from '@react-native-firebase/firestore'; 
-import Index from '../../../index';
+import React, { useState, useEffect, useRef } from "react";
+import { Platform, Alert } from "react-native";
+import {
+  Toggle,
+  Text,
+  Layout,
+  Button,
+  Select,
+  SelectItem,
+  IndexPath,
+} from "@ui-kitten/components";
+import { styled } from "nativewind";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import Constants from "expo-constants";
+import { useUserContext } from "@/contexts/UserContext";
+import firestore from "@react-native-firebase/firestore";
+import { myTheme } from "@/constants/custom-theme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { handleLogOut } from "@/app/utils/utils";
 
 const StyledText = styled(Text);
 const StyledLayout = styled(Layout);
@@ -17,209 +27,362 @@ const StyledButton = styled(Button);
 const StyledSelect = styled(Select);
 
 const Preferences: React.FC = () => {
-  const {userUid} = useUserContext();
-  const [pushNotifications, setPushNotifications] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const { userUid, notification } = useUserContext();
+  const [pushNotifications, setPushNotifications] = useState(
+    notification ? true : false
+  );
+  const [expoPushToken, setExpoPushToken] = useState("");
   const [selectedTime, setSelectedTime] = useState<Date>(new Date());
-  const [interval, setInterval] = useState(12); 
-  const [frequency, setFrequency] = useState<string>('once'); 
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [interval, setInterval] = useState<number>(12);
+  const [frequency, setFrequency] = useState<string>("once");
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
   // Request notification permissions and set listeners
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => {
+    (async () => {
+      const token = await registerForPushNotificationsAsync();
       if (token) setExpoPushToken(token);
-    });
+    })();
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification received:', notification);
-    });
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("Notification received:", notification);
+      });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification response received:', response);
-    });
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("Notification response received:", response);
+      });
 
     return () => {
-      notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-      responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
-  // Effect to handle enabling or disabling notifications
+  // Effect to manage notification scheduling when preferences change
   useEffect(() => {
+    if (notification) {
+      setPushNotifications(true);
+      setFrequency(notification.frequency);
+      setInterval(notification.interval);
+      setSelectedTime(notification.selectedTime);
+    }
     if (pushNotifications) {
-      if (frequency === 'once') {
-        scheduleDailyNotification();
-      } else if (frequency === 'twice') {
-        scheduleTwiceDailyNotification(interval);
-      }
+      if (frequency === "once") scheduleDailyNotification(selectedTime);
+      else if (frequency === "twice")
+        scheduleTwiceDailyNotification(selectedTime, interval);
     } else {
       cancelNotifications();
+      firestore()
+        .collection("users")
+        .doc(userUid)
+        .update({ notificationPreferences: firestore.FieldValue.delete() });
     }
-  }, [pushNotifications, frequency, interval]);
+  }, [pushNotifications, frequency, interval, selectedTime, notification]);
 
-  // Notification registration and scheduling functions
-  const registerForPushNotificationsAsync = async () => {
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
+  // Register for push notifications
+  const registerForPushNotificationsAsync = async (): Promise<
+    string | undefined
+  > => {
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
+        lightColor: "#FF231F7C",
       });
     }
 
     if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
+      if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
-      if (finalStatus !== 'granted') {
-        Alert.alert('Permission not granted', 'You need to allow notifications to use this feature.');
+      if (finalStatus !== "granted") {
+        Alert.alert(
+          "Permission not granted",
+          "You need to allow notifications to use this feature."
+        );
         return;
       }
-      const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+
+      const projectId =
+        Constants.expoConfig?.extra?.eas?.projectId ??
+        Constants.easConfig?.projectId;
       try {
-        const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-        return pushTokenString;
+        const token = (await Notifications.getExpoPushTokenAsync({ projectId }))
+          .data;
+        return token;
       } catch (error) {
-        console.error('Error getting push token:', error);
+        console.error("Error getting push token:", error);
       }
     } else {
-      Alert.alert('Error', 'Must use physical device for push notifications');
+      Alert.alert("Error", "Push notifications require a physical device.");
     }
   };
 
-  // Save preferences to Firebase
+  // Save preferences and schedule notifications
   const savePreferences = async () => {
-    await firestore().collection('users').doc(userUid).set({
-      notificationPreferences: { frequency, interval },
-    }, { merge: true });
+    try {
+      await firestore()
+        .collection("users")
+        .doc(userUid)
+        .set(
+          { notificationPreferences: { frequency, interval, selectedTime } },
+          { merge: true }
+        );
 
-    // Send a test notification after saving preferences
-    sendNotification();
+      // Cancel existing notifications and reschedule
+      await cancelNotifications();
+      if (pushNotifications) {
+        if (frequency === "once") scheduleDailyNotification(selectedTime);
+        else if (frequency === "twice")
+          scheduleTwiceDailyNotification(selectedTime, interval);
+      }
+
+      sendNotification(
+        "Preference saved 🔔",
+        `You will receive reminders ${frequency} a day, every ${interval} hours. 🤗`
+      );
+    } catch (error) {
+      console.error(
+        "Error saving preferences or scheduling notifications:",
+        error
+      );
+    }
   };
 
-  // Send a notification to the user
-  const sendNotification = async () => {
+  // Parse a Date object into hour and minute
+  const parseTime = (time: Date) => ({
+    hour: time.getHours(),
+    minute: time.getMinutes(),
+  });
+
+  // Schedule daily notifications at a specific time
+  const scheduleDailyNotification = async (time: Date) => {
+    const { hour, minute } = parseTime(time);
+
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Preferences Updated",
-          body: `Your will receive Daily Log reminders ${frequency} a day`,
+          title: "Pst! Your daily log awaits",
+          body: "Complete eco actions for a greener tomorrow",
         },
-        trigger: {
-          seconds: 1, // Show the notification after 1 second
+        trigger: { hour, minute, repeats: true },
+      });
+    } catch (error) {
+      console.error("Error scheduling daily notification:", error);
+    }
+  };
+
+  // Schedule twice-daily notifications based on interval
+  const scheduleTwiceDailyNotification = async (
+    startTime: Date,
+    interval: number
+  ) => {
+    const { hour: startHour, minute } = parseTime(startTime);
+
+    try {
+      // First notification
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Pst! Your daily log awaits",
+          body: "Complete eco actions for a greener tomorrow",
         },
+        trigger: { hour: startHour, minute, repeats: true },
+      });
+
+      // Second notification after interval
+      const secondHour = (startHour + interval) % 24;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Pst! Another reminder!",
+          body: "Keep logging your eco actions.",
+        },
+        trigger: { hour: secondHour, minute, repeats: true },
+      });
+    } catch (error) {
+      console.error("Error scheduling twice-daily notifications:", error);
+    }
+  };
+
+  // Cancel all notifications
+  const cancelNotifications = async () => {
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+    } catch (error) {
+      console.error("Error canceling notifications:", error);
+    }
+  };
+
+  // Send immediate notification for confirmation
+  const sendNotification = async (title: string, body: string) => {
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: { title, body },
+        trigger: { seconds: 1 },
       });
     } catch (error) {
       console.error("Error sending notification:", error);
     }
   };
 
-  // Schedule notification once daily
-  const scheduleDailyNotification = async () => {
-    await Notifications.cancelAllScheduledNotificationsAsync();
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Pst! Your daily log awaits",
-        body: 'Complete eco actions for a greener tomorrow',
-      },
-      trigger: {
-        hour: 8,
-        minute: 0,
-        repeats: true,
-      },
-    });
+  // Handle toggle change and request notification permissions if turning on
+  const handleToggleChange = async (status: boolean) => {
+    setPushNotifications(status);
+    if (status) {
+      await requestNotificationPermission();
+    }
   };
 
-  // Schedule notification twice daily with an interval
-  const scheduleTwiceDailyNotification = async (interval: number) => {
-    // Schedule the first notification
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Pst! Your daily log awaits",
-        body: 'Complete eco actions for a greener tomorrow',
-      },
-      trigger: {
-        hour: 8,
-        minute: 0,
-        repeats: true,
-      },
-    });
-
-    // Schedule the second notification after the specified interval
-    const secondNotificationHour = (8 + interval) % 24;
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Pst! Your daily log awaits",
-        body: 'Complete eco actions for a greener tomorrow',
-      },
-      trigger: {
-        hour: secondNotificationHour,
-        minute: 0,
-        repeats: true,
-      },
-    });
+  // Request notification permission on toggle
+  const requestNotificationPermission = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } =
+          await Notifications.requestPermissionsAsync();
+        if (newStatus !== "granted") {
+          Alert.alert(
+            "Permission not granted",
+            "You need to allow notifications to use this feature."
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+    }
   };
-
-    // Cancel all notifications
-    const cancelNotifications = async () => {
-      await Notifications.cancelAllScheduledNotificationsAsync();
-    };
-
-  const handleFreqSelection = async (freq: string) => {
-    setFrequency(freq);
-  }
-
-  const handleIntervalSelection = async (interval: number) => {
-    setInterval(interval);
-  }
 
   return (
     <StyledLayout className="m-2 p-2">
-      <StyledLayout className="mt-4 ml-2 mr-2 p-1 flex flex-row">
-        <StyledText category="h6">Daily reminders</StyledText>
+      <StyledLayout
+        className="flex-row justify-between p-3 rounded-2xl "
+        style={{ backgroundColor: myTheme["color-success-600"] }}
+      >
+        <StyledText className="font-bold text-xl text-white">
+          Daily Reminders
+        </StyledText>
         <StyledToggle
-          className="ml-auto"
           checked={pushNotifications}
-          onChange={setPushNotifications}
+          onChange={handleToggleChange}
         />
       </StyledLayout>
 
       {pushNotifications && (
-        <>
-          <StyledLayout className="p-2 m-1">
-            <StyledLayout className="flex flex-row items-center justify-between">
-              <StyledText category="s1">Frequency:</StyledText>
-              <StyledSelect className='w-1/2' placeholder={"Select"}>
-                <SelectItem title="Once Daily" onPress={() => handleFreqSelection("once")}/>
-                <SelectItem title="Twice Daily" onPress={() => handleFreqSelection("twice")}/>
+        <StyledLayout className="p-3">
+          <StyledLayout className="my-2">
+            <StyledText className="text-lg mb-2 font-bold">
+              Frequency
+            </StyledText>
+            <StyledSelect
+              value={frequency === "once" ? "Once Daily" : "Twice Daily"}
+              onSelect={(index) => {
+                const singleIndex = index as IndexPath; // Explicitly cast to IndexPath
+                setFrequency(singleIndex.row === 0 ? "once" : "twice");
+              }}
+              multiSelect={false} // Ensure single selection
+            >
+              <SelectItem title="Once Daily" />
+              <SelectItem title="Twice Daily" />
+            </StyledSelect>
+          </StyledLayout>
+
+          {frequency === "twice" && (
+            <StyledLayout className="my-2">
+              <StyledText className="text-lg mb-2 font-bold">
+                Interval
+              </StyledText>
+              <StyledSelect
+                value={`${interval} Hours`}
+                onSelect={(index: IndexPath | IndexPath[]) => {
+                  const selectedIndex = index as IndexPath;
+                  setInterval(selectedIndex.row === 0 ? 8 : 12);
+                }}
+              >
+                <SelectItem title="Every 8 Hours" />
+                <SelectItem title="Every 12 Hours" />
               </StyledSelect>
             </StyledLayout>
-
-            {frequency === 'twice' && (
-              <StyledLayout className="flex flex-row items-center justify-between">
-                <StyledText category="s1">Interval:</StyledText>
-                <StyledSelect className='w-1/2' placeholder={"Select"}>
-                  <SelectItem title="Every 8 Hours" onPress={() => handleIntervalSelection(8)}/>
-                  <SelectItem title="Every 12 Hours" onPress={() => handleIntervalSelection(12)}/>
-                </StyledSelect>
-              </StyledLayout>
-            )}
-          </StyledLayout>
-        </>
+          )}
+          <StyledButton
+            className="mt-10 rounded-lg w-1/2 ml-40"
+            onPress={savePreferences}
+          >
+            Save Preferences
+          </StyledButton>
+        </StyledLayout>
       )}
 
-      {/* Save preferences button */}
-      <StyledButton onPress={savePreferences} status="primary">
-        Save Preferences
-      </StyledButton>
+<StyledLayout
+        className="flex-row justify-center items-center mt-5"
+        style={{
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 20,
+          borderTopColor: myTheme["color-success-900"],
+        }}
+      >
+        <StyledLayout className="items-center">
+          <Button
+            style={{
+              borderRadius: 100,
+              marginHorizontal: 8,
+              borderWidth: 1,
+              paddingHorizontal: 15,
+              paddingVertical: 10,
+            }}
+            onPress={() => router.push("/Profile/profile")}
+          >
+            <MaterialCommunityIcons name="arrow-left" size={20}>
+              <Text
+                category="label"
+                className="items-center"
+                style={{ color: "", textAlign: "center", fontSize: 16 }}
+              >
+                {" "}
+                Go back{" "}
+              </Text>
+            </MaterialCommunityIcons>
+          </Button>
+        </StyledLayout>
+
+        <StyledLayout className="">
+          <Button
+            style={{
+              borderColor: myTheme["color-success-700"],
+              borderRadius: 100,
+              marginHorizontal: 8,
+              borderWidth: 1,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            }}
+            onPress={handleLogOut}
+            appearance="ghost"
+          >
+            <MaterialCommunityIcons name="logout" size={18} color={""}>
+              <Text
+                category="label"
+                className="items-center"
+                style={{ color: "", textAlign: "center", fontSize: 16 }}
+              >
+                {" "}
+                Log Out{" "}
+              </Text>
+            </MaterialCommunityIcons>
+          </Button>
+        </StyledLayout>
+      </StyledLayout>
     </StyledLayout>
   );
 };

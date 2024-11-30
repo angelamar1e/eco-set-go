@@ -22,8 +22,12 @@ export const UserLogsProvider = ({ children }) => {
     emissionsData,
   } = useContext(EmissionsContext);
   const [totalImpact, setTotalImpact] = useState(0);
-  const { foodEcoActions, transportationEcoActions, electricityEcoActions, initializeData } =
-    useActionsContext();
+  const {
+    foodEcoActions,
+    transportationEcoActions,
+    electricityEcoActions,
+    initializeData,
+  } = useActionsContext();
 
   // State for impacts
   const [dailyImpact, setDailyImpact] = useState({});
@@ -54,12 +58,13 @@ export const UserLogsProvider = ({ children }) => {
       data.data.length > 0 &&
       data.data.every((entry) => Array.isArray(entry) && entry.length === 3) // Ensure all rows have 3 values
     );
-  };  
+  };
+
+  const [currentLoading, setCurrentLoading] = useState(false);
 
   useEffect(() => {
     initializeData();
     setData(userLogs);
-    console.log("LOGS", userLogs);
   }, [userLogs, selectedPeriod]);
 
   // Calculate total impact and prepare chart data
@@ -68,13 +73,13 @@ export const UserLogsProvider = ({ children }) => {
     let foodImpact = 0;
     let transportImpact = 0;
     let electricityImpact = 0;
-  
+
     const daily = {};
     const weekly = {};
     const monthly = {};
-  
+
     const loggedActionIds = [];
-  
+
     if (userLogs) {
       Object.entries(userLogs).forEach(([date, actions]) => {
         const logDate = new Date(date);
@@ -87,19 +92,18 @@ export const UserLogsProvider = ({ children }) => {
           year: "numeric",
         });
         const weekString = getWeekString(logDate);
-  
+
         if (!daily[dayString])
           daily[dayString] = { Food: 0, Transportation: 0, Electricity: 0 };
         if (!weekly[weekString])
           weekly[weekString] = { Food: 0, Transportation: 0, Electricity: 0 };
         if (!monthly[monthString])
           monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
-  
+
         Object.entries(actions).forEach(([id, action]) => {
           loggedActionIds.push(id);
           const category = getCategoryFromId(id);
-          console.log("Category and Impact:", { id, category, impact: action.impact });
-        
+
           if (category && typeof action.impact === "number") {
             totalImpact += action.impact;
             daily[dayString][category] += action.impact;
@@ -111,7 +115,7 @@ export const UserLogsProvider = ({ children }) => {
           if (category === "Electricity") electricityImpact += action.impact;
         });
       });
-  
+
       const selectedImpacts =
         selectedPeriod === "Daily"
           ? daily
@@ -119,11 +123,9 @@ export const UserLogsProvider = ({ children }) => {
           ? weekly
           : monthly;
 
-      console.log("Selected Impacts:", selectedImpacts);
-
       setChartData(selectedImpacts);
     }
-  
+
     setLoggedActionIds(loggedActionIds);
     setTotalImpact(convertGramsToTons(totalImpact));
     setFoodImpact(convertGramsToTons(foodImpact));
@@ -132,56 +134,53 @@ export const UserLogsProvider = ({ children }) => {
     setDailyImpact(daily);
     setWeeklyImpact(weekly);
     setMonthlyImpact(monthly);
-  };  
+  };
 
   const setChartData = (selectedImpacts) => {
     const limitedEntries = Object.entries(selectedImpacts)
       .sort((a, b) => new Date(a[0]) - new Date(b[0]))
       .slice(-5);
-  
+
     const limitedLabels = limitedEntries.map(([label]) => label);
-  
+
     const stackedData = limitedEntries.map(([, impacts]) => [
       Number(impacts.Food) || 0,
       Number(impacts.Transportation) || 0,
       Number(impacts.Electricity) || 0,
     ]);
-  
-    // Ensure the data structure is valid
-    console.log("Limited Labels:", limitedLabels);
-    console.log("Stacked Data:", stackedData);
-  
+
     setStackedChartData({
       labels: limitedLabels,
       legend: ["Food", "Transportation", "Electricity"],
       data: stackedData,
       barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
     });
-  };  
-  
-  useEffect(() => {
-    console.log("Final Chart Data Updated:", stackedChartData);
-  }, [stackedChartData]);  
+  };
 
   const setCurrentFootprint = () => {
+    setCurrentLoading(true);
     if (initialFootprint && role === "user") {
       const currentOverall = initialFootprint - totalImpact;
       const currentFood = foodFootprint - foodImpact;
       const currentTranspo = transportationFootprint - transportationImpact;
       const currentElectricity = electricityFootprint - electricityImpact;
 
-      firestore().collection('current_footprint').doc(userUid).set({
-        overall_footprint: currentOverall,
-        food_footprint: currentFood,
-        transportation_footprint: currentTranspo,
-        electricity_footprint: currentElectricity
-      }, {merge: true})
+      firestore().collection("current_footprint").doc(userUid).set(
+        {
+          overall_footprint: currentOverall,
+          food_footprint: currentFood,
+          transportation_footprint: currentTranspo,
+          electricity_footprint: currentElectricity,
+        },
+        { merge: true }
+      );
     }
+    setCurrentLoading(false);
   };
 
   useEffect(() => {
     setCurrentFootprint();
-  }, [userLogs, totalImpact, initialFootprint]);
+  }, [userLogs, initialFootprint]);
 
   // Helper function to check if userLogs is effectively empty
   const isUserLogsEmpty = (logs) => {
@@ -192,20 +191,21 @@ export const UserLogsProvider = ({ children }) => {
     );
   };
 
-  // Get week string for weekly impacts
   const getWeekString = (date) => {
     const startOfWeek = new Date(date);
     startOfWeek.setDate(date.getDate() - date.getDay()); // Sunday as the start of the week
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    return `${startOfWeek.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-    })} - ${endOfWeek.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
+  
+    return `${startOfWeek.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+    })} - ${endOfWeek.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
     })}`;
   };
+  
 
   // Example function to map action ID to category
   const getCategoryFromId = (id) => {
@@ -222,6 +222,7 @@ export const UserLogsProvider = ({ children }) => {
   return (
     <UserLogsContext.Provider
       value={{
+        currentLoading,
         userLogs,
         setUserLogs,
         setData,

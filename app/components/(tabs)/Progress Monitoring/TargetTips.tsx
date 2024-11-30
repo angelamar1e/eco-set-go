@@ -14,7 +14,7 @@ const StyledLayout = styled(Layout);
 
 const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
   const tips = [
-    "Try setting a carbon reduction goal of 2 tons (2000 kg) of CO₂e - that's like growing 30 tree seedlings for 10 years! 🌱"
+    "Over a year, a carbon reduction goal of 2 tons (2000 kg) of CO₂e is ideal - that's like growing 30 tree seedlings for 10 years! 🌱"
   ];
 
   return (
@@ -65,28 +65,36 @@ const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
                 {tip}
               </Text>
 
-              <TouchableOpacity
-                className="mt-3 pt-3 items-center"
-                style={{
-                  borderTopWidth: 1,
-                  borderTopColor: `${myTheme['color-success-200']}30`,
-                }}
-                onPress={() => {
-                  onClose();
-                  router.push("/components/(tabs)/Eco Articles/GoalSetting");
-                }}
-              >
-                <Text style={{ 
-                  fontFamily: 'Poppins-Medium',
-                  fontSize: 14,
-                  color: myTheme['color-success-700'],
-                  textDecorationLine: 'underline',
-                }}>
-                  Learn more
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+                {/* Learn More Link */}
+                <View 
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 5,
+                    paddingTop: 8,
+                    borderTopWidth: 1,
+                    borderTopColor: `${myTheme['color-success-200']}30`,
+                  }}
+                >
+                  <Text
+                    onPress={() => {
+                      onClose();
+                      router.push(`/components/(tabs)/Eco Articles/ZFKkaJj9PfOyegEIHwp4`);
+                    }}
+                    style={{ 
+                      fontFamily: 'Poppins-Medium',
+                      fontSize: 12,
+                      color: myTheme['color-success-700'],
+                      textDecorationLine: 'underline',
+                    }}
+                  >
+                    Learn more
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
 
           <TouchableOpacity
             className="py-2 rounded-full items-center justify-center border"

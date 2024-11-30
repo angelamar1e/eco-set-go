@@ -138,7 +138,6 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             },
             { merge: true }
           );
-          console.log(`Goal status updated to: ${currentStatus}`);
         } catch (error) {
           console.error("Error updating goal status:", error);
         }

@@ -6,6 +6,8 @@ import { styled } from 'nativewind';
 import { formatTimeAgo, fetchUserInfo, handleAddComment, handleDeleteComment, confirmDeletePost } from '@/app/utils/communityUtils';
 import { Timestamp } from '@react-native-firebase/firestore';
 import { myTheme } from '@/constants/custom-theme';
+import { useUserContext } from '@/contexts/UserContext';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const StyledCard = styled(Card);
 const StyledText = styled(Text);
@@ -39,6 +41,7 @@ const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   comments = [],
 }) => {
+  const {name} = useUserContext();
   const [editedContent, setEditedContent] = useState(content);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -64,32 +67,17 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <StyledLayout className="p-1 m-2 rounded-lg border border-gray-200">
-      <StyledLayout className="flex-row justify-between">
-        <StyledLayout>
-          <StyledText 
-            style={{ 
-              fontFamily: 'Poppins-SemiBold',
-              fontSize: 14,
-              marginTop: 8,
-              marginLeft: 8
-            }}
-          >
-            @{userName}
-          </StyledText>
-          <StyledText 
-            style={{ 
-              fontFamily: 'Poppins-Regular',
-              fontSize: 11,
-              marginLeft: 8,
-              color: '#8F9BB3'
-            }}
-          >
-            {formattedTimestamp}
-          </StyledText>
+    <StyledLayout className="p-1 m-2 rounded-xl border border-gray-200" style={{backgroundColor: myTheme['color-basic-200']}}>
+      <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-11/12 items-center'>
+          <StyledLayout className='flex-row mt-4 items-center w-[240px]' style={{backgroundColor: myTheme['color-basic-200']}}>
+          <StyledText  className=" ml-2 font-bold text-[90px]"><MaterialCommunityIcons name='emoticon-excited' size={50} color={myTheme['color-success-700']}/></StyledText>
+          <StyledText className=" ml-1 text-[15px] text-gray-500 italic w-full">@{userName}</StyledText>
+          </StyledLayout>
+          <StyledText className="ml-2 text-[13px] text-gray-400 mt-4"  style={{color: myTheme['color-success-900']}}>{formattedTimestamp}</StyledText>
         </StyledLayout>
 
-        <StyledLayout className='m-1 p-1'>
+        <StyledLayout className='m-1 p-1' style={{backgroundColor: myTheme['color-basic-200']}}>
         <Popover
           visible={postPopoverVisible}
           placement="bottom end"
@@ -100,8 +88,12 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
           onBackdropPress={togglePostPopover}
         >
-          <StyledLayout className="p-1 rounded-lg">
-            <TouchableOpacity 
+          <StyledLayout className="p-1 rounded-lg" >
+            <StyledButton
+              size="small"
+              className="font-bold"
+              appearance="ghost"
+              status="info"
               onPress={() => {
                 setEditModalVisible(true);
                 setPostPopoverVisible(false);
@@ -137,18 +129,19 @@ const PostCard: React.FC<PostCardProps> = ({
 
       </StyledLayout>
 
-      <StyledLayout className="mt-2 ml-2">
-      <StyledText style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
-        {content}
-        </StyledText>
+      <StyledLayout className="my-2 ml-5" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledText className='text-lg'>{content}</StyledText>
       </StyledLayout>
       {/* Comment Button */}
-      <TouchableOpacity 
+      <StyledLayout className='items-end mr-5' style={{backgroundColor: myTheme['color-basic-200']}}>
+      <StyledButton
+        appearance='ghost'
         onPress={() => setCommentModalVisible(true)}
-        className="mt-2 mb-2 items-center rounded-full"
-      >
-        <StyledText style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: '#8F9BB3' }}>Comments</StyledText>
-      </TouchableOpacity>
+        className="mt-2 mb-2 w-1/3 rounded-full flex-row"
+        style={{backgroundColor: myTheme['color-basic-300']}}>
+        <StyledText>Comments</StyledText>
+      </StyledButton>
+      </StyledLayout>
 
       {/* Comment Modal */}
       <Modal

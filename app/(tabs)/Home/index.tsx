@@ -17,6 +17,7 @@ import { useLoadFonts } from "@/assets/fonts/loadFonts";
 import { useUserGoalContext } from "@/contexts/UserGoalContext";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { useLogsContext } from "@/contexts/UserLogs";
+import LottieView from "lottie-react-native";
 import {
   conditionalConvertGramsToKg,
   convertTonsToGrams,
@@ -25,6 +26,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { EmissionsContext } from "@/contexts/Emissions";
 import TakeaQuiz from "@/app/(quiz)/takeaquiz";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SustainabilityLoader from "@/app/components/(tabs)/Home/SustainabilityLoader";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -46,35 +48,32 @@ export default function LandingPage() {
   const { username, currentFootprint, initialFootprint, userUid } =
     useUserContext();
   const { latestGoal } = useUserGoalContext();
-  const { initializeData } = useContext(EmissionsContext);
-  const { setUserLogs, totalImpact } = useLogsContext();
+  const { initializeData, initialLoading } = useContext(EmissionsContext);
+  const { setUserLogs, totalImpact, currentLoading, userLogs} = useLogsContext();
   const fontsLoaded = useLoadFonts();
 
   const firstName = username ? username.split(" ")[0] : "";
 
-   // Fetch user logs from Firestore
-   useEffect(() => {
+  // Fetch user logs from Firestore
+  useEffect(() => {
     setLoading(true);
     const unsubscribe = firestore()
       .collection("user_logs")
       .doc(userUid)
-      .onSnapshot(
-        (doc) => {
-          if (doc.exists) {
-            try {
-              if (doc.data()){
-                setUserLogs(doc.data());
-                setLoading(false);
-              }
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          try {
+            if (doc.data()) {
+              setUserLogs(doc.data());
+              setLoading(false);
             }
-            catch(error){
-              console.log("NOPE!", error);
-            }
-          } else {
-            setUserLogs({});
+          } catch (error) {
+            console.log(error);
           }
+        } else {
+          setUserLogs({});
         }
-      );
+      });
 
     return () => unsubscribe();
   }, [userUid]);
@@ -111,9 +110,7 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
 
   let percentage = progressPercentage * 100;
-  let difference = conditionalConvertGramsToKg(
-    convertTonsToGrams(totalImpact)
-  );
+  let difference = conditionalConvertGramsToKg(convertTonsToGrams(totalImpact));
 
   const handleTakeQuiz = async () => {
     setShowQuizModal(false);
@@ -139,7 +136,7 @@ export default function LandingPage() {
               >
                 Welcome,{" "}
                 <StyledText
-                  className="text-xl"
+                  className="text-2xl"
                   style={{
                     color: myTheme["color-success-600"],
                     fontFamily: "Poppins-Italic",
@@ -174,17 +171,19 @@ export default function LandingPage() {
               {/* initial footprint card */}
               <StyledLayout className="flex-column w-1/2 space-y-2">
                 {/* First Card - Initial Footprint */}
-                <StyledLayout 
-                  className="flex-row w-full border h-auto items-center justify-center rounded-xl bg-transparent flex-wrap p-3" 
-                  style={{borderColor: myTheme['color-basic-500']}}
+                <StyledLayout
+                  className="flex-row w-full border h-auto items-center justify-center rounded-xl bg-transparent flex-wrap p-3"
+                  style={{ borderColor: myTheme["color-basic-500"] }}
                 >
-                  <StyledText 
-                    className="text-13" 
-                    style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700']}}
+                  <StyledText
+                    className="text-13"
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: myTheme["color-success-700"],
+                    }}
                   >
                     Initial Footprint
                   </StyledText>
-
                   <StyledView className="flex-row items-center text-center">
                     <StyledText
                       className="text-3xl pt-4"
@@ -194,24 +193,51 @@ export default function LandingPage() {
                       }}
                     >
                       {initialFootprint.toFixed(2)}
-                      <StyledText className="text-sm" style={{ fontFamily: "Poppins-Regular" }}> tons CO₂e</StyledText>
+                      <StyledText
+                        className="text-sm"
+                        style={{ fontFamily: "Poppins-Regular" }}
+                      >
+                        {" "}
+                        tons CO₂e
+                      </StyledText>
                     </StyledText>
                   </StyledView>
-
-                  <View className="flex-column items-center py-2 mt-2 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-transparent-100']}}>
-                    <StyledText className="text-sm text-center text-white" style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}>
-                      Reduced by <Ionicons name="trending-down" size={14} color={myTheme['color-basic-700']} />
+                  <View
+                    className="flex-column items-center py-2 mt-2 rounded-xl w-full"
+                    style={{
+                      backgroundColor: myTheme["color-success-transparent-100"],
+                    }}
+                  >
+                    <StyledText
+                      className="text-sm text-center text-white"
+                      style={{
+                        fontFamily: "Poppins-Regular",
+                        color: myTheme["color-basic-700"],
+                      }}
+                    >
+                      Reduced by{" "}
+                      <Ionicons
+                        name="trending-down"
+                        size={14}
+                        color={myTheme["color-basic-700"]}
+                      />
                     </StyledText>
-                    <StyledText className="text-xl font-bold text-center text-white" style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}>
+                    <StyledText
+                      className="text-xl font-bold text-center text-white"
+                      style={{
+                        fontFamily: "Poppins-Regular",
+                        color: myTheme["color-success-700"],
+                      }}
+                    >
                       {difference}
                     </StyledText>
                   </View>
                 </StyledLayout>
 
                 {/* Second Card - Goal */}
-                <StyledLayout 
-                  className="flex-row w-full h-auto border items-center justify-center rounded-xl bg-transparent flex-wrap p-3" 
-                  style={{borderColor: myTheme['color-basic-500']}}
+                <StyledLayout
+                  className="flex-row w-full h-auto border items-center justify-center rounded-xl bg-transparent flex-wrap p-3"
+                  style={{ borderColor: myTheme["color-basic-500"] }}
                 >
                   {latestGoal ? (
                     <>
@@ -219,25 +245,53 @@ export default function LandingPage() {
                         <StyledText style={{ fontFamily: "Poppins-Regular" }}>
                           <StyledText
                             className="text-13"
-                            style={{ fontFamily: "Poppins-Regular", color: myTheme['color-success-700'] }}
+                            style={{
+                              fontFamily: "Poppins-Regular",
+                              color: myTheme["color-success-700"],
+                            }}
                           >
                             Goal:
                           </StyledText>{" "}
-                          <StyledText className="text-sm" style={{fontFamily: "Poppins-Regular", color: myTheme['color-basic-700']}}>Reduce your emissions by{" "}</StyledText>
+                          <StyledText
+                            className="text-sm"
+                            style={{
+                              fontFamily: "Poppins-Regular",
+                              color: myTheme["color-basic-700"],
+                            }}
+                          >
+                            Reduce your emissions by{" "}
+                          </StyledText>
                           <StyledText
                             className="text-base"
-                            style={{ fontFamily: "Poppins-Bold", color: myTheme['color-success-700'] }}
+                            style={{
+                              fontFamily: "Poppins-Bold",
+                              color: myTheme["color-success-700"],
+                            }}
                           >
-                            {conditionalConvertGramsToKg(latestGoal?.target ?? 0)}
+                            {conditionalConvertGramsToKg(
+                              latestGoal?.target ?? 0
+                            )}
                           </StyledText>
                         </StyledText>
                       </StyledView>
 
-                      <View className="flex-row items-center justify-center py-2 mt-2 rounded-xl w-full" style={{backgroundColor: myTheme['color-success-transparent-100']}}>
-                        <View className="items-center mx-4 border-r px-4" style={{borderColor: myTheme['color-basic-500']}}>
+                      <View
+                        className="flex-row items-center justify-center py-2 mt-2 rounded-xl w-full"
+                        style={{
+                          backgroundColor:
+                            myTheme["color-success-transparent-100"],
+                        }}
+                      >
+                        <View
+                          className="items-center mx-4 border-r px-4"
+                          style={{ borderColor: myTheme["color-basic-500"] }}
+                        >
                           <StyledText
                             className="text-2xl"
-                            style={{ fontFamily: "Poppins-SemiBold", color: myTheme['color-success-700'] }}
+                            style={{
+                              fontFamily: "Poppins-SemiBold",
+                              color: myTheme["color-success-700"],
+                            }}
                           >
                             {percentage > 100 ? 100 : percentage.toFixed(0)}%
                           </StyledText>
@@ -251,57 +305,75 @@ export default function LandingPage() {
                             {/* <Ionicons name="checkmark" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/> */}
                           </View>
                         </View>
-                        
+
                         <View className="items-center mx-4 right-4">
                           <StyledText
                             className="text-2xl text-center"
-                            style={{ fontFamily: "Poppins-SemiBold", color: myTheme['color-success-700'] }}
+                            style={{
+                              fontFamily: "Poppins-SemiBold",
+                              color: myTheme["color-success-700"],
+                            }}
                           >
                             {latestGoal?.end_date
-                              ? Math.ceil((latestGoal.end_date.toDate().getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                              ? Math.ceil(
+                                  (latestGoal.end_date.toDate().getTime() -
+                                    new Date().getTime()) /
+                                    (1000 * 60 * 60 * 24)
+                                )
                               : "0"}
                           </StyledText>
                           <View className="flex-row items-center">
                             <StyledText
                               className="text-xs"
-                              style={{ fontFamily: "Poppins-Regular", color: myTheme['color-basic-700'] }}
+                              style={{
+                                fontFamily: "Poppins-Regular",
+                                color: myTheme["color-basic-700"],
+                              }}
                             >
                               days
                             </StyledText>
-                            <Ionicons name="time-outline" size={14} color={myTheme['color-basic-700']} style={{marginLeft: 4}}/>
+                            <Ionicons
+                              name="time-outline"
+                              size={14}
+                              color={myTheme["color-basic-700"]}
+                              style={{ marginLeft: 4 }}
+                            />
                           </View>
                         </View>
                       </View>
                     </>
                   ) : (
                     <StyledLayout className="w-full items-center">
-                      <StyledText 
-                        className="text-base mb-2" 
-                        style={{ 
+                      <StyledText
+                        className="text-base mb-2"
+                        style={{
                           fontFamily: "Poppins-Regular",
-                          color: myTheme['color-success-700']
+                          color: myTheme["color-success-700"],
                         }}
                       >
                         Ready to make a difference? 🌍
                       </StyledText>
                       <StyledButton
-                          className="rounded-xl w-full"
-                          size="medium"
-                          appearance="ghost"
-                          status="success"
-                          onPress={() => router.push('/(tabs)/Progress Monitoring/report')}
-                          style={{
-                            backgroundColor: theme['color-success-transparent-200']
-                          }}
-                          activeOpacity={0.7}
-                        >
-                        {evaProps => (
+                        className="rounded-xl w-full"
+                        size="medium"
+                        appearance="ghost"
+                        status="success"
+                        onPress={() =>
+                          router.push("/(tabs)/Progress Monitoring/report")
+                        }
+                        style={{
+                          backgroundColor:
+                            theme["color-success-transparent-200"],
+                        }}
+                        activeOpacity={0.7}
+                      >
+                        {(evaProps) => (
                           <StyledView className="flex-row items-center justify-center">
                             <StyledText
                               {...evaProps}
-                              style={{ 
+                              style={{
                                 fontFamily: "Poppins-Medium",
-                                color: theme['color-success-700'],
+                                color: theme["color-success-700"],
                               }}
                               className="text-sm"
                             >
@@ -316,25 +388,26 @@ export default function LandingPage() {
               </StyledLayout>
             </StyledLayout>
 
-            <StyledLayout className="flex-row items-center justify-between mt-4">
+            <StyledLayout className="flex-row justify-between mt-4">
               <StyledText
-                className="text-2xl mb-2 text-center"
+                className="text-2xl ml-2 mt-2 w-1/2"
                 style={{
-                  color: headertextColor,
+                  color: myTheme['color-success-700'],
                   flex: 1,
                   fontFamily: "Poppins-SemiBold",
                 }}
               >
                 Daily Log{" "}
               </StyledText>
+              {/* </StyledLayout> */}
+              <View
+                className="flex-row justify-center items-center space-x-2"
+                style={{ flexDirection: "row" }}
+              >
+                <AddActionButton />
+                <ReflectionButton />
+              </View>
             </StyledLayout>
-            <View
-              className="flex-row justify-center items-center space-x-2"
-              style={{ flexDirection: "row" }}
-            >
-              <AddActionButton />
-              <ReflectionButton />
-            </View>
             <DailyLog />
           </StyledLayout>
         </StyledLayout>
@@ -347,10 +420,16 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  if (!username && currentFootprint === 0 && initialFootprint === 0) {
+  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={myTheme["color-success-700"]} />
+        <LottieView
+          source={require("../../../assets/animation/loading.json")}
+          autoPlay
+          loop
+          style={{ width: 200, height: 200 }}
+        />
+        <SustainabilityLoader />
       </StyledLayout>
     );
   }

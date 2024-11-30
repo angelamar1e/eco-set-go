@@ -7,6 +7,7 @@ import { editReflection, deleteReflection } from '@/app/utils/reflectionUtils';
 import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import FilterDate from './FilterDate';
+import { myTheme } from '@/constants/custom-theme';
 
 interface Reflection {
   id: string;
@@ -94,16 +95,18 @@ const ReflectionList: React.FC = () => {
 
   return (
     <StyledLayout style={{ position: 'relative' }}>
+      <StyledLayout className='mx-3 mb-5' style={{borderWidth:1, borderColor: myTheme['color-basic-400']}}></StyledLayout>
       <StyledLayout className="flex-row justify-between" style={{ zIndex: 1 }}>
         <StyledText 
           category="s1" 
           className="m-2" 
           style={{ 
             fontFamily: 'Poppins-SemiBold',
-            fontSize: 16 
+            color: myTheme['color-success-700'],
+            fontSize: 22 
           }}
         >
-          Reflection
+          Reflections 💭
         </StyledText>
         <FilterDate onDateChange={handleDateChange} />
       </StyledLayout>
