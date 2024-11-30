@@ -15,7 +15,7 @@ interface Post {
   content: string;
   userName: string;
   timestamp: Timestamp;
-  
+  userUID: string,
 }
 
 interface EcoNewsItem {
@@ -87,6 +87,7 @@ const CommunityPosts: React.FC = () => {
           id={item.id}
           content={item.content}
           userName={item.userName}
+          userUID={item.userUID}
           timestamp={item.timestamp}
           onEdit={(newContent) => handleEditPost(item.id, newContent)}
           onDelete={() => handleDeletePost(item.id)}

@@ -41,108 +41,109 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
     return differenceInDays;
   };
 
-  const difference = getDifferenceInDays(latestGoal!.start_date);
-
-  return (
-    <Modal
-      transparent={true}
-      visible={visible}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
-          padding: 20,
-        }}
+  
+  if (latestGoal) {
+    const difference = getDifferenceInDays(latestGoal!.start_date);
+    return (
+      <Modal
+        transparent={true}
+        visible={visible}
+        animationType="fade"
+        onRequestClose={onClose}
       >
         <View
           style={{
-            backgroundColor: "white",
-            borderRadius: 20,
-            width: "85%",
-            maxWidth: 320,
-            elevation: 8,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            overflow: "hidden",
-            justifyContent: "flex-start",
-            //justifyContent: "top",
-            //minHeight: 250,
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            padding: 20,
           }}
         >
           <View
             style={{
-              backgroundColor: myTheme["color-success-transparent-100"],
-              padding: 12,
-              paddingLeft: 20,
-              flexDirection: "row",
-              // alignItems: "center",
-              marginBottom: 10,
+              backgroundColor: "white",
+              borderRadius: 20,
+              width: "85%",
+              maxWidth: 320,
+              elevation: 8,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              overflow: "hidden",
+              justifyContent: "flex-start",
+              //justifyContent: "top",
+              //minHeight: 250,
             }}
           >
-            <Text
+            <View
               style={{
-                fontFamily: "Poppins-Bold",
-                fontSize: 18,
-                color: myTheme["color-success-800"],
+                backgroundColor: myTheme["color-success-transparent-100"],
+                padding: 12,
+                paddingLeft: 20,
+                flexDirection: "row",
+                // alignItems: "center",
+                marginBottom: 10,
               }}
             >
-              Congratulations! 🥳
-            </Text>
-          </View>
+              <Text
+                style={{
+                  fontFamily: "Poppins-Bold",
+                  fontSize: 18,
+                  color: myTheme["color-success-800"],
+                }}
+              >
+                Congratulations! 🥳
+              </Text>
+            </View>
 
-          {/* Content */}
-          <View style={{ padding: 18 }}>
-            <Text
-              style={{
-                fontFamily: "Poppins-Regular",
-                fontSize: 16,
-                color: myTheme["color-basic-800"],
-                lineHeight: 18,
-                marginBottom: 30,
-                textAlign: "justify",
-                paddingHorizontal: 5,
-              }}
-            >
-              You completed your goal{" "}
-              {difference === 0 ? (
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    fontSize: 16,
-                    color: myTheme["color-basic-800"],
-                    lineHeight: 18,
-                    marginBottom: 16,
-                    textAlign: "justify",
-                    paddingHorizontal: 5,
-                  }}
-                >
-                  within the day. Let's keep up the great work!
-                </Text>
-              ) : (
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    fontSize: 16,
-                    color: myTheme["color-basic-800"],
-                    lineHeight: 18,
-                    // marginBottom:,
-                    textAlign: "justify",
-                    paddingHorizontal: 5,
-                  }}
-                >
-                  in {difference} day/s. Let's keep up the great work!
-                </Text>
-              )}
-            </Text>
+            {/* Content */}
+            <View style={{ padding: 18 }}>
+              <Text
+                style={{
+                  fontFamily: "Poppins-Regular",
+                  fontSize: 16,
+                  color: myTheme["color-basic-800"],
+                  lineHeight: 18,
+                  marginBottom: 30,
+                  textAlign: "justify",
+                  paddingHorizontal: 5,
+                }}
+              >
+                You completed your goal{" "}
+                {difference === 0 ? (
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 16,
+                      color: myTheme["color-basic-800"],
+                      lineHeight: 18,
+                      marginBottom: 16,
+                      textAlign: "justify",
+                      paddingHorizontal: 5,
+                    }}
+                  >
+                    within the day. Let's keep up the great work!
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 16,
+                      color: myTheme["color-basic-800"],
+                      lineHeight: 18,
+                      // marginBottom:,
+                      textAlign: "justify",
+                      paddingHorizontal: 5,
+                    }}
+                  >
+                    in {difference} day/s. Let's keep up the great work!
+                  </Text>
+                )}
+              </Text>
 
-            {/* <View className="flex-row justify-center space-"> */}
+              {/* <View className="flex-row justify-center space-"> */}
               {/* Button */}
               <TouchableOpacity
                 onPress={onSetNewGoal}
@@ -177,7 +178,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                   alignItems: "center",
                   flexDirection: "row",
                   justifyContent: "center",
-                  marginTop: 10
+                  marginTop: 10,
                 }}
               >
                 <Text
@@ -193,9 +194,10 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             </View>
           </View>
         </View>
-      {/* </View> */}
-    </Modal>
-  );
+        {/* </View> */}
+      </Modal>
+    );
+  }
 };
 
 export default CongratulationsModal;

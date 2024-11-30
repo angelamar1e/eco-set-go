@@ -115,7 +115,7 @@ const EcoPoints = () => {
                 <StyledText style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-SemiBold', fontSize: 16}}>{currentLevel!}</StyledText>
                 <StyledLayout className="flex-row items-center">
                   <StyledText style={{ fontFamily: 'Poppins-Regular', color: subtextColor1, fontSize: 12, marginRight: 4 }}>
-                    {nextLevelPts! - points} EcoPoints to
+                    {nextLevelPts! - points} points to
                   </StyledText>
                   <StyledText style={{ fontFamily: 'Poppins-SemiBold', color: myTheme['color-success-700'], fontSize: 14 }}>
                     {nextLevel!}

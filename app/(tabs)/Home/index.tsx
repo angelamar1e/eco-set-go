@@ -27,6 +27,8 @@ import { EmissionsContext } from "@/contexts/Emissions";
 import TakeaQuiz from "@/app/(quiz)/takeaquiz";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SustainabilityLoader from "@/app/components/(tabs)/Home/SustainabilityLoader";
+import { EcoActionsContext } from "@/contexts/EcoActions";
+import Confetti from "@/app/components/(tabs)/Home/Confetti";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -56,7 +58,6 @@ export default function LandingPage() {
 
   // Fetch user logs from Firestore
   useEffect(() => {
-    setLoading(true);
     const unsubscribe = firestore()
       .collection("user_logs")
       .doc(userUid)
@@ -65,7 +66,6 @@ export default function LandingPage() {
           try {
             if (doc.data()) {
               setUserLogs(doc.data());
-              setLoading(false);
             }
           } catch (error) {
             console.log(error);
@@ -107,7 +107,7 @@ export default function LandingPage() {
   const theme = useTheme();
   const headertextColor = theme["color-success-900"];
   const { progressPercentage } = useUserGoalContext();
-  const [loading, setLoading] = useState(true);
+  const { loading } = useContext(EcoActionsContext);
 
   let percentage = progressPercentage * 100;
   let difference = conditionalConvertGramsToKg(convertTonsToGrams(totalImpact));
@@ -420,7 +420,7 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
+  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0 || loading === true) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
         <LottieView
