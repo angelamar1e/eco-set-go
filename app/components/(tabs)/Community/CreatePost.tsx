@@ -6,6 +6,7 @@ import { Pressable, Text } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { myTheme } from '@/constants/custom-theme';
+import { useUserContext } from '@/contexts/UserContext';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -15,6 +16,7 @@ const StyledText = styled(Text);
 
 export const CreatePost = (): React.ReactElement => {
   const [value, setValue] = useState('');
+  const {userUid} = useUserContext();
   const [userName, setUserName] = useState<string | undefined>();
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,7 @@ export const CreatePost = (): React.ReactElement => {
           content: value,
           userName: userName, 
           timestamp: firestore.FieldValue.serverTimestamp(),
+          userUID: userUid,
         });
         setValue('');
         setSuccess(true);
