@@ -73,7 +73,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             overflow: "hidden",
             justifyContent: "flex-start",
             //justifyContent: "top",
-            minHeight: 270,
+            //minHeight: 250,
           }}
         >
           <View
@@ -137,7 +137,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                     paddingHorizontal: 5,
                   }}
                 >
-                  in {difference} days
+                  in {difference} day/s
                 </Text>
               )}
             </Text>
@@ -154,7 +154,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                   flexDirection: "row",
                   justifyContent: "center",
                   marginTop: 6,
-                  // marginBottom: 6,
+                  //marginBottom: 6,
                 }}
               >
                 <Text
