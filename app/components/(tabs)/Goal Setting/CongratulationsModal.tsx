@@ -71,8 +71,9 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             shadowOpacity: 0.3,
             shadowRadius: 8,
             overflow: "hidden",
-            justifyContent: "top",
-            minHeight: 270,
+            justifyContent: "flex-start",
+            //justifyContent: "top",
+            //minHeight: 250,
           }}
         >
           <View
@@ -153,7 +154,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                   flexDirection: "row",
                   justifyContent: "center",
                   marginTop: 6,
-                  // marginBottom: 6,
+                  //marginBottom: 6,
                 }}
               >
                 <Text

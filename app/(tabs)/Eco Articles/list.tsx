@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image } from 'react-native';
+import { ActivityIndicator, FlatList, Image } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { router } from 'expo-router';

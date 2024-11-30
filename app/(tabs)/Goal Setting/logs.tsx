@@ -56,7 +56,7 @@ const Logs = () => {
       <StyledLayout className="flex-1 px-2">
         <WeekOverview />
 
-        <View className="flex-1">
+        <View className="flex-1 mb-10 pb-3">
           <FlatList
             data={[
               { id: "1", component: <DailyLog /> },

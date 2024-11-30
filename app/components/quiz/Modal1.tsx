@@ -11,75 +11,104 @@ interface Modal1Props {
 const Modal1: React.FC<Modal1Props> = ({ visible, onClose }) => {
   return (
     <Modal
-      animationType="fade"
       transparent={true}
       visible={visible}
+      animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-center items-center" 
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          padding: 20,
+        }}
       >
-        <View 
-          className="w-4/5 rounded-3xl p-6"
-          style={{ 
-            backgroundColor: 'white',
+        <View
+          style={{
+            backgroundColor: "white",
+            borderRadius: 20,
+            width: "85%",
+            maxWidth: 320,
+            elevation: 8,
             shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            overflow: "hidden",
           }}
         >
-          <Text 
-            className="text-center mb-4"
+          <View
             style={{
-              fontFamily: 'Poppins-SemiBold',
-              fontSize: 20,
-              color: myTheme['color-success-800'],
+              backgroundColor: myTheme["color-success-transparent-100"],
+              padding: 12,
+              paddingLeft: 20,
+              flexDirection: "row",
+              marginBottom: 10,
             }}
           >
-            Hey there! 👋
-          </Text>
-
-          <Text 
-            className="text-center mb-2"
-            style={{
-              fontFamily: 'Poppins-Medium',
-              fontSize: 15,
-              color: myTheme['color-basic-800'],
-            }}
-          >
-            Let's Make Every Answer Count!          
-          </Text>
-
-          <Text 
-            className="text-center mb-4"
-            style={{
-              fontFamily: 'Poppins-Regular',
-              fontSize: 14,
-              lineHeight: 20,
-              color: myTheme['color-basic-600'],
-            }}
-          >
-            For the most accurate footprint calculation, try to answer all questions! Skip less, learn more! 📊🌱            
-          </Text>
-
-          <TouchableOpacity
-            className="py-2 rounded-full items-center justify-center border"
-            style={{ 
-              borderColor: myTheme['color-basic-400'],
-              backgroundColor: 'transparent'
-            }}
-            onPress={onClose}
-          >
-            <Text style={{
-              fontFamily: 'Poppins-SemiBold',
-              fontSize: 14,
-              color: myTheme['color-basic-600'],
-            }}>
-              Got it!
+            <Text
+              style={{
+                fontFamily: "Poppins-Bold",
+                fontSize: 18,
+                color: myTheme["color-success-800"],
+              }}
+            >
+              Hey there! 👋
             </Text>
-          </TouchableOpacity>
+          </View>
+
+          <View style={{ padding: 18 }}>
+            <Text
+              style={{
+                fontFamily: "Poppins-Medium",
+                fontSize: 16,
+                color: myTheme["color-basic-800"],
+                marginBottom: 8,
+                textAlign: "center",
+              }}
+            >
+              Let's Make Every Answer Count!
+            </Text>
+
+            <Text
+              style={{
+                fontFamily: "Poppins-Regular",
+                fontSize: 14,
+                color: myTheme["color-basic-800"],
+                lineHeight: 18,
+                marginBottom: 30,
+                textAlign: "justify",
+                paddingHorizontal: 5,
+              }}
+            >
+              For the most accurate footprint calculation, try to answer all questions! Skip less, learn more! 📊🌱
+            </Text>
+
+            <TouchableOpacity
+              onPress={onClose}
+              style={{
+                backgroundColor: myTheme["color-basic-200"],
+                padding: 4,
+                borderRadius: 10,
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: "Poppins-SemiBold",
+                  fontSize: 14,
+                  color: myTheme["color-success-800"],
+                }}
+              >
+                Got it!
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>

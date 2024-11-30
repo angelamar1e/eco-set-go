@@ -18,7 +18,7 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
   const fontsLoaded = useLoadFonts();
 
   return (
-    <StyledLayout className="mt-2 flex-row flex-wrap">
+    <StyledLayout className="mt-2 flex-row flex-wrap items-center justify-center">
         {filters.map((category) => (
           <TouchableOpacity
             key={category}
