@@ -32,6 +32,7 @@ export const EmissionsContext = createContext();
 export const EmissionsProvider = ({ children }) => {
   const { userUid, role } = useUserContext();
   const [initialized, setInitialized] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [newOverallFootprint, setNewOverallFootprint] = useState(0);
 
   // Load initial data from Firestore for the logged-in user
@@ -202,108 +203,117 @@ export const EmissionsProvider = ({ children }) => {
   // Calculate total emissions after all individual emissions data has been initialized
   useEffect(() => {
     if (initialized) {
-      // Calculate each emission category
-      const calculatedCarEmissions = computeCarEmissions(
-        kmTravelled,
-        constructionScale,
-        lifeSpanInKm,
-        footprintPerLiter,
-        consumptionPerKm,
-        numOfPassengers,
-        user
-      );
-
-      const calculatedAirplaneTravelEmissions = computeTotalAirplaneEmissions(
-        travelledByPlane,
-        shortHaulDuration,
-        mediumHaulDuration,
-        longHaulDuration
-      );
-
-      const calculatedTwoWheelersEmissions = computeTwoWheelersEmissions(
-        usesTwoWheelers,
-        twoWheelerEFPerKm,
-        twoWheelersKmTravelled
-      );
-
-      const calculatedEfficientTravelEmissions =
-        computeTotalEfficientTravelEmissions(
-          selectedTransports,
-          eBikeKmTravelled,
-          smallVehKmTravelled
+      try {
+        setLoading(true);
+        // Calculate each emission category
+        const calculatedCarEmissions = computeCarEmissions(
+          kmTravelled,
+          constructionScale,
+          lifeSpanInKm,
+          footprintPerLiter,
+          consumptionPerKm,
+          numOfPassengers,
+          user
         );
-
-      const calculatedTrainEmissions = computeTrainEmissions(trainKmTravelled);
-
-      const calculatedPublicTransportEmissions =
-        computeTotalPublicTransportEmissions(
-          selectedPublicTransport,
-          busHrsTravelled,
-          jeepHrsTravelled,
-          tricycleHrsTravelled
+  
+        const calculatedAirplaneTravelEmissions = computeTotalAirplaneEmissions(
+          travelledByPlane,
+          shortHaulDuration,
+          mediumHaulDuration,
+          longHaulDuration
         );
-
-      const calculatedBreakfastEmissions =
-        computeBreakfastEmissions(breakfastEF);
-
-      const calculatedMealEmissions = computeTotalMealEmissions(
-        beefMealEF,
-        chickenMealEF,
-        porkMealEF,
-        fishMealEF,
-        vegetarianMealEF,
-        veganMealEF,
-        mealTypeFrequency
-      );
-
-      const calculatedHotDrinksEmissions =
-        computeTotalHotDrinksEmissions(hotDrinksFrequency);
-
-      const calculatedColdDrinksEmissions = computeTotalColdDrinkEmissions(
-        sweetDrinksFrequency,
-        alcoholFrequency
-      );
-
-      const calculatedElectricityEmissions = computeElectricityEmissions(
-        householdSize,
-        usesSolarPanels,
-        solarProduction,
-        solarConsumptionPercent,
-        gridMonthlySpend
-      );
-
-      // Update each emissions state with calculated values
-      setCarEmissions(calculatedCarEmissions);
-      setAirplaneTravelEmissions(calculatedAirplaneTravelEmissions);
-      setTwoWheelersEmissions(calculatedTwoWheelersEmissions);
-      setEfficientTravelEmissions(calculatedEfficientTravelEmissions);
-      setTrainEmissions(calculatedTrainEmissions);
-      setPublicTransportEmissions(calculatedPublicTransportEmissions);
-      setBreakfastEmissions(calculatedBreakfastEmissions);
-      setMealEmissions(calculatedMealEmissions);
-      setHotDrinksEmissions(calculatedHotDrinksEmissions);
-      setColdDrinksEmissions(calculatedColdDrinksEmissions);
-      setElectricityEmissions(calculatedElectricityEmissions);
-
-    const newFoodEmissions =
-      breakfastEmissions +
-      mealEmissions +
-      hotDrinksEmissions +
-      coldDrinksEmissions +
-      bottledWaterEmissions;
-
-    const newTransportEmissions =
-      carEmissions +
-      airplaneTravelEmissions +
-      twoWheelersEmissions +
-      efficientTravelEmissions +
-      trainEmissions +
-      publicTransportEmissions;
-
-    setFoodFootprint(newFoodEmissions);
-    setTransportationFootprint(newTransportEmissions);
-    setElectricityFootprint(electricityEmissions);
+  
+        const calculatedTwoWheelersEmissions = computeTwoWheelersEmissions(
+          usesTwoWheelers,
+          twoWheelerEFPerKm,
+          twoWheelersKmTravelled
+        );
+  
+        const calculatedEfficientTravelEmissions =
+          computeTotalEfficientTravelEmissions(
+            selectedTransports,
+            eBikeKmTravelled,
+            smallVehKmTravelled
+          );
+  
+        const calculatedTrainEmissions = computeTrainEmissions(trainKmTravelled);
+  
+        const calculatedPublicTransportEmissions =
+          computeTotalPublicTransportEmissions(
+            selectedPublicTransport,
+            busHrsTravelled,
+            jeepHrsTravelled,
+            tricycleHrsTravelled
+          );
+  
+        const calculatedBreakfastEmissions =
+          computeBreakfastEmissions(breakfastEF);
+  
+        const calculatedMealEmissions = computeTotalMealEmissions(
+          beefMealEF,
+          chickenMealEF,
+          porkMealEF,
+          fishMealEF,
+          vegetarianMealEF,
+          veganMealEF,
+          mealTypeFrequency
+        );
+  
+        const calculatedHotDrinksEmissions =
+          computeTotalHotDrinksEmissions(hotDrinksFrequency);
+  
+        const calculatedColdDrinksEmissions = computeTotalColdDrinkEmissions(
+          sweetDrinksFrequency,
+          alcoholFrequency
+        );
+  
+        const calculatedElectricityEmissions = computeElectricityEmissions(
+          householdSize,
+          usesSolarPanels,
+          solarProduction,
+          solarConsumptionPercent,
+          gridMonthlySpend
+        );
+  
+        // Update each emissions state with calculated values
+        setCarEmissions(calculatedCarEmissions);
+        setAirplaneTravelEmissions(calculatedAirplaneTravelEmissions);
+        setTwoWheelersEmissions(calculatedTwoWheelersEmissions);
+        setEfficientTravelEmissions(calculatedEfficientTravelEmissions);
+        setTrainEmissions(calculatedTrainEmissions);
+        setPublicTransportEmissions(calculatedPublicTransportEmissions);
+        setBreakfastEmissions(calculatedBreakfastEmissions);
+        setMealEmissions(calculatedMealEmissions);
+        setHotDrinksEmissions(calculatedHotDrinksEmissions);
+        setColdDrinksEmissions(calculatedColdDrinksEmissions);
+        setElectricityEmissions(calculatedElectricityEmissions);
+  
+      const newFoodEmissions =
+        breakfastEmissions +
+        mealEmissions +
+        hotDrinksEmissions +
+        coldDrinksEmissions +
+        bottledWaterEmissions;
+  
+      const newTransportEmissions =
+        carEmissions +
+        airplaneTravelEmissions +
+        twoWheelersEmissions +
+        efficientTravelEmissions +
+        trainEmissions +
+        publicTransportEmissions;
+  
+      setFoodFootprint(newFoodEmissions);
+      setTransportationFootprint(newTransportEmissions);
+      setElectricityFootprint(electricityEmissions);
+      }
+    catch(error) {
+      console.log(error);
     }
+    finally{
+      setLoading(false);
+    }
+  }
   }, [initialized,
     carEmissions,
     airplaneTravelEmissions,
@@ -1089,7 +1099,7 @@ export const EmissionsProvider = ({ children }) => {
         setTransportationFootprint(newTransportEmissions);
         setElectricityFootprint(electricityEmissions);
 
-        if (role === "user") {
+        if (role === "user" && loading === false) {
           try {
             await firestore().collection("initial_footprint").doc(userUid).set(
               {
@@ -1108,7 +1118,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateFootprint();
-  }, [carEmissions, 
+  }, [loading, carEmissions, 
     airplaneTravelEmissions,
     twoWheelersEmissions,
     efficientTravelEmissions,
@@ -1124,6 +1134,7 @@ export const EmissionsProvider = ({ children }) => {
   return (
     <EmissionsContext.Provider
       value={{
+        loading,
         initialized,
         initializeData,
         newOverallFootprint,

@@ -55,10 +55,14 @@ export const UserLogsProvider = ({ children }) => {
       data.data.every((entry) => Array.isArray(entry) && entry.length === 3) // Ensure all rows have 3 values
     );
   };  
+  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     initializeData();
     setData(userLogs);
+    setLoading(false);
   }, [userLogs, selectedPeriod]);
 
   // Calculate total impact and prepare chart data
@@ -168,8 +172,10 @@ export const UserLogsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    setCurrentFootprint();
-  }, [userLogs, initialFootprint]);
+    if (loading === false){
+      setCurrentFootprint();
+    }
+  }, [userLogs, initialFootprint, totalImpact]);
 
   // Helper function to check if userLogs is effectively empty
   const isUserLogsEmpty = (logs) => {
