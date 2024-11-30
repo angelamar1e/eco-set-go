@@ -118,23 +118,19 @@ const ProgressReport = () => {
 
   const renderDataValues = () => {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ height: 400 }}>
         <ScrollView 
           className="flex-wrap"
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
           contentContainerStyle={{
-            padding: 20,
-            paddingBottom: 110
-          }}
-          style={{
-            height: '100%',
-            maxHeight: 400,
+            padding: 16
           }}
         >
           {stackedChartData.labels.map((label: string, index: number) => (
             <View 
               key={index} 
-              className="mb-4 p-4 rounded-lg" 
+              className="mb-4 p-4 rounded-lg flex-wrap" 
               style={{
                 backgroundColor: myTheme['color-basic-200'],
                 borderColor: myTheme['color-basic-300'],
@@ -289,29 +285,25 @@ const ProgressReport = () => {
         </StyledText>
       </StyledLayout>
 
-      <StyledLayout className="flex-1">
-        <GoalSetting />
-        <View className="flex-row justify-center mt-2 mb-3 px-2 h-32">
-          {/* Total Impact Layout */}
-          <StyledLayout
-            className="flex-1 mx-1.5 rounded-3xl justify-center overflow-hidden"
-            style={{
-              backgroundColor: 'transparent',
-              elevation: 4,
-              shadowColor: myTheme["color-success-700"],
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.2,
-              shadowRadius: 4,
-            }}
-          >
-            <View
+        <StyledLayout className="flex-1">
+          <GoalSetting />
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 50
+              }}
+            >
+          <View className="flex-row justify-center mt-2 mb-3 px-2 h-32">
+            {/* Total Impact Layout */}
+            <StyledLayout
+              className="flex-1 mx-1.5 rounded-3xl justify-center overflow-hidden"
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: myTheme["color-success-700"],
+                backgroundColor: 'transparent',
+                elevation: 4,
+                shadowColor: myTheme["color-success-700"],
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
               }}
             >
               <View
@@ -321,93 +313,50 @@ const ProgressReport = () => {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  backgroundColor: myTheme["color-success-800"],
-                  opacity: 0.3,
-                  borderRadius: 24,
-                }}
-              />
-            </View>
-            <View className="items-center">
-              <Text
-                style={{
-                  fontFamily: "Poppins-Medium",
-                  fontSize: 12,
-                  color: 'white',
-                  opacity: 0.9,
-                  marginBottom: 4,
+                  backgroundColor: myTheme["color-success-700"],
                 }}
               >
-                Total Impact
-              </Text>
-              <View className="items-center">
-                <View className="flex-row items-baseline">
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Bold",
-                      fontSize: 24,
-                      color: 'white',
-                    }}
-                  >
-                    {conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Medium",
-                      fontSize: 13,
-                      color: 'white',
-                      marginLeft: 2,
-                    }}
-                  >
-                    CO₂e
-                  </Text>
-                </View>
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: myTheme["color-success-800"],
+                    opacity: 0.3,
+                    borderRadius: 24,
+                  }}
+                />
               </View>
-            </View>
-          </StyledLayout>
-
-          {/* Emissions Comparison Layout */}
-
-            {/* Container for both emissions */}
-            <StyledLayout className="flex-1 p-1" 
-              style={{ 
-                borderColor: myTheme['color-success-700'],
-                borderWidth: 1,
-                borderRadius: 24,
-              }}
-              >
-              {/* Initial Emissions */}
-              <StyledLayout 
-                className="flex-1 justify-center"
-                style={{
-                  backgroundColor: 'transparent',
-                }}
-              >
+              <View className="items-center">
+                <Text
+                  style={{
+                    fontFamily: "Poppins-Medium",
+                    fontSize: 12,
+                    color: 'white',
+                    opacity: 0.9,
+                    marginBottom: 4,
+                  }}
+                >
+                  Total Impact
+                </Text>
                 <View className="items-center">
-                  <Text 
-                    style={{ 
-                      fontFamily: 'Poppins-Medium',
-                      fontSize: 11,
-                      color: myTheme['color-basic-600'],
-                      marginBottom: 1,
-                    }}
-                  >
-                    Initial Emissions
-                  </Text>
                   <View className="flex-row items-baseline">
-                    <Text 
-                      style={{ 
-                        fontFamily: 'Poppins-Bold',
-                        fontSize: 18,
-                        color: myTheme['color-success-900'],
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Bold",
+                        fontSize: 24,
+                        color: 'white',
                       }}
                     >
-                      {(initialFootprint).toFixed(2)} tons
+                      {conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}
                     </Text>
-                    <Text 
-                      style={{ 
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 12,
-                        color: myTheme['color-success-900'],
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Medium",
+                        fontSize: 13,
+                        color: 'white',
                         marginLeft: 2,
                       }}
                     >
@@ -415,7 +364,60 @@ const ProgressReport = () => {
                     </Text>
                   </View>
                 </View>
-              </StyledLayout>
+              </View>
+            </StyledLayout>
+
+            {/* Emissions Comparison Layout */}
+
+              {/* Container for both emissions */}
+              <StyledLayout className="flex-1 p-1" 
+                style={{ 
+                  borderColor: myTheme['color-success-700'],
+                  borderWidth: 1,
+                  borderRadius: 24,
+                }}
+                >
+                {/* Initial Emissions */}
+                <StyledLayout 
+                  className="flex-1 justify-center"
+                  style={{
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <View className="items-center">
+                    <Text 
+                      style={{ 
+                        fontFamily: 'Poppins-Medium',
+                        fontSize: 11,
+                        color: myTheme['color-basic-600'],
+                        marginBottom: 1,
+                      }}
+                    >
+                      Initial Emissions
+                    </Text>
+                    <View className="flex-row items-baseline">
+                      <Text 
+                        style={{ 
+                          fontFamily: 'Poppins-Bold',
+                          fontSize: 18,
+                          color: myTheme['color-success-900'],
+                        }}
+                      >
+                        {(initialFootprint).toFixed(2)} tons
+                      </Text>
+                      <Text 
+                        style={{ 
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 12,
+                          color: myTheme['color-success-900'],
+                          marginLeft: 2,
+                        }}
+                      >
+                        CO₂e
+                      </Text>
+                    </View>
+                  </View>
+                </StyledLayout>
 
               {/* Subtle Divider */}
               <View 
@@ -515,6 +517,7 @@ const ProgressReport = () => {
             </Layout>
           </ViewPager>
         </StyledLayout>
+        </ScrollView>
       </StyledLayout>
     </StyledLayout>
   );

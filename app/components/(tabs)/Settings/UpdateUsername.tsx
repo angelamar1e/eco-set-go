@@ -13,7 +13,7 @@ const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
 const UpdateUsername = () => {
-  const {userUid, username, setUsername} = useUserContext();
+  const {userUid, username} = useUserContext();
   const [newUsername, setNewUsername] = useState("");
   const router = useRouter();
 

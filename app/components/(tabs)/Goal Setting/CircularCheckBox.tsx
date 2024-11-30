@@ -19,8 +19,8 @@ const CircularCheckbox: React.FC<CircularCheckboxProps> = ({ status, isChecked, 
       <View
         className="h-5 w-5 rounded-full border-2 flex items-center justify-center"
         style={{
-          backgroundColor: checked ? theme['color-primary-default'] : 'transparent',
-          borderColor: checked ? theme['color-primary-default'] : theme['color-basic-300'],
+          backgroundColor: checked ? theme['color-success-600'] : 'transparent',
+          borderColor: checked ? theme['color-success-600'] : theme['color-success-300'],
         }}
       >
         {checked && <Ionicons name="checkmark" color={iconColor || "white"} />}

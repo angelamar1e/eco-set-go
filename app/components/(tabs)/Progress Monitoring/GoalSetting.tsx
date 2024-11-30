@@ -41,12 +41,13 @@ const GoalSetting: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState<"start" | "end" | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const {dailyLogLoading} = useUserGoalContext();
 
   useEffect(() => {
-    if (progressPercentage >= 1){
+    if (progressPercentage >= 1 && dailyLogLoading === false){
       setModalVisible(true);
     }
-  }, [progressPercentage]);
+  }, [dailyLogLoading]);
 
   const closeModal = () => {
     setModalVisible(false);
@@ -97,7 +98,7 @@ const GoalSetting: React.FC = () => {
               </View>
             </>
           ) : (
-            <View className="flex-row flex-wrap mb-4 justify-between">
+            <View className="flex-row flex-wrap mb-1 justify-between">
             <View className="basis-1/2">
               <StyledText category="label" className="mb-1" style={{ color: myTheme['color-basic-600'], fontFamily: 'Poppins-Medium'}}>Start Date</StyledText>
               <TouchableOpacity

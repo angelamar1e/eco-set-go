@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Modal, TouchableOpacity } from 'react-native';
-import { Text, Button } from '@ui-kitten/components';
+import { Text, Button, Layout } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { myTheme } from '@/constants/custom-theme';
@@ -15,31 +15,96 @@ interface TakeaQuizProps {
 const TakeaQuiz: React.FC<TakeaQuizProps> = ({ visible, onTakeQuiz, onDismiss }) => {
   const router = useRouter();
   const StyledText = styled(Text);
+  const StyledLayout = styled(Layout);
 
   return (
     <Modal
-      visible={visible}
-      transparent
       animationType="fade"
+      visible={visible}
       onRequestClose={onDismiss}
     >
-      <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center' }}>
-        <View style={{ width: '80%', padding: 20, backgroundColor: 'white', borderRadius: 10, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
-          <Ionicons name="help" size={40} color={myTheme['color-primary-500']} />
-          <Text style={{ fontFamily: 'Poppins-Medium', textAlign: 'center', marginVertical: 10, fontSize: 20, color: myTheme['color-basic-900'] }}>Take a Quick Quiz!</Text>
-          <Text style={{ textAlign: 'center', marginVertical: 10, color: '#6b7280', fontFamily: 'Poppins-Regular' }}>Get started by taking a short quiz to  
-            <Text style={{ fontSize:15, fontFamily: 'Poppins-Medium', color: myTheme['color-success-900']}}> estimate your carbon footprint</Text> and 
-            <Text style={{ fontSize:15, fontFamily: 'Poppins-Medium', color: myTheme['color-success-900']}}> personalize </Text> 
-              your experience.
-          </Text>
-          <View style={{ flexDirection: 'row', marginTop: 15, alignItems: 'center' }}>
-            <Button onPress={onTakeQuiz} style={{ flex: 1, borderRadius: 50, alignItems: 'center' }} status="primary">Take a Quiz</Button>
-            <TouchableOpacity onPress={onDismiss}>
-              <StyledText className="text-sm font-bold" style={{color: myTheme['color-success-700']}}> Take the quiz later</StyledText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <StyledLayout 
+        className="flex-1 justify-center items-center"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      >
+        <StyledLayout 
+          className="w-4/5 rounded-3xl p-6"
+          style={{ 
+            backgroundColor: 'white',
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <StyledText 
+            className="text-center mb-3"
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              color: myTheme['color-success-800']
+            }}
+          >
+            Take a Quick Quiz! 🧐
+          </StyledText>
+          
+          <StyledText 
+            className="text-center mb-4"
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              lineHeight: 20,
+              color: myTheme['color-basic-600']
+            }}
+          >
+            Get started by taking a short quiz to{' '}
+            <Text style={{ fontFamily: 'Poppins-Medium', color: myTheme['color-success-700']}}>
+              estimate your carbon footprint
+            </Text>{' '}
+            and{' '}
+            <Text style={{ fontFamily: 'Poppins-Medium', color: myTheme['color-success-700']}}>
+              personalize
+            </Text>{' '}
+            your experience.
+          </StyledText>
+
+          <TouchableOpacity 
+            className="py-2 rounded-full mb-2 items-center justify-center"
+            style={{ backgroundColor: myTheme['color-success-700'] }}
+            onPress={onTakeQuiz}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 14,
+                color: 'white'
+              }}
+            >
+              Take a Quiz
+            </StyledText>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="py-2 rounded-full items-center justify-center border"
+            style={{ 
+              borderColor: myTheme['color-basic-400'],
+              backgroundColor: 'transparent'
+            }}
+            onPress={onDismiss}
+          >
+            <StyledText 
+              style={{ 
+                fontFamily: 'Poppins-SemiBold',
+                fontSize: 14,
+                color: myTheme['color-basic-600']
+              }}
+            >
+              Take the quiz later
+            </StyledText>
+          </TouchableOpacity>
+        </StyledLayout>
+      </StyledLayout>
     </Modal>
   );
 };

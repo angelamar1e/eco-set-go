@@ -3,6 +3,7 @@ import { Image, TouchableOpacity, Linking, useColorScheme } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import storage from '@react-native-firebase/storage';
+import { myTheme } from '@/constants/custom-theme';
 
 interface EcoNewsCardProps {
   thumbnail: string;
@@ -52,9 +53,20 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
 
   return (
     <StyledLayout
-      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border ${borderClass}`}  // Dynamically applied border class
+      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 border ${borderClass}`}
+      style={{
+        backgroundColor: myTheme['color-basic-200'],
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 2.5,
+        elevation: 2,
+      }}
     >
-      <StyledLayout className="flex-row items-start">
+      <StyledLayout className="flex-row items-start" style={{backgroundColor: myTheme['color-basic-200']}}>
         <StyledLayout>
           {imageUrl && (
             <TouchableOpacity onPress={handlePress}>
@@ -63,12 +75,19 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
           )}
         </StyledLayout>
 
-        <StyledLayout className="flex-1 m-2 p-2">
+        <StyledLayout className="flex-1 m-2 p-2" style={{backgroundColor: myTheme['color-basic-200']}}>
           <TouchableOpacity onPress={handlePress}>
-            <StyledText style={{
-              fontFamily: 'Poppins-SemiBold',
-              fontSize: 12
-            }}>
+            <StyledText 
+              className="" 
+              style={{
+                color: myTheme['color-success-700'],
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                lineHeight: 16
+              }}
+              numberOfLines={6}
+              ellipsizeMode="tail"
+            >
               {headline}
             </StyledText>
           </TouchableOpacity>

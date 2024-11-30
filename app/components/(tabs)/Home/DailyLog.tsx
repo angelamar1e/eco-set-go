@@ -18,6 +18,7 @@ import AddActionButton from "../Goal Setting/AddActionButton";
 import { myTheme } from "@/constants/custom-theme";
 import { ActivityIndicator } from "react-native-paper";
 import { Points } from "@/constants/Points";
+import { useUserGoalContext } from "@/contexts/UserGoalContext";
 
 
 const templates = [Meal, Static, Parameterized, ReductionRate, TransportationOptions, Transportation];
@@ -37,6 +38,7 @@ const DailyLog: FC = () => {
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
   const [loading, setLoading] = useState(true);
+  const {setDailyLogLoading, dailyLogLoading} = useUserGoalContext(); 
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -47,6 +49,10 @@ const DailyLog: FC = () => {
 
     setCurrentLog(currentLog[actionId]);
   }
+
+  useEffect(() => {
+    setDailyLogLoading(loading);
+  }, [loading]);
 
   const dailyLogDoc = firestore().collection("daily_logs").doc(userUid);
   const userLogs = firestore().collection("user_logs").doc(userUid);
@@ -197,7 +203,6 @@ const DailyLog: FC = () => {
                 [actionId]: updatePayload
             }
         });
-        console.log(`Successfully updated Firestore with actionId: ${actionId}`, updatePayload);
     } catch (error) {
         console.error("Error updating Firestore:", error);
     }
@@ -238,7 +243,7 @@ const DailyLog: FC = () => {
         <StyledLayout className="pt-1">
         {loading ? ( // Show loading spinner if loading
           <StyledLayout className="mt-6" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="small" color={myTheme['color-success-700']} />
+            <ActivityIndicator size="small" color={myTheme['color-success-600']} />
           </StyledLayout>
         ) : (
           <>
@@ -274,6 +279,7 @@ const DailyLog: FC = () => {
               category="s1" 
               style={{ 
                 fontFamily: 'Poppins-SemiBold',
+                color: myTheme['color-success-700']
               }} 
               className="mt-3 ml-3"
             >

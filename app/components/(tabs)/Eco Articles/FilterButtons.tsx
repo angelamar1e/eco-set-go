@@ -18,12 +18,12 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({ selectedFilter, onFilterC
   const fontsLoaded = useLoadFonts();
 
   return (
-    <StyledLayout className="mt-2 justify-center items-center flex-row flex-wrap">
+    <StyledLayout className="mt-2 flex-row flex-wrap items-center justify-center">
         {filters.map((category) => (
           <TouchableOpacity
             key={category}
             onPress={() => onFilterChange(category)}
-            className={`p-1 px-3 py-1 m-1 rounded-full border flex-grow items-center justify-center ${
+            className={`p-1 px-3 py-1 m-1 rounded-full border ${
               selectedFilter === category 
                 ? 'bg-[#34C759] border-[#34C759]' 
                 : 'bg-[#F5F7F9] border-[#8F9BB3]'
