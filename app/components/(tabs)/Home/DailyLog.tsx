@@ -38,7 +38,7 @@ const DailyLog: FC = () => {
   const [currentLog, setCurrentLog] = useState({});
   const [completedActionIds, setCompletedActionIds] = useState<{[key: string]: number}>({});
   const [loading, setLoading] = useState(true);
-  const {setDailyLogLoading} = useUserGoalContext(); 
+  const {setDailyLogLoading, dailyLogLoading} = useUserGoalContext(); 
 
   const currentDate = moment().format("YYYY-MM-DD");
 
@@ -203,7 +203,6 @@ const DailyLog: FC = () => {
                 [actionId]: updatePayload
             }
         });
-        console.log(`Successfully updated Firestore with actionId: ${actionId}`, updatePayload);
     } catch (error) {
         console.error("Error updating Firestore:", error);
     }
@@ -244,7 +243,7 @@ const DailyLog: FC = () => {
         <StyledLayout className="pt-1">
         {loading ? ( // Show loading spinner if loading
           <StyledLayout className="mt-6" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="small" color={myTheme['color-success-700']} />
+            <ActivityIndicator size="small" color={myTheme['color-success-600']} />
           </StyledLayout>
         ) : (
           <>
@@ -280,6 +279,7 @@ const DailyLog: FC = () => {
               category="s1" 
               style={{ 
                 fontFamily: 'Poppins-SemiBold',
+                color: myTheme['color-success-700']
               }} 
               className="mt-3 ml-3"
             >

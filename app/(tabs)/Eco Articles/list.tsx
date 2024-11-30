@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image } from 'react-native';
+import { ActivityIndicator, FlatList, Image } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { router } from 'expo-router';
@@ -21,12 +21,14 @@ const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
 
   const fetchEcoActions = async (category: string) => {
     try {
+      setLoading(true);
       let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
 
-      if (category !== 'ALL' && category !== 'Getting Started') {
+      if (category !== 'ALL') {
         query = query.where('category', '==', category);
       }
 
@@ -46,6 +48,7 @@ const EcoActionsList = () => {
       );
 
       setEcoActions(data as EcoAction[]);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching eco actions: ", error);
     }
@@ -86,9 +89,9 @@ const EcoActionsList = () => {
             source={{ uri: item.image }}
             className='rounded-lg'
             style={{
-              zIndex: 10,
+              zIndex:10,
               opacity: 0.5,
-              width: '115%',
+              width: '150%', 
               height: '170%',
             }}
             resizeMode="cover"
@@ -96,11 +99,13 @@ const EcoActionsList = () => {
         )}
         {/* Title section positioned at the bottom */}
         <StyledLayout
-          className="justify-center items-center p-2 flex-wrap"
+          className="justify-center items-center p-2"
           style={{
             zIndex: 20,
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
+            top: 0,
+            height: 70,
             width: '115%',
           }}
         >
@@ -108,7 +113,6 @@ const EcoActionsList = () => {
             style={{
               color: 'white',
               fontFamily: 'Poppins-Regular',
-              fontSize: 15
             }}
           >
             {item.title}
@@ -117,74 +121,6 @@ const EcoActionsList = () => {
       </StyledCard>
     );
   };
-
-  const renderGettingStartedItems = () => (
-    <>
-      <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
-        className="h-[150px] rounded-xl m-2"
-        style={{
-          borderColor: myTheme['color-success-700'],
-          borderWidth: 1,
-          borderBottomWidth: 1,
-          overflow: 'hidden',
-        }}
-      >
-        {/* Title section positioned at the bottom */}
-        <StyledLayout
-          className="justify-center items-center p-2 flex-wrap"
-          style={{
-            zIndex: 20,
-            backgroundColor: myTheme['color-success-700'],
-            position: 'absolute',
-            width: '115%',
-          }}
-        >
-          <Text
-            style={{
-              color: 'white',
-              fontFamily: 'Poppins-Regular',
-              fontSize: 15
-            }}
-          >
-            Introduction to Carbon Footprint
-          </Text>
-          </StyledLayout>
-      </StyledCard>
-
-      <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
-        className="h-[150px] rounded-xl m-2"
-        style={{
-          borderColor: myTheme['color-success-700'],
-          borderWidth: 1,
-          borderBottomWidth: 1,
-          overflow: 'hidden',
-        }}
-      >
-        {/* Title section positioned at the bottom */}
-        <StyledLayout
-          className="justify-center items-center p-2 flex-wrap"
-          style={{
-            zIndex: 20,
-            backgroundColor: myTheme['color-success-700'],
-            position: 'absolute',
-            width: '115%',
-          }}
-        >
-          <Text
-            style={{
-              color: 'white',
-              fontFamily: 'Poppins-Regular',
-              fontSize: 15
-            }}
-          >
-            Goal Guidelines
-          </Text>
-        </StyledLayout>
-      </StyledCard>
-    </>
-  );
 
   const fontsLoaded = useLoadFonts(); 
 
@@ -209,11 +145,10 @@ const EcoActionsList = () => {
             onFilterChange={setFilter} 
           />
         </StyledLayout>
-
-        {filter === 'Getting Started' ? (
-          <StyledLayout className="mt-2">
-            {renderGettingStartedItems()}
-          </StyledLayout>
+        {(loading === true) ? (
+          <StyledLayout className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color={myTheme['color-success-600']} />
+        </StyledLayout>
         ) : (
           <FlatList
             className="mt-2"

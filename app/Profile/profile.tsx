@@ -105,7 +105,7 @@ const UserProfile = () => {
                 {/* Profile Header - simplified */}
                 <StyledLayout className="mt-5 flex-row p-1 justify-between">
                     <StyledButton
-                        onPress={() => router.push('/(tabs)/Home')}
+                        onPress={() => router.push('/(tabs)/Rewards/points')}
                         className="p-1 m-1 rounded-full"
                         size="small"
                         appearance="outline"
@@ -114,7 +114,7 @@ const UserProfile = () => {
                     </StyledButton>
                     <StyledButton
                         className="p-1 m-1 rounded-full"
-                        onPress={() => router.push('/Profile/Settings/setting')}                     
+                        onPress={() => router.push('/Profile/Settings')}                     
                         size="small"
                         appearance="outline"
                         status="basic">

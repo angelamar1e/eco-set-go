@@ -14,7 +14,7 @@ const StyledLayout = styled(Layout);
 
 const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
   const tips = [
-    "Try setting a carbon reduction goal of 2 tons (2000 kg) of CO₂e - that's like growing 30 tree seedlings for 10 years! 🌱"
+    "Over a year, a carbon reduction goal of 2 tons (2000 kg) of CO₂e is ideal - that's like growing 30 tree seedlings for 10 years! 🌱"
   ];
 
   return (

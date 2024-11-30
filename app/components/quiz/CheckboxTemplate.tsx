@@ -41,7 +41,6 @@ const CheckboxTemplate: FC<TemplateProps> = ({
     }
     
     setSelectedAnswers(updatedAnswers);
-    console.log(updatedAnswers);
     onAnswer(updatedAnswers); // Call onAnswer with the updated array
   };
 

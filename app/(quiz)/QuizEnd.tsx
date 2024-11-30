@@ -211,7 +211,7 @@ const QuizEnd = () => {
                                                 color: myTheme['color-success-700']
                                             }}>
                                                 {emissionData.value.toFixed(2)}
-                                                <Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
+                                                <Text style={{fontFamily: 'Poppins-Regular' }}> tons</Text>
                                             </Text>
                                             <Text style={{fontFamily: 'Poppins-SemiBold' }}>
                                                 <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {emissionData.source || 'Unknown'} 

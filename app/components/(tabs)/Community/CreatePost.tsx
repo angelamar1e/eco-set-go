@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
+import { Card, Button, Input, Layout, Modal} from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -61,24 +62,20 @@ export const CreatePost = (): React.ReactElement => {
   };
 
   return (
-    <StyledCard className="mt-16 ml-2 mr-2">
-      <StyledLayout className="flex-row items-center mb-3">
+    <StyledCard className="mt-20 mx-3 bg-gray-100 rounded-xl" style={{backgroundColor: myTheme['color-basic-200']}}>
+      <StyledLayout className="flex-row items-center mb-3 " style={{backgroundColor: myTheme['color-basic-200']}}>
         <StyledInput
           className="flex-1 rounded-lg"
           placeholder="Share your thoughts... 💭"
           value={value}
           onChangeText={setValue}
           multiline={true}
-          textStyle={{ 
-            fontFamily: 'Poppins-Regular',
-            fontSize: 13,
-            top: 2
-          }}
-          style={{ fontFamily: 'Poppins-Regular' }}
+          size='large'
+          style={{borderColor: myTheme['color-success-600']}}
         />
       </StyledLayout>
 
-      <StyledLayout className="flex-row justify-between">
+      <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
         <StyledLayout className="flex-row items-center">
           <Pressable onPress={() => console.log('Attach image')}>
             <Ionicons size={22} name="image-outline" color="#34C759" />
@@ -86,24 +83,13 @@ export const CreatePost = (): React.ReactElement => {
         </StyledLayout>
         
         <StyledButton
-          className="ml-1 rounded-full px-4 py-0"
-          status="success"
-          size="small"
-          appearance="filled"
+          className="ml-1 rounded-full"
+          appearance="ghost"
           disabled={value.length === 0 || loading}
           onPress={handlePostSubmit}
+          style={{backgroundColor: myTheme['color-basic-400']}}
         >
-          {evaProps => (
-            <Text 
-              style={{ 
-                fontFamily: 'Poppins-Medium',
-                fontSize: 12,
-                color: 'white'
-              }}
-            >
-              {loading ? 'Posting...' : 'Post'}
-            </Text>
-          )}
+          <Text >{loading ? 'Posting...' : 'Post'}</Text>
         </StyledButton>
       </StyledLayout>
 

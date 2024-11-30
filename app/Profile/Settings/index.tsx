@@ -44,18 +44,6 @@ const setting = () => {
       }
   };
   
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      const { userUid } = useUserContext();
-      if (userUid) {
-        fetchEmail(userUid);
-        fetchPassword(userUid);
-      }
-    };
-
-    fetchUserDetails();
-  }, []);
-  
   return (
     <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
@@ -72,11 +60,7 @@ const setting = () => {
       
         <StyledLayout className="mt-5">
         {selectedTab === 'Details' ? (
-            <Details 
-                username={username}
-                email={email}
-                password={password}
-            />
+            <Details/>
         ) : (
             <Preferences/>
         )}    
