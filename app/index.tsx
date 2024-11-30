@@ -27,19 +27,15 @@ export default function Index() {
         <TitleComponent />
       </StyledLayout>
 
-      <StyledLayout style={{ width: '100%', paddingHorizontal: 35, top: 70}}>
+      <StyledLayout style={{ width: '100%', paddingHorizontal: 35, bottom: 90}}>
         <TouchableOpacity
           style={{ 
-            marginVertical: 8,
+            marginVertical: 12,
             borderRadius: 12,
             backgroundColor: myTheme['color-success-700'],
             padding: 10,
             alignItems: 'center',
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5
+            top: 10
           }}
           onPress={() => router.push("/login")}
         >
@@ -55,16 +51,11 @@ export default function Index() {
 
         <TouchableOpacity
           style={{ 
-            marginVertical: 8,
+            marginVertical: 12,
             borderRadius: 12,
             backgroundColor: myTheme['color-success-700'],
             padding: 10,
-            alignItems: 'center',
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5
+            alignItems: 'center'
           }}
           onPress={() => router.push("/sign_up")}
         >
