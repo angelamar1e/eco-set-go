@@ -11,6 +11,7 @@ import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";
 import storage from '@react-native-firebase/storage';
 import { useLoadFonts } from '@/assets/fonts/loadFonts';
+import { ActivityIndicator } from 'react-native-paper';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
@@ -21,12 +22,14 @@ const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
 
   const fetchEcoActions = async (category: string) => {
     try {
+      setLoading(true);
       let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
 
-      if (category !== 'ALL' && category !== 'Getting Started') {
+      if (category !== 'ALL') {
         query = query.where('category', '==', category);
       }
 
@@ -46,6 +49,7 @@ const EcoActionsList = () => {
       );
 
       setEcoActions(data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching eco actions: ", error);
     }
@@ -119,73 +123,6 @@ const EcoActionsList = () => {
     );
   };
 
-  const renderGettingStartedItems = () => (
-    <>
-      <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
-        style={{
-          borderColor: myTheme['color-success-700'],
-          borderWidth: 1,
-          borderBottomWidth: 0,
-          overflow: 'hidden',
-        }}
-        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
-      >
-        <StyledLayout
-          className="justify-center items-center"
-          style={{
-            backgroundColor: myTheme['color-success-700'],
-            position: 'absolute',
-            bottom: 0,
-            width: '120%',
-          }}
-        >
-          <Text
-            style={{
-              color: 'white',
-              paddingVertical: 10,
-              fontFamily: 'Poppins-Regular',
-              width: '95%',
-              fontSize: 13,
-            }}
-          >Introduction to Carbon Footprint
-          </Text>
-          </StyledLayout>
-      </StyledCard>
-
-      <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
-        style={{
-          borderColor: myTheme['color-success-700'],
-          borderWidth: 1,
-          borderBottomWidth: 0,
-          overflow: 'hidden',
-        }}
-        className='mx-2 mb-2 h-[150px] bg-transparent justify-end rounded-xl'
-      >
-        <StyledLayout
-          className="justify-center items-center"
-          style={{
-            backgroundColor: myTheme['color-success-700'],
-            position: 'absolute',
-            bottom: 0,
-            width: '120%',
-          }}
-        >
-          <Text
-            style={{
-              color: 'white',
-              paddingVertical: 10,
-              fontFamily: 'Poppins-Regular',
-              width: '95%',
-              fontSize: 13,
-            }}>Goal Guidelines
-          </Text>
-        </StyledLayout>
-      </StyledCard>
-    </>
-  );
-
   const fontsLoaded = useLoadFonts(); 
 
   return (
@@ -209,18 +146,17 @@ const EcoActionsList = () => {
             onFilterChange={setFilter} 
           />
         </StyledLayout>
-
-        {filter === 'Getting Started' ? (
-          <StyledLayout className="mt-2">
-            {renderGettingStartedItems()}
-          </StyledLayout>
+        {(loading === true) ? (
+          <StyledLayout className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color={myTheme['color-success-600']} />
+        </StyledLayout>
         ) : (
           <FlatList
-            className="mt-2 max-h-screen"
-            data={ecoActions}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
+          className="mt-2 max-h-screen"
+          data={ecoActions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
         )}
       </StyledLayout>
     </StyledLayout>
