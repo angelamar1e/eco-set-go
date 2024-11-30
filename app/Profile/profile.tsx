@@ -8,6 +8,7 @@ import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { myTheme } from "@/constants/custom-theme";
 import { EmissionsContext } from "@/contexts/Emissions";
 import { getHighestEmissions } from '@/contexts/EmissionsData';
+import { Levels } from "@/constants/Points";
 
 // Create a function to generate a random color
 const getRandomColor = () => {
@@ -56,13 +57,14 @@ interface EmissionsData {
 
 const UserProfile = () => {
     const router = useRouter();
-    const { username, userUid, joinDate, initialFootprint, points: userPoints, level: userLevel } = useUserContext();
+    const { username, userUid, joinDate, initialFootprint, points: userPoints } = useUserContext();
     const {
         foodFootprint,
         transportationFootprint,
         electricityFootprint,
         emissionsData
     } = useContext(EmissionsContext);
+    const [currentLevel, setCurrentLevel] = useState<keyof typeof Levels | null>(null);
 
     const initials = getInitials(username);
     const [avatarColor, setAvatarColor] = useState(getRandomColor());
@@ -92,6 +94,21 @@ const UserProfile = () => {
         }
     }
 
+    useEffect(() => {
+        const calculateLevel = () => {
+            const levels = Object.keys(Levels) as Array<keyof typeof Levels>;
+            
+            for (let i = 0; i < levels.length; i++) {
+                const level = levels[i];
+                if (Levels[level] >= userPoints) {
+                    setCurrentLevel(level);
+                    break;
+                }
+            }
+        };
+
+        calculateLevel();
+    }, [userPoints]);
 
     useEffect(() => {
         setAvatarColor(getRandomColor());
@@ -210,7 +227,7 @@ const UserProfile = () => {
                                     fontSize: 18,
                                     color: myTheme['color-success-700']
                                 }}>
-                                    {userLevel || 1}
+                                    {currentLevel?.toString()}
                                 </StyledText>
                                 <StyledText style={{ 
                                     fontFamily: 'Poppins-Regular',
