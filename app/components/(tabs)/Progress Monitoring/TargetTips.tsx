@@ -96,7 +96,7 @@ const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
                   }}
                   onPress={() => {
                     onClose();
-                    router.push("/components/(tabs)/Eco Articles/GoalSetting");
+                    router.push("/components/(tabs)/Eco Articles/ZFKkaJj9PfOyegEIHwp4");
                   }}
                 >
                   <Text
@@ -136,6 +136,7 @@ const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
               </Text>
             </TouchableOpacity>
           </View>
+        </View>
         </View>
       </Modal>
   );
