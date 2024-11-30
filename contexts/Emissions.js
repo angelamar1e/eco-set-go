@@ -32,7 +32,7 @@ export const EmissionsContext = createContext();
 export const EmissionsProvider = ({ children }) => {
   const { userUid, role } = useUserContext();
   const [initialized, setInitialized] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [newOverallFootprint, setNewOverallFootprint] = useState(0);
 
   // Load initial data from Firestore for the logged-in user
@@ -204,7 +204,6 @@ export const EmissionsProvider = ({ children }) => {
   useEffect(() => {
     if (initialized) {
       try {
-        setLoading(true);
         // Calculate each emission category
         const calculatedCarEmissions = computeCarEmissions(
           kmTravelled,
@@ -309,9 +308,6 @@ export const EmissionsProvider = ({ children }) => {
       }
     catch(error) {
       console.log(error);
-    }
-    finally{
-      setLoading(false);
     }
   }
   }, [initialized,
@@ -1099,8 +1095,9 @@ export const EmissionsProvider = ({ children }) => {
         setTransportationFootprint(newTransportEmissions);
         setElectricityFootprint(electricityEmissions);
 
-        if (role === "user" && loading === false) {
+        if (role === "user") {
           try {
+            setInitialLoading(true);
             await firestore().collection("initial_footprint").doc(userUid).set(
               {
                 overall_footprint: newOverallFootprint,
@@ -1110,6 +1107,7 @@ export const EmissionsProvider = ({ children }) => {
               },
               { merge: true }
             );
+            setInitialLoading(false);
           } catch (error) {
             console.error("Error updating footprint:", error);
           }
@@ -1118,7 +1116,7 @@ export const EmissionsProvider = ({ children }) => {
     };
 
     updateFootprint();
-  }, [loading, carEmissions, 
+  }, [initialized, carEmissions, 
     airplaneTravelEmissions,
     twoWheelersEmissions,
     efficientTravelEmissions,
@@ -1134,7 +1132,7 @@ export const EmissionsProvider = ({ children }) => {
   return (
     <EmissionsContext.Provider
       value={{
-        loading,
+        initialLoading,
         initialized,
         initializeData,
         newOverallFootprint,
