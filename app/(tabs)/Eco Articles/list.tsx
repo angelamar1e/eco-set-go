@@ -11,6 +11,7 @@ import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";
 import storage from '@react-native-firebase/storage';
 import { useLoadFonts } from '@/assets/fonts/loadFonts';
+import { ActivityIndicator } from 'react-native-paper';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);

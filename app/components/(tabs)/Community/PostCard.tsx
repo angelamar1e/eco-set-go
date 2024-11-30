@@ -107,7 +107,7 @@ const PostCard: React.FC<PostCardProps> = ({
               }}>
                 Edit
               </StyledText>
-            </TouchableOpacity>
+            </StyledButton>
             <TouchableOpacity
               onPress={() => {
                 setConfirmDeleteVisible(true);
