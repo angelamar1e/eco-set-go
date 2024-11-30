@@ -129,7 +129,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                 <Text
                   style={{
                     fontFamily: "Poppins-Regular",
-                    fontSize: 13,
+                    fontSize: 16,
                     color: myTheme["color-basic-800"],
                     lineHeight: 18,
                     // marginBottom:,
@@ -137,7 +137,7 @@ const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                     paddingHorizontal: 5,
                   }}
                 >
-                  in {difference} day/s
+                  in {difference} day/s. Let's keep up the great work!
                 </Text>
               )}
             </Text>
