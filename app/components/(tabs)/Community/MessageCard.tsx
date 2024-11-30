@@ -3,6 +3,7 @@ import { Image, TouchableOpacity } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { myTheme } from '@/constants/custom-theme';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface MessageCardProps {
   recipientName: string;
@@ -25,73 +26,57 @@ const MessageCard: React.FC<MessageCardProps> = ({
   onPress
 }) => {
   return (
-    <TouchableOpacity 
-      onPress={onPress}
-      className="mx-2 my-1"
-    >
+    <TouchableOpacity onPress={onPress}>
       <StyledLayout 
-        className="flex-row items-center p-4 rounded-lg"
+        className="p-3 mb-5 m-2 rounded-xl border border-gray-200" 
         style={{
-          backgroundColor: 'white',
-          borderWidth: 1,
-          borderColor: myTheme['color-basic-300']
+          backgroundColor: myTheme['color-basic-200'],
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowOpacity: 0.15,
+          shadowRadius: 2.5,
+          elevation: 2,
         }}
       >
-        {/* Recipient Icon */}
-        <Image
-          source={{ uri: recipientIcon }}
-          className="w-12 h-12 rounded-full mr-3"
-          alt={`${recipientName}'s icon`}
-        />
-        
-        {/* Content Container */}
-        <StyledLayout className="flex-1">
-          {/* Header Row */}
-          <StyledLayout className="flex-row items-center justify-between mb-1">
-            <StyledLayout className="flex-row items-center">
-              <StyledText 
-                style={{ 
-                  fontFamily: 'Poppins-SemiBold',
-                  fontSize: 14,
-                  color: myTheme['color-basic-800']
-                }}
-              >
-                {recipientName}
+        <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
+          <StyledLayout className='flex-row w-11/12 items-center' style={{backgroundColor: myTheme['color-basic-200']}}>
+            <StyledLayout className='flex-row mt-2 items-center w-[240px]' style={{backgroundColor: myTheme['color-basic-200']}}>
+              <StyledText className="ml-2 font-bold text-[90px]">
+                <MaterialCommunityIcons name='emoticon-excited' size={40} color={myTheme['color-success-700']}/>
               </StyledText>
               <StyledText 
-                style={{ 
-                  fontFamily: 'Poppins-Regular',
-                  fontSize: 12,
-                  color: myTheme['color-basic-600'],
-                  marginLeft: 4
-                }}
+                className="ml-1 text-gray-500 w-full"
+                style={{ fontFamily: 'Poppins-Italic', fontSize: 15 }}
               >
                 @{recipientHandle}
               </StyledText>
             </StyledLayout>
-            
-            {/* Date */}
             <StyledText 
-              style={{ 
+              className="ml-2 text-gray-400 mt-4"  
+              style={{
+                color: myTheme['color-success-900'],
                 fontFamily: 'Poppins-Regular',
-                fontSize: 11,
-                color: myTheme['color-basic-500']
+                fontSize: 13
               }}
             >
               {latestMessageDate}
             </StyledText>
           </StyledLayout>
+        </StyledLayout>
 
-          {/* Message Preview */}
+        <StyledLayout className="mt-2 ml-5" style={{backgroundColor: myTheme['color-basic-200']}}>
           <StyledText 
             numberOfLines={2}
             ellipsizeMode="tail"
             style={{ 
               fontFamily: 'Poppins-Regular',
-              fontSize: 13,
               color: myTheme['color-basic-600'],
               lineHeight: 18
             }}
+            className="text-lg"
           >
             {latestMessage}
           </StyledText>

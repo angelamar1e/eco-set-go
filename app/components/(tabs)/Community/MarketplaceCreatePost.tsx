@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
+import { Pressable, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { myTheme } from '@/constants/custom-theme';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -60,7 +61,20 @@ export const CreateListing = (): React.ReactElement => {
   };
 
   return (
-    <StyledCard className="h-100 mt-12 mb-2 ml-2 mr-2 rounded-lg">
+    <StyledCard 
+      className="h-100 mt-12 mb-2 ml-2 mr-2 rounded-lg"
+      style={{
+        backgroundColor: myTheme['color-basic-200'],
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 2.5,
+        elevation: 2,
+      }}
+    >
       <StyledInput
         className="mt-2 mb-2 rounded-lg"
         placeholder="Item description... 🏷️"
@@ -69,8 +83,7 @@ export const CreateListing = (): React.ReactElement => {
         multiline={true}
         textStyle={{ 
           fontFamily: 'Poppins-Regular',
-          fontSize: 13,
-          top: 2
+          fontSize: 13
         }}
       />
       <StyledInput
@@ -81,34 +94,32 @@ export const CreateListing = (): React.ReactElement => {
         onChangeText={setPrice}
         textStyle={{ 
           fontFamily: 'Poppins-Regular',
-          fontSize: 13,
-          top: 2
+          fontSize: 13
         }}
       />
-      <StyledLayout className="flex-row justify-between">
+      <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
         <Pressable onPress={() => console.log('Attach image')}>
           <Ionicons size={22} name="image-outline" color="#34C759" />
         </Pressable>
-        <StyledButton
-          className="ml-1 rounded-full px-4 py-0"
-          status="success"
-          size="small"
-          appearance="filled"
-          disabled={!description || !price || loading}
+        <TouchableOpacity
+          className="mt-2 mb-2 w-1/3 rounded-full"
           onPress={handleListingSubmit}
+          disabled={!description || !price || loading}
+          style={{
+            backgroundColor: myTheme['color-basic-400'],
+            padding: 3
+          }}
         >
-          {evaProps => (
-            <Text 
-              style={{ 
-                fontFamily: 'Poppins-Medium',
-                fontSize: 12,
-                color: 'white'
-              }}
-            >
-              {loading ? 'Listing...' : 'List'}
-            </Text>
-          )}
-        </StyledButton>
+          <Text style={{ 
+            fontFamily: 'Poppins-Medium', 
+            textAlign: 'center', 
+            fontSize: 12, 
+            top: 1,
+            color: description && price ? myTheme['color-success-700'] : myTheme['color-basic-600']
+          }}>
+            {loading ? 'Listing...' : 'List'}
+          </Text>
+        </TouchableOpacity>
       </StyledLayout>
 
       <Modal
@@ -116,16 +127,17 @@ export const CreateListing = (): React.ReactElement => {
         backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         onBackdropPress={() => setSuccess(false)}
       >
-        <Card disabled={true}>
-        <StyledText 
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText 
             style={{ 
               fontFamily: 'Poppins-Regular',
               fontSize: 14,
               textAlign: 'center'
             }}
-          >Listing successfully added! 🎉
-        </StyledText>
-        </Card>
+          >
+            Listing successfully added! 🎉
+          </StyledText>
+        </StyledLayout>
       </Modal>
     </StyledCard>
   );
