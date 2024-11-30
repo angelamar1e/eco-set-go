@@ -12,6 +12,8 @@ const StyledLayout = styled(Layout);
 const Calculator: React.FC = () => {
   const { newOverallFootprint } = useContext(EmissionsContext);
 
+  const displayFootprint = !isFinite(newOverallFootprint) ? '0.00' : newOverallFootprint.toFixed(2);
+
   return (
     <StyledLayout className="flex-row items-center justify-center shadow">
       <StyledTextLarge
@@ -23,7 +25,7 @@ const Calculator: React.FC = () => {
         }}
         className="ml-2"
       >
-        {newOverallFootprint.toFixed(2)}
+        {displayFootprint}
       </StyledTextLarge>
       <StyledTextSmall
         style={{ 
