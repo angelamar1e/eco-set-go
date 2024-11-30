@@ -12,6 +12,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userUid, setUserUID] = useState(null);
   const [username, setUsername] = useState("");
+  const [notification, setNotification] = useState("");
   const [role, setRole] = useState("");
   const [currentFootprint, setCurrentFootprint] = useState(0);
   const [initialFootprint, setInitialFootprint] = useState(0);
@@ -21,34 +22,54 @@ export const UserProvider = ({ children }) => {
   const [joinDate, setJoinDate] = useState("");
   const [profileCreated, setProfileCreated] = useState(true);
 
-  // Function to fetch user details
-  const fetchUserDetails = async (uid) => {
+  const fetchUserDetails = (uid) => {
     setLoading(true);
+
     try {
-      // Fetch user document from Firestore once
-      const userDoc = await firestore().collection("users").doc(uid).get();
+      const unsubscribe = firestore()
+        .collection("users")
+        .doc(uid)
+        .onSnapshot(
+          (doc) => {
+            if (doc.exists) {
+              const {
+                username = "",
+                role = "",
+                created_at,
+                points = 0,
+                redeemablePoints = 0,
+                notificationPreferences = "",
+              } = doc.data();
 
-      if (userDoc.exists) {
-        const { username, role, created_at, points, redeemablePoints } = userDoc.data();
-        setRole(role || ""); // Fallback to an empty string if undefined
-        setUsername(username || ""); // Fallback to an empty string if undefined
-        setPoints(points || 0); // Fallback to an empty string if undefined
-        setRedeemablePoints(redeemablePoints || 0); // Fallback to an empty string if undefined
+              setNotification(notificationPreferences);
+              setRole(role);
+              setUsername(username);
+              setPoints(points);
+              setRedeemablePoints(redeemablePoints);
 
-        if (created_at) {
-          const parsedDate = moment(
-            created_at,
-            "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
-          ).format("YYYY-MM-DD");
-          setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
-        } else {
-          setJoinDate("");
-        }
-      } else {
-        console.log("User document does not exist", uid);
-      }
+              if (created_at) {
+                const parsedDate = moment(
+                  created_at,
+                  "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
+                ).format("YYYY-DD-MM");
+                setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
+              } else {
+                setJoinDate("");
+              }
+            } else {
+              console.log("User document does not exist:", uid);
+              resetUserDetails();
+            }
+          },
+          (error) => {
+            console.error("Error fetching user details in snapshot:", error);
+            resetUserDetails();
+          }
+        );
+
+      return unsubscribe; // Return the unsubscribe function to clean up later if needed
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error setting up snapshot:", error);
       resetUserDetails();
     } finally {
       setLoading(false);
@@ -63,33 +84,42 @@ export const UserProvider = ({ children }) => {
     const unsubscribeInitial = firestore()
       .collection("initial_footprint")
       .doc(userUid)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          setInitialFootprint(data.overall_footprint);
-        }
-      },  {merge: true});
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setInitialFootprint(data.overall_footprint);
+          }
+        },
+        { merge: true }
+      );
 
     const unsubscribeCurrent = firestore()
       .collection("current_footprint")
       .doc(userUid)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          setCurrentFootprint(data.overall_footprint);
-        }
-      }, {merge: true});
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setCurrentFootprint(data.overall_footprint);
+          }
+        },
+        { merge: true }
+      );
 
     const unsubscribePoints = firestore()
-      .collection('users')
+      .collection("users")
       .doc(userUid)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          setPoints(data.points);
-          setRedeemablePoints(data.redeemablePoints);
-        }
-      }, {merge: true});
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setPoints(data.points);
+            setRedeemablePoints(data.redeemablePoints);
+          }
+        },
+        { merge: true }
+      );
 
     return () => {
       unsubscribeInitial();
@@ -111,7 +141,7 @@ export const UserProvider = ({ children }) => {
     const unsubscribe = auth().onAuthStateChanged((user) => {
       if (user) {
         setUserUID(user.uid);
-        if (profileCreated){
+        if (profileCreated) {
           fetchUserDetails(user.uid);
         }
       } else {
@@ -137,6 +167,7 @@ export const UserProvider = ({ children }) => {
         setProfileCreated,
         userUid,
         username,
+        notification,
         role,
         points,
         redeemablePoints,
