@@ -12,6 +12,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userUid, setUserUID] = useState(null);
   const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [notification, setNotification] = useState("");
   const [role, setRole] = useState("");
   const [currentFootprint, setCurrentFootprint] = useState(0);
@@ -33,6 +34,7 @@ export const UserProvider = ({ children }) => {
           (doc) => {
             if (doc.exists) {
               const {
+                name = "",
                 username = "",
                 role = "",
                 created_at,
@@ -41,6 +43,7 @@ export const UserProvider = ({ children }) => {
                 notificationPreferences = "",
               } = doc.data();
 
+              setName(name);
               setNotification(notificationPreferences);
               setRole(role);
               setUsername(username);
@@ -165,6 +168,7 @@ export const UserProvider = ({ children }) => {
       value={{
         fetchUserDetails,
         setProfileCreated,
+        name,
         userUid,
         username,
         notification,
