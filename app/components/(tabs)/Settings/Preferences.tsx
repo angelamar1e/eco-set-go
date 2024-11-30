@@ -32,7 +32,8 @@ const Preferences: React.FC = () => {
     notification ? true : false
   );
   const [expoPushToken, setExpoPushToken] = useState("");
-  const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+  const selectedTime = new Date();
+  selectedTime.setHours(8, 0, 0, 0); // Always set to 8:00 AM
   const [interval, setInterval] = useState<number>(12);
   const [frequency, setFrequency] = useState<string>("once");
   const notificationListener = useRef<Notifications.Subscription>();
@@ -71,7 +72,6 @@ const Preferences: React.FC = () => {
       setPushNotifications(true);
       setFrequency(notification.frequency);
       setInterval(notification.interval);
-      setSelectedTime(notification.selectedTime);
     }
     if (pushNotifications) {
       if (frequency === "once") scheduleDailyNotification(selectedTime);
