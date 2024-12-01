@@ -419,7 +419,8 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
+  //if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
+  if (!username || !userUid || currentLoading === true || initialLoading === true || userLogs.length === 0) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
         <LottieView
