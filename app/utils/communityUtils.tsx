@@ -1,6 +1,8 @@
 import { Timestamp } from '@react-native-firebase/firestore';
 import firestore from '@react-native-firebase/firestore';
 import { firebase } from '@react-native-firebase/auth';
+import { sendNotification } from '../components/(tabs)/Settings/Preferences';
+import { useUserContext } from '@/contexts/UserContext';
 
 export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined) => {
   if (!timestamp) return 'Unknown time';
@@ -38,11 +40,11 @@ export const fetchUserInfo = async (setUsername: (username: string) => void, set
 };
 
 export const handleAddComment = async (
-  newComment: string, 
-  postId: string, 
-  username: string, 
-  uid: string, 
-  setNewComment: (comment: string) => void
+  newComment: string,
+  postId: string,
+  username: string,
+  uid: string,
+  setNewComment: (comment: string) => void,
 ) => {
   if (newComment.trim()) {
     try {
@@ -50,6 +52,8 @@ export const handleAddComment = async (
         console.warn("Cannot add comment: Username or UID is not defined.");
         return;
       }
+
+      // Add the comment to the database
       const commentData = {
         postId,
         userName: username,
@@ -57,8 +61,32 @@ export const handleAddComment = async (
         content: newComment,
         timestamp: Timestamp.fromDate(new Date()),
       };
-      await firestore().collection('comments').add(commentData);
+      await firestore().collection("comments").add(commentData);
       setNewComment("");
+
+      // Fetch the post owner details
+      const postDoc = await firestore().collection("posts").doc(postId).get();
+      if (!postDoc.exists) {
+        console.warn("Post not found.");
+        return;
+      }
+
+      const postOwnerUid = postDoc.data()?.userUID;
+
+      // Fetch the expoPushToken of the post owner
+      const postOwnerDoc = await firestore().collection("users").doc(postOwnerUid).get();
+      const expoPushToken = postOwnerDoc.data()?.expoPushToken;
+
+      if (expoPushToken && uid != postOwnerUid) {
+        // Send the notification
+        await sendNotification(
+          "New comment on your post 💭",
+          `${username} commented: ${newComment.trim().slice(0,50)}`,
+          expoPushToken
+        );
+      } else {
+        console.warn("Post owner does not have a push token. Same post owner/commenter.");
+      }
     } catch (error) {
       console.error("Error adding comment: ", error);
     }
@@ -66,6 +94,7 @@ export const handleAddComment = async (
     console.warn("Comment cannot be empty");
   }
 };
+
 
 export const handleDeleteComment = async (commentId: string) => {
   try {

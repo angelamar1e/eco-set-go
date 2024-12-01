@@ -7,6 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { myTheme } from '@/constants/custom-theme';
 import { useUserContext } from '@/contexts/UserContext';
+import { sendNotification } from '../Settings/Preferences';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -47,22 +48,53 @@ export const CreatePost = (): React.ReactElement => {
     if (value.trim().length > 0 && userName) {
       setLoading(true);
       try {
+        // Add the post to Firestore
         await firestore().collection('posts').add({
           content: value,
-          userName: userName, 
+          userName: userName,
           timestamp: firestore.FieldValue.serverTimestamp(),
           userUID: userUid,
         });
+  
+        // Query all users with `postsNotificationsEnabled` set to true
+        const usersSnapshot = await firestore()
+          .collection('users')
+          .where('postsNotificationsEnabled', '==', true)
+          .get();
+  
+        // Filter out the current user from the list of users
+        const filteredUsers = usersSnapshot.docs.filter(doc => doc.id !== userUid);
+  
+        // Notify each user
+        const notificationPromises = filteredUsers.map(async (doc) => {
+          const user = doc.data();
+          if (user.expoPushToken) {
+            await sendNotification(
+              `${userName} shared a post`,
+              `${value.trim().slice(0, 50)}...`, // Trim content to 50 characters
+              "community-posts"
+            );
+          }
+        });
+  
+        // Wait for all notifications to complete
+        await Promise.all(notificationPromises);
+  
+        // Clear the input and display success message
         setValue('');
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
       } catch (error) {
-        console.error("Error adding post: ", error);
+        console.error("Error adding post or sending notifications: ", error);
       } finally {
         setLoading(false);
       }
+    } else {
+      console.warn("Post content cannot be empty");
     }
   };
+  
+  
 
   return (
     <StyledCard 

@@ -103,7 +103,7 @@ const PostCard: React.FC<PostCardProps> = ({
       }}
     >
       <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
-        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-11/12 items-center mb-3'>
+        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-10/12 items-center mb-3'>
           <StyledText  className=" ml-2 font-bold text-[90px] mt-4"><MaterialCommunityIcons name='emoticon-excited' size={50} color={myTheme['color-success-700']}/></StyledText>
           <StyledLayout className='flex-column w-[240px] mt-4' style={{backgroundColor: myTheme['color-basic-200']}}>
           <StyledText 
@@ -131,8 +131,8 @@ const PostCard: React.FC<PostCardProps> = ({
           visible={postPopoverVisible}
           placement="bottom end"
           anchor={() => (
-            <TouchableOpacity onPress={togglePostPopover}>
-              <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9"/>
+            <TouchableOpacity onPress={togglePostPopover} className="p-2">
+              <Ionicons name="ellipsis-vertical" size={20} color={myTheme['color-basic-700']}/>
             </TouchableOpacity>
           )}
           onBackdropPress={togglePostPopover}
@@ -146,7 +146,7 @@ const PostCard: React.FC<PostCardProps> = ({
             >
               <StyledText style={{ 
                 fontFamily: 'Poppins-Medium', 
-                fontSize: 12,
+                fontSize: 16,
                 color: myTheme['color-info-500'],
                 padding: 8
               }}>
@@ -161,7 +161,7 @@ const PostCard: React.FC<PostCardProps> = ({
             >
               <StyledText style={{ 
                 fontFamily: 'Poppins-Medium', 
-                fontSize: 12,
+                fontSize: 16,
                 color: myTheme['color-danger-500'],
                 padding: 8
               }}>
@@ -235,12 +235,12 @@ const PostCard: React.FC<PostCardProps> = ({
                         placement="bottom end"
                         anchor={() => (
                           <TouchableOpacity onPress={() => toggleCommentPopover(comment.id)}>
-                            <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9" />
+                            <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
                           </TouchableOpacity>
                         )}
                         onBackdropPress={() => setCommentPopoverVisible(null)}
                       >
-                        <StyledLayout className="p-2 rounded-lg">
+                        <StyledLayout className="p-3 rounded-lg" style={{backgroundColor: myTheme['color-basic-100']}}>
                           <TouchableOpacity
                             onPress={() => {
                               setCommentToDelete(comment);
@@ -251,11 +251,11 @@ const PostCard: React.FC<PostCardProps> = ({
                             <StyledText
                               style={{
                                 fontFamily: 'Poppins-Medium',
-                                fontSize: 12,
+                                fontSize: 16,
                                 color: myTheme['color-danger-500'],
                               }}
                             >
-                              Delete Comment
+                              Delete
                             </StyledText>
                           </TouchableOpacity>
                         </StyledLayout>
@@ -266,10 +266,10 @@ const PostCard: React.FC<PostCardProps> = ({
                     <StyledText 
                       style={{ 
                         fontFamily: 'Poppins-Regular', 
-                        fontSize: 14, 
+                        fontSize: 16, 
                         backgroundColor: myTheme['color-basic-300'], 
-                        padding: 5, 
-                        paddingVertical: 5, 
+                        padding: 10,
+                        paddingVertical: 16, 
                         borderRadius: 10,
                         flexWrap: 'wrap'
                       }}
@@ -278,6 +278,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     </StyledText>
                     <StyledText 
                       style={{ 
+                        marginVertical: 5,
                         fontFamily: 'Poppins-Regular',
                         fontSize: 11,
                         color: '#8F9BB3'
@@ -295,18 +296,20 @@ const PostCard: React.FC<PostCardProps> = ({
             placeholder="Add a comment..."
             value={newComment}
             onChangeText={setNewComment}
-            className="rounded-lg m-1"
+            className="rounded-lg pt-5"
+            size="large"
+            multiline={true}
             textStyle={{ fontFamily: "Poppins-Regular", fontSize: 12 }}
             accessoryRight={() => (
               <TouchableOpacity
-                onPress={() =>
+                onPress={() =>  
                   handleAddComment(newComment, id, username, uid, setNewComment)
                 }
                 disabled={!newComment.trim()}
               >
                 <Ionicons
                   name="send"
-                  size={20}
+                  size={24}
                   color={newComment.trim() ? "#34C759" : "#A9A9A9"}
                 />
               </TouchableOpacity>
@@ -337,7 +340,8 @@ const PostCard: React.FC<PostCardProps> = ({
             placeholder="Edit your post..."
             multiline
             className="mb-2 mt-2"
-            textStyle={{ fontFamily: "Poppins-Regular", fontSize: 13, top: 2 }}
+            size="large"
+            textStyle={{ fontFamily: "Poppins-Regular", fontSize: 16, top: 2 }}
           />
           <StyledLayout className="flex-row justify-between mt-3">
             <TouchableOpacity
@@ -347,7 +351,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-info-500"],
                   padding: 8,
                 }}
@@ -367,7 +371,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-primary-700"],
                   padding: 8,
                 }}
@@ -404,7 +408,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-info-500"],
                 }}
               >
@@ -422,7 +426,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-danger-500"],
                 }}
               >
@@ -458,7 +462,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-info-500"],
                 }}
               >
@@ -478,7 +482,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 12,
+                  fontSize: 16,
                   color: myTheme["color-danger-500"],
                 }}
               >
