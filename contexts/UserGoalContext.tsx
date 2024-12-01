@@ -182,7 +182,7 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       )
       .catch((error) => console.error("Error submitting goal:", error));
 
-    toggleEdit();
+    setEditGoal(false);
   };
 
   return (
