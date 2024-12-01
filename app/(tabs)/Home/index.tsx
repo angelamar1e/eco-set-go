@@ -27,8 +27,7 @@ import { EmissionsContext } from "@/contexts/Emissions";
 import TakeaQuiz from "@/app/(quiz)/takeaquiz";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SustainabilityLoader from "@/app/components/(tabs)/Home/SustainabilityLoader";
-import { EcoActionsContext } from "@/contexts/EcoActions";
-import Confetti from "@/app/components/(tabs)/Home/Confetti";
+import { EcoActionsContext, useActionsContext } from "@/contexts/EcoActions";
 
 const StyledView = styled(View);
 const StyledLayout = styled(Layout);
@@ -51,7 +50,7 @@ export default function LandingPage() {
     useUserContext();
   const { latestGoal } = useUserGoalContext();
   const { initializeData, initialLoading } = useContext(EmissionsContext);
-  const { setUserLogs, totalImpact, currentLoading, userLogs} = useLogsContext();
+  const { setUserLogs, totalImpact, currentLoading, userLogs } = useLogsContext();
   const fontsLoaded = useLoadFonts();
 
   const firstName = username ? username.split(" ")[0] : "";
@@ -420,7 +419,7 @@ export default function LandingPage() {
   }
 
   // Render loading indicator if data is still being loaded
-  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0 || loading === true) {
+  if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
         <LottieView

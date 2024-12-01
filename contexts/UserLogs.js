@@ -26,8 +26,9 @@ export const UserLogsProvider = ({ children }) => {
     foodEcoActions,
     transportationEcoActions,
     electricityEcoActions,
-    initializeData,
+    initializeEcoActions,
   } = useActionsContext();
+  const [ecoActionsInitialized, setEcoActionsInitialized] = useState(false); // Track initialization
 
   // State for impacts
   const [dailyImpact, setDailyImpact] = useState({});
@@ -60,15 +61,31 @@ export const UserLogsProvider = ({ children }) => {
     );
   };
 
-  const [currentLoading, setCurrentLoading] = useState(false);
+  const [currentLoading, setCurrentLoading] = useState(true);
 
+   // Wait for eco actions to initialize and then set data
+   useEffect(() => {
+    const initialize = async () => {
+      try {
+        await initializeEcoActions();
+        setEcoActionsInitialized(true); // Mark eco actions as initialized
+      } catch (error) {
+        console.error("Failed to initialize eco actions:", error);
+      }
+    };
+    initialize();
+  }, []); // Runs once on mount
+
+  // Recalculate data whenever userLogs or selectedPeriod changes
   useEffect(() => {
-    initializeData();
-    setData(userLogs);
-  }, [userLogs, selectedPeriod]);
+    if (ecoActionsInitialized && userLogs) {
+      setData(userLogs);
+    }
+  }, [userLogs, selectedPeriod, ecoActionsInitialized]);
 
-  // Calculate total impact and prepare chart data
-  const setData = (userLogs) => {
+  const setData = async (userLogs) => {
+    if (!ecoActionsInitialized) return; // Ensure initialization is complete
+
     let totalImpact = 0;
     let foodImpact = 0;
     let transportImpact = 0;
@@ -93,12 +110,9 @@ export const UserLogsProvider = ({ children }) => {
         });
         const weekString = getWeekString(logDate);
 
-        if (!daily[dayString])
-          daily[dayString] = { Food: 0, Transportation: 0, Electricity: 0 };
-        if (!weekly[weekString])
-          weekly[weekString] = { Food: 0, Transportation: 0, Electricity: 0 };
-        if (!monthly[monthString])
-          monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
+        if (!daily[dayString]) daily[dayString] = { Food: 0, Transportation: 0, Electricity: 0 };
+        if (!weekly[weekString]) weekly[weekString] = { Food: 0, Transportation: 0, Electricity: 0 };
+        if (!monthly[monthString]) monthly[monthString] = { Food: 0, Transportation: 0, Electricity: 0 };
 
         Object.entries(actions).forEach(([id, action]) => {
           loggedActionIds.push(id);
@@ -138,20 +152,24 @@ export const UserLogsProvider = ({ children }) => {
 
   const setChartData = (selectedImpacts) => {
     // Sort entries by date in ascending order
-  const sortedEntries = Object.entries(selectedImpacts).sort(
-    ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
-  );
-
-  const limitedEntries = sortedEntries.slice(-5);
-
+    const sortedEntries = Object.entries(selectedImpacts).sort(
+      ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
+    );
+  
+    // Limit entries based on the selected period
+    const limit = selectedPeriod === "Weekly" ? 4 : 5; // Show 4 for weekly, 5 for others
+    const limitedEntries = sortedEntries.slice(-limit);
+  
+    // Extract labels and data
     const limitedLabels = limitedEntries.map(([label]) => label);
-
+  
     const stackedData = limitedEntries.map(([, impacts]) => [
       Number(impacts.Food) || 0,
       Number(impacts.Transportation) || 0,
       Number(impacts.Electricity) || 0,
     ]);
-
+  
+    // Set the chart data
     setStackedChartData({
       labels: limitedLabels,
       legend: ["Food", "Transportation", "Electricity"],
@@ -159,8 +177,9 @@ export const UserLogsProvider = ({ children }) => {
       barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
     });
   };
+  
 
-  const setCurrentFootprint = () => {
+  const setCurrentFootprint = async () => {
     setCurrentLoading(true);
     if (initialFootprint && role === "user") {
       const currentOverall = initialFootprint - totalImpact;
@@ -168,7 +187,7 @@ export const UserLogsProvider = ({ children }) => {
       const currentTranspo = transportationFootprint - transportationImpact;
       const currentElectricity = electricityFootprint - electricityImpact;
 
-      firestore().collection("current_footprint").doc(userUid).set(
+      await firestore().collection("current_footprint").doc(userUid).set(
         {
           overall_footprint: currentOverall,
           food_footprint: currentFood,
@@ -200,13 +219,12 @@ export const UserLogsProvider = ({ children }) => {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
   
-    return `${startOfWeek.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-    })} - ${endOfWeek.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-    })}`;
+    const formatOptions = { day: "numeric", month: "short" };
+  
+    return `${startOfWeek.toLocaleDateString("en-GB", formatOptions)}-${endOfWeek.toLocaleDateString(
+      "en-GB",
+      formatOptions
+    )}`;
   };
   
 
@@ -215,7 +233,10 @@ export const UserLogsProvider = ({ children }) => {
     if (foodEcoActions.includes(id)) return "Food";
     if (transportationEcoActions.includes(id)) return "Transportation";
     if (electricityEcoActions.includes(id)) return "Electricity";
-  };
+    console.warn(`Category not found for ID: ${id}`);
+    return "Unknown"; // Fallback category
+};
+
 
   // Function to handle period selection
   const handlePeriodChange = (period) => {

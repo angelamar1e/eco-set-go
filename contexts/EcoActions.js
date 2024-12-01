@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react"; // Import necessary hooks
-import firestore from '@react-native-firebase/firestore'; // Ensure Firestore is imported
+import React, { createContext, useContext, useEffect, useState } from "react";
+import firestore from "@react-native-firebase/firestore";
+import { useUserContext } from "./UserContext";
 
 export const EcoActionsContext = createContext();
 
@@ -7,66 +8,91 @@ export const EcoActionsProvider = ({ children }) => {
     const [foodEcoActions, setFoodEcoActions] = useState([]);
     const [transportationEcoActions, setTransportationEcoActions] = useState([]);
     const [electricityEcoActions, setElectricityEcoActions] = useState([]);
-    const [ecoActionsDictionary, setEcoActionsDictionary] = useState({}); // Store eco action ID to title mapping
-    const [error, setError] = useState(null); // Initialize error state
-    const [loading, setLoading] = useState(true); // Initialize loading state
+    const [ecoActionsDictionary, setEcoActionsDictionary] = useState({});
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const { userUid } = useUserContext();
+
+    // Store whether the actions have been initialized
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        initializeData();
-    }, []);
+        if (userUid && !initialized) {
+            initializeEcoActions(); // Initialize when userUid changes and it's not yet initialized
+        }
+    }, [userUid]);
 
-    const initializeData = async () => {
+    const initializeEcoActions = async () => {
         try {
-            const snapshot = await firestore().collection('eco_actions').get();
-            const ecoActionsDict = {}; // Temporary object to store ID-title mappings
+            setLoading(true); // Set loading to true whenever initialization is called
 
+            // Fetch data from Firestore
+            const snapshot = await firestore().collection("eco_actions").get();
+
+            // Temporary variables to avoid multiple state updates
+            const foodActions = [];
+            const transportationActions = [];
+            const electricityActions = [];
+            const ecoActionsDict = {};
+
+            // Process Firestore data
             snapshot.docs.forEach((doc) => {
                 const actionId = doc.id;
                 const actionData = doc.data();
                 const title = actionData.title;
 
-                // Map eco action ID to title in the dictionary
+                // Populate the dictionary
                 ecoActionsDict[actionId] = title;
 
-                // Categorize eco actions based on their category
+                // Categorize actions
                 if (actionData.category === "Food") {
-                    setFoodEcoActions(prev => [...prev, actionId]); // Append to the previous state
+                    foodActions.push(actionId);
                 } else if (actionData.category === "Transportation") {
-                    setTransportationEcoActions(prev => [...prev, actionId]);
+                    transportationActions.push(actionId);
                 } else if (actionData.category === "Electricity") {
-                    setElectricityEcoActions(prev => [...prev, actionId]);
+                    electricityActions.push(actionId);
                 }
             });
 
-            // Update the state with the populated dictionary
+            // Update state with the processed data
+            setFoodEcoActions(foodActions);
+            setTransportationEcoActions(transportationActions);
+            setElectricityEcoActions(electricityActions);
             setEcoActionsDictionary(ecoActionsDict);
+
+            // Mark as initialized
+            setInitialized(true);
         } catch (error) {
-            setError(error); // Set error if occurs
+            console.error("Error initializing eco actions:", error);
+            setError(error);
         } finally {
-            setLoading(false); // Set loading to false regardless of success or failure
+            setLoading(false); // Always set loading to false at the end
         }
     };
 
-    // Function to get eco action title by its ID
+    // Function to get an eco action title by its ID
     const getEcoActionTitle = (id) => {
-        return ecoActionsDictionary[id] || 'Unknown Action'; // Return 'Unknown Action' if not found
+        return ecoActionsDictionary[id] || "Unknown Action";
     };
 
     return (
-        <EcoActionsContext.Provider value={{
-            foodEcoActions,
-            transportationEcoActions,
-            electricityEcoActions,
-            initializeData,
-            loading,
-            error,
-            getEcoActionTitle // Provide the function to get the title
-        }}>
+        <EcoActionsContext.Provider
+            value={{
+                foodEcoActions,
+                transportationEcoActions,
+                electricityEcoActions,
+                initializeEcoActions,
+                loading,
+                error,
+                getEcoActionTitle,
+            }}
+        >
             {children}
         </EcoActionsContext.Provider>
     );
 };
 
+// Custom hook for easier access
 export function useActionsContext() {
     return useContext(EcoActionsContext);
 }
