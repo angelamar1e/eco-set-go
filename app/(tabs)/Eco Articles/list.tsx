@@ -87,12 +87,13 @@ const EcoActionsList = () => {
         {item.image && (
           <Image
             source={{ uri: item.image }}
-            className='rounded-lg'
             style={{
-              zIndex:10,
+              zIndex: 10,
               opacity: 0.5,
-              width: '150%', 
-              height: '170%',
+              width: '120%',
+              height: '122%',
+              margin: -10,
+              alignSelf: 'center'
             }}
             resizeMode="cover"
           />
@@ -105,7 +106,7 @@ const EcoActionsList = () => {
             backgroundColor: myTheme['color-success-700'],
             position: 'absolute',
             top: 0,
-            height: 70,
+            height: 'auto',
             width: '115%',
           }}
         >
@@ -113,6 +114,7 @@ const EcoActionsList = () => {
             style={{
               color: 'white',
               fontFamily: 'Poppins-Regular',
+              fontSize: 16,
             }}
           >
             {item.title}
