@@ -27,7 +27,7 @@ const StyledButton = styled(Button);
 const StyledSelect = styled(Select);
 
 const Preferences: React.FC = () => {
-  const { userUid, notification } = useUserContext();
+  const { userUid, notification, name } = useUserContext();
   const [pushNotifications, setPushNotifications] = useState(
     notification ? true : false
   );
@@ -38,6 +38,7 @@ const Preferences: React.FC = () => {
   const [frequency, setFrequency] = useState<string>("once");
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
+ 
 
   // Request notification permissions and set listeners
   useEffect(() => {
@@ -66,25 +67,35 @@ const Preferences: React.FC = () => {
     };
   }, []);
 
-  // Effect to manage notification scheduling when preferences change
   useEffect(() => {
     if (notification) {
       setPushNotifications(true);
       setFrequency(notification.frequency);
       setInterval(notification.interval);
     }
+  }, [notification]); // Add `notification` as a dependency if it can change
+  
+  // Effect to handle scheduling when preferences change
+  useEffect(() => {
     if (pushNotifications) {
       if (frequency === "once") scheduleDailyNotification(selectedTime);
       else if (frequency === "twice")
         scheduleTwiceDailyNotification(selectedTime, interval);
     } else {
+      // Cancel notifications but do not delete preferences immediately
       cancelNotifications();
+    }
+  }, [pushNotifications, frequency, interval, selectedTime]);
+  
+  // Effect to delete notification preferences when specifically required
+  useEffect(() => {
+    if (!pushNotifications) {
       firestore()
         .collection("users")
         .doc(userUid)
         .update({ notificationPreferences: firestore.FieldValue.delete() });
     }
-  }, [pushNotifications, frequency, interval, selectedTime, notification]);
+  }, [pushNotifications]); // Run only when `pushNotifications` changes  
 
   // Register for push notifications
   const registerForPushNotificationsAsync = async (): Promise<
@@ -133,11 +144,12 @@ const Preferences: React.FC = () => {
   // Save preferences and schedule notifications
   const savePreferences = async () => {
     try {
+      const firstName = name.split(' ')[0];
       await firestore()
         .collection("users")
         .doc(userUid)
         .set(
-          { notificationPreferences: { frequency, interval, selectedTime } },
+          { notificationPreferences: { frequency, interval } },
           { merge: true }
         );
 
@@ -149,9 +161,11 @@ const Preferences: React.FC = () => {
           scheduleTwiceDailyNotification(selectedTime, interval);
       }
 
+      const message = frequency === "once" ? `You will receive reminders once a day.` : `You will receive reminders ${frequency} a day, every ${interval} hours, starting at 8AM tomorrow.`
+
       sendNotification(
-        "Preference saved 🔔",
-        `You will receive reminders ${frequency} a day, every ${interval} hours. 🤗`
+        "Preferences saved 🔔💚",
+        message
       );
     } catch (error) {
       console.error(
@@ -169,13 +183,14 @@ const Preferences: React.FC = () => {
 
   // Schedule daily notifications at a specific time
   const scheduleDailyNotification = async (time: Date) => {
+    const firstName = name.split(' ')[0];
     const { hour, minute } = parseTime(time);
 
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Pst! Your daily log awaits",
-          body: "Complete eco actions for a greener tomorrow",
+          title: `Hi ${firstName} 🥰`,
+          body: "yung daily log mo po pakigawa thanks",
         },
         trigger: { hour, minute, repeats: true },
       });
@@ -189,14 +204,15 @@ const Preferences: React.FC = () => {
     startTime: Date,
     interval: number
   ) => {
+    const firstName = name.split(' ')[0];
     const { hour: startHour, minute } = parseTime(startTime);
 
     try {
       // First notification
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Pst! Your daily log awaits",
-          body: "Complete eco actions for a greener tomorrow",
+          title: `Hi ${firstName} 🥰`,
+          body: "yung daily log mo po pakigawa thanks!",
         },
         trigger: { hour: startHour, minute, repeats: true },
       });
@@ -205,8 +221,8 @@ const Preferences: React.FC = () => {
       const secondHour = (startHour + interval) % 24;
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Pst! Another reminder!",
-          body: "Keep logging your eco actions.",
+          title: `Hello ulit, ${firstName}!`,
+          body: "Logging today means greener tomorrows 🍃 (and helping us graduate)",
         },
         trigger: { hour: secondHour, minute, repeats: true },
       });
