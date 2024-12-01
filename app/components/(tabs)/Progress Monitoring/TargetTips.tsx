@@ -137,8 +137,8 @@ const TargetTips: React.FC<TargetTipsProps> = ({ visible, onClose }) => {
             </TouchableOpacity>
           </View>
         </View>
-        </View>
-      </Modal>
+      </View>
+    </Modal>
   );
 };
 

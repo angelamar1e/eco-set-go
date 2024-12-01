@@ -53,8 +53,18 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
 
   return (
     <StyledLayout
-      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 shadow-xl border ${borderClass}` }  // Dynamically applied border class
-      style={{backgroundColor: myTheme['color-basic-200']}}
+      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 border ${borderClass}`}
+      style={{
+        backgroundColor: myTheme['color-basic-200'],
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 2.5,
+        elevation: 2,
+      }}
     >
       <StyledLayout className="flex-row items-start" style={{backgroundColor: myTheme['color-basic-200']}}>
         <StyledLayout>
@@ -67,7 +77,17 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
 
         <StyledLayout className="flex-1 m-2 p-2" style={{backgroundColor: myTheme['color-basic-200']}}>
           <TouchableOpacity onPress={handlePress}>
-            <StyledText category="s2" className="font-bold" style={{color: myTheme['color-success-700']}}>
+            <StyledText 
+              className="" 
+              style={{
+                color: myTheme['color-success-700'],
+                fontFamily: 'Poppins-Medium',
+                fontSize: 12,
+                lineHeight: 16
+              }}
+              numberOfLines={6}
+              ellipsizeMode="tail"
+            >
               {headline}
             </StyledText>
           </TouchableOpacity>

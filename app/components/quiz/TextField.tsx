@@ -11,13 +11,23 @@ interface TextFieldProps {
 }
 
 export const TextField: FC<TextFieldProps> = ({ unit, value, onChangeText, onBlur,}) => {
+  const handleChangeText = (text: string) => {
+    const numericValue = parseFloat(text);
+    if (!isNaN(numericValue)) {
+      onChangeText(numericValue.toString());
+    } else {
+      onChangeText('');
+    }
+  };
+
   return (
     <View className="flex-row items-center">
       <Input
         value={value}
-        onChangeText={onChangeText}
+        onChangeText={handleChangeText}
         onBlur={onBlur}
         onPressOut={onBlur}
+        keyboardType='numeric'
         style={{ borderRadius: 10, width: '40%', marginRight: 10 }} 
         textStyle={{ minHeight: 40, fontFamily: 'Poppins-Regular', fontSize: 14 }}
       />
