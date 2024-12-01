@@ -103,26 +103,26 @@ const PostCard: React.FC<PostCardProps> = ({
       }}
     >
       <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
-        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-11/12 items-center'>
-          <StyledLayout className='flex-row mt-4 items-center w-[240px]' style={{backgroundColor: myTheme['color-basic-200']}}>
-          <StyledText  className=" ml-2 font-bold text-[90px]"><MaterialCommunityIcons name='emoticon-excited' size={50} color={myTheme['color-success-700']}/></StyledText>
+        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-11/12 items-center mb-3'>
+          <StyledText  className=" ml-2 font-bold text-[90px] mt-4"><MaterialCommunityIcons name='emoticon-excited' size={50} color={myTheme['color-success-700']}/></StyledText>
+          <StyledLayout className='flex-column w-[240px] mt-4' style={{backgroundColor: myTheme['color-basic-200']}}>
           <StyledText 
-            className="ml-1 text-gray-500 w-full"
-            style={{ fontFamily: 'Poppins-Italic', fontSize: 15 }}
+            className="ml-1 leading-5"
+            style={{ fontFamily: 'Poppins-Italic', fontSize: 15, color: myTheme['color-success-900'] }}
           >
             @{userName}
           </StyledText>
-          </StyledLayout>
+          
           <StyledText 
-            className="ml-2 text-gray-400 mt-4"  
+            className="ml-2 text-gray-400"  
             style={{
-              color: myTheme['color-success-900'],
               fontFamily: 'Poppins-Regular',
-              fontSize: 13
+              fontSize: 12
             }}
           >
             {formattedTimestamp}
           </StyledText>
+          </StyledLayout>
         </StyledLayout>
 
         {userUID === userUid && ( 
