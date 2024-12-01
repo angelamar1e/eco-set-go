@@ -52,13 +52,21 @@ const ReflectionList: React.FC = () => {
             });
 
             // Sort reflections by date in descending order
-            const sortedReflections = fetchedReflections.sort(
-              (a, b) => b.date.toDate().getTime() - a.date.toDate().getTime()
-            );
+            const sortedReflections = fetchedReflections.sort((a, b) => {
+              if (a.date && b.date) {
+                return b.date.toDate().getTime() - a.date.toDate().getTime();
+              } else if (a.date) {
+                return -1; // If b.date is null, a comes first
+              } else if (b.date) {
+                return 1; // If a.date is null, b comes first
+              } else {
+                return 0; // If both dates are null, they are equal
+              }
+            });
 
             setReflections(sortedReflections);
           } else {
-            console.warn('No reflections found for this user');
+            // console.warn('No reflections found for this user');
             setReflections([]);
           }
         },
@@ -76,17 +84,22 @@ const ReflectionList: React.FC = () => {
     if (startDate && endDate) {
       const startOfDay = new Date(startDate.setHours(0, 0, 0, 0));
       const endOfDay = new Date(endDate.setHours(23, 59, 59, 999));
-
+  
       const filtered = reflections.filter(reflection => {
-        const reflectionDate = reflection.date.toDate();
-        return reflectionDate >= startOfDay && reflectionDate <= endOfDay;
+        if (reflection && reflection.date) {
+          // Ensure the `date` is not null and is a valid date
+          const reflectionDate = reflection.date.toDate();
+          return reflectionDate >= startOfDay && reflectionDate <= endOfDay;
+        }
+        return false; // Exclude reflections with null or undefined date
       });
-
+  
       setFilteredReflections(filtered);
     } else {
       setFilteredReflections(reflections);
     }
   }, [startDate, endDate, reflections]);
+  
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setStartDate(start);

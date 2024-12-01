@@ -83,6 +83,10 @@ export const UserLogsProvider = ({ children }) => {
     }
   }, [userLogs, selectedPeriod, ecoActionsInitialized]);
 
+  useEffect(() => {
+    console.log(stackedChartData);
+  }, [stackedChartData])
+
   const setData = async (userLogs) => {
     if (!ecoActionsInitialized) return; // Ensure initialization is complete
 
@@ -151,16 +155,13 @@ export const UserLogsProvider = ({ children }) => {
   };
 
   const setChartData = (selectedImpacts) => {
-    // Sort entries by date in ascending order
     const sortedEntries = Object.entries(selectedImpacts).sort(
       ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
     );
   
-    // Limit entries based on the selected period
-    const limit = selectedPeriod === "Weekly" ? 4 : 5; // Show 4 for weekly, 5 for others
+    const limit = selectedPeriod === "Weekly" ? 4 : 5;
     const limitedEntries = sortedEntries.slice(-limit);
   
-    // Extract labels and data
     const limitedLabels = limitedEntries.map(([label]) => label);
   
     const stackedData = limitedEntries.map(([, impacts]) => [
@@ -169,7 +170,6 @@ export const UserLogsProvider = ({ children }) => {
       Number(impacts.Electricity) || 0,
     ]);
   
-    // Set the chart data
     setStackedChartData({
       labels: limitedLabels,
       legend: ["Food", "Transportation", "Electricity"],
@@ -177,6 +177,7 @@ export const UserLogsProvider = ({ children }) => {
       barColors: ["#FF6384", "#36A2EB", "#FFCE56"],
     });
   };
+  
   
 
   const setCurrentFootprint = async () => {

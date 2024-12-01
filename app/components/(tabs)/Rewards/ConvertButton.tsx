@@ -60,7 +60,7 @@ const ConvertButton: React.FC<ConvertButtonProps> = ({ reqPoints, rewardId }) =>
     <StyledButton
       onPress={handleClaim} // Update onPress to reference handleClaim correctly
       className="rounded-full m-0 p-0"
-      disabled={isClaimed || points < reqPoints} // Disable if already claimed or insufficient points
+      disabled={isClaimed} // Disable if already claimed or insufficient points
     >
       <StyledText className='text-xs' style={{ color: isClaimed ? myTheme['color-primary-500'] : myTheme['color-basic-600'] }}>
         {isClaimed ? 'Claimed' : 'Claim'} 

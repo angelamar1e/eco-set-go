@@ -86,13 +86,13 @@ const Incentives = () => {
                 style={{ 
                   fontFamily: 'Poppins-Regular',
                   fontSize: 9,
-                  color: myTheme['color-success-600'],
+                  color: myTheme['color-success-700'],
                   opacity: 0.8,
                   marginTop: 10,
                   textAlign: 'center',
                 }}
               >
-                ← Swipe to redeem
+                Swipe to redeem →
               </StyledText>
             </StyledCard>
           </Swipeable>

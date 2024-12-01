@@ -38,7 +38,7 @@ export const ReductionRate: React.FC<ActionItemProps> = ({
   // Update impact calculation
   function getImpact() {
     let impact = 0;
-    const baseEmissions = carEmissions / 365; // Ensure a fallback value
+    const baseEmissions = carEmissions ? carEmissions / 365 : 0; // Ensure a fallback value
     const passengers = carNumOfPassengers ?? 1; // Ensure no division by zero
     const reductionRate = item.impact;
 
@@ -117,9 +117,10 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
   };
 
   const handleCompleteDetails = () => {
+    const numOfPassengers = emissionsData["carNumOfPassengers"] ?? 1;
     const kmTravelled = inputValue
       ? parseFloat(inputValue)
-      : emissionsData["carKmTravelled"] / 365;
+      : emissionsData["kmTravelled"] / 365;
     const baseEmissions = emissionsData["carEFPerKm"] * kmTravelled;
     const reductionRate = item.impact;
 
@@ -128,7 +129,7 @@ export const DrivingActionDone: React.FC<DoneItemProps> = ({
       impact = baseEmissions * reductionRate;
     } else {
       impact =
-        (baseEmissions * reductionRate) / emissionsData["carNumOfPassengers"];
+        (baseEmissions * reductionRate) / numOfPassengers;
     }
 
     handleComplete(item.id, item.template, convertKgToGrams(impact));

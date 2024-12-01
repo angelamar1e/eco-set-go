@@ -69,7 +69,9 @@ const WeekOverview: React.FC = () => {
       .onSnapshot((doc) => {
         if (doc.exists && doc.data()) {
           const data = doc.data()!;
-          setActionsCount(data.action_ids.length);
+          if (data.action_ids){
+            setActionsCount(data.action_ids.length);
+          }
         } else {
           setActionsCount(0);
         }
@@ -139,7 +141,9 @@ const WeekOverview: React.FC = () => {
             >
               {dates.map((date, index) => {
                 let color;
-                if (greens.includes(date)) {
+                if (actionsCount === 0) {
+                  color = myTheme["color-basic-300"];
+                } else if (greens.includes(date)) {
                   color = myTheme["color-success-500"]; // Green color for 'good'
                 } else if (yellows.includes(date)) {
                   color = "#fff365"; // Yellow color for 'caution'
@@ -147,8 +151,6 @@ const WeekOverview: React.FC = () => {
                   color = "#ffb54c"; // Orange color for 'attention'
                 } else if (reds.includes(date)) {
                   color = "#ff6961"; // Red color for 'alert'
-                } else {
-                  color = "#ff6961"; // Default color for no status
                 }
 
                 return (

@@ -5,7 +5,7 @@ export const Multipliers = {
 
 export const Car = {
   efPerKm: 0.2136499,
-  kmTravelled: 0,
+  kmTravelled: 19363,
   constructionScale: 4500,
   lifeSpan: 225000,
   footprintPerLiter: 2.33982,

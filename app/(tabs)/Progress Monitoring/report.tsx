@@ -212,9 +212,39 @@ const ProgressReport = () => {
       { name: "Electricity", color: currentColors.bars[2] },
     ];
   
+    // Check if there is only one record and its values are all zeros
+    if (
+      stackedChartData.data.length === 1 &&
+      stackedChartData.data[0].every((value: number) => value === 0)
+    ) {
+      return (
+        <View className="items-center justify-center" style={{ backgroundColor: "white", padding: 20 }}>
+          <Text
+            style={{
+              fontFamily: "Poppins-Regular",
+              fontSize: 16,
+              color: myTheme['color-success-700'],
+              textAlign: "center",
+              marginBottom: 16
+            }}
+          >No activity recorded yet.</Text>
+          <Text
+            style={{
+              fontFamily: "Poppins-Regular",
+              fontSize: 13,
+              color: myTheme['color-basic-600'],
+              textAlign: "center",
+            }}
+          >
+            Small eco-friendly actions can make a big difference. Start today to create a sustainable future. 🌳
+          </Text>
+        </View>
+      );
+    }
+  
     return (
       <>
-        <View className="items-center justify-center" style={{backgroundColor: "white"}}>
+        <View className="items-center justify-center" style={{ backgroundColor: "white" }}>
           <View>
             <StackedBarChart
               data={{
@@ -222,11 +252,11 @@ const ProgressReport = () => {
                 data: stackedChartData.data,
                 barColors: currentColors.bars,
                 legend: ["Food", "Transportation", "Electricity"],
-              }}              
+              }}
               width={Dimensions.get("window").width + 60}
               height={220}
               chartConfig={chartConfig}
-              style={{marginEnd: 15 }}
+              style={{ marginEnd: 15 }}
               fromZero
               hideLegend
               withHorizontalLabels={false}
