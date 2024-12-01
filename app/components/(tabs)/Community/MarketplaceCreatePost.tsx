@@ -62,7 +62,7 @@ export const CreateListing = (): React.ReactElement => {
 
   return (
     <StyledCard 
-      className="h-100 mt-12 mb-2 ml-2 mr-2 rounded-lg"
+      className="h-100 mt-20 mb-2 ml-2 mr-2 rounded-lg"
       style={{
         backgroundColor: myTheme['color-basic-200'],
         shadowColor: "#000",
