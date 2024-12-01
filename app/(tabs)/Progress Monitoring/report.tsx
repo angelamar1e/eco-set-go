@@ -25,7 +25,7 @@ import { EmissionsData } from "../../../constants/DefaultValues";
 import { EmissionsContext } from "@/contexts/Emissions";
 import { useUserContext } from "@/contexts/UserContext";
 import { ActivityIndicator } from "react-native-paper";
-import { convertGramsToKg } from '../../utils/EstimationUtils';
+import { convertGramsToKg } from "../../utils/EstimationUtils";
 
 // Define types for report data
 type ReportData = {
@@ -47,11 +47,11 @@ const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 
-
 // ProgressReport component
 const ProgressReport = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const shouldLoadComponent = (index: number): boolean => index === selectedIndex;
+  const shouldLoadComponent = (index: number): boolean =>
+    index === selectedIndex;
 
   const [period, setPeriod] = useState<"Daily" | "Weekly" | "Monthly">("Daily");
   const [colorScheme, setColorScheme] = useState<"light" | "dark">(
@@ -98,14 +98,14 @@ const ProgressReport = () => {
       text: "#000000",
       //bars: ["#00A3E0", "#FF7A9B", "#FFD700"],
       //bars: ["#F5ED18", "#62A9FF", "#FF7A6B"],
-      bars: ["#80D680", "#218838", "#185724"]
+      bars: ["#80D680", "#218838", "#185724"],
     },
     dark: {
       background: "#f4f5f2",
       text: "#ffffff",
       //bars: ["#0096D6", "#FF6A85", "#FFC300"],
       //bars: ["#F2EE18", "#4294FF", "#FF796B"],
-      bars: ["#73F29C", "#13B879", "#05665E"]
+      bars: ["#73F29C", "#13B879", "#05665E"],
     },
   };
 
@@ -117,85 +117,124 @@ const ProgressReport = () => {
   }, []);
 
   const renderDataValues = () => {
-    return (
-      <View style={{ height: 400 }}>
-        <ScrollView 
-          className="flex-wrap"
-          showsVerticalScrollIndicator={false}
-          nestedScrollEnabled={true}
-          contentContainerStyle={{
-            padding: 16
-          }}
+    if (
+      stackedChartData.data.length === 0 ||
+      (stackedChartData.data.length === 1 &&
+        stackedChartData.data[0].every((value: number) => value === 0))
+    ) {
+      return (
+        <View
+          className="items-center justify-center"
+          style={{ backgroundColor: "white", padding: 20, height: 200, width: 400, }}
         >
-          {stackedChartData.labels.map((label: string, index: number) => (
-            <View 
-              key={index} 
-              className="mb-4 p-4 rounded-lg flex-wrap" 
-              style={{
-                backgroundColor: myTheme['color-basic-200'],
-                borderColor: myTheme['color-basic-300'],
-                borderWidth: 1,
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.1,
-                shadowRadius: 3,
-                elevation: 1,
-              }}
-            >
-              <Text
+          <Text
+            style={{
+              fontFamily: "Poppins-Regular",
+              fontSize: 16,
+              color: myTheme["color-success-700"],
+              textAlign: "center",
+              marginBottom: 16,
+            }}
+          >
+            No activity recorded yet.
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Poppins-Regular",
+              fontSize: 13,
+              color: myTheme["color-basic-600"],
+              textAlign: "center",
+            }}
+          >
+            Small eco-friendly actions can make a big difference. Start today to
+            create a sustainable future. 🌳
+          </Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ height: 400 }}>
+          <ScrollView
+            className="flex-wrap"
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+            contentContainerStyle={{
+              padding: 16,
+            }}
+          >
+            {stackedChartData.labels.map((label: string, index: number) => (
+              <View
+                key={index}
+                className="mb-4 p-4 rounded-lg flex-wrap"
                 style={{
-                  fontFamily: "Poppins-Medium",
-                  fontSize: 13,
-                  color: myTheme["color-success-700"],
+                  backgroundColor: myTheme["color-basic-200"],
+                  borderColor: myTheme["color-basic-300"],
+                  borderWidth: 1,
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 3,
+                  elevation: 1,
                 }}
               >
-                {label}
-              </Text>
-              {stackedChartData.data[index].map((value: number, subIndex: number) => (
-                <View 
-                  key={subIndex} 
-                  className="flex-row justify-between items-center py-1 px-5"
+                <Text
                   style={{
-                    borderBottomWidth: subIndex !== stackedChartData.data[index].length - 1 ? 1 : 0,
-                    borderBottomColor: `${myTheme['color-basic-300']}50`
+                    fontFamily: "Poppins-Medium",
+                    fontSize: 13,
+                    color: myTheme["color-success-700"],
                   }}
                 >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular", 
-                      fontSize: 13,
-                      color: myTheme["color-basic-600"],
-                    }}
-                  >
-                    {stackedChartData.legend[subIndex]}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Medium",
-                      fontSize: 13,
-                      color: myTheme["color-basic-800"],
-                      marginLeft: 20
-                    }}
-                  >
-                    {convertGramsToKg(value).toFixed(2)} kg CO₂e
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    );
+                  {label}
+                </Text>
+                {stackedChartData.data[index].map(
+                  (value: number, subIndex: number) => (
+                    <View
+                      key={subIndex}
+                      className="flex-row justify-between items-center py-1 px-5"
+                      style={{
+                        borderBottomWidth:
+                          subIndex !== stackedChartData.data[index].length - 1
+                            ? 1
+                            : 0,
+                        borderBottomColor: `${myTheme["color-basic-300"]}50`,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "Poppins-Regular",
+                          fontSize: 13,
+                          color: myTheme["color-basic-600"],
+                        }}
+                      >
+                        {stackedChartData.legend[subIndex]}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "Poppins-Medium",
+                          fontSize: 13,
+                          color: myTheme["color-basic-800"],
+                          marginLeft: 20,
+                        }}
+                      >
+                        {convertGramsToKg(value).toFixed(2)} kg CO₂e
+                      </Text>
+                    </View>
+                  )
+                )}
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      );
+    }
   };
-  
-  
 
   const renderStackedBarChart = () => {
     const currentColors = chartColors[colorScheme];
-  
+
     const chartConfig = {
       backgroundColor: currentColors.background,
       backgroundGradientFrom: currentColors.background,
@@ -205,46 +244,56 @@ const ProgressReport = () => {
       barPercentage: 0.5,
       decimalPlaces: 0,
     };
-  
+
     const legendData = [
       { name: "Food", color: currentColors.bars[0] },
       { name: "Transportation", color: currentColors.bars[1] },
       { name: "Electricity", color: currentColors.bars[2] },
     ];
-  
+
     // Check if there is only one record and its values are all zeros
     if (
-      stackedChartData.data.length === 1 &&
-      stackedChartData.data[0].every((value: number) => value === 0)
+      stackedChartData.data.length === 0 ||
+      (stackedChartData.data.length === 1 &&
+        stackedChartData.data[0].every((value: number) => value === 0))
     ) {
       return (
-        <View className="items-center justify-center" style={{ backgroundColor: "white", padding: 20 }}>
+        <View
+          className="items-center justify-center"
+          style={{ backgroundColor: "white", padding: 20, height: 200, }}
+        >
           <Text
             style={{
               fontFamily: "Poppins-Regular",
               fontSize: 16,
-              color: myTheme['color-success-700'],
+              color: myTheme["color-success-700"],
               textAlign: "center",
-              marginBottom: 16
+              marginBottom: 16,
             }}
-          >No activity recorded yet.</Text>
+          >
+            No activity recorded yet.
+          </Text>
           <Text
             style={{
               fontFamily: "Poppins-Regular",
               fontSize: 13,
-              color: myTheme['color-basic-600'],
+              color: myTheme["color-basic-600"],
               textAlign: "center",
             }}
           >
-            Small eco-friendly actions can make a big difference. Start today to create a sustainable future. 🌳
+            Small eco-friendly actions can make a big difference. Start today to
+            create a sustainable future. 🌳
           </Text>
         </View>
       );
     }
-  
+
     return (
       <>
-        <View className="items-center justify-center" style={{ backgroundColor: "white" }}>
+        <View
+          className="items-center justify-center"
+          style={{ backgroundColor: "white" }}
+        >
           <View>
             <StackedBarChart
               data={{
@@ -292,11 +341,11 @@ const ProgressReport = () => {
       </>
     );
   };
-  
-  if (!stackedChartData && !isStackedChartDataValid()){
+
+  if (!stackedChartData && !isStackedChartDataValid()) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color={myTheme['color-success-700']} />
+        <ActivityIndicator size="large" color={myTheme["color-success-700"]} />
       </StyledLayout>
     );
   }
@@ -315,20 +364,20 @@ const ProgressReport = () => {
         </StyledText>
       </StyledLayout>
 
-        <StyledLayout className="flex-1">
-          <GoalSetting />
-          <ScrollView 
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 50
-              }}
-            >
+      <StyledLayout className="flex-1">
+        <GoalSetting />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: 50,
+          }}
+        >
           <View className="flex-row justify-center mt-2 mb-3 px-2 h-32">
             {/* Total Impact Layout */}
             <StyledLayout
               className="flex-1 mx-1.5 rounded-3xl justify-center overflow-hidden"
               style={{
-                backgroundColor: 'transparent',
+                backgroundColor: "transparent",
                 elevation: 4,
                 shadowColor: myTheme["color-success-700"],
                 shadowOffset: { width: 0, height: 2 },
@@ -338,7 +387,7 @@ const ProgressReport = () => {
             >
               <View
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   left: 0,
                   right: 0,
@@ -348,7 +397,7 @@ const ProgressReport = () => {
               >
                 <View
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
                     left: 0,
                     right: 0,
@@ -364,7 +413,7 @@ const ProgressReport = () => {
                   style={{
                     fontFamily: "Poppins-Medium",
                     fontSize: 12,
-                    color: 'white',
+                    color: "white",
                     opacity: 0.9,
                     marginBottom: 4,
                   }}
@@ -377,16 +426,18 @@ const ProgressReport = () => {
                       style={{
                         fontFamily: "Poppins-Bold",
                         fontSize: 24,
-                        color: 'white',
+                        color: "white",
                       }}
                     >
-                      {conditionalConvertGramsToKg(convertTonsToGrams(totalImpact))}
+                      {conditionalConvertGramsToKg(
+                        convertTonsToGrams(totalImpact)
+                      )}
                     </Text>
                     <Text
                       style={{
                         fontFamily: "Poppins-Medium",
                         fontSize: 13,
-                        color: 'white',
+                        color: "white",
                         marginLeft: 2,
                       }}
                     >
@@ -399,98 +450,99 @@ const ProgressReport = () => {
 
             {/* Emissions Comparison Layout */}
 
-              {/* Container for both emissions */}
-              <StyledLayout className="flex-1 p-1" 
-                style={{ 
-                  borderColor: myTheme['color-success-700'],
-                  borderWidth: 1,
-                  borderRadius: 24,
+            {/* Container for both emissions */}
+            <StyledLayout
+              className="flex-1 p-1"
+              style={{
+                borderColor: myTheme["color-success-700"],
+                borderWidth: 1,
+                borderRadius: 24,
+              }}
+            >
+              {/* Initial Emissions */}
+              <StyledLayout
+                className="flex-1 justify-center"
+                style={{
+                  backgroundColor: "transparent",
                 }}
-                >
-                {/* Initial Emissions */}
-                <StyledLayout 
-                  className="flex-1 justify-center"
-                  style={{
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  <View className="items-center">
-                    <Text 
-                      style={{ 
-                        fontFamily: 'Poppins-Medium',
-                        fontSize: 11,
-                        color: myTheme['color-basic-600'],
-                        marginBottom: 1,
+              >
+                <View className="items-center">
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Medium",
+                      fontSize: 11,
+                      color: myTheme["color-basic-600"],
+                      marginBottom: 1,
+                    }}
+                  >
+                    Initial Emissions
+                  </Text>
+                  <View className="flex-row items-baseline">
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Bold",
+                        fontSize: 18,
+                        color: myTheme["color-success-900"],
                       }}
                     >
-                      Initial Emissions
+                      {initialFootprint.toFixed(2)} tons
                     </Text>
-                    <View className="flex-row items-baseline">
-                      <Text 
-                        style={{ 
-                          fontFamily: 'Poppins-Bold',
-                          fontSize: 18,
-                          color: myTheme['color-success-900'],
-                        }}
-                      >
-                        {(initialFootprint).toFixed(2)} tons
-                      </Text>
-                      <Text 
-                        style={{ 
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 12,
-                          color: myTheme['color-success-900'],
-                          marginLeft: 2,
-                        }}
-                      >
-                        CO₂e
-                      </Text>
-                    </View>
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Regular",
+                        fontSize: 12,
+                        color: myTheme["color-success-900"],
+                        marginLeft: 2,
+                      }}
+                    >
+                      CO₂e
+                    </Text>
                   </View>
-                </StyledLayout>
+                </View>
+              </StyledLayout>
 
               {/* Subtle Divider */}
-              <View 
-                style={{ 
+              <View
+                style={{
                   height: 1,
-                  backgroundColor: `${myTheme['color-basic-500']}40`,
+                  backgroundColor: `${myTheme["color-basic-500"]}40`,
                   marginHorizontal: 16,
-                }} 
+                }}
               />
 
               {/* Current Emissions */}
               <StyledLayout
                 className="flex-1 justify-center"
                 style={{
-                  backgroundColor: 'transparent'
+                  backgroundColor: "transparent",
                 }}
               >
                 <View className="items-center">
-                  <Text 
-                    style={{ 
-                      fontFamily: 'Poppins-Medium',
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Medium",
                       fontSize: 11,
-                      color: myTheme['color-basic-600'],
+                      color: myTheme["color-basic-600"],
                       marginBottom: 1,
                     }}
                   >
                     Current Emissions
                   </Text>
                   <View className="flex-row items-baseline">
-                    <Text 
-                      style={{ 
-                        fontFamily: 'Poppins-Bold',
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Bold",
                         fontSize: 20,
-                        color: myTheme['color-success-700'],
+                        color: myTheme["color-success-700"],
                       }}
                     >
-                      {(currentFootprint).toFixed(2)} tons
+                      {currentFootprint.toFixed(2)} tons
                     </Text>
-                    <Text 
-                      style={{ 
-                        fontFamily: 'Poppins-Regular',
+                    <Text
+                      style={{
+                        fontFamily: "Poppins-Regular",
                         fontSize: 14,
-                        color: myTheme['color-success-700'],
+                        color: myTheme["color-success-700"],
                         marginLeft: 2,
                       }}
                     >
@@ -500,53 +552,53 @@ const ProgressReport = () => {
                 </View>
               </StyledLayout>
             </StyledLayout>
-        </View>
-        <StyledLayout
-          className="justify-center border-t border-b pb-3 border-gray-200 rounded-xl"
-          style={{}}
-        >
-          <View
-            className="mt-3"
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              marginBottom: 10,
-            }}
+          </View>
+          <StyledLayout
+            className="justify-center border-t border-b pb-3 border-gray-200 rounded-xl"
+            style={{}}
           >
-            {["Daily", "Weekly", "Monthly"].map((option) => (
-              <TouchableOpacity
-                key={option}
-                onPress={() => {
-                  handlePeriodChange(option);
-                  setPeriod(option as "Daily" | "Weekly" | "Monthly");
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Medium",
-                    fontSize: 14,
-                    color:
-                      period === option
-                        ? myTheme["color-success-700"]
-                        : myTheme["color-basic-600"],
+            <View
+              className="mt-3"
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginBottom: 10,
+              }}
+            >
+              {["Daily", "Weekly", "Monthly"].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  onPress={() => {
+                    handlePeriodChange(option);
+                    setPeriod(option as "Daily" | "Weekly" | "Monthly");
                   }}
                 >
-                  {option}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <ViewPager
-            selectedIndex={selectedIndex}
-            shouldLoadComponent={shouldLoadComponent}
-            onSelect={(index) => setSelectedIndex(index)}
-          >
-            <Layout level="2">{renderStackedBarChart()}</Layout>
-            <Layout level="2">
-              <Text>{renderDataValues()}</Text>
-            </Layout>
-          </ViewPager>
-        </StyledLayout>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Medium",
+                      fontSize: 14,
+                      color:
+                        period === option
+                          ? myTheme["color-success-700"]
+                          : myTheme["color-basic-600"],
+                    }}
+                  >
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <ViewPager
+              selectedIndex={selectedIndex}
+              shouldLoadComponent={shouldLoadComponent}
+              onSelect={(index) => setSelectedIndex(index)}
+            >
+              <Layout level="2">{renderStackedBarChart()}</Layout>
+              <Layout level="2">
+                <Text>{renderDataValues()}</Text>
+              </Layout>
+            </ViewPager>
+          </StyledLayout>
         </ScrollView>
       </StyledLayout>
     </StyledLayout>
