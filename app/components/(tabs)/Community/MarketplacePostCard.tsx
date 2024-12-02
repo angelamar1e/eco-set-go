@@ -7,6 +7,7 @@ import { Timestamp } from '@react-native-firebase/firestore';
 import { formatTimeAgo, fetchUserInfo, fetchComments, handleAddComment, handleDeleteComment, handleEditListing, handleDeleteListing } from '@/app/utils/marketplaceUtils';
 import { myTheme } from '@/constants/custom-theme';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useUserContext } from '@/contexts/UserContext';
 
 export interface Comment {
   id: string;
@@ -14,6 +15,7 @@ export interface Comment {
   userName: string;
   timestamp: Timestamp;
   content: string;
+  uid: string,
 }
 
 interface ListingCardProps {
@@ -22,6 +24,7 @@ interface ListingCardProps {
   userName: string;
   price: string;
   timestamp: Timestamp;
+  uid: string,
   onEdit: (newContent: string, newPrice: string) => Promise<void>;
   onDelete: () => Promise<void>;
 }
@@ -32,15 +35,14 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
-const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price, timestamp, onEdit, onDelete }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price, timestamp, uid, onEdit, onDelete }) => {
   const [editedContent, setEditedContent] = useState(content);
   const [editedPrice, setEditedPrice] = useState(price);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const [username, setUsername] = useState('');
-  const [uid, setUid] = useState('');
+  const {userUid, username} = useUserContext();
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null);
   const [confirmCommentDeleteVisible, setConfirmCommentDeleteVisible] = useState(false);
@@ -48,27 +50,9 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
   const [commentPopoverVisible, setCommentPopoverVisible] = useState<string | null>(null);
 
   const formattedTimestamp = formatTimeAgo(timestamp);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { username, uid } = await fetchUserInfo();
-        setUsername(username);
-        setUid(uid);
-        
-        const fetchedComments = await fetchComments(id);
-        setComments(fetchedComments);
-      } catch (error) {
-        console.error('Error fetching user info or comments:', error);
-      }
-    };
-
-    fetchData();
-  }, [id]);  // Add id as a dependency to re-fetch comments when postId changes.
-
   const handleAddCommentWrapper = async () => {
     if (newComment.trim()) {
-      const addedComment = await handleAddComment(id, username, uid, newComment);
+      const addedComment = await handleAddComment(id, username, userUid, newComment);
       setComments((prevComments) => [...prevComments, addedComment]);
       setNewComment(''); // Reset input field after comment is added
     }
@@ -120,6 +104,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
           </StyledLayout>
         </StyledLayout>
         <StyledLayout className='m-1 p-1' style={{backgroundColor: myTheme['color-basic-200']}}>
+          {uid === userUid && (
           <Popover
             visible={postPopoverVisible}
             placement="bottom end"
@@ -163,6 +148,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               </TouchableOpacity>
             </StyledLayout>
           </Popover>
+          )}
         </StyledLayout>
       </StyledLayout>
 
@@ -239,6 +225,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                         @{comment.userName}
                       </StyledText>                     
                       {/* for comment actions */}
+                      {comment.uid === userUid && (
                       <Popover
                         visible={commentPopoverVisible === comment.id}
                         placement="bottom end"
@@ -269,6 +256,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                           </TouchableOpacity>
                         </StyledLayout>
                       </Popover>
+                      )}
                     </StyledLayout>
                    
                     <StyledText 

@@ -4,6 +4,7 @@ import firestore from "@react-native-firebase/firestore"; // Firebase Firestore
 import { router } from "expo-router";
 import { goToInterface } from "@/app/utils/utils";
 import moment from "moment";
+import { push } from "@react-native-firebase/database";
 
 // Create a User Context
 const UserContext = createContext();
@@ -24,6 +25,7 @@ export const UserProvider = ({ children }) => {
   const [joinDate, setJoinDate] = useState("");
   const [profileCreated, setProfileCreated] = useState(true);
   const [level, setLevel] = useState(1);
+  const [pushToken, setPushToken] = useState(""); 
 
   const fetchUserDetails = (uid) => {
     setLoading(true);
@@ -45,6 +47,7 @@ export const UserProvider = ({ children }) => {
                 remindersPreferences,
                 postsNotificationsEnabled = true,
                 level = 1,
+                expoPushToken,
               } = doc.data();
 
               setName(name);
@@ -55,6 +58,7 @@ export const UserProvider = ({ children }) => {
               setPoints(points);
               setRedeemablePoints(redeemablePoints);
               setLevel(level);
+              setPushToken(expoPushToken);
 
               if (created_at) {
                 const parsedDate = moment(
@@ -188,6 +192,7 @@ export const UserProvider = ({ children }) => {
         setLoading,
         joinDate,
         level,
+        pushToken,
       }}
     >
       {children}
