@@ -146,7 +146,7 @@ const PostCard: React.FC<PostCardProps> = ({
             >
               <StyledText style={{ 
                 fontFamily: 'Poppins-Medium', 
-                fontSize: 16,
+                fontSize: 14,
                 color: myTheme['color-info-500'],
                 padding: 8
               }}>
@@ -161,7 +161,7 @@ const PostCard: React.FC<PostCardProps> = ({
             >
               <StyledText style={{ 
                 fontFamily: 'Poppins-Medium', 
-                fontSize: 16,
+                fontSize: 14,
                 color: myTheme['color-danger-500'],
                 padding: 8
               }}>
@@ -197,25 +197,41 @@ const PostCard: React.FC<PostCardProps> = ({
       {/* Comment Modal */}
       <Modal
         visible={commentModalVisible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         onBackdropPress={() => setCommentModalVisible(false)}
-        style={{
-          width: 300,
-          height: 250,
-          alignSelf: "center",
-          justifyContent: "center",
-        }}
+        style={{ width: 300, maxHeight: '80%', alignSelf: 'center' }}
       >
         <StyledLayout className="p-5 rounded-lg">
-          <StyledText
-            style={{
-              fontFamily: "Poppins-SemiBold",
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
               fontSize: 16,
-              marginBottom: 8,
+              marginBottom: 8
             }}
           >
             Comments
           </StyledText>
+          <StyledInput
+            placeholder="Add a comment..."
+            value={newComment}
+            onChangeText={setNewComment}
+            className="rounded-lg mb-3"
+            size='large'
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 14}}
+            style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}
+            accessoryRight={() => (
+              <TouchableOpacity
+                onPress={() => handleAddComment(newComment, id, username, uid, setNewComment)}
+                disabled={!newComment.trim()}
+              >
+                <Ionicons 
+                  name="send" 
+                  size={20} 
+                  color={newComment.trim() ? myTheme['color-success-700'] : "#A9A9A9"} 
+                />
+              </TouchableOpacity>
+            )}
+          />
           <ScrollView style={{ maxHeight: 400 }}>
             {comments.length > 0 ? (
               comments
@@ -224,23 +240,25 @@ const PostCard: React.FC<PostCardProps> = ({
                 .map((comment) => (
                   <View key={comment.id} className="pb-2 mb-2">
                     <StyledLayout className='flex-row justify-between'>
-                      <StyledText style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14 , color: myTheme['color-success-700']}}>
+                      <StyledText style={{ 
+                        fontFamily: 'Poppins-SemiBold', 
+                        fontSize: 14,
+                        color: myTheme['color-success-700']
+                      }}>
                         @{comment.userName}
-                      </StyledText>                     
-                      {/* for comment actions */}
-
-                      {userUID === userUid && (
+                      </StyledText>
+                      {/* Comment actions */}
                       <Popover
                         visible={commentPopoverVisible === comment.id}
                         placement="bottom end"
                         anchor={() => (
-                          <TouchableOpacity onPress={() => toggleCommentPopover(comment.id)}>
+                          <TouchableOpacity onPress={() => setCommentPopoverVisible(comment.id)}>
                             <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
                           </TouchableOpacity>
                         )}
                         onBackdropPress={() => setCommentPopoverVisible(null)}
                       >
-                        <StyledLayout className="p-3 rounded-lg" style={{backgroundColor: myTheme['color-basic-100']}}>
+                        <StyledLayout className="p-3 rounded-lg">
                           <TouchableOpacity
                             onPress={() => {
                               setCommentToDelete(comment);
@@ -251,24 +269,23 @@ const PostCard: React.FC<PostCardProps> = ({
                             <StyledText
                               style={{
                                 fontFamily: 'Poppins-Medium',
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: myTheme['color-danger-500'],
                               }}
                             >
-                              Delete
+                              Delete Comment
                             </StyledText>
                           </TouchableOpacity>
                         </StyledLayout>
                       </Popover>
-                      )}
                     </StyledLayout>
-                   
+                    
                     <StyledText 
                       style={{ 
                         fontFamily: 'Poppins-Regular', 
                         fontSize: 16, 
                         backgroundColor: myTheme['color-basic-300'], 
-                        padding: 10,
+                        padding: 5, 
                         paddingVertical: 16, 
                         borderRadius: 10,
                         flexWrap: 'wrap'
@@ -278,7 +295,6 @@ const PostCard: React.FC<PostCardProps> = ({
                     </StyledText>
                     <StyledText 
                       style={{ 
-                        marginVertical: 5,
                         fontFamily: 'Poppins-Regular',
                         fontSize: 11,
                         color: '#8F9BB3'
@@ -289,32 +305,14 @@ const PostCard: React.FC<PostCardProps> = ({
                   </View>
                 ))
             ) : (
-              <StyledText className="text-gray-500" style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>No comments yet.</StyledText>
+              <StyledText 
+                className="text-gray-500" 
+                style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}
+              >
+                No comments yet.
+              </StyledText>
             )}
           </ScrollView>
-          <StyledInput
-            placeholder="Add a comment..."
-            value={newComment}
-            onChangeText={setNewComment}
-            className="rounded-lg pt-5"
-            size="large"
-            multiline={true}
-            textStyle={{ fontFamily: "Poppins-Regular", fontSize: 12 }}
-            accessoryRight={() => (
-              <TouchableOpacity
-                onPress={() =>  
-                  handleAddComment(newComment, id, username, uid, setNewComment)
-                }
-                disabled={!newComment.trim()}
-              >
-                <Ionicons
-                  name="send"
-                  size={24}
-                  color={newComment.trim() ? "#34C759" : "#A9A9A9"}
-                />
-              </TouchableOpacity>
-            )}
-          />
         </StyledLayout>
       </Modal>
 
@@ -338,7 +336,6 @@ const PostCard: React.FC<PostCardProps> = ({
             value={editedContent}
             onChangeText={setEditedContent}
             placeholder="Edit your post..."
-            multiline
             className="mb-2 mt-2"
             size="large"
             textStyle={{ fontFamily: "Poppins-Regular", fontSize: 16, top: 2 }}
@@ -351,7 +348,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-info-500"],
                   padding: 8,
                 }}
@@ -371,7 +368,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-primary-700"],
                   padding: 8,
                 }}
@@ -408,7 +405,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-info-500"],
                 }}
               >
@@ -426,7 +423,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-danger-500"],
                 }}
               >
@@ -462,7 +459,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-info-500"],
                 }}
               >
@@ -482,7 +479,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <StyledText
                 style={{
                   fontFamily: "Poppins-Medium",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: myTheme["color-danger-500"],
                 }}
               >

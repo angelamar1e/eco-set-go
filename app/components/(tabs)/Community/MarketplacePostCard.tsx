@@ -125,7 +125,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             placement="bottom end"
             anchor={() => (
               <TouchableOpacity onPress={() => setPostPopoverVisible(!postPopoverVisible)}>
-                <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9"/>
+                <Ionicons name="ellipsis-vertical" size={20} color={myTheme['color-basic-700']}/>
               </TouchableOpacity>
             )}
             onBackdropPress={() => setPostPopoverVisible(false)}
@@ -139,7 +139,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               >
                 <StyledText style={{ 
                   fontFamily: 'Poppins-Medium', 
-                  fontSize: 12,
+                  fontSize: 14,
                   color: myTheme['color-info-500'],
                   padding: 8
                 }}>
@@ -154,7 +154,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               >
                 <StyledText style={{ 
                   fontFamily: 'Poppins-Medium', 
-                  fontSize: 12,
+                  fontSize: 14,
                   color: myTheme['color-danger-500'],
                   padding: 8
                 }}>
@@ -210,6 +210,23 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
           >
             Comments
           </StyledText>
+          <StyledInput
+            placeholder="Add a comment..."
+            value={newComment}
+            onChangeText={setNewComment}
+            className="rounded-lg mb-3"
+            size='large'
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 14}}
+            style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}
+            accessoryRight={() => (
+              <TouchableOpacity
+                onPress={handleAddCommentWrapper}
+                disabled={!newComment.trim()}
+              >
+                <Ionicons name="send" size={20} color={newComment.trim() ? "#34C759" : "#A9A9A9"} />
+              </TouchableOpacity>
+            )}
+          />
           <ScrollView style={{ maxHeight: 400 }}>
             {comments.length > 0 ? (
               comments
@@ -227,12 +244,12 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                         placement="bottom end"
                         anchor={() => (
                           <TouchableOpacity onPress={() => setCommentPopoverVisible(comment.id)}>
-                            <Ionicons name="ellipsis-vertical" size={15} color="#A9A9A9" />
+                            <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
                           </TouchableOpacity>
                         )}
                         onBackdropPress={() => setCommentPopoverVisible(null)}
                       >
-                        <StyledLayout className="p-2 rounded-lg">
+                        <StyledLayout className="p-3 rounded-lg">
                           <TouchableOpacity
                             onPress={() => {
                               setCommentToDelete(comment);
@@ -243,7 +260,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                             <StyledText
                               style={{
                                 fontFamily: 'Poppins-Medium',
-                                fontSize: 12,
+                                fontSize: 14,
                                 color: myTheme['color-danger-500'],
                               }}
                             >
@@ -257,10 +274,10 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
                     <StyledText 
                       style={{ 
                         fontFamily: 'Poppins-Regular', 
-                        fontSize: 14, 
+                        fontSize: 16, 
                         backgroundColor: myTheme['color-basic-300'], 
                         padding: 5, 
-                        paddingVertical: 5, 
+                        paddingVertical: 16, 
                         borderRadius: 10,
                         flexWrap: 'wrap'
                       }}
@@ -282,22 +299,6 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               <StyledText className="text-gray-500" style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>No comments yet.</StyledText>
             )}
           </ScrollView>
-          <StyledInput
-            placeholder="Add a comment..."
-            value={newComment}
-            onChangeText={setNewComment}
-            className="rounded-lg m-1"
-            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}
-            style={{ fontFamily: 'Poppins-Regular' }}
-            accessoryRight={() => (
-              <TouchableOpacity
-                onPress={handleAddCommentWrapper}
-                disabled={!newComment.trim()}
-              >
-                <Ionicons name="send" size={20} color={newComment.trim() ? "#34C759" : "#A9A9A9"} />
-              </TouchableOpacity>
-            )}
-          />
         </StyledLayout>
       </Modal>
 
@@ -337,7 +338,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             >
               <StyledText style={{
                 fontFamily: 'Poppins-Medium',
-                fontSize: 12,
+                fontSize: 14,
                 color: myTheme['color-info-500'],
                 padding: 8
               }}>
@@ -355,7 +356,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             >
               <StyledText style={{
                 fontFamily: 'Poppins-Medium', 
-                fontSize: 12,
+                fontSize: 14,
                 color: myTheme['color-primary-700'],
                 padding: 8
               }}>
@@ -386,7 +387,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               <StyledText 
                 style={{ 
                   fontFamily: 'Poppins-Medium', 
-                  fontSize: 12,
+                  fontSize: 14,
                   color: myTheme['color-info-500']
                 }}
               >
@@ -404,7 +405,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               <StyledText
                 style={{
                   fontFamily: 'Poppins-Medium',
-                  fontSize: 12, 
+                  fontSize: 14, 
                   color: myTheme['color-danger-500']
                 }}
               >
@@ -435,7 +436,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               <StyledText 
                 style={{ 
                   fontFamily: 'Poppins-Medium', 
-                  fontSize: 12,
+                  fontSize: 14,
                   color: myTheme['color-info-500']
                 }}
               >
@@ -450,7 +451,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
               <StyledText
                 style={{
                   fontFamily: 'Poppins-Medium',
-                  fontSize: 12, 
+                  fontSize: 14, 
                   color: myTheme['color-danger-500']
                 }}
               >

@@ -60,12 +60,14 @@ const Logs = () => {
           <FlatList
             data={[
               { id: "1", component: <DailyLog /> },
-              { id: "2", component: <Buttons /> },
-              { id: "3", component: <ReflectionList /> },
+              { id: "2", component: <ReflectionList /> },
             ]}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View className="mb-4">{item.component}</View>
+              <View className="mb-4">
+                {item.component}
+                {item.id === "1" && <Buttons />}
+              </View>
             )}
             showsVerticalScrollIndicator={false}
           />
