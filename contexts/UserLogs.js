@@ -203,7 +203,7 @@ export const UserLogsProvider = ({ children }) => {
 
   useEffect(() => {
     setCurrentFootprint();
-  }, [userLogs, initialFootprint]);
+  }, [userLogs, initialFootprint, totalImpact]);
 
   // Helper function to check if userLogs is effectively empty
   const isUserLogsEmpty = (logs) => {

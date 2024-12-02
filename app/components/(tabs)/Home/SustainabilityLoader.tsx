@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f4f3",
   },
   phrase: {
+    marginTop: 50,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",

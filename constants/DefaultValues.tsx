@@ -10,7 +10,7 @@ export const Car = {
   lifeSpan: 225000,
   footprintPerLiter: 2.33982,
   consumptionPerKm: 13,
-  numOfPassengers: 2,
+  numOfPassengers: 1.58,
   user: "owner",
 }
 

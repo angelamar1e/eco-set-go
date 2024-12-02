@@ -13,7 +13,8 @@ export const UserProvider = ({ children }) => {
   const [userUid, setUserUID] = useState(null);
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
-  const [notification, setNotification] = useState("");
+  const [remindersPreferences, setRemindersPreferences] = useState("");
+  const [postsPreferences, setPostsPreferences] = useState("");
   const [role, setRole] = useState("");
   const [currentFootprint, setCurrentFootprint] = useState(0);
   const [initialFootprint, setInitialFootprint] = useState(0);
@@ -41,12 +42,14 @@ export const UserProvider = ({ children }) => {
                 created_at,
                 points = 0,
                 redeemablePoints = 0,
-                notificationPreferences = "",
+                remindersPreferences,
+                postsNotificationsEnabled = true,
                 level = 1,
               } = doc.data();
 
               setName(name);
-              setNotification(notificationPreferences);
+              setRemindersPreferences(remindersPreferences);
+              setPostsPreferences(postsNotificationsEnabled);
               setRole(role);
               setUsername(username);
               setPoints(points);
@@ -174,7 +177,8 @@ export const UserProvider = ({ children }) => {
         name,
         userUid,
         username,
-        notification,
+        remindersPreferences,
+        postsPreferences,
         role,
         points,
         redeemablePoints,
