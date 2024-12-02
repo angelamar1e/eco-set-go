@@ -14,7 +14,6 @@ const BackButton = () => {
   const theme = useTheme();
 
   const navigateBack = () => {
-    console.log("Back button pressed"); // Debug log
     navigation.goBack();
   };
 

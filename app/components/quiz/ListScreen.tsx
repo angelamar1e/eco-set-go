@@ -15,19 +15,17 @@ const ListHeader = () => {
   const theme = useTheme();
 
   const navigateBack = () => navigation.goBack();
-  const BackIcon = () => <Ionicons name="chevron-back" size={35} color={theme['color-primary-900']} />;
+  const BackIcon = () => <Ionicons name="chevron-back" size={25} color={theme['color-success-900']} />;
 
   return (
-    <Layout level='1' style={{ borderBottomWidth: 1, borderBottomColor: myTheme["color-primary-900"], borderStyle: 'solid' }}>
+    <Layout level='1' style={{ borderBottomWidth: 2, borderBottomColor: myTheme["color-success-900"], borderStyle: 'solid' }}>
       <TopNavigation
         accessoryLeft={() => (
           <View className='flex-row items-center'>
             <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
             <StyledText 
-            category='h2'
-            style={{ color: myTheme["color-primary-700"] }} 
-            className='p-2'
-          >
+              style={{ color: myTheme["color-success-700"], fontFamily: 'Poppins-Bold', fontSize: 30, top: 5 }}   
+            >
             All Questions
           </StyledText>
           </View> 

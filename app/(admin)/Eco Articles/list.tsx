@@ -68,7 +68,7 @@ const EcoActionsList = () => {
       <Button
         icon="plus"
         mode="contained"
-        onPress={() => router.push('components/(admin)/Eco Articles/add_article')}
+        onPress={() => router.push('/components/(admin)/Eco Articles/add_article')}
         style={{ position: "absolute", bottom: 40, right: 20, borderRadius: 50 }}
       >
         Add

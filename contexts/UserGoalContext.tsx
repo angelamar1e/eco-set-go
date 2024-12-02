@@ -16,6 +16,8 @@ export type GoalData = {
 };
 
 type UserGoalContextProps = {
+  dailyLogLoading: boolean,
+  setDailyLogLoading: (state: boolean) => void,
   latestGoal: GoalData | null;
   editGoal: boolean;
   progressImpact: number;
@@ -26,6 +28,7 @@ type UserGoalContextProps = {
   newStartDate: Date;
   newEndDate: Date;
   newTarget: number;
+  setEditGoal: (visibility: boolean) => void;
   setNewStartDate: (date: Date) => void;
   setNewEndDate: (date: Date) => void;
   setNewTarget: (target: number) => void;
@@ -36,8 +39,10 @@ const UserGoalContext = createContext<UserGoalContextProps | undefined>(undefine
 export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userUid } = useUserContext();
   const { userLogs } = useLogsContext();
+
   const goalsDoc = firestore().collection("goals").doc(userUid);
 
+  const [dailyLogLoading, setDailyLogLoading] = useState(true);
   const [latestGoal, setLatestGoal] = useState<GoalData | null>(null);
   const [editGoal, setEditGoal] = useState(false);
   const [newStartDate, setNewStartDate] = useState<Date>(new Date());
@@ -79,10 +84,8 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     let totalImpact = 0;
     if (latestGoal && userLogs) {
       const { stringStartDate, stringEndDate } = convertTimestampToString(latestGoal.start_date, latestGoal.end_date);
-      const startDate = latestGoal.start_date.toDate();
-      const endDate = latestGoal.end_date.toDate();
       Object.entries(userLogs as UserLogs).forEach(([date, actions]) => {
-        if (date >= stringStartDate && date <= stringEndDate) {
+        if (date >= stringStartDate) {
           for (const logEntry of Object.values(actions)) {
             if (typeof logEntry.impact === "number") {
               totalImpact += logEntry.impact;
@@ -135,7 +138,6 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             },
             { merge: true }
           );
-          console.log(`Goal status updated to: ${currentStatus}`);
         } catch (error) {
           console.error("Error updating goal status:", error);
         }
@@ -180,14 +182,17 @@ export const UserGoalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       )
       .catch((error) => console.error("Error submitting goal:", error));
 
-    toggleEdit();
+    setEditGoal(false);
   };
 
   return (
     <UserGoalContext.Provider
       value={{
+        dailyLogLoading,
+        setDailyLogLoading,
         latestGoal,
         editGoal,
+        setEditGoal,
         progressImpact,
         progressPercentage,
         isComplete,

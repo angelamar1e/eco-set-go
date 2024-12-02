@@ -24,10 +24,10 @@ const InputTemplate: FC<TemplateProps> = ({
   setModalVisible,
   tips,
 }) => {
-  const [inputValue, setInputValue] = useState<string>(defaultValue || "");
+  const [inputValue, setInputValue] = useState<string>(defaultValue.toString());
 
   const handlePress = (value: any) => {
-    setInputValue(value);
+    setInputValue(value.toString());
     onAnswer(value);
   };
 
@@ -41,33 +41,54 @@ const InputTemplate: FC<TemplateProps> = ({
 
   return (
     <QuestionContainer>
-        <StyledText className="text-sm mb-3" style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-Medium' }}>
-          {category}
+      <StyledText 
+        className="text-sm mb-3" 
+        style={{ 
+          color: myTheme['color-success-700'], 
+          fontFamily: 'Poppins-Medium',
+          fontSize: 14
+        }}
+      >
+        {category}
+      </StyledText>
+
+      <View className="flex-row justify-between items-center mb-2">
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold', 
+            fontSize: 16,
+            flex: 1,
+            marginRight: 8
+          }}
+        >
+          {question} 
         </StyledText>
+        {tips && tips.length > 0 && (
+          <TouchableOpacity 
+            onPress={() => setModalVisible(true)}
+            className="p-1"
+          >
+            <Ionicons 
+              name="information-circle-outline" 
+              size={22} 
+              style={{ color: myTheme['color-success-700'] }} 
+            />
+          </TouchableOpacity>
+        )}
+      </View>
 
-        <View className="flex-row justify-between">
-          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
-            {question} 
-          </StyledText>
-          {tips && tips.length > 0 && (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
-            </TouchableOpacity>
-          )}
-        </View>
-
-      <StyledLayout className="flex-row flex-wrap justify-left mb-10">
+      <StyledLayout className="flex-row flex-wrap justify-left mb-3">
         {choices ? (
           Object.entries(choices).map(([key, value]) => (
             <PresetChoices
               key={key}
               title={key}
-              isSelected={value === defaultValue}
+              isSelected={value === defaultValue || value.toString() === inputValue}
               onPress={() => handlePress(value)}
             />
           ))
         ) : (
-          <Text> Loading... </Text>
+          <></>
         )}
       </StyledLayout>
 
@@ -80,7 +101,7 @@ const InputTemplate: FC<TemplateProps> = ({
         />
       </StyledLayout>
 
-       {tips && tips.length > 0 && (
+      {tips && tips.length > 0 && (
         <TipsModal
           visible={isModalVisible}
           onClose={() => setModalVisible(false)}

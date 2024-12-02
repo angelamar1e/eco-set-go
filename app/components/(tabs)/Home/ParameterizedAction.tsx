@@ -23,13 +23,12 @@ export const Parameterized: React.FC<ActionItemProps> = ({
   handleDelete,
 }) => {
 
-    const { emissionsData } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let impact = 0;
 
     function getImpact() {
         const baseEmissions = emissionsData[item.baseEmission!] ?? 0;
         const replacementEmissions = emissionsData[item.impact] ?? item.impact
-        console.log(baseEmissions);
 
         if (item.title === "Carpool"){
           impact = baseEmissions * replacementEmissions;
@@ -49,13 +48,9 @@ export const Parameterized: React.FC<ActionItemProps> = ({
         </View>        
       )}
     >
-    <StyledLayout className="pt-1 m-1" 
-        style={{
-          borderBottomWidth: 1, 
-          borderBottomColor: myTheme['color-basic-500']
-        }} >
-        <StyledCard className="rounded-lg mb-2 h-12" style={{justifyContent: 'center'}}>
-          <View className="flex-row items-center justify-start bottom-1">
+    <StyledLayout className="pt-1 m-1 justify-start items-start">
+    <View className="rounded px-3 border border-gray-200 py-2 w-full" style={{justifyContent: 'center', backgroundColor: myTheme['color-basic-200']}}>
+          <View className="flex-row">
               <CircularCheckbox
             status={
               completedActions.some((action) => action.id === item.id)
@@ -64,11 +59,20 @@ export const Parameterized: React.FC<ActionItemProps> = ({
             }
             onPress={() => getImpact()}
           />
-            <StyledText category="p1" numberOfLines={2} style={{width: "85%",}} className="text-base w-10/12 leading-6">
+            <StyledText
+              numberOfLines={2}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14,
+                top: 8
+              }}
+              className="text-base leading-5"
+            >
               {item.title}
             </StyledText>
         </View>
-      </StyledCard>
+      </View>
     </StyledLayout>
     </Swipeable>
   );

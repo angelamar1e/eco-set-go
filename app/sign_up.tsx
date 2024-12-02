@@ -1,16 +1,16 @@
 import { ThemedView } from '@/components/ThemedView';
 import { AuthInputFields } from '@/components/InputFields';
 import { SignUpButton } from "@/components/SignUpButton";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Alert,
   View
 } from "react-native";
-import { Link, router, Stack } from 'expo-router';
+import { Link, router, Stack, useRouter } from 'expo-router';
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { goToInterface } from './utils/utils';
-import { LoginButton } from '@/components/LoginButton';
+import { CTAButton } from '@/components/CTAButton';
 import { Container } from '@/components/Container';
 import { TitleComponent } from '@/components/Title';
 import { ThemedText } from '@/components/ThemedText';
@@ -18,6 +18,12 @@ import { useUserContext } from '@/contexts/UserContext';
 import { Button, Input, Layout, Modal, Text } from '@ui-kitten/components';
 import { Ionicons } from '@expo/vector-icons';
 import { styled } from 'nativewind';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { myTheme } from '@/constants/custom-theme';
+import TakeaQuiz from './(quiz)/takeaquiz';
+import { EmissionsContext } from '@/contexts/Emissions';
+import { EmissionsData } from '../constants/DefaultValues';
+import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -44,7 +50,9 @@ const CustomAlert: React.FC<CustomAlertProps> = ({ visible, message, onClose }) 
 );
 
 export default function SignUp() {
-  const {userUid, loading} = useUserContext();
+  const fontsLoaded = useLoadFonts();
+  const {initializeData} = useContext(EmissionsContext);
+  const {userUid, fetchUserDetails, setProfileCreated} = useUserContext();
   const [username, setUsername] = useState<string | undefined>();
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -53,6 +61,7 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
+  const router = useRouter();
 
   const current_date = Date().toString();
 
@@ -84,65 +93,52 @@ export default function SignUp() {
     return true;
   };
 
-
   const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
     const userUid = response.user.uid;
-
+  
     try {
-      firestore().collection('users').doc(userUid).set({
-        role: "user",
-        username,
-        created_at: current_date,
-      });
-
-      firestore().collection('current_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      
-
-      firestore().collection('initial_footprint').doc(userUid).set({
-        food_footprint: 0,
-        transportation_footprint: 0,
-        electricity_footprint: 0,
-        overall_footprint: 0
-      });
-
-      firestore().collection('daily_logs').doc(userUid).set({
-      })
-
-      firestore().collection('user_logs').doc(userUid).set({
-      })
-
-      firestore().collection('goals').doc(userUid).set({
-      });
-
-    }
-    catch(error){
+      await Promise.all([
+        firestore().collection('users').doc(userUid).set({
+          role: "user",
+          username,
+          created_at: current_date,
+          points: 0,
+          redeemablePoints: 0,
+        }, {merge: true}),
+        firestore().collection('current_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('initial_footprint').doc(userUid).set({
+          food_footprint: 0,
+          transportation_footprint: 0,
+          electricity_footprint: 0,
+          overall_footprint: 0
+        }, {merge: true}),
+        firestore().collection('daily_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('user_logs').doc(userUid).set({}, {merge: true}),
+        firestore().collection('goals').doc(userUid).set({}, {merge: true})
+      ]);
+    } catch (error) {
       console.error(error);
     }
   }
-
+  
   const handleSignUp = async () => {
-    if (email && password){
+    if (email && password) {
       try {
-          const response = await auth().createUserWithEmailAndPassword(email, password);
-          await createProfile(response);
-          clearAllInput();
-      } catch (error){
-          handleError(error);
-      }
-      finally{
+        const response = await auth().createUserWithEmailAndPassword(email, password);
+        setProfileCreated(false);
+        await createProfile(response);
+        setProfileCreated(true);
+        clearAllInput();
+      } catch (error) {
+        handleError(error);
       }
     }
   };
-
-  if (!loading){
-    goToInterface("user");
-  }
 
   const handleError = (error: any) => {
     let message = 'An error occurred. Please try again.';
@@ -161,7 +157,7 @@ export default function SignUp() {
         message = 'Please provide an email address.';
         break;
       default:
-        message = error.message; // Generic error message
+        message = error.message;
     }
 
     setAlertMessage(message);
@@ -173,6 +169,10 @@ export default function SignUp() {
     setEmail('');
     setPassword('');
   };
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <StyledLayout style={{ flex: 1, justifyContent: "center", paddingHorizontal: 35 }}>
@@ -189,6 +189,7 @@ export default function SignUp() {
             caption={usernameError || ""}
             accessoryLeft={<Ionicons name="person" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
           <Input
@@ -200,6 +201,7 @@ export default function SignUp() {
             caption={emailError || ""}
             accessoryLeft={<Ionicons name="mail" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
 
           <Input
@@ -212,19 +214,36 @@ export default function SignUp() {
             caption={passwordError || ""}
             accessoryLeft={<Ionicons name="lock-closed" size={25} color="#8F9BB3" />}
             style={{ marginVertical: 8, borderRadius: 7 }}
+            textStyle={{ fontFamily: 'Poppins-Regular', paddingTop: 5, fontSize: 14 }}
           />
         </StyledLayout>
 
-        <Button style={{ marginVertical: 12, borderRadius: 12, }} onPress={handleSignUp}>
-          Sign Up
-        </Button>
-        <StyledLayout className="flex-row items-center justify-center">
-          <ThemedText>Already have an account?</ThemedText>
-          <Button appearance="ghost" 
-             style={{ marginLeft: -16 }}
-             onPress={() => router.push("/login")}
-          >Login</Button>    
-          </StyledLayout>
+        <TouchableOpacity
+          style={{ 
+            marginVertical: 12,
+            borderRadius: 12,
+            backgroundColor: myTheme['color-success-700'],
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onPress={handleSignUp}
+        >
+          <StyledText style={{
+            fontFamily: 'Poppins-Medium',
+            color: 'white',
+            fontSize: 14,
+            top: 2
+          }}>
+            Sign Up
+          </StyledText>
+        </TouchableOpacity>
+        <StyledLayout style={{flexDirection: 'row', marginTop: 12, alignItems: 'center', justifyContent: 'center'}}>
+          <StyledText style={{color: '#8F9BB3', fontSize: 13, fontFamily: 'Poppins-Regular'}}>Already have an account?</StyledText>
+          <TouchableOpacity onPress={() => router.push("/login")}>
+            <StyledText style={{fontSize: 13, fontFamily: 'Poppins-SemiBold', color: myTheme['color-success-700']}}> Login</StyledText>
+          </TouchableOpacity>
+        </StyledLayout>
       </Container>
 
       <CustomAlert

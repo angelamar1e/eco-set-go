@@ -9,6 +9,7 @@ import { EmissionsDataProvider } from "@/contexts/EmissionsData";
 import { UserProvider } from "@/contexts/UserContext";
 import { UserLogsProvider } from "@/contexts/UserLogs";
 import { UserGoalProvider } from "@/contexts/UserGoalContext";
+import { UserbaseProvider } from "@/contexts/UserbaseContext";
 import { EcoActionsProvider } from "@/contexts/EcoActions";
 
 export default function RootLayout() {
@@ -19,6 +20,7 @@ export default function RootLayout() {
       <EcoActionsProvider>
         <EmissionsProvider>
           <EmissionsDataProvider>
+            <UserbaseProvider>
             <UserLogsProvider>
               <UserGoalProvider>
                 <ApplicationProvider
@@ -63,11 +65,36 @@ export default function RootLayout() {
                         name="components/(tabs)/Eco Articles/[article]"
                         options={{ headerShown: false }}
                       />
-                    </Stack>
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/UpdateUsername" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/updatepassword" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Settings/updateemail" 
+                        options={{ headerShown: false}} 
+                      />
+                      <Stack.Screen 
+                        name="components/(tabs)/Eco Articles/Introduction" 
+                        options={{headerShown: false}}
+                      />        
+                      <Stack.Screen 
+                        name="components/(tabs)/Eco Articles/GoalSetting" 
+                        options={{headerShown: false}}
+                      />      
+                      <Stack.Screen 
+                        name="components/(tabs)/Rewards/MilestonesPage" 
+                        options={{headerShown: false}}
+                      />              
+                    </Stack>     
                   </GestureHandlerRootView>
                 </ApplicationProvider>
               </UserGoalProvider>
             </UserLogsProvider>
+            </UserbaseProvider>
           </EmissionsDataProvider>
         </EmissionsProvider>
       </EcoActionsProvider>

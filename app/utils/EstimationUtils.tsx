@@ -32,7 +32,11 @@ export function convertGramsToTons(inGrams: number) {
 }
 
 export function convertTonsToGrams(inTons: number) {
-  return inTons * 1000000; // Return the value in tons
+  return inTons * 1000000; // Return the value in grams
+}
+
+export function convertTonsToKg(inTons: number) {
+  return inTons * 1000; // Return the value in kg
 }
 
 export function formatNumber(value: number) {
@@ -54,6 +58,17 @@ export function conditionalConvertGramsToKg(inGrams: number) {
   }
 }
 
+// Function to convert kilograms to tons or display kilograms
+export function conditionalConvertKgToTons(inKg: number) {
+  // Return as a string to label as kilograms or tons
+  if (inKg >= 1000) {
+    return formatNumber(inKg / 1000) + " tons";
+  } else {
+    return formatNumber(inKg) + " kg"; // Return the value in kilograms
+  }
+}
+
+
 export function computeImpact(higherEF: number, lessEF: number) {
   const impact = higherEF - lessEF;
 
@@ -64,6 +79,10 @@ export function frequencyMultiplier(value: number, multiplier: number) {
   let result = value * multiplier;
 
   return result;
+}
+
+export function wasteRecycled(reductionInKg: number){
+  return reductionInKg * 0.4;
 }
 
 export function getCarEFPerKm(footprintPerLiter: number, consumptionPerKm: number){
@@ -93,17 +112,23 @@ export function computeCarEmissions(
 
   switch (user) {
     case "owner":
-      manufacture = constructionPerKm * thresholdKm;
+      if (kmTravelled < thresholdKm){
+        manufacture = constructionPerKm * thresholdKm;
+      }
+      else{
+        manufacture = constructionPerKm * kmTravelled;
+      }
       break;
     case "non-owner":
       manufacture = constructionPerKm * kmTravelled;
+      console.log(manufacture, efPerKm);
       break;
     case "car-sharer":
       manufacture = 0;
       efPerKm = TransportEmission.Car.efPerKm;
       break;
     default:
-      manufacture = constructionPerKm * thresholdKm;
+      manufacture = constructionPerKm * kmTravelled;
       break;
   }
 

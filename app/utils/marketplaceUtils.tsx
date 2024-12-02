@@ -1,8 +1,10 @@
-import firestore from '@react-native-firebase/firestore';
 import { Timestamp } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
+import { firebase } from '@react-native-firebase/auth';
+import { Comment } from '../components/(tabs)/Community/MarketplacePostCard';
 
-// Function to format timestamps into a human-readable format
-export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined) => {
+// Format a timestamp into a human-readable "time ago" string
+export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined): string => {
     if (!timestamp) return 'Unknown time';
     const date = timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
     const now = new Date();
@@ -17,69 +19,71 @@ export const formatTimeAgo = (timestamp: Timestamp | Date | null | undefined) =>
     return `${days} days ago`;
 };
 
-// Function to handle editing a listing
+// Fetch the current user information
+export const fetchUserInfo = async (): Promise<{ username: string, uid: string }> => {
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+        throw new Error('No user is currently signed in.');
+    }
+    
+    const userRef = firestore().collection('users').doc(currentUser.uid);
+    const userDoc = await userRef.get();
+    if (!userDoc.exists) {
+        throw new Error('User document does not exist.');
+    }
+    
+    const userData = userDoc.data();
+    return {
+        username: userData?.username || '',
+        uid: currentUser.uid,
+    };
+};
+
+// Fetch comments for a given listing
+export const fetchComments = async (postId: string): Promise<Comment[]> => {
+    const commentsSnapshot = await firestore().collection('comments').where('postId', '==', postId).get();
+    return commentsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    })) as Comment[];
+};
+
+// Add a new comment
+export const handleAddComment = async (postId: string, username: string, uid: string, newComment: string) => {
+    if (!newComment.trim()) {
+        throw new Error('Comment cannot be empty.');
+    }
+
+    const commentData = {
+        postId,
+        userName: username,
+        uid,
+        content: newComment,
+        timestamp: Timestamp.fromDate(new Date()),
+    };
+
+    const docRef = await firestore().collection('comments').add(commentData);
+    return {
+        id: docRef.id,
+        ...commentData,
+    };
+};
+
+// Delete a comment
+export const handleDeleteComment = async (commentId: string) => {
+    await firestore().collection('comments').doc(commentId).delete();
+};
+
+// Edit a listing
 export const handleEditListing = async (listingId: string, newContent: string, newPrice: string) => {
-    try {
-        await firestore().collection('listings').doc(listingId).update({ 
-            content: newContent,
-            price: newPrice // Update price along with content
-        });
-        console.log('Listing updated successfully!');
-    } catch (error) {
-        console.error('Error updating listing:', error);
-    }
+    await firestore().collection('listings').doc(listingId).update({
+        content: newContent,
+        price: newPrice,
+    });
 };
 
-// Function to handle deleting a listing
+// Delete a listing
 export const handleDeleteListing = async (listingId: string) => {
-    try {
-        await firestore().collection('listings').doc(listingId).delete();
-        console.log('Listing deleted successfully!');
-    } catch (error) {
-        console.error('Error deleting listing:', error);
-    }
+    await firestore().collection('listings').doc(listingId).delete();
 };
 
-// Function to handle the submission of edited content and price
-export const handleEditSubmit = async (
-    onEdit: (newContent: string, newPrice: string) => Promise<void>, // Updated to accept newPrice
-    editedContent: string,
-    editedPrice: string, // Added parameter for edited price
-    setEditModalVisible: React.Dispatch<React.SetStateAction<boolean>>, 
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-    setLoading(true);
-    try {
-        await onEdit(editedContent, editedPrice); // Pass both content and price to onEdit
-        setEditModalVisible(false); // Close modal after editing
-    } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Could not edit the listing. Please try again later.';
-        console.error(errorMessage);
-    } finally {
-        setLoading(false);
-    }
-};
-
-// Function to confirm deletion of a post
-export const confirmDeletePost = async (
-    id: string, 
-    setConfirmDeleteVisible: React.Dispatch<React.SetStateAction<boolean>>, 
-    setShowMenu: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-    try {
-        await handleDeleteListing(id);
-        setConfirmDeleteVisible(false);
-        setShowMenu(false);
-    } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'An error occurred while trying to confirm delete.';
-        console.error(errorMessage);
-    }
-};
-
-// Function to handle the delete button press
-export const handleDeletePress = (
-    setConfirmDeleteVisible: React.Dispatch<React.SetStateAction<boolean>>, 
-    setShowMenu: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-    setConfirmDeleteVisible(true);
-};

@@ -41,6 +41,7 @@ const StyledSelect = styled(Select);
 const StyledSelectItem = styled(SelectItem);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
+const StyledInput = styled(Input);
 
 export interface MealData {
   mealType: string;
@@ -53,7 +54,7 @@ export const Meal: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
@@ -111,17 +112,17 @@ export const Meal: React.FC<ActionItemProps> = ({
     >
       <StyledLayout
         className="pt-1 m-1"
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: myTheme["color-basic-500"],
-        }}
       >
         <StyledSelect
-          className="w-full rounded-lg mb-2"
+          className="w-full rounded-lg"
           placeholder={() => (
             <StyledText
               numberOfLines={2}
-              style={{ width: "85%" }}
+              style={{ 
+                width: "85%",
+                fontFamily: 'Poppins-Regular',
+                fontSize: 14
+              }}
               className="text-base leading-5"
             >
               {item.title}
@@ -132,7 +133,11 @@ export const Meal: React.FC<ActionItemProps> = ({
             Object.entries(item.options).map(([key, value]) => (
               <StyledSelectItem
                 key={key}
-                title={key}
+                title={() => (
+                  <StyledText style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
+                    {key}
+                  </StyledText>
+                )}
                 onPress={() => {
                   getImpact(key, value);
                   setExpanded(false); // Collapse the dropdown after selection
@@ -155,7 +160,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
   handleUnmark,
 }) => {
   const { userUid, loading } = useUserContext();
-  const { emissionsData } = useContext(EmissionsDataContext);
+  const { emissionsData } = useContext(EmissionsContext);
   const [baseMeal, setBaseMeal] = useState<MealData>();
   const [chosenMeal, setChosenMeal] = useState<MealData>();
   const [inputValue, setInputValue] = useState("");
@@ -210,9 +215,8 @@ export const MealDone: React.FC<DoneItemProps> = ({
   const handleCompleteDetails = async () => {
     const weightInGrams =
       parseFloat(inputValue) <= 0 ? 0.15 : parseFloat(inputValue);
-    const additionals = emissionsData["foodAdditionals"] || {};
+    const additionals = emissionsData["additionals"] || {};
     const maxReplacementAmount = getMaxReplacementAmount();
-    console.log(maxReplacementAmount);
 
     if (weightInGrams > maxReplacementAmount) {
       Alert.alert(
@@ -248,7 +252,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
       <StyledLayout
         className="pt-1 m-1"
       >
-        <View className="border border-gray-300 rounded-lg">
+        <View className="border border-gray-200 rounded-lg">
           <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
             <CircularCheckbox
               status={
@@ -258,16 +262,20 @@ export const MealDone: React.FC<DoneItemProps> = ({
               }
               onPress={() => handleUnmark(item.id)}
             />
-            <StyledText className="text-base w-10/12 leading-6">
+            <StyledText 
+              className="text-base w-10/12 leading-6"
+              style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}
+            >
               {item.title}
             </StyledText>
           </View>
           <TouchableOpacity onPress={handleMoreDetails}>
             <StyledText
-              category="s1"
               className="ml-12 mt-2 mb-2"
               style={{
-                color: myTheme["color-info-500"],
+                color: myTheme['color-success-700'],
+                fontFamily: 'Poppins-Medium',
+                fontSize: 14
               }}
             >
               Enter more details
@@ -277,37 +285,44 @@ export const MealDone: React.FC<DoneItemProps> = ({
 
         {showInput && (
           <View>
-            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end">
-              <StyledText>
+            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
+              <StyledText 
+                className="text-sm"
+                style={{ fontFamily: 'Poppins-Regular' }}
+              >
                 Amount of{" "}
-                <Text className="italic">
+                <StyledText style={{ fontFamily: 'Poppins-Italic', fontSize: 14 }}>
                   {chosenMeal?.mealBase === "Cereal Products"
                     ? chosenMeal?.mealType
                     : chosenMeal?.mealBase}
-                </Text>
-                {" "}eaten{" "}
+                </StyledText>
+                {" "}eaten{": "} 
               </StyledText>
-              <Input
-                style={{ width: "30%" }}
+              <StyledInput
+                className="w-1/4"
                 placeholder=""
                 keyboardType="numeric"
                 value={inputValue}
                 onChangeText={setInputValue}
               />
-              <StyledText category="label" className="ml-2 mr-3 text-sm">
+              <StyledText 
+                className="ml-2 mr-3 text-sm"
+                style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}
+              >
                 grams
               </StyledText>
             </StyledLayout>
             <View className="items-center">
               <TouchableOpacity
-                className=" rounded-lg items-end w-full mr-2 p-2 px-3 mb-3"
+                className="rounded-lg w-full p-2 px-6 mb-3"
                 onPress={handleCompleteDetails}
               >
                 <StyledText
                   category="p1"
-                  className="text-white font-bold text-sm"
+                  className="text-white text-sm text-right"
                   style={{
-                    color: myTheme["color-info-500"],
+                    color: myTheme['color-success-700'],
+                    fontFamily: 'Poppins-SemiBold'
                   }}
                 >
                   → Submit

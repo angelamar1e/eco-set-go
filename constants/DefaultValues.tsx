@@ -5,12 +5,12 @@ export const Multipliers = {
 
 export const Car = {
   efPerKm: 0.2136499,
-  kmTravelled: 0,
+  kmTravelled: 19363,
   constructionScale: 4500,
   lifeSpan: 225000,
   footprintPerLiter: 2.33982,
   consumptionPerKm: 13,
-  numOfPassengers: 2,
+  numOfPassengers: 1.58,
   user: "owner",
 }
 
@@ -26,12 +26,12 @@ export const Airplane = {
     mediumHaul: {
       aveDuration: 3.5,
       aveDistance: 2190,
-      duration: 3.5,
+      duration: 0,
     },
     longHaul: {
       aveDuration: 12.5,
       aveDistance: 8012,
-      duration: 25,
+      duration: 0,
     },
   },
 }
@@ -39,12 +39,12 @@ export const Airplane = {
 export const TransportEmission = {
   Car: {
     efPerKm: 0.2136499,
-    kmTravelled: 0,
+    kmTravelled: 19363,
     constructionScale: 4500,
     lifeSpan: 225000,
     footprintPerLiter: 2.33982,
     consumptionPerKm: 13,
-    numOfPassengers: 2,
+    numOfPassengers: 1.58,
     user: "owner",
   },
   Airplane: {
@@ -69,10 +69,10 @@ export const TransportEmission = {
   TwoWheelers: {
     usesTwoWheelers: false,
     efPerKm: 0.08,
-    kmTravelled: 2000,
+    kmTravelled: 32578.77,
   },
   EfficientTransport: {
-    selectedTransports: ["bike"],
+    selectedTransports: [""],
     bicycle: {
       construction: 116,
       lifespan: 12,
@@ -95,21 +95,21 @@ export const TransportEmission = {
     efPerKm: 0.03479,
   },
   PublicTransport: {
-    selectedPublicTransport: ["bus", "jeep", "trike"],
+    selectedPublicTransport: ["jeep", "trike"],
     bus: {
       efPerKm: 0.2902192,
       aveSpeed: 12,
-      hrsTravelled: 1,
+      hrsTravelled: 0.22,
     },
     jeepney: {
       efPerKm: 0.2902192,
       aveSpeed: 9,
-      hrsTravelled: 1,
+      hrsTravelled: 0.33,
     },
     tricycle: {
       efPerKm: 0.1235702,
       aveSpeed: 19.94,
-      hrsTravelled: 1,
+      hrsTravelled: 0.88,
     },
   },
 };
@@ -216,15 +216,15 @@ export const Beverages = {
 };
 
 export const ElectricityEmissions = {
-  householdSize: 4,
+  householdSize: 4.1,
   Grid: {
-    ratePerKwh: 11.6339, // in pesos
-    monthlySpend: 2326.78, // for 200 kWh
+    ratePerKwh: 11.8569, // in pesos
+    monthlySpend: 2371.38, // for 200 kWh
     efPerKwh: 0.6935, // per kWh
   },
   Solar: {
     isUsed: false,
-    annualProduction: 2000,
+    annualProduction: 1000,
     percentConsumed: 100,
   },
 };

@@ -9,18 +9,21 @@ interface Reflection {
   uid: string;
 }
 
-// Fetch reflections
-export const fetchReflections = async (): Promise<Reflection[]> => {
-  const reflectionsRef = firestore().collection('reflections');
-  const snapshot = await reflectionsRef.get(); // Fetch all reflections
+// Fetch reflections for the logged-in user
+//export const fetchReflections = async (userUid: string): Promise<Reflection[]> => {
+ // const reflectionsRef = firestore()
+ //   .collection('reflections')
+ //   .where('uid', '==', userUid); // Only fetch reflections with matching UID
 
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    content: doc.data().content || '',
-    date: doc.data().date || '',
-    uid: doc.data().uid || ''
-  }));
-};
+ // const snapshot = await reflectionsRef.get();
+
+//  return snapshot.docs.map(doc => ({
+ //   id: doc.id,
+ //   content: doc.data().content || '',
+ //   date: doc.data().date || '',
+  //  uid: doc.data().uid || ''
+ // }));
+// };
 
 // Create reflection
 export const createReflection = async (reflection: { content: string; date: string; uid: string }): Promise<void> => {
@@ -36,7 +39,6 @@ export const deleteReflection = async (id: string): Promise<void> => {
 export const editReflection = async (id: string, newContent: string): Promise<void> => {
   await firestore().collection('reflections').doc(id).update({ content: newContent });
 };
-
 
 // Confirm delete reflection
 export const confirmDeleteReflection = async (id: string): Promise<void> => {

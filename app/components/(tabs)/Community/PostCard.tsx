@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { View, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Card, Text, Layout, Input, Button } from '@ui-kitten/components';
-import { styled } from 'nativewind';
-import { Timestamp } from '@react-native-firebase/firestore';
-import { firebase } from '@react-native-firebase/firestore';
-import { formatTimeAgo, handleEditSubmit, confirmDeletePost } from '@/app/utils/communityUtils';
-
-interface Comment {
-  id: string;
-  postId: string;
-  userName: string;
-  timestamp: Timestamp;
-  content: string;
-}
-
-interface PostCardProps {
-  id: string; // Post ID
-  content: string;
-  userName: string;
-  timestamp: Timestamp;
-  onEdit: (newContent: string) => Promise<void>;
-  onDelete: () => Promise<void>;
-  comments?: Comment[]; // Optional comments prop
-}
+import React, { useState, useEffect } from "react";
+import { View, TouchableOpacity, ScrollView } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import {
+  Card,
+  Text,
+  Layout,
+  Input,
+  Button,
+  Modal,
+  Popover,
+} from "@ui-kitten/components";
+import { styled } from "nativewind";
+import {
+  formatTimeAgo,
+  fetchUserInfo,
+  handleAddComment,
+  handleDeleteComment,
+  confirmDeletePost,
+} from "@/app/utils/communityUtils";
+import { Timestamp } from "@react-native-firebase/firestore";
+import { myTheme } from "@/constants/custom-theme";
+import { useUserContext } from "@/contexts/UserContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const StyledCard = styled(Card);
 const StyledText = styled(Text);
@@ -31,314 +29,467 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
+interface Comment {
+  id: string;
+  content: string;
+  userName: string;
+  timestamp: Timestamp;
+}
+
+interface PostCardProps {
+  id: string;
+  content: string;
+  userName: string;
+  userUID: string;
+  timestamp: Timestamp;
+  onEdit: (content: string) => void;
+  onDelete: (id: string) => void;
+  comments?: Comment[];
+}
+
 const PostCard: React.FC<PostCardProps> = ({
   id,
   content,
   userName,
+  userUID,
   timestamp,
   onEdit,
   onDelete,
   comments = [],
 }) => {
+  const { userUid } = useUserContext();
   const [editedContent, setEditedContent] = useState(content);
-  const [showMenu, setShowMenu] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentModalVisible, setCommentModalVisible] = useState(false);
-  const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null); // State for comment to delete
-  const [confirmCommentDeleteVisible, setConfirmCommentDeleteVisible] = useState(false); // State for comment delete confirmation
+  const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null);
+  const [confirmCommentDeleteVisible, setConfirmCommentDeleteVisible] =
+    useState(false);
   const [username, setUsername] = useState("");
   const [uid, setUid] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [postPopoverVisible, setPostPopoverVisible] = useState(false);
+  const [commentPopoverVisible, setCommentPopoverVisible] = useState<
+    string | null
+  >(null); // Track popover for comments
 
   const formattedTimestamp = formatTimeAgo(timestamp);
 
-  const fetchUserInfo = async () => {
-    const currentUser = firebase.auth().currentUser;
-    if (currentUser) {
-      const userRef = firebase.firestore().collection('users').doc(currentUser.uid);
-      const userDoc = await userRef.get();
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        setUsername(userData?.username || "");
-        setUid(currentUser.uid);
-      } else {
-        console.warn("User document does not exist.");
-      }
-    } else {
-      console.warn("No user is currently signed in.");
-    }
-  };
-
   useEffect(() => {
-    fetchUserInfo();
+    fetchUserInfo(setUsername, setUid);
   }, []);
 
-  const handleAddComment = async () => {
-    if (newComment.trim()) {
-      try {
-        if (!username || !uid) {
-          console.warn("Cannot add comment: Username or UID is not defined.");
-          return;
-        }
+  const togglePostPopover = () => setPostPopoverVisible(!postPopoverVisible);
 
-        const commentData = {
-          postId: id,
-          userName: username,
-          uid: uid,
-          content: newComment,
-          timestamp: Timestamp.fromDate(new Date()),
-        };
-
-        await firebase.firestore().collection('comments').add(commentData);
-        setNewComment("");
-      } catch (error) {
-        console.error("Error adding comment: ", error);
-      }
-    } else {
-      console.warn("Comment cannot be empty");
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      await firebase.firestore().collection('comments').doc(commentId).delete();
-      setCommentToDelete(null);
-      setConfirmCommentDeleteVisible(false); // Close comment delete confirmation
-    } catch (error) {
-      console.error("Error deleting comment: ", error);
-    }
+  const toggleCommentPopover = (commentId: string) => {
+    setCommentPopoverVisible(
+      commentPopoverVisible === commentId ? null : commentId
+    ); // Toggle popover for specific comment
   };
 
   return (
-    <StyledCard className="p-1 mb-2 ml-2 mr-2 rounded-lg">
-      <StyledLayout className="flex-row justify-between">
-        <View>
-          <StyledText category="s1" className="font-bold">
+    <StyledLayout 
+      className="p-1 m-2 rounded-xl border border-gray-200" 
+      style={{
+        backgroundColor: myTheme['color-basic-200'],
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 2.5,
+        elevation: 2,
+      }}
+    >
+      <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledLayout style={{backgroundColor: myTheme['color-basic-200']}} className='flex-row w-10/12 items-center mb-3'>
+          <StyledText  className=" ml-2 font-bold text-[90px] mt-4"><MaterialCommunityIcons name='emoticon-excited' size={50} color={myTheme['color-success-700']}/></StyledText>
+          <StyledLayout className='flex-column w-[240px] mt-4' style={{backgroundColor: myTheme['color-basic-200']}}>
+          <StyledText 
+            className="ml-1 leading-5"
+            style={{ fontFamily: 'Poppins-Italic', fontSize: 15, color: myTheme['color-success-900'] }}
+          >
             @{userName}
           </StyledText>
-          <StyledText category="c1" className="text-gray-500">
+          
+          <StyledText 
+            className="ml-2 text-gray-400"  
+            style={{
+              fontFamily: 'Poppins-Regular',
+              fontSize: 12
+            }}
+          >
             {formattedTimestamp}
           </StyledText>
-        </View>
+          </StyledLayout>
+        </StyledLayout>
 
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-          <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
-        </TouchableOpacity>
+        {userUID === userUid && ( 
+          <StyledLayout className='m-1 p-1' style={{backgroundColor: myTheme['color-basic-200']}}>
+        <Popover
+          visible={postPopoverVisible}
+          placement="bottom end"
+          anchor={() => (
+            <TouchableOpacity onPress={togglePostPopover} className="p-2">
+              <Ionicons name="ellipsis-vertical" size={20} color={myTheme['color-basic-700']}/>
+            </TouchableOpacity>
+          )}
+          onBackdropPress={togglePostPopover}
+        >
+          <StyledLayout className="p-1 rounded-lg" >
+            <TouchableOpacity
+              onPress={() => {
+                setEditModalVisible(true);
+                setPostPopoverVisible(false);
+              }}
+            >
+              <StyledText style={{ 
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 14,
+                color: myTheme['color-info-500'],
+                padding: 8
+              }}>
+                Edit
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setConfirmDeleteVisible(true);
+                setPostPopoverVisible(false);
+              }}
+            >
+              <StyledText style={{ 
+                fontFamily: 'Poppins-Medium', 
+                fontSize: 14,
+                color: myTheme['color-danger-500'],
+                padding: 8
+              }}>
+                Delete
+              </StyledText>
+            </TouchableOpacity>
+          </StyledLayout>
+          </Popover>
+        </StyledLayout>
+        )}
+        </StyledLayout>
+
+          
+
+      <StyledLayout className="my-2 ml-5" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledText 
+          className='text-lg'
+          style={{ fontFamily: 'Poppins-Regular' }}
+        >
+          {content}
+        </StyledText>
       </StyledLayout>
-
-      <StyledLayout className="mt-2">
-        <StyledText category="p1">{content}</StyledText>
-      </StyledLayout>
-
-      {/* Popup Menu */}
-      {showMenu && (
-        <View className="absolute right-0 top-0 mt-2 bg-white border border-gray-200 rounded shadow-lg p-2">
-          <StyledButton
-            size="small"
-            className="font-bold"
-            appearance="ghost"
-            status="info"
-            onPress={() => {
-              setEditModalVisible(true);
-              setShowMenu(false);
-            }}
-          >
-            Edit
-          </StyledButton>
-          <StyledButton
-            size="small"
-            className="font-bold"
-            appearance="ghost"
-            status="danger"
-            onPress={() => {
-              setConfirmDeleteVisible(true);
-              setShowMenu(false);
-            }}
-          >
-            Delete
-          </StyledButton>
-        </View>
-      )}
-
       {/* Comment Button */}
-      <StyledButton 
-        appearance='ghost'
-        status='basic'
-        size='small'
-        onPress={() => setCommentModalVisible(true)} 
-        className="mt-2 items-center rounded-full flex-row">
-        <StyledText>Add a comment</StyledText>
-      </StyledButton>
+      <StyledLayout className='items-end mr-5' style={{backgroundColor: myTheme['color-basic-200']}}>
+      <TouchableOpacity
+        onPress={() => setCommentModalVisible(true)}
+        className="mt-2 mb-2 w-1/3 rounded-full flex-row items-center justify-center"
+        style={{backgroundColor: myTheme['color-basic-300'], padding: 8}}>
+        <StyledText style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: myTheme['color-success-700'], top: 1 }}>Comments</StyledText>
+      </TouchableOpacity>
+      </StyledLayout>
 
       {/* Comment Modal */}
-      <Modal transparent={true} visible={commentModalVisible} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => setCommentModalVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
-                <StyledText category="h6" className="font-bold mb-2">Comments</StyledText>
-                {comments.length > 0 ? (
-                  comments
-                    .slice() 
-                    .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis()) // Sort comments by timestamp
-                    .map((comment) => (
-                      <View key={comment.id} className="border-b border-gray-200 pb-2 mb-2">
-                        <StyledText className="font-bold">@{comment.userName}</StyledText>
-                        <StyledText>{comment.content}</StyledText>
-                        <StyledText className="text-xs text-gray-500">{formatTimeAgo(comment.timestamp)}</StyledText>
-                        <TouchableOpacity onPress={() => {
-                          setCommentToDelete(comment);
-                          setConfirmCommentDeleteVisible(true);
-                        }}>
-                          <StyledLayout className='flex-row justify-end'>
-                          <StyledText className="text-red-500 text-xs">Delete</StyledText>
-                          </StyledLayout>
-                          
-                        </TouchableOpacity>
-                      </View>
-                    ))
-                ) : (
-                  <StyledText className="text-gray-500">No comments yet.</StyledText>
-                )}
-                <StyledInput
-                  placeholder="Add a comment..."
-                  value={newComment}
-                  onChangeText={setNewComment}
-                  className="rounded-lg m-2"
+      <Modal
+        visible={commentModalVisible}
+        backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onBackdropPress={() => setCommentModalVisible(false)}
+        style={{ width: 300, maxHeight: '80%', alignSelf: 'center' }}
+      >
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 16,
+              marginBottom: 8
+            }}
+          >
+            Comments
+          </StyledText>
+          <StyledInput
+            placeholder="Add a comment..."
+            value={newComment}
+            onChangeText={setNewComment}
+            className="rounded-lg mb-3"
+            size='large'
+            textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 14}}
+            style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}
+            accessoryRight={() => (
+              <TouchableOpacity
+                onPress={() => handleAddComment(newComment, id, username, uid, setNewComment)}
+                disabled={!newComment.trim()}
+              >
+                <Ionicons 
+                  name="send" 
+                  size={20} 
+                  color={newComment.trim() ? myTheme['color-success-700'] : "#A9A9A9"} 
                 />
-                <StyledLayout className="flex-row justify-end">
-                  <StyledButton onPress={handleAddComment} disabled={!newComment.trim()} 
-                    className="m-1 rounded-full justify-end"
-                    status="success"
-                    size="small"
-                    appearance="filled">
-                    Send
-                  </StyledButton>
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
-          </StyledLayout>
-        </TouchableWithoutFeedback>
+              </TouchableOpacity>
+            )}
+          />
+          <ScrollView style={{ maxHeight: 400 }}>
+            {comments.length > 0 ? (
+              comments
+                .slice()
+                .sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis())
+                .map((comment) => (
+                  <View key={comment.id} className="pb-2 mb-2">
+                    <StyledLayout className='flex-row justify-between'>
+                      <StyledText style={{ 
+                        fontFamily: 'Poppins-SemiBold', 
+                        fontSize: 14,
+                        color: myTheme['color-success-700']
+                      }}>
+                        @{comment.userName}
+                      </StyledText>
+                      {/* Comment actions */}
+                      <Popover
+                        visible={commentPopoverVisible === comment.id}
+                        placement="bottom end"
+                        anchor={() => (
+                          <TouchableOpacity onPress={() => setCommentPopoverVisible(comment.id)}>
+                            <Ionicons name="ellipsis-vertical" size={20} color="#A9A9A9" />
+                          </TouchableOpacity>
+                        )}
+                        onBackdropPress={() => setCommentPopoverVisible(null)}
+                      >
+                        <StyledLayout className="p-3 rounded-lg">
+                          <TouchableOpacity
+                            onPress={() => {
+                              setCommentToDelete(comment);
+                              setConfirmCommentDeleteVisible(true);
+                              setCommentPopoverVisible(null);
+                            }}
+                          >
+                            <StyledText
+                              style={{
+                                fontFamily: 'Poppins-Medium',
+                                fontSize: 14,
+                                color: myTheme['color-danger-500'],
+                              }}
+                            >
+                              Delete Comment
+                            </StyledText>
+                          </TouchableOpacity>
+                        </StyledLayout>
+                      </Popover>
+                    </StyledLayout>
+                    
+                    <StyledText 
+                      style={{ 
+                        fontFamily: 'Poppins-Regular', 
+                        fontSize: 16, 
+                        backgroundColor: myTheme['color-basic-300'], 
+                        padding: 5, 
+                        paddingVertical: 16, 
+                        borderRadius: 10,
+                        flexWrap: 'wrap'
+                      }}
+                    >
+                      {comment.content}
+                    </StyledText>
+                    <StyledText 
+                      style={{ 
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 11,
+                        color: '#8F9BB3'
+                      }}
+                    >
+                      {formatTimeAgo(comment.timestamp)}
+                    </StyledText>
+                  </View>
+                ))
+            ) : (
+              <StyledText 
+                className="text-gray-500" 
+                style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}
+              >
+                No comments yet.
+              </StyledText>
+            )}
+          </ScrollView>
+        </StyledLayout>
       </Modal>
 
       {/* Edit Modal */}
-      <Modal transparent={true} visible={editModalVisible} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => setEditModalVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg" style={{ width: '90%', maxWidth: 400 }}>
-                <StyledText category='s1' className='font-bold m-2'>Edit post</StyledText>
-                <StyledInput
-                  multiline={true}
-                  value={editedContent}
-                  onChangeText={setEditedContent}
-                  className="rounded-lg"
-                />
-                <StyledLayout className="flex-row justify-between mt-4">
-                  <StyledButton
-                    onPress={() => setEditModalVisible(false)}
-                    appearance="filled"
-                    status="info"
-                    size='small'
-                    className='rounded-full'
-                  >
-                    <StyledText>Cancel</StyledText>
-                  </StyledButton>
-                  <StyledButton
-                    onPress={() => handleEditSubmit(onEdit, editedContent, setEditModalVisible, setLoading)}
-                    status="success"
-                    appearance="filled"
-                    size="small"
-                    className="rounded-full"
-                  >
-                    Finish Editing
-                  </StyledButton>
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+      <Modal
+        visible={editModalVisible}
+        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        onBackdropPress={() => setEditModalVisible(false)}
+        style={{
+          width: 300,
+          height: 250,
+          alignSelf: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText style={{ fontFamily: "Poppins-SemiBold", fontSize: 16 }}>
+            Edit Post
+          </StyledText>
+          <StyledInput
+            value={editedContent}
+            onChangeText={setEditedContent}
+            placeholder="Edit your post..."
+            className="mb-2 mt-2"
+            size="large"
+            textStyle={{ fontFamily: "Poppins-Regular", fontSize: 16, top: 2 }}
+          />
+          <StyledLayout className="flex-row justify-between mt-3">
+            <TouchableOpacity
+              onPress={() => setEditModalVisible(false)}
+              className="m-1 rounded-full"
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-info-500"],
+                  padding: 8,
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (editedContent !== content) {
+                  onEdit(editedContent);
+                }
+                setEditModalVisible(false);
+              }}
+              className="m-1 rounded-full"
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-primary-700"],
+                  padding: 8,
+                }}
+              >
+                Save Changes
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
 
-      {/* Post Deletion Confirmation Modal */}
-      <Modal transparent={true} visible={confirmDeleteVisible} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => setConfirmDeleteVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg">
-                <StyledText category='s1' className='font-bold m-2 text-center'>Delete post</StyledText>
-                <StyledText className='m-2 text-center'>Are you sure you want to delete this post?</StyledText>
-                <StyledLayout className="flex-row justify-between m-2">
-                  <StyledButton
-                    className="font-bold rounded-full"
-                    appearance="filled"
-                    status="info"
-                    size='small'
-                    onPress={() => {
-                      setConfirmDeleteVisible(false);
-                      setShowMenu(false);
-                    }}
-                  >
-                    Cancel
-                  </StyledButton>
-                  <StyledButton
-                    className="font-bold rounded-full"
-                    appearance="filled"
-                    status="danger"
-                    size='small'
-                    onPress={() => confirmDeletePost(id, setConfirmDeleteVisible, setShowMenu)}
-                  >
-                    Delete
-                  </StyledButton>
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+      {/* Confirm Delete Post */}
+      <Modal
+        visible={confirmDeleteVisible}
+        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        onBackdropPress={() => setConfirmDeleteVisible(false)}
+        style={{
+          width: 300,
+          height: 150,
+          alignSelf: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText style={{ fontFamily: "Poppins-SemiBold", fontSize: 16 }}>
+            Are you sure you want to delete this post?
+          </StyledText>
+          <StyledLayout className="flex-row justify-between">
+            <TouchableOpacity
+              onPress={() => setConfirmDeleteVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-info-500"],
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onDelete(id);
+                setConfirmDeleteVisible(false);
+              }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-danger-500"],
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
 
-      {/* Comment Deletion Confirmation Modal */}
-      <Modal transparent={true} visible={confirmCommentDeleteVisible} animationType="slide">
-        <TouchableWithoutFeedback onPress={() => setConfirmCommentDeleteVisible(false)}>
-          <StyledLayout className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-            <TouchableWithoutFeedback>
-              <StyledLayout className="bg-white p-5 rounded-lg">
-                <StyledText category='s1' className='font-bold m-2 text-center'>Delete comment</StyledText>
-                <StyledText className='m-2 text-center'>Are you sure you want to delete this comment?</StyledText>
-                <StyledLayout className="flex-row justify-between m-2">
-                  <StyledButton
-                    className="font-bold rounded-full"
-                    appearance="filled"
-                    status="info"
-                    size='small'
-                    onPress={() => {
-                      setConfirmCommentDeleteVisible(false);
-                    }}
-                  >
-                    Cancel
-                  </StyledButton>
-                  <StyledButton
-                    className="font-bold rounded-full"
-                    appearance="filled"
-                    status="danger"
-                    size='small'
-                    onPress={() => {
-                      if (commentToDelete) {
-                        handleDeleteComment(commentToDelete.id);
-                      }
-                    }}
-                  >
-                    Delete
-                  </StyledButton>
-                </StyledLayout>
-              </StyledLayout>
-            </TouchableWithoutFeedback>
+      {/* Confirm Comment Delete */}
+      <Modal
+        visible={confirmCommentDeleteVisible}
+        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        onBackdropPress={() => setConfirmCommentDeleteVisible(false)}
+        style={{
+          width: 300,
+          height: 150,
+          alignSelf: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StyledLayout className="p-5 rounded-lg">
+          <StyledText style={{ fontFamily: "Poppins-SemiBold", fontSize: 16 }}>
+            Are you sure you want to delete this comment?
+          </StyledText>
+          <StyledLayout className="flex-row justify-between">
+            <TouchableOpacity
+              onPress={() => setConfirmCommentDeleteVisible(false)}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-info-500"],
+                }}
+              >
+                Cancel
+              </StyledText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (commentToDelete) {
+                  handleDeleteComment(commentToDelete.id);
+                }
+                setConfirmCommentDeleteVisible(false);
+              }}
+              className="m-1 p-2 rounded-full flex-row items-center justify-center"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <StyledText
+                style={{
+                  fontFamily: "Poppins-Medium",
+                  fontSize: 14,
+                  color: myTheme["color-danger-500"],
+                }}
+              >
+                Delete
+              </StyledText>
+            </TouchableOpacity>
           </StyledLayout>
-        </TouchableWithoutFeedback>
+        </StyledLayout>
       </Modal>
-    </StyledCard>
+    </StyledLayout>
   );
 };
 

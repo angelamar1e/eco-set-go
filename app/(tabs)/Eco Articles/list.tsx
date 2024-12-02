@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList } from 'react-native';
+import { ActivityIndicator, FlatList, Image } from 'react-native';
 import { Card, Text, Layout } from '@ui-kitten/components';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { router } from 'expo-router';
@@ -9,79 +9,130 @@ import SearchBar from '@/app/components/(tabs)/Eco Articles/SearchBar';
 import FilterButtons from '@/app/components/(tabs)/Eco Articles/FilterButtons';
 import { styled } from 'nativewind';
 import { myTheme } from "@/constants/custom-theme";
+import storage from '@react-native-firebase/storage';
 import { useLoadFonts } from '@/assets/fonts/loadFonts';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
 const StyledText = styled(Text);
 
+const cache: { [key: string]: string } = {}; // In-memory cache for image URLs
+
 const EcoActionsList = () => {
   const [ecoActions, setEcoActions] = useState<EcoAction[]>([]);
   const [filter, setFilter] = useState<string>('ALL');
+  const [loading, setLoading] = useState(true);
 
   const fetchEcoActions = async (category: string) => {
     try {
+      setLoading(true);
       let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('eco_actions');
 
-      // Apply category filter if it's not "ALL" and not "Getting Started"
-      if (category !== 'ALL' && category !== 'Getting Started') {
+      if (category !== 'ALL') {
         query = query.where('category', '==', category);
       }
 
       const ecoActionsCollection = await query.get();
-      const data = ecoActionsCollection.docs.map((doc) => ({
-        id: doc.id,
-        title: doc.data().title,
-        category: doc.data().category,
-      })) as EcoAction[];
+      const data = await Promise.all(
+        ecoActionsCollection.docs.map(async (doc) => {
+          const ecoActionData = doc.data();
+          let imageUrl = ecoActionData.image ? await loadImage(ecoActionData.image) : null;
+          
+          return {
+            id: doc.id,
+            title: ecoActionData.title,
+            category: ecoActionData.category,
+            image: imageUrl,
+          };
+        })
+      );
 
-      setEcoActions(data);
+      setEcoActions(data as EcoAction[]);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching eco actions: ", error);
     }
   };
 
-  // Fetch eco actions whenever the filter changes
+  const loadImage = async (gsUrl: string) => {
+    if (cache[gsUrl]) return cache[gsUrl];
+
+    try {
+      const ref = storage().refFromURL(gsUrl);
+      const url = await ref.getDownloadURL();
+      cache[gsUrl] = url;
+      return url;
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchEcoActions(filter);
   }, [filter]);
 
-  const renderItem = ({ item }: { item: EcoAction }) => (
-    <StyledCard
-      onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
-      className='m-2 h-[150px] bg-transparent justify-end'
-    >
-      <Text category='s1'>{item.title}</Text>
-    </StyledCard>
-  );
-
-  const renderGettingStartedItems = () => (
-    <>
+  const renderItem = ({ item }: { item: EcoAction }) => {
+    return (
       <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/Introduction`)}
-        className='m-2 h-[150px] bg-transparent justify-end'
+        onPress={() => router.push(`/components/(tabs)/Eco Articles/${item.id}`)}
+        className="h-[150px] rounded-xl m-2"
+        style={{
+          borderColor: myTheme['color-success-700'],
+          borderWidth: 1,
+          borderBottomWidth: 1,
+          overflow: 'hidden',
+        }}
       >
-        <Text category='s1'>Introduction</Text>
+        {item.image && (
+          <Image
+            source={{ uri: item.image }}
+            style={{
+              zIndex: 10,
+              opacity: 0.5,
+              width: '120%',
+              height: '122%',
+              margin: -10,
+              alignSelf: 'center'
+            }}
+            resizeMode="cover"
+          />
+        )}
+        {/* Title section positioned at the bottom */}
+        <StyledLayout
+          className="justify-center items-center p-2"
+          style={{
+            zIndex: 20,
+            backgroundColor: myTheme['color-success-700'],
+            position: 'absolute',
+            top: 0,
+            height: 'auto',
+            width: '115%',
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Poppins-Regular',
+              fontSize: 16,
+            }}
+          >
+            {item.title}
+          </Text>
+        </StyledLayout>
       </StyledCard>
-
-      <StyledCard
-        onPress={() => router.push(`/components/(tabs)/Eco Articles/GoalSetting`)}
-        className='m-2 h-[150px] bg-transparent justify-end'
-      >
-        <Text category='s1'>Goal Setting</Text>
-      </StyledCard>
-    </>
-  );
+    );
+  };
 
   const fontsLoaded = useLoadFonts(); 
 
   return (
-    <StyledLayout className='flex-1'>
+    <StyledLayout className='flex-1 pb-12'>
       <StyledLayout className="flex-1">
         <StyledLayout className='h-1/6 rounded-b-3xl justify-center items-center relative'
           style={{ backgroundColor: myTheme['color-success-700']}}
         >
-          <StyledText className="text-white text-3xl" style={{ fontFamily: 'Poppins-SemiBold'}}>
+          <StyledText className="text-white text-2xl" style={{ fontFamily: 'Poppins-SemiBold',}}>
             Eco Articles
           </StyledText>
         </StyledLayout>
@@ -96,11 +147,10 @@ const EcoActionsList = () => {
             onFilterChange={setFilter} 
           />
         </StyledLayout>
-
-        {filter === 'Getting Started' ? (
-          <StyledLayout className="mt-2">
-            {renderGettingStartedItems()}
-          </StyledLayout>
+        {(loading === true) ? (
+          <StyledLayout className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color={myTheme['color-success-600']} />
+        </StyledLayout>
         ) : (
           <FlatList
             className="mt-2"

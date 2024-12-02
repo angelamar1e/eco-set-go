@@ -1,96 +1,201 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import auth from '@react-native-firebase/auth'; // Firebase Auth
-import firestore from '@react-native-firebase/firestore'; // Firebase Firestore
-import { router } from 'expo-router';
-import { goToInterface } from '@/app/utils/utils';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import auth from "@react-native-firebase/auth"; // Firebase Auth
+import firestore from "@react-native-firebase/firestore"; // Firebase Firestore
+import { router } from "expo-router";
+import { goToInterface } from "@/app/utils/utils";
+import moment from "moment";
 
 // Create a User Context
 const UserContext = createContext();
 
 // Create a Provider Component
 export const UserProvider = ({ children }) => {
-    const [userUid, setUserUID] = useState();
-    const [username, setUsername] = useState('');
-    const [role, setRole] = useState('');
-    const [overallFootprint, setOverallFootprint] = useState(0);
-    const [loading, setLoading] = useState(true);
+  const [userUid, setUserUID] = useState(null);
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [remindersPreferences, setRemindersPreferences] = useState("");
+  const [postsPreferences, setPostsPreferences] = useState("");
+  const [role, setRole] = useState("");
+  const [currentFootprint, setCurrentFootprint] = useState(0);
+  const [initialFootprint, setInitialFootprint] = useState(0);
+  const [points, setPoints] = useState(100);
+  const [redeemablePoints, setRedeemablePoints] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [joinDate, setJoinDate] = useState("");
+  const [profileCreated, setProfileCreated] = useState(true);
+  const [level, setLevel] = useState(1);
 
-    // Function to fetch user details
-    const fetchUserDetails = async (uid) => {
-        setLoading(true); // Set loading to true at the beginning
-        try {
-            // Fetch user document from Firestore once
-            const userDoc = await firestore().collection('users').doc(uid).get();
+  const fetchUserDetails = (uid) => {
+    setLoading(true);
 
-            if (userDoc.exists) {
-                const { username, role } = userDoc.data(); // Destructure username and role from the fetched document
+    try {
+      const unsubscribe = firestore()
+        .collection("users")
+        .doc(uid)
+        .onSnapshot(
+          (doc) => {
+            if (doc.exists) {
+              const {
+                name = "",
+                username = "",
+                role = "",
+                created_at,
+                points = 0,
+                redeemablePoints = 0,
+                remindersPreferences,
+                postsNotificationsEnabled = true,
+                level = 1,
+              } = doc.data();
 
-                // Set individual user details states
-                setUserUID(uid);
-                setUsername(username || ''); // Fallback to an empty string if undefined
-                setRole(role || ''); // Fallback to an empty string if undefined
+              setName(name);
+              setRemindersPreferences(remindersPreferences);
+              setPostsPreferences(postsNotificationsEnabled);
+              setRole(role);
+              setUsername(username);
+              setPoints(points);
+              setRedeemablePoints(redeemablePoints);
+              setLevel(level);
+
+              if (created_at) {
+                const parsedDate = moment(
+                  created_at,
+                  "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ"
+                ).format("YYYY-DD-MM");
+                setJoinDate(parsedDate); // Should now display as "YYYY-MM-DD"
+              } else {
+                setJoinDate("");
+              }
             } else {
-                console.log("User document does not exist");
-                resetUserDetails(uid);
+              console.log("User document does not exist:", uid);
+              resetUserDetails();
             }
-        } catch (error) {
-            console.error("Error fetching user details:", error);
-            // Optionally reset to defaults on error
-            resetUserDetails(null);
-        } finally {
-            setLoading(false); // Set loading to false after the operation
-        }
+          },
+          (error) => {
+            console.error("Error fetching user details in snapshot:", error);
+            resetUserDetails();
+          }
+        );
+
+      return unsubscribe; // Return the unsubscribe function to clean up later if needed
+    } catch (error) {
+      console.error("Error setting up snapshot:", error);
+      resetUserDetails();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Only set up listeners if userUid is available
+    if (!userUid) return;
+
+    // Set up listeners for both footprints
+    const unsubscribeInitial = firestore()
+      .collection("initial_footprint")
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setInitialFootprint(data.overall_footprint);
+          }
+        },
+        { merge: true }
+      );
+
+    const unsubscribeCurrent = firestore()
+      .collection("current_footprint")
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setCurrentFootprint(data.overall_footprint);
+          }
+        },
+        { merge: true }
+      );
+
+    const unsubscribePoints = firestore()
+      .collection("users")
+      .doc(userUid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            setPoints(data.points);
+            setRedeemablePoints(data.redeemablePoints);
+          }
+        },
+        { merge: true }
+      );
+
+    return () => {
+      unsubscribeInitial();
+      unsubscribeCurrent();
+      unsubscribePoints();
     };
+  }, [userUid]);
 
-    // Function to reset user details
-    const resetUserDetails = () => {
-        setUserUID(null);
-        setUsername('');
-        setRole('');
-        setOverallFootprint(null);
-    };
+  // Function to reset user details
+  const resetUserDetails = () => {
+    setUserUID(null);
+    setUsername("");
+    setRole(""); // Ensure role is cleared
+    setInitialFootprint(0);
+    setCurrentFootprint(0);
+  };
 
-    useEffect(() => {
-        const unsubscribe = auth().onAuthStateChanged((user) => {
-            if (user) {
-                fetchUserDetails(user.uid); // Fetch details if user is logged in
-                goToInterface(role);
-            } else {
-                // Reset user details when user signs out
-                resetUserDetails();
-                setLoading(false);
-            }
-        });
-
-        // Cleanup the subscription on unmount
-        return () => unsubscribe();
-    },[]);
-
-    useEffect(() => {
-        if (userUid) {
-            // Setting up the snapshot listener
-            const unsubscribe = firestore()
-                .collection('current_footprint')
-                .doc(userUid)
-                .onSnapshot((doc) => {
-                    const footprint = doc.data()?.overall_footprint; // Use optional chaining for safety
-                    setOverallFootprint(footprint);
-                });
-            
-            // Cleanup the listener on unmount or userUid change
-            return () => unsubscribe();
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUserUID(user.uid);
+        if (profileCreated) {
+          fetchUserDetails(user.uid);
         }
-    }, [userUid]);
-    
+      } else {
+        resetUserDetails();
+        setLoading(false);
+      }
+    });
 
-    return (
-        <UserContext.Provider value={{ userUid, username, role, overallFootprint, loading, setLoading }}>
-            {children}
-        </UserContext.Provider>
-    );
+    return () => unsubscribe();
+  }, [profileCreated]);
+
+  // Trigger goToInterface only when user is signed in and role is valid
+  useEffect(() => {
+    if (userUid && role) {
+      goToInterface(role);
+    }
+  }, [userUid, role]); // Depend on both userUid and role
+
+  return (
+    <UserContext.Provider
+      value={{
+        fetchUserDetails,
+        setProfileCreated,
+        name,
+        userUid,
+        username,
+        remindersPreferences,
+        postsPreferences,
+        role,
+        points,
+        redeemablePoints,
+        loading,
+        currentFootprint,
+        initialFootprint,
+        setLoading,
+        joinDate,
+        level,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 // Create a custom hook for easier access
 export const useUserContext = () => {
-    return useContext(UserContext);
+  return useContext(UserContext);
 };

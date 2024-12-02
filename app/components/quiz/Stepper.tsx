@@ -28,12 +28,28 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
 
   return (
     <StyledLayout 
-      className="flex-row items-center justify-between p-2 m-1 rounded-lg"
+      className="flex-row items-center justify-between py-2 px-4 mb-2 rounded-lg"
       style={{ borderWidth: 1, borderColor: myTheme['color-basic-400'] }}
     >
-      <StyledLayout>
-        <StyledText category='label' className="mr-3" style={{ fontSize: 16 }}>{title}</StyledText>
-        <Text className="text-[15px] text-gray-500 mt-1">{value}x</Text>
+      <StyledLayout className='w-1/2'>
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 14,
+            color: myTheme['color-success-700'],
+          }}
+        >
+          {title}
+        </StyledText>
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-Medium',
+            fontSize: 12,
+            color: myTheme['color-basic-600']
+          }}
+        >
+          {value}x
+        </StyledText>
       </StyledLayout>
 
       <StyledLayout className="flex-row justify-end"> 
@@ -42,7 +58,17 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
           style={{ backgroundColor: myTheme['color-success-700'] }}
           className="w-1/4 rounded-l-lg border-r border-white"
         >
-          <StyledText className="text-lg text-center">-</StyledText>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Medium',
+              fontSize: 18,
+              color: 'white',
+              textAlign: 'center',
+              top: 2
+            }}
+          >
+            -
+          </StyledText>
         </Pressable>
 
         <Pressable 
@@ -50,7 +76,17 @@ const Stepper: FC<StepperProps> = ({ title, frequency: value, onChange }) => {
           style={{ backgroundColor: myTheme['color-success-700'] }}
           className="w-1/4 rounded-r-lg border-l border-white"
         >
-          <StyledText className="text-lg text-center">+</StyledText>
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Medium',
+              fontSize: 15,
+              color: 'white',
+              textAlign: 'center',
+              top: 2
+            }}
+          >
+            +
+          </StyledText>
         </Pressable>
       </StyledLayout>
     </StyledLayout>

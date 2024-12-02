@@ -6,7 +6,7 @@ import { styled } from "nativewind";
 import { Layout, Text } from "@ui-kitten/components";
 import { myTheme } from "@/constants/custom-theme";
 import TipsModal from "./tips";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const StyledLayout = styled(Layout);
@@ -25,53 +25,84 @@ const RadioTemplate: FC<TemplateProps> = ({
   const [answer, setAnswer] = useState<string | number | boolean>(defaultValue);
   const [answerText, setAnswerText] = useState<string>("");
 
-  const handlePress = (title: string, selected: string | number) => {
-    setAnswer(selected);
-    setAnswerText(title);
-    onAnswer(selected);
+  const handlePress = (selectedKey: string, selectedText: string, selectedValue: any) => {
+    setAnswer(selectedKey);
+    setAnswerText(selectedText);
+    onAnswer(selectedValue);
   };
 
   return (
-      <QuestionContainer>
-        <StyledText className="text-sm mb-3" style={{ color: myTheme['color-success-700'], fontFamily: 'Poppins-Medium' }}>
-          {category}
+    <QuestionContainer>
+      <StyledText 
+        className="mb-3" 
+        style={{ 
+          fontFamily: 'Poppins-Medium',
+          fontSize: 14,
+          color: myTheme['color-success-700']
+        }}
+      >
+        {category}
+      </StyledText>
+
+      <View className="flex-row justify-between items-center mb-2">
+        <StyledText 
+          style={{ 
+            fontFamily: 'Poppins-SemiBold',
+            fontSize: 16,
+            flex: 1,
+            marginRight: 8,
+            color: myTheme['color-basic-800']
+          }}
+        >
+          {question}
         </StyledText>
-
-        <View className="flex-row justify-between">
-          <StyledText className="mb-3" style={{ fontFamily: 'Poppins-SemiBold', fontSize: 19, alignItems: 'center' }}>
-            {question} 
-          </StyledText>
-          {tips && tips.length > 0 && (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Ionicons name="information-circle-outline" size={18} style={{ color: myTheme['color-success-700'], top: 2}} />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Radio Choices */}
-        <StyledLayout className="flex-wrap flex-row justify-center mt-10 mb-3">
-          {choices ? (
-            Object.entries(choices).map(([key, value]) => (
-              <RadioChoices
-                key={key}
-                title={key}
-                isSelected={key === answerText}
-                onPress={() => handlePress(key, value)}
-              />
-            ))
-          ) : (
-            <Text> Loading... </Text>
-          )}
-        </StyledLayout>
-        
         {tips && tips.length > 0 && (
-          <TipsModal
-            visible={isModalVisible}
-            onClose={() => setModalVisible(false)}
-            tips={tips}
-          />
+          <TouchableOpacity 
+            onPress={() => setModalVisible(true)}
+            className="p-1"
+          >
+            <Ionicons 
+              name="information-circle-outline" 
+              size={22} 
+              style={{ color: myTheme['color-success-700'] }} 
+            />
+          </TouchableOpacity>
         )}
-      </QuestionContainer>
+      </View>
+
+      <StyledLayout className="flex-wrap flex-row justify-center mt-2">
+        {choices ? (
+          Object.entries(choices).map(([key, { text, value, example, choices_tip }]) => (
+            <RadioChoices
+              key={key}
+              title={text}
+              example={example}
+              choices_tip={choices_tip}
+              isSelected={answer === key}
+              onPress={() => handlePress(key, text, value)}
+            />
+          ))
+        ) : (
+          <StyledText 
+            style={{ 
+              fontFamily: 'Poppins-Regular',
+              fontSize: 14,
+              color: myTheme['color-basic-600']
+            }}
+          >
+            Loading...
+          </StyledText>
+        )}
+      </StyledLayout>
+        
+      {tips && tips.length > 0 && (
+        <TipsModal
+          visible={isModalVisible}
+          onClose={() => setModalVisible(false)}
+          tips={tips}
+        />
+      )}
+    </QuestionContainer>
   );
 };
 

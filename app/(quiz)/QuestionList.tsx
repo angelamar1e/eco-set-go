@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, ListRenderItem } from 'react-native';
-import { Layout, Button, Text } from '@ui-kitten/components';
+import { FlatList, ListRenderItem, Touchable, TouchableOpacity, Button } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
 import { styled } from 'nativewind';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import firestore from '@react-native-firebase/firestore';
 import { myTheme } from '@/constants/custom-theme';
 import { QuestionData } from "@/types/QuestionData";
@@ -50,31 +50,20 @@ const QuestionList = () => {
     fetchQuestions();
   }, []);
 
-  const renderItem: ListRenderItem<QuestionItem> = ({ item }) => (
-    <StyledButton  
-      onPress={() => router.push(`/(quiz)/${item.id}`)} // Navigate to the specific question page
-      style={{ 
-        marginBottom: 10, 
-        borderRadius: 15, 
-        borderWidth: 2, 
-        borderColor: myTheme['color-success-700'], 
-        backgroundColor: myTheme['color-success-900'],
-        justifyContent: 'flex-start'
-      }}
-    >
-      <StyledText 
-        category='h6' 
-        style={{ color: myTheme['color-success-900'], textAlign: 'left', fontWeight: 'bold' }}>
-        {item.question}
-      </StyledText>
-    </StyledButton>
+  const renderItem: ListRenderItem<QuestionItem> = ({ item, index }) => (
+    // <TouchableOpacity className='border p-3 rounded-xl m-2'>
+      <Link href={`/(quiz)/?questionIndex=${index}`} className={`border p-3 rounded-xl m-2 border-lime-600`}>
+        <StyledText 
+          category='h6' 
+          style={{ color: myTheme['color-success-900'], textAlign: 'left', fontWeight: 'bold' }}>
+          {item.question}
+        </StyledText>
+      </Link>
+    // </TouchableOpacity>
   );
 
-  // Log questionDocumentIds to check if it's being accessed correctly
-  console.log('Question Document IDs:', questionDocumentIds); 
-
   return (
-    <StyledLayout className="flex-1 p-4">
+    <StyledLayout className="flex-1 px-4 pt-1">
       <FlatList
         data={questions}
         renderItem={renderItem}

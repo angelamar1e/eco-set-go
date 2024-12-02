@@ -1,4 +1,4 @@
-import { EmissionsDataContext, getHighestEmissions } from '@/contexts/EmissionsData';
+import { getHighestEmissions } from '@/contexts/EmissionsData';
 import { useUserContext } from '@/contexts/UserContext';
 import firestore from '@react-native-firebase/firestore';
 import { Layout, Text, Button, Card } from '@ui-kitten/components';
@@ -6,40 +6,39 @@ import { styled } from 'nativewind';
 import { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { myTheme } from '@/constants/custom-theme';
+import { EmissionsContext } from '@/contexts/Emissions';
 
 const StyledLayout = styled(Layout);
 const StyledCard = styled(Card);
 
+interface EmissionCategory {
+    category: string;
+    value: number;
+    percentage?: string;
+}
+
+interface HighestEmissions {
+    food: { value: number; source: string; percentage: number; };
+    transportation: { value: number; source: string; percentage: number; };
+    electricity: { value: number; source: string; percentage: number; };
+}
+
 const QuizEnd = () => {
-    const { userUid } = useUserContext();
     const {
-        foodEmissions,
-        transportationEmissions,
-        electricityEmissions,
-        totalEmissions
-    } = useContext(EmissionsDataContext);
+        foodFootprint,
+        transportationFootprint,
+        electricityFootprint,
+    } = useContext(EmissionsContext);
 
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        const setInitialFootprint = async () => {
-            await firestore().collection("initial_footprint").doc(userUid).set({
-                food_footprint: foodEmissions,
-                transportation_footprint: transportationEmissions,
-                electricity_footprint: electricityEmissions,
-                overall_footprint: totalEmissions
-            });
-        };
-        setInitialFootprint();
-    }, [userUid, foodEmissions, transportationEmissions, electricityEmissions, totalEmissions]);
+    const {initialFootprint} = useUserContext();
 
     // Prepare an array with each category and its value, then sort it from highest to lowest
     const sortedEmissions = [
-        { category: "Food 🥗", value: foodEmissions },
-        { category: "Transportation 🛻", value: transportationEmissions },
-        { category: "Electricity ⚡", value: electricityEmissions }
+        { category: "Food 🥗", value: foodFootprint },
+        { category: "Transportation 🛻", value: transportationFootprint },
+        { category: "Electricity ⚡", value: electricityFootprint }
     ].sort((a, b) => b.value - a.value); 
 
     const maxWidth = 100; 
@@ -47,7 +46,7 @@ const QuizEnd = () => {
 
     const widthDecrement = (maxWidth - minWidth) / (sortedEmissions.length - 1);
 
-    const total = totalEmissions;
+    const total = initialFootprint;
 
     // Calculate percentages for each category
     const percentageEmissions = sortedEmissions.map(emission => ({
@@ -55,14 +54,16 @@ const QuizEnd = () => {
         percentage: ((Number(emission.value) / total) * 100).toFixed(2) // Ensure emission.value is a number
     }));
 
-    const { emissionsData, loading, error } = useContext(EmissionsDataContext);
+    const { emissionsData } = useContext(EmissionsContext);
     let highestEmissions = {
         food: { value: 0, source: '', percentage: 0 },
         transportation: { value: 0, source: '', percentage: 0 },
         electricity: { value: 0, source: '', percentage: 0 },
     };
 
-    let foodCategory, transportationCategory, electricityCategory;
+    let foodCategory: EmissionCategory | undefined;
+    let transportationCategory: EmissionCategory | undefined;
+    let electricityCategory: EmissionCategory | undefined;
 
     if (emissionsData) {
         highestEmissions = getHighestEmissions(emissionsData);
@@ -77,10 +78,6 @@ const QuizEnd = () => {
         transportationCategory = percentageEmissions.find(e => e.category === "Transportation 🛻");
         electricityCategory = percentageEmissions.find(e => e.category === "Electricity ⚡");
     }
-
-    // Handle loading and error states
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -108,7 +105,7 @@ const QuizEnd = () => {
 
                             }}
                         >
-                            {totalEmissions.toFixed(2)}
+                            {initialFootprint.toFixed(2)}
                         </Text>
                         <Text
                             className=""
@@ -170,81 +167,61 @@ const QuizEnd = () => {
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 25 }}>Main Emissions</Text>
                     </View>
 
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 22, color: myTheme['color-success-900'] }}>
-                        Food
-                    </Text>
-                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, color: myTheme['color-success-700']}}>
-                        {foodCategory ? foodCategory.percentage : 0}%<Text style={{fontFamily: 'Poppins-Regular' }}> of your footprint</Text>
-                    </Text>
-                    
-                    <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
-                            style={{
-                                borderColor: myTheme['color-success-900'], 
-                                backgroundColor: myTheme['color-success-transparent-100']
-                                }}
-                            >
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                    {highestEmissions.food.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
+                    {/* Map through sorted emissions to display details */}
+                    {sortedEmissions.map((emission, index) => {
+                        const categoryName = emission.category.split(' ')[0].toLowerCase();
+                        const category = categoryName as keyof HighestEmissions;
+                        const emissionData = highestEmissions[category];
+                        const categoryPercentage = 
+                            category === 'food' ? foodCategory?.percentage :
+                            category === 'transportation' ? transportationCategory?.percentage :
+                            category === 'electricity' ? electricityCategory?.percentage :
+                            '0';
+
+                        return (
+                            <View key={index} style={{ marginBottom: 10 }}>
+                                <Text style={{ 
+                                    fontFamily: 'Poppins-Medium', 
+                                    fontSize: 22, 
+                                    color: myTheme['color-success-900'] 
+                                }}>
+                                    {emission.category.split(' ')[0]}
                                 </Text>
-                                <Text style={{fontFamily: 'Poppins-SemiBold' }}>
-                                    <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.food.source || 'Unknown'} 
+                                <Text style={{ 
+                                    fontFamily: 'Poppins-SemiBold', 
+                                    fontSize: 20, 
+                                    color: myTheme['color-success-700']
+                                }}>
+                                    {categoryPercentage ? `${categoryPercentage}%` : '0%'}
+                                    <Text style={{fontFamily: 'Poppins-Regular' }}> of your footprint</Text>
                                 </Text>
+
+                                <View style={{ alignItems: 'center' }}>
+                                    <StyledCard 
+                                        className='border p-2 w-full items-center rounded-xl shadow mb-2' 
+                                        style={{
+                                            borderColor: myTheme['color-success-900'], 
+                                            backgroundColor: myTheme['color-success-transparent-100']
+                                        }}
+                                    >
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Text style={{ 
+                                                fontFamily: 'Poppins-SemiBold', 
+                                                fontSize: 25, 
+                                                color: myTheme['color-success-700']
+                                            }}>
+                                                {emissionData.value.toFixed(2)}
+                                                <Text style={{fontFamily: 'Poppins-Regular' }}> tons</Text>
+                                            </Text>
+                                            <Text style={{fontFamily: 'Poppins-SemiBold' }}>
+                                                <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {emissionData.source || 'Unknown'} 
+                                            </Text>
+                                        </View>
+                                    </StyledCard>
+                                </View>
                             </View>
-                        </StyledCard>
-                    </View>
-
-
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 22, color: myTheme['color-success-900'] }}>
-                        Transportation
-                    </Text>
-                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, color: myTheme['color-success-700']}}>
-                        {transportationCategory ? transportationCategory.percentage : 0}%<Text style={{fontFamily: 'Poppins-Regular' }}> of your footprint</Text>
-                    </Text>
-
-                    <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
-                            style={{
-                                borderColor: myTheme['color-success-900'], 
-                                backgroundColor: myTheme['color-success-transparent-100']
-                                }}
-                            >
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.transportation.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
-                                </Text>
-                                <Text style={{fontFamily: 'Poppins-SemiBold' }}>
-                                    <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.transportation.source || 'Unknown'} 
-                                </Text>
-                            </View>
-                        </StyledCard>
-                    </View>
-
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 22, color: myTheme['color-success-900'] }}>
-                        Electricity
-                    </Text>
-                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, color: myTheme['color-success-700']}}>
-                        {electricityCategory ? electricityCategory.percentage : 0}%<Text style={{fontFamily: 'Poppins-Regular' }}> of your footprint</Text>
-                    </Text>
-
-                    <View style={{ alignItems: 'center' }}>
-                        <StyledCard className='border p-2 w-full items-center rounded-xl shadow mb-2' 
-                            style={{
-                                borderColor: myTheme['color-success-900'], 
-                                backgroundColor: myTheme['color-success-transparent-100']
-                                }}
-                            >
-                            <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 25, color: myTheme['color-success-700']}}>
-                                {highestEmissions.electricity.value.toFixed(2)}<Text style={{fontFamily: 'Poppins-Regular' }}> kg</Text>
-                                </Text>
-                                <Text style={{fontFamily: 'Poppins-SemiBold' }}>
-                                    <Text style={{fontFamily: 'Poppins-Regular' }}>from</Text> {highestEmissions.electricity.source || 'Unknown'} 
-                                </Text>
-                            </View>
-                        </StyledCard>
-                    </View>               
+                        );
+                    })}
                 </StyledLayout>
                 
                 <StyledLayout style={{
