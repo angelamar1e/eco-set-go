@@ -61,6 +61,8 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Tracks if the login process is in progress
+
   const router = useRouter();
 
   const current_date = Date().toString();
@@ -128,6 +130,7 @@ export default function SignUp() {
   
   const handleSignUp = async () => {
     if (email && password) {
+      setIsLoggingIn(true);
       try {
         const response = await auth().createUserWithEmailAndPassword(email, password);
         setProfileCreated(false);
@@ -173,6 +176,8 @@ export default function SignUp() {
   if (!fontsLoaded) {
     return null;
   }
+
+
 
   return (
     <StyledLayout style={{ flex: 1, justifyContent: "center", paddingHorizontal: 35 }}>
@@ -235,7 +240,7 @@ export default function SignUp() {
             fontSize: 14,
             top: 2
           }}>
-            Sign Up
+              {isLoggingIn ? "Signing Up" : "Sign Up"}
           </StyledText>
         </TouchableOpacity>
         <StyledLayout style={{flexDirection: 'row', marginTop: 12, alignItems: 'center', justifyContent: 'center'}}>

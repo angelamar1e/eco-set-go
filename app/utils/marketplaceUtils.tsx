@@ -85,7 +85,7 @@ export const handleAddComment = async (
     return;
   }
 
-  const postOwnerUid = postDoc.data()?.userUID;
+  const postOwnerUid = postDoc.data()?.uid;
 
   // Fetch the expoPushToken of the post owner
   const postOwnerDoc = await firestore()

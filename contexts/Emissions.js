@@ -37,6 +37,7 @@ export const EmissionsProvider = ({ children }) => {
 
   // Load initial data from Firestore for the logged-in user
   const initializeData = async () => {
+    setInitialized(false);
     const doc = await firestore()
       .collection("emissions_data")
       .doc(userUid)
@@ -337,21 +338,21 @@ export const EmissionsProvider = ({ children }) => {
   // Define and persist car emissions state
   const [kmTravelled, setKmTravelled] = useState(Car.kmTravelled);
   const [constructionScale, setConstructionScale] = useState(
-    TransportEmission.Car.constructionScale
+    Car.constructionScale
   );
   const [lifeSpanInKm, setLifeSpanInKm] = useState(
-    TransportEmission.Car.lifeSpan
+    Car.lifeSpan
   );
   const [footprintPerLiter, setFootprintPerLiter] = useState(
-    TransportEmission.Car.footprintPerLiter
+    Car.footprintPerLiter
   );
   const [consumptionPerKm, setConsumptionPerKm] = useState(
-    TransportEmission.Car.consumptionPerKm
+    Car.consumptionPerKm
   );
   const [numOfPassengers, setNumOfPassengers] = useState(
-    TransportEmission.Car.numOfPassengers
+    Car.numOfPassengers
   );
-  const [user, setUser] = useState(TransportEmission.Car.user);
+  const [user, setUser] = useState(Car.user);
   const [carEFPerKm, setCarEFPerKm] = useState(
     getCarEFPerKm(footprintPerLiter, consumptionPerKm)
   );
@@ -1059,8 +1060,12 @@ export const EmissionsProvider = ({ children }) => {
   const [electricityFootprint, setElectricityFootprint] = useState(electricityEmissions);
 
   useEffect(() => {
+    console.log("STATUS",initialized);
+  },[initialized]);
+
+  useEffect(() => {
     const updateFootprint = async () => {
-      if (userUid && initialized) {
+      if (userUid) {
         const newOverallFootprint =
           carEmissions +
           airplaneTravelEmissions +
@@ -1095,7 +1100,7 @@ export const EmissionsProvider = ({ children }) => {
         setTransportationFootprint(newTransportEmissions);
         setElectricityFootprint(electricityEmissions);
 
-        if (role === "user") {
+        if (role === "user" && initialized) {
           try {
             setInitialLoading(true);
             await firestore().collection("initial_footprint").doc(userUid).set(

@@ -61,17 +61,18 @@ export const CreateListing = (): React.ReactElement => {
           .get();
   
         // Filter out the current user from the list of users
-        const filteredUsers = usersSnapshot.docs.filter(doc => doc.id !== userUid);
+        const filteredUsers = usersSnapshot.docs.filter(doc => doc.id != userUid);
+        console.log(filteredUsers);
   
         const formatted = description.length > 50 ? `${description.trim().slice(0, 50)}...` : description.trim()
         // Notify each user
         const notificationPromises = filteredUsers.map(async (doc) => {
-          const user = doc.data();
-          if (user.expoPushToken) {
+          const user = doc.data().expoPushToken;
+          if (user) {
             await sendNotification(
               `@${userName} created a listing 🛒`,
               `${formatted} • ${formatPrice(price)}`, // Trim and append ellipsis if longer than 50 characters
-              user.expoPushToken,
+              user,
               "community-posts"
             );
           }
