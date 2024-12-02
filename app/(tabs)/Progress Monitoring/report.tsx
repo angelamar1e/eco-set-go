@@ -329,7 +329,7 @@ const ProgressReport = () => {
                   style={{
                     fontFamily: "Poppins-Regular",
                     fontSize: 13,
-                    color: currentColors.text,
+                    color: myTheme["color-basic-600"],
                   }}
                 >
                   {item.name}
