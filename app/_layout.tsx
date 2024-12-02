@@ -13,7 +13,7 @@ import { UserbaseProvider } from "@/contexts/UserbaseContext";
 import { EcoActionsProvider } from "@/contexts/EcoActions";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = "light";
 
   return (
     <UserProvider>
@@ -25,11 +25,7 @@ export default function RootLayout() {
               <UserGoalProvider>
                 <ApplicationProvider
                   {...eva}
-                  theme={
-                    colorScheme === "dark"
-                      ? { ...eva.dark, ...myTheme }
-                      : { ...eva.light, ...myTheme.light }
-                  }
+                  theme={{ ...eva.light, ...myTheme.light }}
                 >
                   <GestureHandlerRootView style={{ flex: 1 }}>
                     <Stack>
