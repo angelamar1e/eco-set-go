@@ -363,8 +363,8 @@ const EcoActionDetail = () => {
               {item.data.map((contentItem) => (
                 <StyledLayout
                   key={contentItem.id}
-                  className={`flex-row items-start p-3 m-2 rounded-md shadow-lg ${borderColor}`}
-                  style={{ backgroundColor: myTheme["color-success-100"] }}
+                  className={`flex-row items-start p-3 m-2 rounded-md shadow-lg border-gray-200`}
+                  style={{ backgroundColor: myTheme["color-success-100"], }}
                 >
                   <StyledText category="h5" className="" style={{ zIndex: 40 }}>
                     {item.emoji}

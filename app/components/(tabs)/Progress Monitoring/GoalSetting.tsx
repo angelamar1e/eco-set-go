@@ -47,7 +47,7 @@ const GoalSetting: React.FC = () => {
     if (progressPercentage >= 1 && dailyLogLoading === false){
       setModalVisible(true);
     }
-  }, [dailyLogLoading]);
+  }, [progressPercentage]);
 
   const closeModal = () => {
     setModalVisible(false);
