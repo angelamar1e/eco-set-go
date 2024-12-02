@@ -49,11 +49,11 @@ const EcoNewsCard: React.FC<EcoNewsCardProps> = ({ thumbnail, headline, date, li
   };
 
   // Dynamically apply the border color based on the color scheme
-  const borderClass = colorScheme === 'dark' ? 'border-black' : 'border-gray-200';
+  // const borderClass = colorScheme === 'dark' ? 'border-black' : 'border-gray-200';
 
   return (
     <StyledLayout
-      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 border ${borderClass}`}
+      className={`h-[150px] w-[300px] rounded-lg mb-2 mx-2 border border-gray-200`}
       style={{
         backgroundColor: myTheme['color-basic-200'],
         shadowColor: "#000",
