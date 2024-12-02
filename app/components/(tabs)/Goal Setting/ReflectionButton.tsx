@@ -108,7 +108,7 @@ const ReflectionButton = () => {
                 <StyledText
                   style={{
                     fontFamily: 'Poppins-Medium',
-                    fontSize: 16,
+                    fontSize: 14,
                     color: myTheme['color-success-700'],
                   }}
                 >
@@ -122,8 +122,20 @@ const ReflectionButton = () => {
                 value={content}
                 onChangeText={setContent}
                 multiline={true}
-                textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 14, top: 2 }}
-                style={{ fontFamily: 'Poppins-Regular' }}
+                size='large'
+                textStyle={{ 
+                  fontFamily: 'Poppins-Regular', 
+                  fontSize: 14, 
+                  top: 2,
+                  maxHeight: 100 // Limit text input height
+                }}
+                style={{ 
+                  fontFamily: 'Poppins-Regular', 
+                  width: 300,
+                  maxHeight: 100 // Match textStyle maxHeight
+                }}
+                scrollEnabled={true}
+                textAlignVertical="top"
               />
 
               {showDatePicker && (
@@ -149,7 +161,7 @@ const ReflectionButton = () => {
                   <StyledText
                     style={{
                       fontFamily: 'Poppins-Medium',
-                      fontSize: 16,
+                      fontSize: 14,
                       color: myTheme['color-info-500'],
                     }}
                   >
@@ -166,7 +178,7 @@ const ReflectionButton = () => {
                   <StyledText
                     style={{
                       fontFamily: 'Poppins-Medium',
-                      fontSize: 16,
+                      fontSize: 14,
                       color: myTheme['color-success-700'],
                     }}
                   >
