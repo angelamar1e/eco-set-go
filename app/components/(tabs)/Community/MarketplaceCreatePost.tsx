@@ -62,7 +62,7 @@ export const CreateListing = (): React.ReactElement => {
 
   return (
     <StyledCard 
-      className="h-100 mt-20 mb-2 ml-2 mr-2 rounded-lg"
+      className="mt-20 mx-3 bg-gray-100 rounded-xl" 
       style={{
         backgroundColor: myTheme['color-basic-200'],
         shadowColor: "#000",
@@ -75,40 +75,54 @@ export const CreateListing = (): React.ReactElement => {
         elevation: 2,
       }}
     >
-      <StyledInput
-        className="mt-2 mb-2 rounded-lg"
-        placeholder="Item description... 🏷️"
-        value={description}
-        onChangeText={setDescription}
-        multiline={true}
-        textStyle={{ 
-          fontFamily: 'Poppins-Regular',
-          fontSize: 13
-        }}
-      />
-      <StyledInput
-        className="mt-2 mb-2 rounded-lg"
-        placeholder="Price... 💰"
-        value={price}
-        keyboardType="numeric"
-        onChangeText={setPrice}
-        textStyle={{ 
-          fontFamily: 'Poppins-Regular',
-          fontSize: 13
-        }}
-      />
+      <StyledLayout className="flex-row items-center mb-3" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledInput
+          className="flex-1 rounded-lg"
+          placeholder="Item description... 🏷️"
+          value={description}
+          onChangeText={setDescription}
+          multiline={true}
+          size='large'
+          style={{
+            borderColor: myTheme['color-success-600'],
+            fontFamily: 'Poppins-Regular',
+            fontSize: 12,
+            top: 2,
+          }}
+          textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 13, top: 2 }}
+        />
+      </StyledLayout>
+
+      <StyledLayout className="flex-row items-center mb-3" style={{backgroundColor: myTheme['color-basic-200']}}>
+        <StyledInput
+          className="flex-1 rounded-lg"
+          placeholder="Price... 💰"
+          value={price}
+          keyboardType="numeric"
+          onChangeText={setPrice}
+          size='large'
+          style={{
+            borderColor: myTheme['color-success-600'],
+            fontFamily: 'Poppins-Regular',
+            fontSize: 12,
+            top: 2,
+          }}
+          textStyle={{ fontFamily: 'Poppins-Regular', fontSize: 13, top: 2 }}
+        />
+      </StyledLayout>
+
       <StyledLayout className="flex-row justify-between" style={{backgroundColor: myTheme['color-basic-200']}}>
-        <Pressable onPress={() => console.log('Attach image')}>
-          <Ionicons size={22} name="image-outline" color="#34C759" />
-        </Pressable>
+        <StyledLayout className="flex-row items-center" style={{backgroundColor: myTheme['color-basic-200']}}>
+          <Pressable onPress={() => console.log('Attach image')}>
+            <Ionicons size={22} name="image-outline" color="#34C759" />
+          </Pressable>
+        </StyledLayout>
+        
         <TouchableOpacity
           className="mt-2 mb-2 w-1/3 rounded-full"
           onPress={handleListingSubmit}
           disabled={!description || !price || loading}
-          style={{
-            backgroundColor: myTheme['color-basic-400'],
-            padding: 3
-          }}
+          style={{backgroundColor: myTheme['color-basic-400'], padding: 3}}
         >
           <Text style={{ 
             fontFamily: 'Poppins-Medium', 
@@ -127,17 +141,17 @@ export const CreateListing = (): React.ReactElement => {
         backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         onBackdropPress={() => setSuccess(false)}
       >
-        <StyledLayout className="p-5 rounded-lg">
+        <Card disabled={true}>
           <StyledText 
             style={{ 
-              fontFamily: 'Poppins-Regular',
+              fontFamily: "Poppins-Regular",
               fontSize: 14,
               textAlign: 'center'
             }}
           >
             Listing successfully added! 🎉
           </StyledText>
-        </StyledLayout>
+        </Card>
       </Modal>
     </StyledCard>
   );
