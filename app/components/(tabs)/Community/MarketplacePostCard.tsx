@@ -35,6 +35,19 @@ const StyledLayout = styled(Layout);
 const StyledInput = styled(Input);
 const StyledButton = styled(Button);
 
+export const formatPrice = (price: string | number): string => {
+  const numericPrice = typeof price === "string" ? parseFloat(price) : price;
+
+  if (isNaN(numericPrice)) {
+    return "₱0"; // Default value for invalid input
+  }
+
+  return `₱${numericPrice.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
 const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price, timestamp, uid, onEdit, onDelete }) => {
   const [editedContent, setEditedContent] = useState(content);
   const [editedPrice, setEditedPrice] = useState(price);
@@ -53,10 +66,14 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
   const handleAddCommentWrapper = async () => {
     if (newComment.trim()) {
       const addedComment = await handleAddComment(id, username, userUid, newComment);
-      setComments((prevComments) => [...prevComments, addedComment]);
+      if (addedComment) { // Ensure addedComment is defined
+        setComments((prevComments) => [...prevComments, addedComment]);
+      }
       setNewComment(''); // Reset input field after comment is added
     }
   };
+
+  
 
   const handleDeleteCommentWrapper = async () => {
     if (commentToDelete) {
@@ -165,7 +182,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ id, content, userName, price,
             color: myTheme['color-success-600']
           }}
         >
-          ₱{price}
+          {formatPrice(price)}
         </StyledText>
       </StyledLayout>
 

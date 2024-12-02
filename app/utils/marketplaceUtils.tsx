@@ -79,7 +79,7 @@ export const handleAddComment = async (
   const docRef = await firestore().collection("comments").add(commentData);
 
   // Fetch the post owner details
-  const postDoc = await firestore().collection("posts").doc(postId).get();
+  const postDoc = await firestore().collection("listings").doc(postId).get();
   if (!postDoc.exists) {
     console.warn("Post not found.");
     return;

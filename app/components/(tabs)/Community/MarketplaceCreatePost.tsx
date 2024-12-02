@@ -8,6 +8,7 @@ import auth from '@react-native-firebase/auth';
 import { myTheme } from '@/constants/custom-theme';
 import { useUserContext } from '@/contexts/UserContext';
 import { sendNotification } from '../Settings/Preferences';
+import { formatPrice } from './MarketplacePostCard';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -69,7 +70,7 @@ export const CreateListing = (): React.ReactElement => {
           if (user.expoPushToken) {
             await sendNotification(
               `@${userName} created a listing 🛒`,
-              `${formatted} • ₱${price}`, // Trim and append ellipsis if longer than 50 characters
+              `${formatted} • ${formatPrice(price)}`, // Trim and append ellipsis if longer than 50 characters
               user.expoPushToken,
               "community-posts"
             );
