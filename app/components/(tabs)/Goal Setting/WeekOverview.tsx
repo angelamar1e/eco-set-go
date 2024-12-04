@@ -9,6 +9,7 @@ import { firebase } from "@react-native-firebase/firestore";
 import firestore from "@react-native-firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
 import { ActivityIndicator } from "react-native";
+import { toDate } from "date-fns";
 
 const StyledLayout = styled(Layout);
 const StyledText = styled(Text);
@@ -61,6 +62,7 @@ const WeekOverview: React.FC = () => {
   const [yellows, setYellows] = useState<string[]>([]);
   const [greens, setGreens] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const currentDate = new Date;
 
   useEffect(() => {
     const unsub = firestore()
@@ -141,7 +143,7 @@ const WeekOverview: React.FC = () => {
             >
               {dates.map((date, index) => {
                 let color;
-                if (actionsCount === 0) {
+                if (actionsCount === 0 || toDate(date) > currentDate) {
                   color = myTheme["color-basic-300"];
                 } else if (greens.includes(date)) {
                   color = myTheme["color-success-500"]; // Green color for 'good'
@@ -151,6 +153,9 @@ const WeekOverview: React.FC = () => {
                   color = "#ffb54c"; // Orange color for 'attention'
                 } else if (reds.includes(date)) {
                   color = "#ff6961"; // Red color for 'alert'
+                }
+                else {
+                  color = "#ff6961";
                 }
 
                 return (
