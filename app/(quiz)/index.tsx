@@ -333,7 +333,7 @@ const QuizIndex = () => {
           {loading ? (
             <StyledLayout className="items-center justify-center border flex-1"><ActivityIndicator size={"large"} color={myTheme["color-success-600"]}/></StyledLayout>
           ) : (
-            <>
+            <ScrollView className="max-h-[650px]">
               {questionData.image && (
                 <StyledLayout
                   className="bg-white pt-3"
@@ -358,7 +358,7 @@ const QuizIndex = () => {
                   />
                 </StyledLayout>
               )}
-              <ScrollView className="pl-4 pr-4 mb-18">
+              <ScrollView className="pl-4 mr-4 pt-4">
                 <CurrentComponent
                   key={questionData.variable}
                   question={questionData.question}
@@ -379,7 +379,7 @@ const QuizIndex = () => {
                   }
                 />
               </ScrollView>
-            </>
+            </ScrollView>
           )}
           <StyledLayout
             style={{
