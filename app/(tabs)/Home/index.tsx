@@ -52,6 +52,10 @@ export default function LandingPage() {
   const { initializeData, initialLoading } = useContext(EmissionsContext);
   const { setUserLogs, totalImpact, currentLoading, userLogs } = useLogsContext();
   const fontsLoaded = useLoadFonts();
+  const {dailyLogLoading} = useUserGoalContext();
+  const [currentLoaded, setCurrentLoaded] = useState(false);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const firstName = username ? username.split(" ")[0] : "";
 
@@ -91,9 +95,15 @@ export default function LandingPage() {
       }
     };
 
-    initialize();
     checkModalStatus();
+    initialize();
   }, []);
+
+  useEffect(() => {
+    if (username && userUid && currentLoading === false && initialLoading === false){
+      setIsFirstLoad(false);
+    }
+  }, [username, userUid, currentLoading, initialLoading]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -420,7 +430,7 @@ export default function LandingPage() {
 
   // Render loading indicator if data is still being loaded
   //if (!username || currentLoading === true || initialLoading === true || userLogs.length === 0) {
-  if (!username || !userUid || currentLoading === true || initialLoading === true || userLogs.length === 0) {
+  if (isFirstLoad === true) {
     return (
       <StyledLayout className="flex-1 justify-center items-center">
         <LottieView

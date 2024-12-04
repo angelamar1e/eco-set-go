@@ -6,6 +6,9 @@ import { Pressable, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { myTheme } from '@/constants/custom-theme';
+import { useUserContext } from '@/contexts/UserContext';
+import { sendNotification } from '../Settings/Preferences';
+import { formatPrice } from './MarketplacePostCard';
 
 const StyledButton = styled(Button);
 const StyledInput = styled(Input);
@@ -19,6 +22,7 @@ export const CreateListing = (): React.ReactElement => {
   const [price, setPrice] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { userUid } = useUserContext();
 
   const fetchUserName = async (userUid: string) => {
     try {
@@ -47,7 +51,37 @@ export const CreateListing = (): React.ReactElement => {
           userName: userName,
           price: parseFloat(price),
           timestamp: firestore.FieldValue.serverTimestamp(),
+          uid: userUid,
         });
+
+        // Query all users with `postsNotificationsEnabled` set to true
+        const usersSnapshot = await firestore()
+          .collection('users')
+          .where('postsNotificationsEnabled', '==', true)
+          .get();
+  
+        // Filter out the current user from the list of users
+        const filteredUsers = usersSnapshot.docs.filter(doc => doc.id != userUid);
+        console.log(filteredUsers);
+  
+        const formatted = description.length > 50 ? `${description.trim().slice(0, 50)}...` : description.trim()
+        // Notify each user
+        const notificationPromises = filteredUsers.map(async (doc) => {
+          const user = doc.data().expoPushToken;
+          if (user) {
+            await sendNotification(
+              `@${userName} created a listing 🛒`,
+              `${formatted} • ${formatPrice(price)}`, // Trim and append ellipsis if longer than 50 characters
+              user,
+              "community-posts"
+            );
+          }
+        });
+  
+        // Wait for all notifications to complete
+        await Promise.all(notificationPromises);
+  
+
         setDescription('');
         setPrice('');
         setSuccess(true);

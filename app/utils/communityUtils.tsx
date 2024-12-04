@@ -77,12 +77,15 @@ export const handleAddComment = async (
       const postOwnerDoc = await firestore().collection("users").doc(postOwnerUid).get();
       const expoPushToken = postOwnerDoc.data()?.expoPushToken;
 
+      const formatted = newComment.length > 50 ? `${newComment.trim().slice(0, 50)}...` : newComment.trim()
+
       if (expoPushToken && uid != postOwnerUid) {
         // Send the notification
         await sendNotification(
           "New comment on your post 💭",
-          `${username} commented: ${newComment.trim().slice(0,50)}`,
-          expoPushToken
+          `@${username}: ${formatted}`,
+          expoPushToken,
+          "community-posts"
         );
       } else {
         console.warn("Post owner does not have a push token. Same post owner/commenter.");

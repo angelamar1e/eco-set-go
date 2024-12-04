@@ -4,7 +4,14 @@ import { View, TouchableOpacity } from "react-native";
 import { Checkbox, IconButton, List } from "react-native-paper";
 import { Swipeable, TextInput } from "react-native-gesture-handler";
 import { ActionItemProps, DoneItemProps } from "@/types/ActionItemProps";
-import { Card, Input, Layout, Select, SelectItem, Text } from "@ui-kitten/components";
+import {
+  Card,
+  Input,
+  Layout,
+  Select,
+  SelectItem,
+  Text,
+} from "@ui-kitten/components";
 import { styled } from "nativewind";
 import { ThemedText } from "@/components/ThemedText";
 import { EmissionsContext } from "@/contexts/Emissions";
@@ -16,7 +23,10 @@ import {
 import { EcoAction } from "@/types/EcoAction";
 import { FoodItem, Meals, mealBase } from "../../../../constants/DefaultValues";
 import { computeImpact } from "@/app/utils/EstimationUtils";
-import { convertGramsToKg, getCarEFPerKm } from '../../../utils/EstimationUtils';
+import {
+  convertGramsToKg,
+  getCarEFPerKm,
+} from "../../../utils/EstimationUtils";
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { Ionicons } from "@expo/vector-icons";
 import { myTheme } from "@/constants/custom-theme";
@@ -33,13 +43,12 @@ const StyledCard = styled(Card);
 const StyledInput = styled(Input);
 
 
-function isBicycle(title: string){
-    if (title.startsWith("Use a bicycle")){
-        return true;
-    }
-    else{
-        return false;
-    }
+function isBicycle(title: string) {
+  if (title.startsWith("Use a bicycle")) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export const TransportationOptions: React.FC<ActionItemProps> = ({
@@ -57,14 +66,21 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
 
   const toggleDropdown = () => setExpanded(!expanded);
 
-  function assignEmissionFactors(emissionsData: any, EFPerKm: number, item: EcoAction) {
+  function assignEmissionFactors(
+    emissionsData: any,
+    EFPerKm: number,
+    item: EcoAction
+  ) {
     // Resolve values with nullish coalescing
     const EFPerKmValue = emissionsData[EFPerKm] ?? EFPerKm;
-    const baseEmissionValue = emissionsData[item.baseEmission] ?? item.baseEmission;
+    const baseEmissionValue =
+      emissionsData[item.baseEmission] ?? item.baseEmission;
 
     // Compare and assign to higherEF and lessEF
-    const higherEF = EFPerKmValue > baseEmissionValue ? EFPerKmValue : baseEmissionValue;
-    const lessEF = EFPerKmValue > baseEmissionValue ? baseEmissionValue : EFPerKmValue;
+    const higherEF =
+      EFPerKmValue > baseEmissionValue ? EFPerKmValue : baseEmissionValue;
+    const lessEF =
+      EFPerKmValue > baseEmissionValue ? baseEmissionValue : EFPerKmValue;
 
     setVehicleHigherEF(higherEF);
     setVehicleLessEF(lessEF);
@@ -75,29 +91,41 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
   }
 
   useEffect(() => {
-    if (vehicleHigherEF || 0  && vehicleLessEF || 0) {
+    if (vehicleHigherEF || (0 && vehicleLessEF) || 0) {
       const higherEmissions = vehicleHigherEF! * kmTravelled;
       const lessEmissions = vehicleLessEF! * kmTravelled;
 
       let impact = 0;
 
-      if (isBicycle(item.title)){
-          impact = higherEmissions;
+      if (isBicycle(item.title)) {
+        impact = higherEmissions;
+      } else {
+        impact = computeImpact(higherEmissions, lessEmissions);
       }
-      else{
-          impact = computeImpact(higherEmissions, lessEmissions);
-      }
-      
-      handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
+
+      handleComplete(
+        item.id,
+        item.template,
+        convertKgToGrams(impact),
+        {} as MealData,
+        {} as MealData,
+        vehicleHigherEF,
+        vehicleLessEF
+      );
     }
   }, [vehicleHigherEF, vehicleLessEF]);
-  
+
   return (
     <Swipeable
       renderRightActions={() => (
         <View className="flex items-center justify-center ml-2 mr-4">
-          <Ionicons name="trash" size={20} color="red" onPress={() => handleDelete(item.id)} />
-        </View>        
+          <Ionicons
+            name="trash"
+            size={20}
+            color="red"
+            onPress={() => handleDelete(item.id)}
+          />
+        </View>
       )}
     >
        <StyledLayout className="pt-1 m-1"
@@ -146,7 +174,7 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
   completedActions,
   handleUnmark,
 }) => {
-  const {userUid, loading} = useUserContext();
+  const { userUid, loading } = useUserContext();
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [vehicleLessEF, setVehicleLessEF] = useState();
@@ -164,9 +192,10 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
     const getVehicleData = async () => {
       try {
         const currentDate = moment().format("YYYY-MM-DD");
-        const currentLog = (
-          await firestore().collection("user_logs").doc(userUid).get()
-        ).data()?.[currentDate] || {};
+        const currentLog =
+          (
+            await firestore().collection("user_logs").doc(userUid).get()
+          ).data()?.[currentDate] || {};
 
         setVehicleLessEF(currentLog[item.id]?.vehicleLessEF || null);
         setVehicleHigherEF(currentLog[item.id]?.vehicleHigherEF || null);
@@ -179,19 +208,28 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
   }, [userUid, loading]);
 
   const handleCompleteDetails = () => {
-    const kmTravelled = inputValue ? parseFloat(inputValue) : item.defaultKmTravelled!;
+    const kmTravelled = inputValue
+      ? parseFloat(inputValue)
+      : item.defaultKmTravelled!;
 
     const higherEmissions = vehicleHigherEF! * kmTravelled;
     const lessEmissions = vehicleLessEF! * kmTravelled;
 
-    if (isBicycle(item.title)){
-        impact = higherEmissions;
-    }
-    else{
-        impact = computeImpact(higherEmissions, lessEmissions);
+    if (isBicycle(item.title)) {
+      impact = higherEmissions;
+    } else {
+      impact = computeImpact(higherEmissions, lessEmissions);
     }
 
-    handleComplete(item.id, item.template, convertKgToGrams(impact), ({}) as MealData, ({}) as MealData, vehicleHigherEF, vehicleLessEF);
+    handleComplete(
+      item.id,
+      item.template,
+      convertKgToGrams(impact),
+      {} as MealData,
+      {} as MealData,
+      vehicleHigherEF,
+      vehicleLessEF
+    );
 
     setInputValue("");
     setShowInput(false);

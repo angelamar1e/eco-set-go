@@ -65,13 +65,15 @@ export const CreatePost = (): React.ReactElement => {
         // Filter out the current user from the list of users
         const filteredUsers = usersSnapshot.docs.filter(doc => doc.id !== userUid);
   
+        const formatted = value.length > 50 ? `${value.trim().slice(0, 50)}...` : value.trim()
         // Notify each user
         const notificationPromises = filteredUsers.map(async (doc) => {
           const user = doc.data();
           if (user.expoPushToken) {
             await sendNotification(
-              `${userName} shared a post`,
-              `${value.trim().slice(0, 50)}...`, // Trim content to 50 characters
+              `@${userName} shared a post 💌`,
+              `${formatted}`, // Trim and append ellipsis if longer than 50 characters
+              user.expoPushToken,
               "community-posts"
             );
           }

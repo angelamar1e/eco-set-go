@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
-import { Platform, Alert, Linking, TouchableOpacity } from 'react-native';
+import { Platform, Alert, Linking, TouchableOpacity } from "react-native";
 import {
   Toggle,
   Text,
@@ -26,9 +26,17 @@ const StyledToggle = styled(Toggle);
 const StyledButton = styled(Button);
 const StyledSelect = styled(Select);
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+// Function to setup notification channels for Android
 const setupNotificationChannels = async () => {
   if (Platform.OS === "android") {
-    // Daily reminders channel
     await Notifications.setNotificationChannelAsync("daily-reminders", {
       name: "Daily Reminders",
       importance: Notifications.AndroidImportance.HIGH,
@@ -37,7 +45,6 @@ const setupNotificationChannels = async () => {
       vibrationPattern: [0, 250, 250, 250],
     });
 
-    // Community posts channel
     await Notifications.setNotificationChannelAsync("community-posts", {
       name: "Community Posts",
       importance: Notifications.AndroidImportance.HIGH,
@@ -48,28 +55,35 @@ const setupNotificationChannels = async () => {
   }
 };
 
-export const sendNotification = async (
-  title: string,
-  body: string,
-  channelId: string
-) => {
+// Function to send a notification using Expo's push notification service
+export const sendNotification = async (title: string, body: string, token: string, channelId?: string) => {
   try {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        sound: "default",
-        vibrate: [0, 250, 250, 250],
+    const message = {
+      to: token, // Replace with actual token
+      sound: 'default',
+      title,
+      body,
+      data: { channelId },
+    };
+
+    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      trigger: null,
+      body: JSON.stringify(message),
     });
+
+    const data = await response.json();
+    console.log("Notification response:", data);
   } catch (error) {
     console.error("Error sending notification:", error);
   }
 };
 
+
 const Preferences: React.FC = () => {
-  const { userUid, remindersPreferences, postsPreferences, name } =
+  const { userUid, remindersPreferences, postsPreferences, name, pushToken } =
     useUserContext();
   const [reminderNotifications, setReminderNotifications] =
     useState<boolean>(false);
@@ -84,6 +98,7 @@ const Preferences: React.FC = () => {
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
+  // Function to request notification permissions and register for push notifications
   const registerForPushNotificationsAsync = async (): Promise<
     string | undefined
   > => {
@@ -113,17 +128,26 @@ const Preferences: React.FC = () => {
         return;
       }
 
-      const projectId =
-        Constants.expoConfig?.extra?.eas?.projectId ??
-        Constants.easConfig?.projectId;
+      // Fetch FCM token from Expo and save it to Firestore
       try {
-        const token = (await Notifications.getExpoPushTokenAsync({ projectId }))
-          .data;
-        await firestore().collection("users").doc(userUid).set(
-          { expoPushToken: token },
-          { merge: true } // Avoid overwriting existing fields
-        );
-        return token;
+        const projectId =
+          Constants?.expoConfig?.extra?.eas?.projectId ??
+          Constants?.easConfig?.projectId;
+
+        if (!projectId) {
+          throw new Error("Project ID not found");
+        }
+        const { data: token } = await Notifications.getExpoPushTokenAsync({
+          projectId,
+        });
+        if (token) {
+          console.log("Expo push token:", token);
+          await firestore()
+            .collection("users")
+            .doc(userUid)
+            .set({ expoPushToken: token }, { merge: true });
+          return token;
+        }
       } catch (error) {
         console.error("Error getting push token:", error);
       }
@@ -172,7 +196,7 @@ const Preferences: React.FC = () => {
         setInterval(remindersPreferences.interval); // Fallback to default
       }
       if (postsPreferences && status === "granted") {
-        setCommunityPostNotifications(postsPreferences);
+        setCommunityPostNotifications(true);
       }
     };
 
@@ -199,10 +223,10 @@ const Preferences: React.FC = () => {
     requestNotificationPermission();
     const message =
       frequency === "once"
-        ? "once a day."
+        ? "once a day, starting at 8AM tomorrow."
         : interval != 1
-        ? `twice a day, every ${interval} hours.`
-        : `twice a day, every 1 hour.`;
+        ? `twice a day, every ${interval} hours, starting at 8AM tomorrow.`
+        : `twice a day, every 1 hour, starting at 8AM tomorrow.`;
 
     if (reminderNotifications) {
       try {
@@ -229,6 +253,7 @@ const Preferences: React.FC = () => {
         sendNotification(
           "Daily Log Alerts 📣",
           `Your daily reminders are set to ${message}`,
+          expoPushToken,
           "daily-reminders"
         );
       } catch (error) {
@@ -257,6 +282,7 @@ const Preferences: React.FC = () => {
         sendNotification(
           "Community Posts Alert 📣",
           `Post notifications are enabled.`,
+          expoPushToken,
           "community-posts"
         );
       } catch (error) {
@@ -291,7 +317,7 @@ const Preferences: React.FC = () => {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: `Hi ${firstName} 🥰`,
-          body: "yung daily log mo po pakigawa thanks!",
+          body: "Yung daily log mo po paki gawa, thanks!",
         },
         trigger: { hour, minute, repeats: true },
       });
@@ -306,23 +332,25 @@ const Preferences: React.FC = () => {
   ) => {
     const firstName = name.split(" ")[0];
     const { hour: startHour, minute } = parseTime(startTime);
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `Hi ${firstName} 🥰`,
+          body: "Yung daily log mo po paki gawa, thanks!",
+        },
+        trigger: { hour: startHour, minute, repeats: true },
+      });
 
-    for (let i = 0; i < 2; i++) {
-      try {
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: `Hi ${firstName} 🥰`,
-            body: "yung daily log mo po pakigawa thanks!",
-          },
-          trigger: {
-            hour: startHour + i * interval,
-            minute,
-            repeats: true,
-          },
-        });
-      } catch (error) {
-        console.error("Error scheduling twice-daily notification:", error);
-      }
+      const secondHour = (startHour + interval) % 24;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `Hello again, ${firstName}!`,
+          body: "Logging today means greener tomorrows 🍃 (and helping us graduate)",
+        },
+        trigger: { hour: secondHour, minute, repeats: true },
+      });
+    } catch (error) {
+      console.error("Error scheduling twice-daily notifications:", error);
     }
   };
 
@@ -337,13 +365,58 @@ const Preferences: React.FC = () => {
     }
   };
 
-  const requestNotificationPermission = async () => {
-    const { status } = await Notifications.getPermissionsAsync();
-    if (status !== "granted") {
+  const openAppSettings = () => {
+    try {
+      if (Platform.OS === "android") {
+        Linking.openSettings(); // Opens the app-specific settings directly.
+      }
+    } catch (error) {
       Alert.alert(
-        "Notification permission required",
-        "To continue, please grant notification permissions in your settings."
+        "Error",
+        "Unable to open app settings. Please navigate manually to app settings."
       );
+      console.error("Error opening app settings:", error);
+    }
+  };
+
+  const disableNotifications = () => {
+    setReminderNotifications(false);
+    setCommunityPostNotifications(false);
+  };
+
+  const requestNotificationPermission = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+
+      if (status === "granted") {
+        console.log("Notification permission already granted.");
+        return;
+      }
+
+      if (status === "denied") {
+        Alert.alert(
+          "Permission required",
+          "Notifications are disabled. Would you like to open settings to enable them?",
+          [
+            { text: "Cancel", style: "cancel", onPress: disableNotifications },
+            { text: "Open Settings", onPress: openAppSettings },
+          ]
+        );
+        return;
+      }
+
+      const { status: newStatus } =
+        await Notifications.requestPermissionsAsync();
+      if (newStatus !== "granted") {
+        Alert.alert(
+          "Permission not granted",
+          "You need to allow notifications to use this feature."
+        );
+      } else {
+        console.log("Notification permission granted.");
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
     }
   };
 
@@ -372,13 +445,13 @@ const Preferences: React.FC = () => {
           backgroundColor: myTheme["color-success-700"],
           marginTop: 10,
           marginBottom: 10,
-          marginLeft: 'auto',
-          marginRight: 'auto',
+          marginLeft: "auto",
+          marginRight: "auto",
           width: "auto",
           height: "auto",
         }}
       >
-        <StyledText style={{ fontFamily: "Poppins-Bold"}} className="text-white p-3">
+        <StyledText className="text-white p-3 font-bold">
           📩 Save Preferences
         </StyledText>
       </TouchableOpacity>

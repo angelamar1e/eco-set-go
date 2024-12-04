@@ -11,6 +11,7 @@ interface Listing {
   userName: string;
   price: string;
   timestamp: Timestamp;
+  uid: string,
 }
 
 const MarketplacePosts: React.FC = () => {
@@ -42,6 +43,7 @@ const MarketplacePosts: React.FC = () => {
             id={item.id}
             content={item.content}
             userName={item.userName}
+            uid={item.uid}
             price={item.price}
             timestamp={item.timestamp}
             onEdit={async (newContent, newPrice) => {
