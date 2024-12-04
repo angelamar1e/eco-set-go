@@ -17,6 +17,8 @@ import {
   getAdditionals,
   computeHotDrinkEmission,
   getCarEFPerKm,
+  convertGramsToKg,
+  convertKgToGrams,
 } from "@/app/utils/EstimationUtils";
 import {
   Car,
@@ -173,7 +175,7 @@ export const EmissionsProvider = ({ children }) => {
       data.hotDrinksFrequency ?? Beverages.HotDrinks.drinkTypeFrequency
     );
     setCoffeeEmissions(
-      data.coffeeEmissions ?? computeHotDrinkEmission(hotDrinksFrequency.Coffee)
+      data.coffeeEmissions ?? convertKgToGrams(computeHotDrinkEmission(hotDrinksFrequency.Coffee))
     );
 
     // Electricity emissions data
@@ -817,11 +819,11 @@ export const EmissionsProvider = ({ children }) => {
     hotDrinksFrequency.Coffee
   );
   const [coffeeEmissions, setCoffeeEmissions] = useState(
-    computeHotDrinkEmission(
+    convertKgToGrams(computeHotDrinkEmission(
       Beverages.HotDrinks.drinkTypeEF.coffee,
       Beverages.HotDrinks.kgPerCup.coffee,
       coffeeFrequency
-    )
+    ))
   );
   const [hotDrinksEmissions, setHotDrinksEmissions] = useState(
     computeTotalHotDrinksEmissions(Beverages.HotDrinks.drinkTypeFrequency)
@@ -834,7 +836,7 @@ export const EmissionsProvider = ({ children }) => {
       Beverages.HotDrinks.kgPerCup.coffee,
       hotDrinksFrequency.Coffee
     );
-    setCoffeeEmissions(newCoffeeEmissions);
+    setCoffeeEmissions(convertKgToGrams(newCoffeeEmissions));
 
     const newHotDrinksEmissions =
       computeTotalHotDrinksEmissions(hotDrinksFrequency);

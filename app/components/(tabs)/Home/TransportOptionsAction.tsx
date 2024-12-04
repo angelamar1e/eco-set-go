@@ -30,10 +30,11 @@ import {
 import { EmissionsDataContext } from "@/contexts/EmissionsData";
 import { Ionicons } from "@expo/vector-icons";
 import { myTheme } from "@/constants/custom-theme";
-import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 import { useUserContext } from "@/contexts/UserContext";
 import moment from "moment";
 import { MealData } from "./MealAction";
+import CircularCheckboxForDropdown from "../Goal Setting/CircularCheckBox";
+import CircularCheckbox from "../Goal Setting/CircularCheckBox";
 
 const StyledLayout = styled(Layout);
 const StyledSelect = styled(Select);
@@ -41,7 +42,6 @@ const StyledSelectItem = styled(SelectItem);
 const StyledText = styled(Text);
 const StyledCard = styled(Card);
 const StyledInput = styled(Input);
-
 
 function isBicycle(title: string) {
   if (title.startsWith("Use a bicycle")) {
@@ -56,7 +56,6 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
   handleComplete,
   handleDelete,
 }) => {
-  
   const { emissionsData } = useContext(EmissionsContext);
   const [isSelectionSet, setIsSelectionSet] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -128,41 +127,46 @@ export const TransportationOptions: React.FC<ActionItemProps> = ({
         </View>
       )}
     >
-       <StyledLayout className="pt-1 m-1"
-        >
+      <StyledLayout className="pt-1 m-1">
         <StyledSelect
+        onFocus={() => setExpanded(true)}
           className="w-full rounded-lg"
           placeholder={() => (
-            <StyledText
-              numberOfLines={2}
-              style={{ 
-                width: "85%",
-                fontFamily: 'Poppins-Regular',
-                fontSize: 14
-              }}
-              className="text-base leading-5"
-            >
-              {item.title}
-            </StyledText>
+            <View className="pl-1 w-80 flex-row">
+              <CircularCheckbox type="dropdown"/>
+              <StyledText
+                numberOfLines={2}
+                style={{
+                  width: "85%",
+                  fontFamily: "Poppins-Regular",
+                  fontSize: 14,
+                }}
+                className="text-base leading-5 py-2"
+              >
+                {item.title}
+              </StyledText>
+            </View>
           )}
         >
-          {item.options ? (
-              Object.entries(item.options).map(([key, value]) => (
-                <StyledSelectItem
-                  key={key}
-                  title={props => (
-                    <Text style={{fontFamily: 'Poppins-Regular', fontSize: 14}}>{key}</Text>
-                  )}
-                  onPress={() => {
-                    getImpact(value);
-                    setExpanded(false); // Collapse the dropdown after selection
-                  }}
-                />
-              ))
-            ) : (
-              <></>
-            )}
-          </StyledSelect>
+          {item.options && expanded ? (
+            Object.entries(item.options).map(([key, value]) => (
+              <StyledSelectItem
+                key={key}
+                title={(props) => (
+                  <Text style={{ fontFamily: "Poppins-Regular", fontSize: 14 }}>
+                    {key}
+                  </Text>
+                )}
+                onPress={() => {
+                  getImpact(value);
+                  setExpanded(false); // Collapse the dropdown after selection
+                }}
+              />
+            ))
+          ) : (
+            <></>
+          )}
+        </StyledSelect>
       </StyledLayout>
     </Swipeable>
   );
@@ -237,24 +241,22 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
 
   return (
     <View>
-      <StyledLayout 
-          className="pt-1 m-1"
-        >
+      <StyledLayout className="pt-1 m-1">
         <View className="border border-gray-200 rounded-lg">
           <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
-              <CircularCheckbox
+            <CircularCheckbox
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
                   : "unchecked"
-                }
-                onPress={() => handleUnmark(item.id)}
-              />
-            <StyledText 
+              }
+              onPress={() => handleUnmark(item.id)}
+            />
+            <StyledText
               className="text-base w-10/12 leading-6"
-              style={{ 
-                fontFamily: 'Poppins-Regular',
-                fontSize: 14 
+              style={{
+                fontFamily: "Poppins-Regular",
+                fontSize: 14,
               }}
             >
               {item.title}
@@ -262,62 +264,61 @@ export const DoneTransportAction: React.FC<DoneItemProps> = ({
           </View>
 
           <TouchableOpacity onPress={handleMoreDetails}>
-          <StyledText
+            <StyledText
               category="s1"
               className="ml-12 mt-2 mb-2"
               style={{
-                color: myTheme['color-success-700'],
-                fontFamily: 'Poppins-Medium',
-                fontSize: 14
+                color: myTheme["color-success-700"],
+                fontFamily: "Poppins-Medium",
+                fontSize: 14,
               }}
             >
               Enter more details
             </StyledText>
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-        {showInput && (
-          <View>
-            <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
-              <StyledText 
-                className="mr-2 text-sm"
-                style={{ fontFamily: 'Poppins-Regular' }}
-              >
-                Distance travelled:
-              </StyledText>
-              <StyledInput
-                className="w-1/4"
-                placeholder=""
-                keyboardType="numeric"
-                value={inputValue}
-                onChangeText={setInputValue}
-              />
-              <StyledText 
-                className="ml-2 mr-8 text-sm"
-                style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}
-              >
-                km
-              </StyledText>
-            </StyledLayout>
-            <View className="items-center">
-            <TouchableOpacity
-                className="rounded-lg w-full p-2 px-6 mb-3"
-                onPress={handleCompleteDetails}
-              >
+          {showInput && (
+            <View>
+              <StyledLayout className="rounded-xl mb-3 ml-12 flex-row items-center justify-end px-4">
                 <StyledText
-                  category="p1"
-                  className="text-white text-sm text-right"
-                  style={{
-                    color: myTheme['color-success-700'],
-                    fontFamily: 'Poppins-SemiBold'
-                  }}
+                  className="mr-2 text-sm"
+                  style={{ fontFamily: "Poppins-Regular" }}
                 >
-                  → Submit
+                  Distance travelled:
                 </StyledText>
-              </TouchableOpacity>
+                <StyledInput
+                  className="w-1/4"
+                  placeholder=""
+                  keyboardType="numeric"
+                  value={inputValue}
+                  onChangeText={setInputValue}
+                />
+                <StyledText
+                  className="ml-2 mr-8 text-sm"
+                  style={{ fontFamily: "Poppins-Medium", fontSize: 14 }}
+                >
+                  km
+                </StyledText>
+              </StyledLayout>
+              <View className="items-center">
+                <TouchableOpacity
+                  className="rounded-lg w-full p-2 px-6 mb-3"
+                  onPress={handleCompleteDetails}
+                >
+                  <StyledText
+                    category="p1"
+                    className="text-white text-sm text-right"
+                    style={{
+                      color: myTheme["color-success-700"],
+                      fontFamily: "Poppins-SemiBold",
+                    }}
+                  >
+                    → Submit
+                  </StyledText>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
           )}
-
         </View>
       </StyledLayout>
     </View>

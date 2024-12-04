@@ -116,17 +116,20 @@ export const Meal: React.FC<ActionItemProps> = ({
         <StyledSelect
           className="w-full rounded-lg"
           placeholder={() => (
+            <View className="pl-1 w-80 flex-row">
+            <CircularCheckbox type="dropdown"/>
             <StyledText
               numberOfLines={2}
-              style={{ 
+              style={{
                 width: "85%",
                 fontFamily: 'Poppins-Regular',
                 fontSize: 14
               }}
-              className="text-base leading-5"
+              className="text-base leading-5 py-2"
             >
               {item.title}
             </StyledText>
+            </View>
           )}
         >
           {item.options ? (
@@ -255,6 +258,7 @@ export const MealDone: React.FC<DoneItemProps> = ({
         <View className="border border-gray-200 rounded-lg">
           <View className="flex-row flex-wrap ml-3 mt-3 items-center justify-start">
             <CircularCheckbox
+              type="dropdown"
               status={
                 completedActions.some((action) => action.id === item.id)
                   ? "checked"
