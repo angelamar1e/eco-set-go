@@ -83,7 +83,7 @@ export const sendNotification = async (title: string, body: string, token: strin
 
 
 const Preferences: React.FC = () => {
-  const { userUid, remindersPreferences, postsPreferences, name, pushToken } =
+  const { userUid, remindersPreferences, postsPreferences, username, pushToken } =
     useUserContext();
   const [reminderNotifications, setReminderNotifications] =
     useState<boolean>(false);
@@ -310,13 +310,12 @@ const Preferences: React.FC = () => {
   });
 
   const scheduleDailyNotification = async (time: Date) => {
-    const firstName = name.split(" ")[0];
     const { hour, minute } = parseTime(time);
 
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: `Hi ${firstName} 🥰`,
+          title: `Hi @${username} 🥰`,
           body: "Yung daily log mo po paki gawa, thanks!",
         },
         trigger: { hour, minute, repeats: true },
@@ -330,12 +329,11 @@ const Preferences: React.FC = () => {
     startTime: Date,
     interval: number
   ) => {
-    const firstName = name.split(" ")[0];
     const { hour: startHour, minute } = parseTime(startTime);
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: `Hi ${firstName} 🥰`,
+          title: `Hi @${username} 🥰`,
           body: "Yung daily log mo po paki gawa, thanks!",
         },
         trigger: { hour: startHour, minute, repeats: true },
@@ -344,7 +342,7 @@ const Preferences: React.FC = () => {
       const secondHour = (startHour + interval) % 24;
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: `Hello again, ${firstName}!`,
+          title: `Hello again, @${username}!`,
           body: "Logging today means greener tomorrows 🍃 (and helping us graduate)",
         },
         trigger: { hour: secondHour, minute, repeats: true },
@@ -471,7 +469,7 @@ const Preferences: React.FC = () => {
       {reminderNotifications && (
         <StyledLayout className="p-3">
           <StyledLayout className="my-2">
-            <StyledText className="text font-bold">Frequency</StyledText>
+            <StyledText className="text-lg font-bold">Frequency</StyledText>
             <StyledSelect
               value={frequency === "once" ? "Once daily" : "Twice daily"}
               onSelect={(index: IndexPath | IndexPath[]) => {
