@@ -358,7 +358,7 @@ const QuizIndex = () => {
                   />
                 </StyledLayout>
               )}
-              <ScrollView className="pl-4 pr-4 mb-20">
+              <ScrollView className="pl-4 pr-4 mb-18">
                 <CurrentComponent
                   key={questionData.variable}
                   question={questionData.question}

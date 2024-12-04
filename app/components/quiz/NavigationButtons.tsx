@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Button, Text } from "@ui-kitten/components";
+import { Keyboard } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { myTheme } from "@/constants/custom-theme";
 import { styled } from "nativewind";
@@ -12,6 +13,26 @@ interface NavigationButtonProps {
 }
 
 export const NavigationButtons: FC<NavigationButtonProps> = ({ title, onPress }) => {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  if (isKeyboardVisible) {
+    return null;
+  }
+
   return (
     <Button
       style={{
