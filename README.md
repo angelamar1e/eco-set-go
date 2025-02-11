@@ -1,50 +1,16 @@
-# Welcome to your Expo app 👋
+# Eco Set Go 🌱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native Expo application powered by Firebase, designed to help users estimate their personal carbon footprint and build sustainable habits. The app provides insights into individual environmental impact across key areas such as food, transportation, and electricity consumption.
 
-## Get started
+## Features
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Eco Articles** – Discover practical, eco-friendly actions with step-by-step guides and insights on their environmental benefits, these include the initiatives of our partner [Quezon City CCESD](facebook.com/qc.climatechangedepartment), and actions such as reducing meat-based meals to lower emissions.
+- **Daily Eco Action Customization & Logging** – Choose and log personalized sustainable actions linked to Eco Articles for seamless habit tracking.
+- **Carbon Footprint Quiz** – Get an initial footprint estimate using Nos Gestes Climat’s methodology, localized with Philippine-specific data on food, transport, and emissions.
+- **Automated Daily Carbon Footprint Estimation** – Track your environmental impact reduction based on logged actions.
+- **Progress Tracking with Graphs** – Monitor sustainability efforts through daily, weekly, monthly, and all-time visual insights.
+- **Incentive & Reward System** – Earn points, level up, and unlock discount vouchers from [EcoMove](https://ecomoveph.com/) for your eco-friendly actions.
+- **Eco Community** – Connect with like-minded individuals, share experiences, and engage in discussions through posts and comments.
+- **Personal Reflection Entries** – Journal your thoughts and experiences as you progress on your sustainability journey.
+- **Goal Setting** – Define and track sustainability goals to stay motivated.
+- **Push Notifications** – Set daily reminders (once or twice a day) to stay on top of your eco-friendly commitments.
